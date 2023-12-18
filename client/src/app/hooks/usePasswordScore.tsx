@@ -27,8 +27,6 @@ export default function usePasswordScore(password: string) {
       password.length >= length,
     ].filter(Boolean).length;
 
-    console.log(scores);
-
     setScore(scores);
   }, [password]);
 

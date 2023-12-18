@@ -5,7 +5,7 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
 
 const signUpSchema = z
   .object({
-    name: z
+    fullName: z
       .string({
         required_error: "Full name is required",
       })
@@ -26,7 +26,7 @@ const signUpSchema = z
     confirmPassword: z.string({
       required_error: "Passwords do not match",
     }),
-    keepSignedIn: z.boolean(),
+    keepSignedIn: z.boolean().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

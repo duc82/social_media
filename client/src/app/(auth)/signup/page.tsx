@@ -8,9 +8,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
-import { signUp } from "@/app/actions/auth/signup";
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
+import { SignUpDto } from "@/app/types/auth";
+import { signUp } from "@/app/services/authService";
 
 const classNameScore: Record<number, string> = {
   0: "",
@@ -21,12 +22,8 @@ const classNameScore: Record<number, string> = {
   5: "psms-100",
 };
 
-interface IFormValues {
-  name: string;
-  email: string;
-  password: string;
+interface FormValue extends SignUpDto {
   confirmPassword: string;
-  keepSignedIn: boolean;
 }
 
 export default function Signup() {
@@ -35,22 +32,19 @@ export default function Signup() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<IFormValues>({
+  } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
   });
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const { ref } = register("password");
 
-  const onSubmit = async (data: IFormValues) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    formData.append("keepSignedIn", JSON.stringify(data.keepSignedIn));
+  const onSubmit = async (data: FormValue) => {
+    console.log("liu tiu diu");
+    const { confirmPassword, ...values } = data;
 
     try {
-      await signUp(formData);
+      await signUp(values);
       redirect("/login");
     } catch (error) {
       toast.error((error as Error).message);
@@ -71,7 +65,7 @@ export default function Signup() {
       <div className="text-center">
         <h2 className="h1 mb-2">Sign up</h2>
         <span className="d-block">
-          Already have an account? <Link href="/signin">Sign in here</Link>
+          Already have an account? <Link href="/login">Sign in here</Link>
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
@@ -80,11 +74,11 @@ export default function Signup() {
             type="text"
             placeholder="Enter full name"
             className="form-control"
-            {...register("name")}
+            {...register("fullName")}
           />
-          {errors.name && (
+          {errors.fullName && (
             <div className="form-text text-danger mt-1">
-              {errors.name.message}
+              {errors.fullName.message}
             </div>
           )}
         </div>

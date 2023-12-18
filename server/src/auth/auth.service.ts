@@ -20,11 +20,11 @@ export class AuthService {
     private jwtService: JwtService,
   ) {
     const accessTokenExpired = process.env.ACCESS_TOKEN_EXPIRED;
-    const refreshTokenExpired = process.env.RERESH_TOKEN_EXPIRED;
+    const refreshTokenExpired = process.env.REFRESH_TOKEN_EXPIRED;
 
-    if (!(accessTokenExpired && refreshTokenExpired)) {
+    if (!accessTokenExpired || !refreshTokenExpired) {
       throw new Error(
-        "Please provide ACCESS_TOKEN_EXPIRED adn REFRESH_TOKEN_EXPIRED in .env",
+        "Please provide ACCESS_TOKEN_EXPIRED and REFRESH_TOKEN_EXPIRED in .env",
       );
     }
 

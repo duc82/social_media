@@ -7,7 +7,7 @@ import ToastProvider from "./providers/ToastProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social",
+  title: "Social Media",
   description: "Social",
 };
 
