@@ -6,7 +6,8 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Request,
+  Req,
+  Res,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
@@ -14,6 +15,7 @@ import { CreateUserDto } from "src/users/user.dto";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
 import { SignInDto } from "./auth.dto";
+import { Request, Response } from "express";
 
 @Controller("api/auth")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -28,13 +30,27 @@ export class AuthController {
 
   @Post("signin")
   @HttpCode(HttpStatus.OK)
-  async signin(@Body() body: SignInDto) {
-    return this.authService.signIn(body);
+  async signin(
+    @Body() body: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.signIn(body, res);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post("signout")
+  async signOut(@Res() res: Response) {
+    return this.authService.signOut(res);
+  }
+
+  @Post("refresh")
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    return this.authService.refresh(req, res);
   }
 
   @UseGuards(AuthGuard)
   @Get("profile")
-  async getProfile(@Request() req) {
+  async getProfile(@Req() req) {
     return this.authService.getProfile(req.user.userId);
   }
 }

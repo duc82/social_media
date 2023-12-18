@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entity/user.entity";
 import { FindOneOptions, Repository } from "typeorm";
-import { CreateUserDto, UpdateUserProfileDto } from "./user.dto";
+import { CreateUserDto } from "./user.dto";
 import { Profile } from "./entity/profile.entity";
 
 @Injectable()
@@ -50,9 +50,24 @@ export class UsersService {
     return deletedResult;
   }
 
-  async updateProfile(id: string, attrs: Partial<User>) {
-    const profile = await this.profileRepository.findOne({
-      where: { userId: id },
+  async updateProfile(id: string, attrs: Partial<Profile>) {
+    const user = await this.findById(id, {
+      relations: {
+        profile: true,
+      },
     });
+
+    if (!user) {
+      throw new NotFoundException("Not Found User");
+    }
+
+    if (!user.profile) {
+      const newProfile = this.profileRepository.create({ ...attrs, user });
+      await this.profileRepository.save(newProfile);
+      return { message: "Update success" };
+    }
+
+    await this.profileRepository.update(id, attrs);
+    return { message: "Update success" };
   }
 }

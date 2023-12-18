@@ -19,6 +19,6 @@ export class UsersController {
     @Param("id", ParseUUIDPipe) id: string,
     @Body() body: UpdateUserProfileDto,
   ) {
-    return this.usersService.upsert(id, body);
+    return this.usersService.updateProfile(id, body);
   }
 }

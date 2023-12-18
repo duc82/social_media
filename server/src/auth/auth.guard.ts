@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { Request } from "express";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -13,14 +14,14 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const token = this.extractTokenFromHeader(request);
+    const accessToken = this.extractTokenFromCookie(request);
 
-    if (!token) {
+    if (!accessToken) {
       throw new UnauthorizedException("You are not authorized");
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync(accessToken, {
         secret: process.env.JWT_SECRET,
       });
 
@@ -30,6 +31,11 @@ export class AuthGuard implements CanActivate {
     }
 
     return true;
+  }
+
+  private extractTokenFromCookie(req: Request): string | undefined {
+    const accessToken = req.cookies["accessToken"];
+    return accessToken;
   }
 
   private extractTokenFromHeader(request: any): string | undefined {

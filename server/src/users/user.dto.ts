@@ -25,14 +25,11 @@ export class UpdateUserProfileDto {
   bornAt: Date;
 
   @IsEnum(Status)
-  status: string;
+  status: Status;
 
   @IsNotEmpty()
   address: string;
 
   @IsNotEmpty()
   info: string;
-
-  @IsNotEmpty()
-  userId: string;
 }
