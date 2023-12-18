@@ -1,15 +1,15 @@
 "use client";
 
 import { signUpSchema } from "@/app/utils/validation";
-import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEyeSlash, faEye, faE } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SignUpDto } from "@/app/types/auth";
 import { signUp } from "@/app/services/authService";
 
@@ -36,26 +36,27 @@ export default function Signup() {
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
   });
-  const passwordRef = useRef<HTMLInputElement | null>(null);
-  const { ref } = register("password");
+
+  const [passwordType, setPasswordType] = useState<"password" | "text">(
+    "password"
+  );
+
+  const router = useRouter();
 
   const onSubmit = async (data: FormValue) => {
-    console.log("liu tiu diu");
-    const { confirmPassword, ...values } = data;
+    const { confirmPassword, ...signUpDto } = data;
 
     try {
-      await signUp(values);
-      redirect("/login");
+      const value = await signUp(signUpDto);
+      toast.success(value.message);
+      router.push("/signin");
     } catch (error) {
       toast.error((error as Error).message);
     }
   };
 
   const togglePasswordType = () => {
-    if (passwordRef.current) {
-      passwordRef.current.type =
-        passwordRef.current.type === "password" ? "text" : "password";
-    }
+    setPasswordType((prev) => (prev === "password" ? "text" : "password"));
   };
 
   const passwordScore = usePasswordScore(watch("password"));
@@ -100,24 +101,24 @@ export default function Signup() {
         </div>
 
         <div className="mb-3 position-relative">
-          <div className="mb-0 input-group-lg d-flex">
+          <div className="mb-0 input-group input-group-lg">
             <input
-              type="password"
+              type={passwordType}
               placeholder="Enter new password"
               className="form-control"
               {...register("password")}
-              ref={(e) => {
-                ref(e);
-                passwordRef.current = e;
-              }}
+              aria-describedby="passwordHelpBlock"
             />
-            <button
-              type="button"
-              className="input-group-text p-0"
+            <span
+              id="passwordHelpBlock"
+              className="input-group-text p-0 cursor-pointer"
               onClick={togglePasswordType}
             >
-              <FontAwesomeIcon icon={faEyeSlash} className="w-40px" />
-            </button>
+              <FontAwesomeIcon
+                icon={passwordType === "password" ? faEyeSlash : faEye}
+                className="w-40px"
+              />
+            </span>
           </div>
           <div className="mt-2 password-strength-meter">
             <div
@@ -149,15 +150,6 @@ export default function Signup() {
           )}
         </div>
 
-        <div className="mb-3 text-start">
-          <input
-            type="checkbox"
-            id="keepSignedCheck"
-            className="form-check-input"
-            {...register("keepSignedIn")}
-          />
-          <label htmlFor="keepSignedCheck"> Keep me signed in</label>
-        </div>
         <button type="submit" className="btn btn-lg btn-primary w-100">
           Sign me up
         </button>

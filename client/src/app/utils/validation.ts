@@ -26,7 +26,6 @@ const signUpSchema = z
     confirmPassword: z.string({
       required_error: "Passwords do not match",
     }),
-    keepSignedIn: z.boolean().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

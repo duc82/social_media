@@ -1,10 +1,8 @@
-import { SignUpDto } from "../types/auth";
-import { FullUser } from "../types/user";
+import { SignUpDto, UserResponse } from "../types/auth";
 import apiRequest from "./api";
 
-const signUp = async (signUpDto: SignUpDto): Promise<FullUser> => {
-  console.log("signup");
-  return apiRequest<FullUser>("/auth/signup", "POST", signUpDto);
+const signUp = async (signUpDto: SignUpDto): Promise<UserResponse> => {
+  return apiRequest<UserResponse>("/auth/signup", "POST", signUpDto);
 };
 
 export { signUp };
