@@ -1,17 +1,17 @@
 "use client";
 
-import { signUpSchema } from "@/app/utils/validation";
-import { faEyeSlash, faEye, faE } from "@fortawesome/free-solid-svg-icons";
+import { SignUpDto, signUpSchema } from "@/app/utils/validation";
+import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { SignUpDto } from "@/app/types/auth";
 import { signUp } from "@/app/services/authService";
+import handlingError from "@/app/utils/error";
 
 const classNameScore: Record<number, string> = {
   0: "",
@@ -51,7 +51,7 @@ export default function Signup() {
       toast.success(value.message);
       router.push("/signin");
     } catch (error) {
-      toast.error((error as Error).message);
+      toast.error(handlingError(error));
     }
   };
 
@@ -64,9 +64,9 @@ export default function Signup() {
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
-        <h2 className="h1 mb-2">Sign up</h2>
+        <h1 className="h1 mb-2">Sign up</h1>
         <span className="d-block">
-          Already have an account? <Link href="/login">Sign in here</Link>
+          Already have an account? <Link href="/signin">Sign in here</Link>
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
@@ -153,6 +153,14 @@ export default function Signup() {
         <button type="submit" className="btn btn-lg btn-primary w-100">
           Sign me up
         </button>
+
+        <p className="mb-0 mt-3 text-center text-sm">
+          ©{new Date().getFullYear()}{" "}
+          <Link href="/" className="link-primary">
+            Social.
+          </Link>{" "}
+          All rights reserved.
+        </p>
       </form>
     </div>
   );

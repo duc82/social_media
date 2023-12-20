@@ -27,7 +27,8 @@ input::-ms-clear {
 $display-font-weight: 700;
 
 $headings-font-weight: 700;
-$headings-color: $gray-800;
+$h1-font-size: calc(1.359375rem + 1.3125vw);
+$headings-color: $gray-900;
 $enable-negative-margins: true;
 
 $input-border-color: $gray-400;
@@ -41,11 +42,14 @@ $link-decoration: none;
 $input-focus-box-shadow: none;
 $input-focus-border-color: $primary;
 $input-placeholder-color: $gray-500;
+$input-group-addon-color: $gray-900;
 
 $btn-padding-y-lg: 0.8rem;
 $btn-padding-x-lg: 1.5rem;
 $btn-font-size-lg: 1rem;
 $btn-border-radius-lg: 0.2rem;
+
+$nav-link-color: $secondary;
 
 $utilities: (
   "opacity": (

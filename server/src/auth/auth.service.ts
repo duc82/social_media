@@ -60,7 +60,7 @@ export class AuthService {
     const isPasswordMatching = await user.comparePassword(signInDto.password);
 
     if (!user || !isPasswordMatching) {
-      throw new BadRequestException("Invalid credentials");
+      throw new BadRequestException("Email or password is incorrect");
     }
 
     const payload = {
@@ -75,22 +75,24 @@ export class AuthService {
       expiresIn: this.refreshTokenExpired / 1000,
     });
 
-    res.cookie("accessToken", accessToken, {
-      sameSite: "none",
-      secure: true,
-      httpOnly: true,
-      maxAge: this.accessTokenExpired,
-    });
+    // res.cookie("accessToken", accessToken, {
+    //   sameSite: "none",
+    //   secure: true,
+    //   httpOnly: true,
+    //   maxAge: this.accessTokenExpired,
+    // });
 
-    res.cookie("refreshToken", refreshToken, {
-      sameSite: "none",
-      secure: true,
-      httpOnly: true,
-      maxAge: this.refreshTokenExpired,
-    });
+    // res.cookie("refreshToken", refreshToken, {
+    //   sameSite: "none",
+    //   secure: true,
+    //   httpOnly: true,
+    //   maxAge: this.refreshTokenExpired,
+    // });
 
     return {
       user,
+      accessToken,
+      refreshToken,
       message: "User logged in successfully",
     };
   }
@@ -105,30 +107,39 @@ export class AuthService {
   }
 
   async refresh(req: Request, res: Response) {
-    const refreshToken = req.cookies.refreshToken;
+    const [_type, refreshToken] = req.headers.authorization?.split(" ") ?? [];
 
     if (!refreshToken) {
       throw new UnauthorizedException("You are not authorized");
     }
 
-    const payload = await this.jwtService.verifyAsync(refreshToken);
-
-    const newAccessToken = await this.generateToken(payload, {
-      expiresIn: this.accessTokenExpired / 1000,
+    const payload = await this.jwtService.verifyAsync(refreshToken, {
+      secret: process.env.JWT_SECRET,
     });
 
+    const newAccessToken = await this.generateToken(
+      { userId: payload.userId, role: payload.role },
+      {
+        expiresIn: this.accessTokenExpired / 1000,
+      },
+    );
+
     res.cookie("accessToken", newAccessToken, {
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
       maxAge: this.accessTokenExpired,
     });
 
     return {
+      accessToken: newAccessToken,
       message: "Refresh token successfully",
     };
   }
 
   async getProfile(id: string) {
     const user = await this.usersService.findById(id, {
-      relations: ["posts"],
+      relations: ["profile"],
     });
     return user;
   }

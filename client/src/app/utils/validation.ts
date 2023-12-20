@@ -32,4 +32,18 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-export { signUpSchema };
+const signInSchema = z.object({
+  email: z
+    .string({
+      required_error: "Email is required",
+    })
+    .email("Invalid email address"),
+  password: z.string({ required_error: "Password is required" }),
+});
+
+interface SignUpDto
+  extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {}
+interface SignInDto extends z.infer<typeof signInSchema> {}
+
+export { signUpSchema, signInSchema };
+export type { SignInDto, SignUpDto };

@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const accessToken = this.extractTokenFromCookie(request);
+    const accessToken = this.extractTokenFromHeader(request);
 
     if (!accessToken) {
       throw new UnauthorizedException("You are not authorized");
@@ -34,12 +34,11 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromCookie(req: Request): string | undefined {
-    const accessToken = req.cookies["accessToken"];
+    const accessToken = req.cookies.accessToken;
     return accessToken;
   }
 
   private extractTokenFromHeader(request: any): string | undefined {
-    console.log(request.headers);
     const [type, token] = request.headers.authorization?.split(" ") ?? [];
     return type === "Bearer" ? token : undefined;
   }

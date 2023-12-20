@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./styles/scss/globals.scss";
 import dynamic from "next/dynamic";
 import ToastProvider from "./providers/ToastProvider";
+import NextAuthProvider from "./providers/NextAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ToastProvider />
-        {children}
+        <NextAuthProvider>{children}</NextAuthProvider>
       </body>
     </html>
   );

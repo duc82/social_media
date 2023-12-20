@@ -1,14 +1,13 @@
 import { FullUser } from "./user";
 
-interface SignUpDto {
-  fullName: string;
-  email: string;
-  password: string;
-}
-
-interface UserResponse {
+interface SignUpResponse {
   user: FullUser;
   message: string;
 }
 
-export type { SignUpDto, UserResponse };
+interface SignInResponse extends SignUpResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export type { SignUpResponse, SignInResponse };
