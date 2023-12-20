@@ -61,6 +61,7 @@ export const authOptions: AuthOptions = {
     signIn: "/signin",
     error: "/signin",
     signOut: "/signout",
+    newUser: "/",
   },
 
   secret,

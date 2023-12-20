@@ -8,3 +8,10 @@ export default withAuth({
     signOut: "/signout",
   },
 });
+
+export const config = {
+  matcher: [
+    // Match all route exclude /signup and /signin
+    "/((?!signin|signup).*)",
+  ],
+};
