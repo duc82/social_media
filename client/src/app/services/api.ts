@@ -18,6 +18,10 @@ export default async function apiRequest<T>(
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
       body: body ? JSON.stringify(body) : null,
+      headers: {
+        "Content-Type": "application/json",
+        ...init.headers,
+      },
       ...init,
     });
 

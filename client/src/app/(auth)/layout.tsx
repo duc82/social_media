@@ -7,8 +7,19 @@ import {
   faLinkedin,
   faSquareYoutube,
 } from "@fortawesome/free-brands-svg-icons";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default async function AuthLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  if (await getServerSession(authOptions)) {
+    redirect("/");
+  }
+
   return (
     <>
       <main className="bg-primary pt-5 pb-0 position-relative">

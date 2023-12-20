@@ -2,7 +2,6 @@ interface User {
   fullName: string;
   email: string;
   password: string;
-  keepSignedIn: boolean;
 }
 
 interface FullUser extends User {

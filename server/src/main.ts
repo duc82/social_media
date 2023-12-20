@@ -22,15 +22,17 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {
+        console.log(errors);
         const firstError = Object.values(errors[0].constraints)[0];
         return new BadRequestException(firstError);
       },
+      stopAtFirstError: true,
     }),
   );
 
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
-  await app.listen(process.env.PORT || 5000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();

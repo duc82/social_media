@@ -1,13 +1,12 @@
 "use client";
 
-import handlingError from "@/app/utils/error";
 import { SignInDto, signInSchema } from "@/app/utils/validation";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -30,16 +29,20 @@ export default function SignIn() {
   };
 
   const onSubmit = async (data: SignInDto) => {
-    try {
-      await signIn("credentials", {
-        redirect: false,
-
-        ...data,
-      });
-    } catch (error) {
-      toast.error(handlingError(error));
-    }
+    await signIn("credentials", {
+      redirect: true,
+      callbackUrl: "/",
+      ...data,
+    });
   };
+
+  useEffect(() => {
+    const error = new URLSearchParams(window.location.search).get("error");
+
+    if (error) {
+      toast.error(error);
+    }
+  }, []);
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">

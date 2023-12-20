@@ -1,35 +1,24 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { UsersService } from "src/users/users.service";
-import { SignInDto } from "./auth.dto";
-import { CreateUserDto } from "src/users/user.dto";
-import { Request, Response } from "express";
+import { SignInDto, SignUpDto } from "./auth.dto";
 import { Role } from "src/users/entity/user.entity";
 
 @Injectable()
 export class AuthService {
   private readonly accessTokenExpired: number;
-  private readonly refreshTokenExpired: number;
 
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {
     const accessTokenExpired = process.env.ACCESS_TOKEN_EXPIRED;
-    const refreshTokenExpired = process.env.REFRESH_TOKEN_EXPIRED;
 
-    if (!accessTokenExpired || !refreshTokenExpired) {
-      throw new Error(
-        "Please provide ACCESS_TOKEN_EXPIRED and REFRESH_TOKEN_EXPIRED in .env",
-      );
+    if (!accessTokenExpired) {
+      throw new Error("Please provide ACCESS_TOKEN_EXPIRED in .env");
     }
 
     this.accessTokenExpired = +accessTokenExpired;
-    this.refreshTokenExpired = +refreshTokenExpired;
   }
 
   async generateToken(
@@ -39,7 +28,7 @@ export class AuthService {
     return this.jwtService.signAsync(payload, options);
   }
 
-  async signUp(signUpDto: CreateUserDto) {
+  async signUp(signUpDto: SignUpDto) {
     const userExists = await this.usersService.findByEmail(signUpDto.email);
 
     if (userExists) {
@@ -54,7 +43,7 @@ export class AuthService {
     };
   }
 
-  async signIn(signInDto: SignInDto, res: Response) {
+  async signIn(signInDto: SignInDto) {
     const user = await this.usersService.findByEmail(signInDto.email);
 
     const isPasswordMatching = await user.comparePassword(signInDto.password);
@@ -71,9 +60,6 @@ export class AuthService {
     const accessToken = await this.generateToken(payload, {
       expiresIn: this.accessTokenExpired / 1000,
     });
-    const refreshToken = await this.generateToken(payload, {
-      expiresIn: this.refreshTokenExpired / 1000,
-    });
 
     // res.cookie("accessToken", accessToken, {
     //   sameSite: "none",
@@ -82,58 +68,10 @@ export class AuthService {
     //   maxAge: this.accessTokenExpired,
     // });
 
-    // res.cookie("refreshToken", refreshToken, {
-    //   sameSite: "none",
-    //   secure: true,
-    //   httpOnly: true,
-    //   maxAge: this.refreshTokenExpired,
-    // });
-
     return {
       user,
       accessToken,
-      refreshToken,
       message: "User logged in successfully",
-    };
-  }
-
-  async signOut(res: Response) {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-
-    return {
-      message: "Sign out successfully",
-    };
-  }
-
-  async refresh(req: Request, res: Response) {
-    const [_type, refreshToken] = req.headers.authorization?.split(" ") ?? [];
-
-    if (!refreshToken) {
-      throw new UnauthorizedException("You are not authorized");
-    }
-
-    const payload = await this.jwtService.verifyAsync(refreshToken, {
-      secret: process.env.JWT_SECRET,
-    });
-
-    const newAccessToken = await this.generateToken(
-      { userId: payload.userId, role: payload.role },
-      {
-        expiresIn: this.accessTokenExpired / 1000,
-      },
-    );
-
-    res.cookie("accessToken", newAccessToken, {
-      sameSite: "none",
-      secure: true,
-      httpOnly: true,
-      maxAge: this.accessTokenExpired,
-    });
-
-    return {
-      accessToken: newAccessToken,
-      message: "Refresh token successfully",
     };
   }
 
