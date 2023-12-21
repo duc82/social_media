@@ -1,11 +1,12 @@
 "use client";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { Container, Nav, Navbar } from "react-bootstrap";
 
 export default function Header() {
   return (
-    <Navbar fixed="top" expand="lg" className="bg-mode">
+    <Navbar fixed="top" expand="lg">
       <Container>
         <Navbar.Brand
           href="/"

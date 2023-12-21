@@ -4,6 +4,7 @@ import "./styles/scss/globals.scss";
 import dynamic from "next/dynamic";
 import ToastProvider from "./providers/ToastProvider";
 import NextAuthProvider from "./providers/NextAuthProvider";
+import NextThemeProvider from "./providers/NextThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <NextAuthProvider>
-          <ToastProvider />
-          {children}
+          <NextThemeProvider>
+            {children}
+            <ToastProvider />
+          </NextThemeProvider>
         </NextAuthProvider>
       </body>
     </html>

@@ -20,31 +20,12 @@ $font-size-base: 0.9375rem;
   fill: rgb(255, 255, 255);
 }
 
-// Remove toggle password in Microsoft Edge and IE
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
-}
-
 $display-font-weight: 700;
 
 $headings-font-weight: 700;
 $h1-font-size: calc(1.359375rem + 1.3125vw);
 $headings-color: $gray-900;
 $enable-negative-margins: true;
-
-$input-border-color: $gray-400;
-$input-border-radius-lg: 0.2rem;
-$input-font-size-lg: 1rem;
-$input-padding-y-lg: 0.8rem;
-$input-padding-x-lg: 1.5rem;
-$input-color: $gray-900;
-$input-focus-color: $gray-900;
-$link-decoration: none;
-$input-focus-box-shadow: none;
-$input-focus-border-color: $primary;
-$input-placeholder-color: $gray-500;
-$input-group-addon-color: $gray-900;
 
 $btn-padding-y-lg: 0.8rem;
 $btn-padding-x-lg: 1.5rem;
@@ -87,46 +68,8 @@ a {
 .cursor-pointer {
   cursor: pointer;
 }
-
-.password-strength-meter {
-  height: 8px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 4px;
-  background-color: $gray-200;
-
-  .password-strength-meter-score {
-    height: inherit;
-    transition: 0.3s ease-in-out;
-    width: 0%;
-
-    &.psms-20 {
-      background-color: $danger;
-      width: 20%;
-    }
-
-    &.psms-40 {
-      background-color: $warning;
-      width: 40%;
-    }
-
-    &.psms-60 {
-      background-color: $info;
-      width: 60%;
-    }
-
-    &.psms-80 {
-      background-color: $primary;
-      width: 80%;
-    }
-
-    &.psms-100 {
-      background-color: $success;
-      width: 100%;
-    }
-  }
-}
-
+@import "./darkmode";
+@import "./input";
 @import "./navbar";
 @import "./button";
 @import "/node_modules/bootstrap/scss/bootstrap";
