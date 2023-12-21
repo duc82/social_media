@@ -1,0 +1,54 @@
+$navbar-toggler-focus-width: 0;
+
+.navbar-toggler {
+  background-color: $gray-200 !important;
+
+  .navbar-toggler-animation {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+
+    span {
+      height: 2px;
+      width: 100%;
+      background-color: $gray-600;
+      border-radius: 30px;
+      position: absolute;
+      display: block;
+      transition: all 0.3s ease-in-out;
+
+      &:nth-child(1) {
+        top: 10%;
+      }
+
+      &:nth-child(2) {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &:nth-child(3) {
+        bottom: 10%;
+      }
+    }
+  }
+
+  &:not(.collapsed) .navbar-toggler-animation {
+    span {
+      &:nth-child(1) {
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+      }
+
+      &:nth-child(2) {
+        opacity: 0;
+      }
+
+      &:nth-child(3) {
+        bottom: 50%;
+        transform: translateY(50%) rotate(-45deg);
+      }
+    }
+  }
+}

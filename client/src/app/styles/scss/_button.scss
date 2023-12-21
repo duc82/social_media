@@ -1,0 +1,8 @@
+.btn-light {
+  &:hover,
+  :focus,
+  :active,
+  .active {
+    background-color: $gray-300 !important;
+  }
+}

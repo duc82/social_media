@@ -1,3 +1,5 @@
+import Header from "../components/Header";
+
 export default function PrivateLayout({
   children,
 }: {
@@ -5,6 +7,7 @@ export default function PrivateLayout({
 }) {
   return (
     <>
+      <Header />
       <main>{children}</main>
     </>
   );
