@@ -1,38 +1,19 @@
+// Import Bootstrap and Bootstrap Icons
 @import "~bootstrap-icons/font/bootstrap-icons";
 
-@import "/node_modules/bootstrap/scss/functions";
-@import "/node_modules/bootstrap/scss/variables";
-@import "/node_modules/bootstrap/scss/variables-dark";
-@import "/node_modules/bootstrap/scss/maps";
-@import "/node_modules/bootstrap/scss/mixins";
-@import "/node_modules/bootstrap/scss/utilities";
-@import "/node_modules/bootstrap/scss/reboot";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/reboot";
 
 // Body
 $body-color: #676a79;
 $font-size-base: 0.9375rem;
 
-.fill-dark {
-  fill: rgb(20, 25, 30);
-}
-
-.fill-white {
-  fill: rgb(255, 255, 255);
-}
-
-$display-font-weight: 700;
-
-$headings-font-weight: 700;
-$h1-font-size: calc(1.359375rem + 1.3125vw);
-$headings-color: $gray-900;
 $enable-negative-margins: true;
-
-$btn-padding-y-lg: 0.8rem;
-$btn-padding-x-lg: 1.5rem;
-$btn-font-size-lg: 1rem;
-$btn-border-radius-lg: 0.2rem;
-
-$nav-link-color: $secondary;
 
 $utilities: (
   "opacity": (
@@ -68,9 +49,11 @@ a {
 .cursor-pointer {
   cursor: pointer;
 }
-@import "./darkmode";
-@import "./input";
-@import "./navbar";
-@import "./button";
-@import "/node_modules/bootstrap/scss/bootstrap";
-@import "./general";
+
+@import "./custom/typography";
+@import "./custom/form";
+@import "./custom/navbar";
+@import "./custom/button";
+@import "./custom/darkmode";
+@import "~bootstrap/scss/bootstrap";
+@import "./custom/general";

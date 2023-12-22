@@ -4,13 +4,15 @@ input::-ms-clear {
   display: none;
 }
 
+// input color
+$input-color: rgb(47, 47, 47);
+$input-focus-color: $input-color;
+
 $input-border-color: $gray-400;
 $input-border-radius-lg: 0.2rem;
 $input-font-size-lg: 1rem;
 $input-padding-y-lg: 0.8rem;
 $input-padding-x-lg: 1.5rem;
-$input-color: $gray-900;
-$input-focus-color: $gray-900;
 $link-decoration: none;
 $input-focus-box-shadow: none;
 $input-focus-border-color: $primary;

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSquareFacebook,
@@ -14,7 +13,7 @@ import { redirect } from "next/navigation";
 export default async function AuthLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   if (await getServerSession(authOptions)) {
     redirect("/");

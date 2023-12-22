@@ -1,0 +1,14 @@
+@include color-mode(dark) {
+  --bs-body-bg: rgb(25, 26, 31);
+
+  $input-color: $gray-200;
+  $input-focus-color: $input-color;
+  // input color
+  .form-control {
+    color: $input-color;
+
+    &:focus {
+      color: $input-color;
+    }
+  }
+}

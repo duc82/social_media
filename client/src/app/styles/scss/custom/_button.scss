@@ -1,0 +1,13 @@
+$btn-padding-y-lg: 0.8rem;
+$btn-padding-x-lg: 1.5rem;
+$btn-font-size-lg: 1rem;
+$btn-border-radius-lg: 0.2rem;
+
+.btn-light {
+  &:hover,
+  :focus,
+  :active,
+  .active {
+    background-color: $gray-300 !important;
+  }
+}
