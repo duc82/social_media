@@ -1,8 +1,13 @@
 $navbar-toggler-focus-width: 0;
-$nav-link-color: $secondary;
+$navbar-light-color: rgb(103, 106, 121);
+
+.navbar-nav .dropdown-menu {
+  position: absolute !important;
+}
 
 .navbar-toggler {
-  background-color: $gray-200 !important;
+  background-color: $light !important;
+  border: 0 !important;
 
   .navbar-toggler-animation {
     position: relative;

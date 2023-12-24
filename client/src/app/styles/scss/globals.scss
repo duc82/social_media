@@ -2,16 +2,25 @@
 @import "~bootstrap-icons/font/bootstrap-icons";
 
 @import "~bootstrap/scss/functions";
+$light: rgb(238, 240, 242);
+
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
 @import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/reboot";
+@import "./custom/container";
+@import "./custom/font-size";
 
 // Body
 $body-color: #676a79;
 $font-size-base: 0.9375rem;
+$headings-color-dark: $white;
+
+.bg-mode {
+  background-color: $white;
+}
 
 $enable-negative-margins: true;
 

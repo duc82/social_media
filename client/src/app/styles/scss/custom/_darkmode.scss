@@ -1,11 +1,20 @@
 @include color-mode(dark) {
   --bs-body-bg: rgb(25, 26, 31);
 
-  $input-color: $gray-200;
+  .card {
+    --bs-card-bg: rgb(20, 21, 25);
+  }
+
+  .bg-mode {
+    background-color: rgb(15, 15, 16);
+  }
+
+  $input-color: var(--bs-gray-700);
   $input-focus-color: $input-color;
   // input color
   .form-control {
     color: $input-color;
+    border-color: var(--bs-gray-100);
 
     &:focus {
       color: $input-color;

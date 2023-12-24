@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/scss/globals.scss";
-import dynamic from "next/dynamic";
 import ToastProvider from "./providers/ToastProvider";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
+import BootstrapProvider from "./providers/BootstrapProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,10 +12,6 @@ export const metadata: Metadata = {
   title: "Social Media",
   description: "Social",
 };
-
-dynamic(() => require("bootstrap/dist/js/bootstrap.bundle.min.js"), {
-  ssr: false,
-});
 
 export default function RootLayout({
   children,
@@ -29,6 +25,7 @@ export default function RootLayout({
           <NextThemeProvider>
             {children}
             <ToastProvider />
+            <BootstrapProvider />
           </NextThemeProvider>
         </NextAuthProvider>
       </body>
