@@ -1,17 +1,26 @@
-// Import Bootstrap and Bootstrap Icons
+// 1. Import Bootstrap Icons
 @import "~bootstrap-icons/font/bootstrap-icons";
 
+// 2. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "~bootstrap/scss/functions";
+
+// 3. Include any default variable overrides here
 $light: rgb(238, 240, 242);
 
+// 4. Include remainder of required Bootstrap stylesheets (including any separate color mode style
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
+
+// 5. Include any default map overrides here
+
+// 6. Include remainder of required parts
 @import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/utilities";
 @import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+
+// 7. Optionally include any other parts as needed
+@import "~bootstrap/scss/utilities";
 @import "~bootstrap/scss/reboot";
-@import "./custom/container";
-@import "./custom/font-size";
 
 // Body
 $body-color: #676a79;
@@ -59,6 +68,8 @@ a {
   cursor: pointer;
 }
 
+@import "./custom/container";
+@import "./custom/font-size";
 @import "./custom/typography";
 @import "./custom/form";
 @import "./custom/navbar";
