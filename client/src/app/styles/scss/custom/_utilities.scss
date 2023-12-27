@@ -1,0 +1,41 @@
+$box-shadow-menu: 0px 20px 30px rgba(83, 88, 93, 0.1),
+  0px 0px 30px rgba(83, 88, 93, 0.2);
+
+$utilities: (
+  "opacity": (
+    property: opacity,
+    values: (
+      0: 0,
+      10: 0.1,
+      25: 0.25,
+      50: 0.5,
+      75: 0.75,
+      100: 1,
+    ),
+  ),
+
+  "width": (
+    property: width,
+    class: w,
+    values: (
+      "40px": 40px,
+      25: 25%,
+      50: 50%,
+      75: 75%,
+      100: 100%,
+      auto: auto,
+    ),
+  ),
+
+  "shadow": (
+    property: box-shadow,
+    class: shadow,
+    values: (
+      null: var(--#{$prefix}box-shadow),
+      sm: var(--#{$prefix}box-shadow-sm),
+      lg: var(--#{$prefix}box-shadow-lg),
+      menu: $box-shadow-menu,
+      none: none,
+    ),
+  ),
+);

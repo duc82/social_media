@@ -33,33 +33,6 @@ $headings-color-dark: $white;
 
 $enable-negative-margins: true;
 
-$utilities: (
-  "opacity": (
-    property: opacity,
-    values: (
-      0: 0,
-      10: 0.1,
-      25: 0.25,
-      50: 0.5,
-      75: 0.75,
-      100: 1,
-    ),
-  ),
-
-  "width": (
-    property: width,
-    class: w,
-    values: (
-      "40px": 40px,
-      25: 25%,
-      50: 50%,
-      75: 75%,
-      100: 100%,
-      auto: auto,
-    ),
-  ),
-);
-
 a {
   transition: all 0.3s ease-in-out;
 }
@@ -68,6 +41,8 @@ a {
   cursor: pointer;
 }
 
+@import "./custom/utilities";
+@import "./custom/dropdown";
 @import "./custom/container";
 @import "./custom/font-size";
 @import "./custom/typography";
@@ -77,3 +52,13 @@ a {
 @import "./custom/darkmode";
 @import "~bootstrap/scss/bootstrap";
 @import "./custom/general";
+.btn-primary-soft {
+  background-color: rgba(15, 111, 236, 0.1);
+  color: rgb(15, 111, 236);
+  &:hover,
+  :focus,
+  :active {
+    background-color: rgba(15, 111, 236) !important;
+    color: white !important;
+  }
+}

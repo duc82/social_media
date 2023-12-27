@@ -1,18 +1,47 @@
+$navbar-padding-y: 0;
 $navbar-toggler-focus-width: 0;
 $navbar-light-color: rgb(103, 106, 121);
+$navbar-light-active-color: $primary;
+$navbar-light-hover-color: $primary;
+$nav-link-font-weight: 600;
+$nav-link-font-size: 0.9375rem;
+$nav-link-color: $navbar-light-color;
+$navbar-nav-link-padding-x: 1rem;
 
 .navbar-nav {
   .dropdown-menu {
     position: absolute !important;
   }
+
+  .nav-link {
+    line-height: 56px;
+    padding: 0;
+  }
 }
 
-@include media-breakpoint-up(lg) {
-  .navbar-nav {
-    .nav-item {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 5px 30px;
-      position: relative;
+@include media-breakpoint-down(lg) {
+  .navbar-expand-lg {
+    height: 56px;
+
+    .navbar-collapse {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: $white;
+      box-shadow: 0 10px 30px rgba(83, 83, 93, 0.2);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+      .navbar-nav {
+        .nav-item {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+          .nav-link {
+            padding: 5px 30px;
+            line-height: 40px;
+          }
+        }
+      }
     }
   }
 }

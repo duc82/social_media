@@ -23,9 +23,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <NextAuthProvider>
           <NextThemeProvider>
-            {children}
-            <ToastProvider />
-            <BootstrapProvider />
+            <BootstrapProvider>
+              {children}
+              <ToastProvider />
+            </BootstrapProvider>
           </NextThemeProvider>
         </NextAuthProvider>
       </body>

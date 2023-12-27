@@ -1,10 +1,23 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import BootstrapContext from "../context/BootstrapContext";
 
-export default function BootstrapProvider() {
+export default function BootstrapProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [bootstrap, setBootstrap] = useState<any>();
+
   useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
+
+    setBootstrap(bootstrap);
   }, []);
 
-  return null;
+  return (
+    <BootstrapContext.Provider value={bootstrap}>
+      {children}
+    </BootstrapContext.Provider>
+  );
 }
