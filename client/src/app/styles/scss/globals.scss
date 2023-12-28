@@ -1,5 +1,6 @@
-// 1. Import Bootstrap Icons
+// 1. Import Bootstrap Icons and Fontawesome
 @import "~bootstrap-icons/font/bootstrap-icons";
+@import "@fortawesome/fontawesome-svg-core/styles.css";
 
 // 2. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "~bootstrap/scss/functions";
@@ -23,7 +24,8 @@ $light: rgb(238, 240, 242);
 @import "~bootstrap/scss/reboot";
 
 // Body
-$body-color: #676a79;
+$body-color: rgb(102, 105, 120);
+$body-bg: rgb(239, 242, 246);
 $font-size-base: 0.9375rem;
 $headings-color-dark: $white;
 

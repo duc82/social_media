@@ -10,7 +10,9 @@ export default function PrivateLayout({
   return (
     <>
       <Header />
-      <main style={{ marginTop: "100px" }}>{children}</main>
+      <main>
+        <div className="container">{children}</div>
+      </main>
     </>
   );
 }

@@ -35,7 +35,7 @@ export default function Header() {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg">
+    <nav className="navbar fixed-top navbar-expand-lg bg-mode">
       <div className="container">
         {/* Logo */}
         <Link href="/" className="navbar-brand">

@@ -99,3 +99,12 @@ $navbar-nav-link-padding-x: 1rem;
     }
   }
 }
+
+nav {
+  &.fixed-top {
+    & + main {
+      padding-top: calc(1.5rem + 56px);
+      margin-bottom: 1.5rem;
+    }
+  }
+}
