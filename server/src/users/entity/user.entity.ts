@@ -1,4 +1,4 @@
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -6,11 +6,15 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Profile } from "./profile.entity";
 import { Exclude } from "class-transformer";
+import { Post } from "src/posts/entity/post.entity";
+import { Comment } from "src/posts/entity/comment.entity";
 
 export enum Role {
   USER = "user",
@@ -44,6 +48,24 @@ export class User {
   })
   @JoinColumn()
   profile: Profile;
+
+  @OneToMany(() => User, (user) => user.friends)
+  friends: User[];
+
+  @OneToMany(() => Post, (post) => post.user, {
+    cascade: true,
+  })
+  posts: Post[];
+
+  @ManyToMany(() => Post, (post) => post.likes, {
+    cascade: true,
+  })
+  likedPosts: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, {
+    cascade: true,
+  })
+  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;
