@@ -1,6 +1,10 @@
-import { HttpAdapterHost, NestFactory } from "@nestjs/core";
+import { HttpAdapterHost, NestFactory, Reflector } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { BadRequestException, ValidationPipe } from "@nestjs/common";
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  ValidationPipe,
+} from "@nestjs/common";
 import { AllExceptionsFilter } from "./all-exceptions/all-exceptions.filter";
 import * as cookieParser from "cookie-parser";
 
@@ -18,6 +22,8 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(
     new ValidationPipe({

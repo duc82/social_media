@@ -23,6 +23,10 @@ export enum Role {
 
 @Entity()
 export class User {
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
+
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -45,7 +49,10 @@ export class User {
   })
   role: Role;
 
-  @OneToOne(() => Profile, (profile) => profile.user)
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   profile: Profile;
 
@@ -77,9 +84,5 @@ export class User {
 
   async comparePassword(attempt: string): Promise<boolean> {
     return await bcrypt.compare(attempt, this.password);
-  }
-
-  constructor(partial: Partial<User>) {
-    Object.assign(this, partial);
   }
 }

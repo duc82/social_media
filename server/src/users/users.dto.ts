@@ -4,6 +4,7 @@ import {
   IsEnum,
   MinLength,
   IsDate,
+  IsDateString,
 } from "class-validator";
 import { Gender, Status } from "./entity/profile.entity";
 
@@ -27,7 +28,7 @@ export class UpdateUserProfileDto {
   @IsNotEmpty()
   avatar: string;
 
-  @IsDate()
+  @IsDateString()
   bornAt: Date;
 
   @IsEnum(Status)

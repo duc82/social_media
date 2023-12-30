@@ -69,14 +69,15 @@ export class UsersService {
     // Upsert profile
     if (!user.profile) {
       const newProfile = this.profileRepository.create(attrs);
-      await this.profileRepository.save(newProfile);
       user.profile = newProfile;
-      await this.userRepository.save(user);
     } else {
-      await this.profileRepository.update({ id }, attrs);
-      user.profile = await this.profileRepository.findOne({ where: { id } });
+      await this.profileRepository.update({ id: user.profile.id }, attrs);
+      user.profile = await this.profileRepository.findOne({
+        where: { id: user.profile.id },
+      });
     }
 
+    await this.userRepository.save(user);
     return { user, message: "Profile updated successfully" };
   }
 }
