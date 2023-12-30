@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -17,25 +16,26 @@ export class Post {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
-  title: string;
-
   @Column({ nullable: true })
   content: string;
 
   @Column({ nullable: true })
   imageUrl: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
-  @JoinColumn()
+  @Column({ nullable: true })
+  videoUrl: string;
+
+  @ManyToOne(() => User, (user) => user.posts, {
+    onDelete: "CASCADE",
+  })
   user: User;
+
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
 
   @ManyToMany(() => User, (user) => user.likedPosts)
   @JoinTable()
   likes: User[];
-
-  @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;

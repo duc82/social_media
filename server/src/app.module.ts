@@ -6,7 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import { DataSource } from "typeorm";
 import { AuthModule } from "./auth/auth.module";
-import { PostsController } from "./posts/posts.controller";
+import { PostsModule } from "./posts/posts.module";
 
 @Module({
   imports: [
@@ -20,8 +20,9 @@ import { PostsController } from "./posts/posts.controller";
     }),
     UsersModule,
     AuthModule,
+    PostsModule,
   ],
-  controllers: [AppController, PostsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {

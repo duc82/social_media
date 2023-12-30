@@ -23,10 +23,14 @@ export class Comment {
   @JoinTable()
   likes: User[];
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, {
+    onDelete: "CASCADE",
+  })
   user: User;
 
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, {
+    onDelete: "CASCADE",
+  })
   post: Post;
 
   @OneToMany(() => Comment, (comment) => comment.replies)

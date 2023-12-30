@@ -3,6 +3,7 @@ import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { UsersService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
 import { Role } from "src/users/entity/user.entity";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -46,10 +47,14 @@ export class AuthService {
   async signIn(signInDto: SignInDto) {
     const user = await this.usersService.findByEmail(signInDto.email);
 
+    if (!user) {
+      throw new BadRequestException("Invalid credentials");
+    }
+
     const isPasswordMatching = await user.comparePassword(signInDto.password);
 
-    if (!user || !isPasswordMatching) {
-      throw new BadRequestException("Email or password is incorrect");
+    if (!isPasswordMatching) {
+      throw new BadRequestException("Invalid credentials");
     }
 
     const payload = {
@@ -61,24 +66,10 @@ export class AuthService {
       expiresIn: this.accessTokenExpired / 1000,
     });
 
-    // res.cookie("accessToken", accessToken, {
-    //   sameSite: "none",
-    //   secure: true,
-    //   httpOnly: true,
-    //   maxAge: this.accessTokenExpired,
-    // });
-
     return {
       user,
       accessToken,
       message: "User logged in successfully",
     };
-  }
-
-  async getProfile(id: string) {
-    const user = await this.usersService.findById(id, {
-      relations: ["profile"],
-    });
-    return user;
   }
 }

@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsEnum, MinLength } from "class-validator";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsEnum,
+  MinLength,
+  IsDate,
+} from "class-validator";
 import { Gender, Status } from "./entity/profile.entity";
 
 export class CreateUserDto {
@@ -21,7 +27,7 @@ export class UpdateUserProfileDto {
   @IsNotEmpty()
   avatar: string;
 
-  @IsNotEmpty()
+  @IsDate()
   bornAt: Date;
 
   @IsEnum(Status)

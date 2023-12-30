@@ -1,4 +1,4 @@
-import * as bcrypt from "bcryptjs";
+import * as bcrypt from "bcrypt";
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -32,7 +32,9 @@ export class User {
   @Column()
   email: string;
 
-  @Column()
+  @Column({
+    length: 255,
+  })
   @Exclude()
   password: string;
 
@@ -43,29 +45,21 @@ export class User {
   })
   role: Role;
 
-  @OneToOne(() => Profile, (profile) => profile.user, {
-    cascade: true,
-  })
+  @OneToOne(() => Profile, (profile) => profile.user)
   @JoinColumn()
   profile: Profile;
 
   @OneToMany(() => User, (user) => user.friends)
   friends: User[];
 
-  @OneToMany(() => Post, (post) => post.user, {
-    cascade: true,
-  })
+  @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
 
-  @ManyToMany(() => Post, (post) => post.likes, {
-    cascade: true,
-  })
-  likedPosts: Post[];
-
-  @OneToMany(() => Comment, (comment) => comment.user, {
-    cascade: true,
-  })
+  @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @ManyToMany(() => Post, (post) => post.likes)
+  likedPosts: Post[];
 
   @CreateDateColumn()
   createdAt: Date;

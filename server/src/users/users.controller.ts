@@ -1,24 +1,26 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  ParseUUIDPipe,
-  Put,
-} from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { UpdateUserProfileDto } from "./user.dto";
+import { UpdateUserProfileDto } from "./users.dto";
+import { Role } from "./entity/user.entity";
+import { AuthGuard } from "src/auth/auth.guard";
 
+@UseGuards(AuthGuard)
 @Controller("api/users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Put("profile/:id")
-  async updateProfile(
-    @Param("id", ParseUUIDPipe) id: string,
+  @Get("profile")
+  async getUserProfile(
+    @Req() req: Request & { user: { userId: string; role: Role } },
+  ) {
+    return this.usersService.getUserProfile(req.user.userId);
+  }
+
+  @Post("profile/update")
+  async updateUserProfile(
+    @Req() req: Request & { user: { userId: string; role: Role } },
     @Body() body: UpdateUserProfileDto,
   ) {
-    return this.usersService.updateProfile(id, body);
+    return this.usersService.updateUserProfile(req.user.userId, body);
   }
 }
