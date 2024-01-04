@@ -20,31 +20,39 @@ export class Profile {
   @Column({
     type: "enum",
     enum: Gender,
+    nullable: true,
   })
   gender: Gender;
 
   @Column()
   avatar: string;
 
+  @Column()
+  wallpaper: string;
+
   @Column({
     type: "date",
+    nullable: true,
   })
   bornAt: Date;
 
   @Column({
     type: "enum",
     enum: Status,
+    nullable: true,
   })
   status: Status;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   address: string;
 
-  @Column()
-  info: string;
-
-  @OneToOne(() => User, (user) => user.profile, {
-    onDelete: "CASCADE",
+  @Column({
+    nullable: true,
   })
+  overview: string;
+
+  @OneToOne(() => User, (user) => user.profile)
   user: User;
 }

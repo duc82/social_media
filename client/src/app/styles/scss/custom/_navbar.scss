@@ -4,7 +4,7 @@ $navbar-light-color: rgb(103, 106, 121);
 $navbar-light-active-color: $primary;
 $navbar-light-hover-color: $primary;
 $nav-link-font-weight: 600;
-$nav-link-font-size: 0.9375rem;
+$nav-link-font-size: $h6-font-size;
 $nav-link-color: $navbar-light-color;
 $navbar-nav-link-padding-x: 1rem;
 
@@ -16,6 +16,52 @@ $navbar-nav-link-padding-x: 1rem;
   .nav-link {
     line-height: 56px;
     padding: 0;
+  }
+}
+
+.nav {
+  &.nav-bottom-line {
+    .nav-link {
+      background: transparent;
+      border-bottom: 3px solid transparent;
+      &.active {
+        background: transparent;
+        color: $primary;
+        border-bottom: 3px solid $primary;
+      }
+    }
+  }
+
+  &.nav-divider {
+    .nav-item + .nav-item:before {
+      content: "\2022";
+      color: inherit;
+      padding-left: 0.6rem;
+      padding-right: 0.6rem;
+      opacity: 0.8;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+    }
+    .nav-link {
+      padding: 0;
+    }
+  }
+
+  &.nav-stack {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+    .nav-link {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .nav-item .nav-link.active {
+    color: $primary;
   }
 }
 

@@ -5,6 +5,7 @@ import ToastProvider from "./providers/ToastProvider";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
 import BootstrapProvider from "./providers/BootstrapProvider";
+import GLightboxProvider from "./providers/GLightboxProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <NextThemeProvider>
             <BootstrapProvider>
               {children}
+              <GLightboxProvider />
               <ToastProvider />
             </BootstrapProvider>
           </NextThemeProvider>

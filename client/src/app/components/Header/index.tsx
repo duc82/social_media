@@ -90,10 +90,10 @@ export default function Header() {
             </li>
             <li className="nav-item">
               <Link
-                href="/friends"
+                href="/profile/friends"
                 className={clsx(
                   "nav-link",
-                  pathname === "/friends" && "active"
+                  pathname === "/profile/friends" && "active"
                 )}
               >
                 Friends
@@ -144,7 +144,6 @@ export default function Header() {
               type="button"
               className="nav-link icon-md btn p-0"
               data-bs-toggle="dropdown"
-              data-bs-auto-close="outside"
               aria-expanded="false"
             >
               <Avatar src="/07.jpg" />

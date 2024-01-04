@@ -3,8 +3,9 @@ import {
   IsNotEmpty,
   IsEnum,
   MinLength,
-  IsDate,
   IsDateString,
+  ValidateIf,
+  IsString,
 } from "class-validator";
 import { Gender, Status } from "./entity/profile.entity";
 
@@ -22,21 +23,31 @@ export class CreateUserDto {
 }
 
 export class UpdateUserProfileDto {
+  @ValidateIf((o) => o.gender)
   @IsEnum(Gender)
   gender: Gender;
 
-  @IsNotEmpty()
+  @ValidateIf((o) => o.avatar)
+  @IsString()
   avatar: string;
 
+  @ValidateIf((o) => o.wallpaper)
+  @IsString()
+  wallpaper: string;
+
+  @ValidateIf((o) => o.bornAt)
   @IsDateString()
   bornAt: Date;
 
+  @ValidateIf((o) => o.status)
   @IsEnum(Status)
   status: Status;
 
-  @IsNotEmpty()
+  @ValidateIf((o) => o.address)
+  @IsString()
   address: string;
 
-  @IsNotEmpty()
-  info: string;
+  @ValidateIf((o) => o.overview)
+  @IsString()
+  overview: string;
 }

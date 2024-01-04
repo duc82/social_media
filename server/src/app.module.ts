@@ -7,6 +7,8 @@ import { ConfigModule } from "@nestjs/config";
 import { DataSource } from "typeorm";
 import { AuthModule } from "./auth/auth.module";
 import { PostsModule } from "./posts/posts.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -17,6 +19,10 @@ import { PostsModule } from "./posts/posts.module";
       entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
       autoLoadEntities: true,
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "public"),
     }),
     UsersModule,
     AuthModule,

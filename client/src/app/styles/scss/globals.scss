@@ -1,12 +1,13 @@
-// 1. Import Bootstrap Icons and Fontawesome
+// 1. Import external libraries
 @import "~bootstrap-icons/font/bootstrap-icons";
 @import "@fortawesome/fontawesome-svg-core/styles.css";
+@import "~glightbox/dist/css/glightbox.min.css";
 
 // 2. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "~bootstrap/scss/functions";
 
 // 3. Include any default variable overrides here
-$light: rgb(238, 240, 242);
+@import "./custom/variables";
 
 // 4. Include remainder of required Bootstrap stylesheets (including any separate color mode style
 @import "~bootstrap/scss/variables";
@@ -43,7 +44,11 @@ a {
   cursor: pointer;
 }
 
+$list-inline-padding: 0.75rem;
+
 @import "./custom/utilities";
+@import "./custom/card";
+@import "./custom/avatar";
 @import "./custom/dropdown";
 @import "./custom/container";
 @import "./custom/font-size";
@@ -54,6 +59,7 @@ a {
 @import "./custom/darkmode";
 @import "~bootstrap/scss/bootstrap";
 @import "./custom/general";
+
 .btn-primary-soft {
   background-color: rgba(15, 111, 236, 0.1);
   color: rgb(15, 111, 236);

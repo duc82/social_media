@@ -37,7 +37,7 @@ export default function Home() {
             </div>
 
             <div className="offcanvas-body d-block px-2 px-lg-0">
-              <div className="card overflow-hidden">
+              <div className="card overflow-hidden bg-white">
                 {/* Cover Image */}
 
                 <div
@@ -54,8 +54,8 @@ export default function Home() {
                   <div className="text-center">
                     <Avatar
                       src="/07.jpg"
-                      height={"4rem"}
-                      width={"4rem"}
+                      height="4rem"
+                      width="4rem"
                       wrapperClassName="d-inline-block mt-n4 mb-2"
                       className="border border-3 border-white"
                     />
@@ -92,9 +92,8 @@ export default function Home() {
                         href="/profile"
                         className="nav-link d-flex align-items-center"
                       >
-                        {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="home-outline-filled.svg"
                           alt="Feed"
                           width={20}
@@ -104,20 +103,19 @@ export default function Home() {
                       </Link>
                     </li>
                     <li className="nav-item">
-                      <a
+                      <Link
                         className="nav-link d-flex align-items-center"
-                        href="my-profile-connections.html"
+                        href="/profile/friends"
                       >
-                        {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="/person-outline-filled.svg"
-                          alt="Connections"
+                          alt="Friends"
                           width={20}
                           height={20}
                         />
-                        <span>Connections </span>
-                      </a>
+                        <span>Friends </span>
+                      </Link>
                     </li>
                     <li className="nav-item">
                       <a
@@ -126,7 +124,7 @@ export default function Home() {
                       >
                         {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="/earth-outline-filled.svg"
                           alt="Latest News"
                           width={20}
@@ -140,9 +138,8 @@ export default function Home() {
                         className="nav-link d-flex align-items-center"
                         href="events.html"
                       >
-                        {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="/calendar-outline-filled.svg"
                           alt="Events"
                           width={20}
@@ -156,9 +153,8 @@ export default function Home() {
                         className="nav-link d-flex align-items-center"
                         href="groups.html"
                       >
-                        {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="/chat-outline-filled.svg"
                           alt="Groups"
                           width={20}
@@ -172,9 +168,8 @@ export default function Home() {
                         className="nav-link d-flex align-items-center"
                         href="notifications.html"
                       >
-                        {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="/notification-outlined-filled.svg"
                           alt="Notifications"
                           width={20}
@@ -190,7 +185,7 @@ export default function Home() {
                       >
                         {" "}
                         <Image
-                          className="me-2 h-20px fa-fw"
+                          className="me-2"
                           src="/cog-outline-filled.svg"
                           alt="Settings"
                           width={20}

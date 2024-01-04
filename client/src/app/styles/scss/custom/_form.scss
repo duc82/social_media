@@ -4,10 +4,8 @@ input::-ms-clear {
   display: none;
 }
 
-// input color
 $input-color: rgb(47, 47, 47);
 $input-focus-color: $input-color;
-
 $input-border-color: $gray-400;
 $input-border-radius-lg: 0.2rem;
 $input-font-size-lg: 1rem;
@@ -18,6 +16,8 @@ $input-focus-box-shadow: none;
 $input-focus-border-color: $primary;
 $input-placeholder-color: $gray-500;
 $input-group-addon-color: $gray-900;
+$input-bg: $white;
+$input-focus-bg: $input-bg;
 
 .password-strength-meter {
   height: 8px;

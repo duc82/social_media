@@ -57,21 +57,31 @@ export class UsersService {
     return user;
   }
 
-  async updateUserProfile(id: string, attrs: UpdateUserProfileDto) {
+  async updateUserProfile(
+    id: string,
+    profile: UpdateUserProfileDto,
+    url: string,
+  ) {
     const user = await this.findById(id, {
       relations: ["profile"],
     });
+
+    delete user.password;
 
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
+    if (!profile.wallpaper) {
+      profile.wallpaper = url + "/wallpaper.jpg";
+    }
+
     // Upsert profile
     if (!user.profile) {
-      const newProfile = this.profileRepository.create(attrs);
+      const newProfile = this.profileRepository.create(profile);
       user.profile = newProfile;
     } else {
-      await this.profileRepository.update({ id: user.profile.id }, attrs);
+      await this.profileRepository.update({ id: user.profile.id }, profile);
       user.profile = await this.profileRepository.findOne({
         where: { id: user.profile.id },
       });
