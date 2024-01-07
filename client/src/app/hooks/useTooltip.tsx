@@ -11,7 +11,6 @@ export default function useTooltip() {
       '[data-bs-toggle="tooltip"]'
     );
 
-    console.log(tooltipTriggerList);
     const tooltipList = [...tooltipTriggerList].map(
       (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
     );

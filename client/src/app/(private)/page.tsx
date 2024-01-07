@@ -1,10 +1,14 @@
+"use client";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../components/Avatar";
 import Image from "next/image";
 import Link from "next/link";
+import useSocket from "../hooks/useSocket";
 
 export default function Home() {
+  const socket = useSocket();
+
   return (
     <div className="row g-4">
       <div className="col-lg-3">

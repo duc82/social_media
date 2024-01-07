@@ -9,6 +9,7 @@ import { AuthModule } from "./auth/auth.module";
 import { PostsModule } from "./posts/posts.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { EventsGateway } from './events/events.gateway';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { join } from "path";
     PostsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EventsGateway],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
