@@ -1,11 +1,14 @@
-import Main from "@/app/components/Profile/Main";
-import Sidebar from "@/app/components/Profile/Sidebar";
+import Post from "@/app/components/Post";
+import SharePost from "@/app/components/Profile/Main/SharePost";
 
 export default function Profile() {
   return (
-    <div className="row g-4">
-      <Main />
-      <Sidebar />
-    </div>
+    <>
+      <SharePost />
+
+      {[...Array(10)].map((_, i) => (
+        <Post key={i} />
+      ))}
+    </>
   );
 }

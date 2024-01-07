@@ -16,11 +16,9 @@ import {
 export default function Post() {
   return (
     <div className="card">
-      {/* Card header START */}
       <div className="card-header border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
-            {/* Avatar */}
             <Link href="#!" className="avatar avatar-story me-2">
               <Avatar
                 className="avatar-img rounded-circle"
@@ -28,7 +26,6 @@ export default function Post() {
                 alt="Avatar"
               />
             </Link>
-            {/* Info */}
             <div>
               <div className="nav nav-divider">
                 <Link href="#!" className="nav-item card- mb-0 h6">
@@ -39,7 +36,6 @@ export default function Post() {
               <p className="mb-0 small">Web Developer at Webestica</p>
             </div>
           </div>
-          {/* Card feed action dropdown START */}
           <div className="dropdown">
             <button
               type="button"
@@ -50,7 +46,6 @@ export default function Post() {
             >
               <ThreeDots />
             </button>
-            {/* Card feed action dropdown menu */}
             <ul
               className="dropdown-menu dropdown-menu-end"
               aria-labelledby="cardFeedAction1"
@@ -90,17 +85,13 @@ export default function Post() {
               </li>
             </ul>
           </div>
-          {/* Card feed action dropdown END */}
         </div>
       </div>
-      {/* Card header END */}
-      {/* Card body START */}
       <div className="card-body">
         <p>
           I'm thrilled href share that I've completed a graduate certificate
           course in project management with the president's honor roll.
         </p>
-        {/* Card img */}
         <Image
           src="/01.jpg"
           alt="Post"
@@ -109,7 +100,6 @@ export default function Post() {
           sizes="100vw"
           className="card-img h-auto"
         />
-        {/* Feed react START */}
         <ul className="nav nav-stack py-3 small">
           <li className="nav-item">
             <Link
@@ -129,7 +119,6 @@ export default function Post() {
               Comments (12)
             </Link>
           </li>
-          {/* Card share action START */}
           <li className="nav-item dropdown ms-sm-auto">
             <button
               type="button"
@@ -141,7 +130,6 @@ export default function Post() {
               <ReplyFill className="flip-horizontal ps-1" size={18} />
               Share (3)
             </button>
-            {/* Card share action dropdown menu */}
             <ul
               className="dropdown-menu dropdown-menu-end"
               aria-labelledby="cardShareAction8"
@@ -178,13 +166,9 @@ export default function Post() {
               </li>
             </ul>
           </li>
-          {/* Card share action END */}
         </ul>
-        {/* Feed react END */}
 
-        {/* Add comment */}
         <div className="d-flex mb-3">
-          {/* Avatar */}
           <div className="avatar avatar-xs me-2">
             <Link href="#!">
               <Avatar
@@ -194,7 +178,6 @@ export default function Post() {
               />
             </Link>
           </div>
-          {/* Comment box  */}
           <form className="position-relative w-100">
             <textarea
               className="form-control pe-4 bg-light"
@@ -203,12 +186,9 @@ export default function Post() {
             />
           </form>
         </div>
-        {/* Comment wrap START */}
         <ul className="comment-wrap list-unstyled">
-          {/* Comment item START */}
           <li className="comment-item">
             <div className="d-flex position-relative">
-              {/* Avatar */}
               <div className="avatar avatar-xs">
                 <Link href="#!">
                   <Avatar
@@ -219,7 +199,6 @@ export default function Post() {
                 </Link>
               </div>
               <div className="ms-2">
-                {/* Comment by */}
                 <div className="bg-light rounded-start-top-0 p-3 rounded">
                   <div className="d-flex justify-content-between">
                     <h6 className="mb-1">
@@ -232,7 +211,6 @@ export default function Post() {
                     Particular way thoroughly unaffected projection.
                   </p>
                 </div>
-                {/* Comment react */}
                 <ul className="nav nav-divider py-2 small">
                   <li className="nav-item">
                     <Link href="#!" className="nav-link">
@@ -252,12 +230,9 @@ export default function Post() {
                 </ul>
               </div>
             </div>
-            {/* Comment item nested START */}
             <ul className="comment-item-nested list-unstyled">
-              {/* Comment item START */}
               <li className="comment-item">
                 <div className="d-flex">
-                  {/* Avatar */}
                   <div className="avatar avatar-xs">
                     <Link href="#!">
                       <Avatar
@@ -267,7 +242,6 @@ export default function Post() {
                       />
                     </Link>
                   </div>
-                  {/* Comment by */}
                   <div className="ms-2">
                     <div className="bg-light p-3 rounded">
                       <div className="d-flex justify-content-between">
@@ -281,7 +255,6 @@ export default function Post() {
                         but Drawings offended yet answered Jennings perceive.
                       </p>
                     </div>
-                    {/* Comment react */}
                     <ul className="nav nav-divider py-2 small">
                       <li className="nav-item">
                         <Link href="#!" className="nav-link">
@@ -297,11 +270,8 @@ export default function Post() {
                   </div>
                 </div>
               </li>
-              {/* Comment item END */}
-              {/* Comment item START */}
               <li className="comment-item">
                 <div className="d-flex">
-                  {/* Avatar */}
                   <div className="avatar avatar-story avatar-xs">
                     <Link href="#!">
                       <Avatar
@@ -311,7 +281,6 @@ export default function Post() {
                       />
                     </Link>
                   </div>
-                  {/* Comment by */}
                   <div className="ms-2">
                     <div className="bg-light p-3 rounded">
                       <div className="d-flex justify-content-between">
@@ -324,7 +293,6 @@ export default function Post() {
                         Wishing calling is warrant settled was lucky.
                       </p>
                     </div>
-                    {/* Comment react */}
                     <ul className="nav nav-divider py-2 small">
                       <li className="nav-item">
                         <Link href="#!" className="nav-link">
@@ -340,9 +308,7 @@ export default function Post() {
                   </div>
                 </div>
               </li>
-              {/* Comment item END */}
             </ul>
-            {/* Load more replies */}
             <Link
               href="#!"
               role="button"
@@ -357,13 +323,9 @@ export default function Post() {
               </div>
               Load more replies
             </Link>
-            {/* Comment item nested END */}
           </li>
-          {/* Comment item END */}
-          {/* Comment item START */}
           <li className="comment-item">
             <div className="d-flex">
-              {/* Avatar */}
               <div className="avatar avatar-xs">
                 <Link href="#!">
                   <Avatar
@@ -373,7 +335,6 @@ export default function Post() {
                   />
                 </Link>
               </div>
-              {/* Comment by */}
               <div className="ms-2">
                 <div className="bg-light p-3 rounded">
                   <div className="d-flex justify-content-between">
@@ -387,7 +348,6 @@ export default function Post() {
                     Particular way thoroughly unaffected projection.
                   </p>
                 </div>
-                {/* Comment react */}
                 <ul className="nav nav-divider pt-2 small">
                   <li className="nav-item">
                     <Link href="#!" className="nav-link">
@@ -408,14 +368,9 @@ export default function Post() {
               </div>
             </div>
           </li>
-          {/* Comment item END */}
         </ul>
-        {/* Comment wrap END */}
       </div>
-      {/* Card body END */}
-      {/* Card footer START */}
       <div className="card-footer border-0 pt-0">
-        {/* Load more comments */}
         <Link
           href="#!"
           role="button"
@@ -431,7 +386,6 @@ export default function Post() {
           Load more comments
         </Link>
       </div>
-      {/* Card footer END */}
     </div>
   );
 }

@@ -1,6 +1,9 @@
+"use client";
 import Avatar from "@/app/components/Avatar";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Briefcase,
   Calendar2Plus,
@@ -11,6 +14,38 @@ import {
 } from "react-bootstrap-icons";
 
 export default function HeaderMainProfile() {
+  const pathname = usePathname();
+  const menus = [
+    {
+      title: "Posts",
+      href: "/profile",
+    },
+    {
+      title: "About",
+      href: "/profile/about",
+    },
+    {
+      title: "Friends",
+      href: "/profile/friends",
+    },
+    {
+      title: "Media",
+      href: "/profile/media",
+    },
+    {
+      title: "Videos",
+      href: "/profile/videos",
+    },
+    {
+      title: "Events",
+      href: "/profile/events",
+    },
+    {
+      title: "Activity",
+      href: "/profile/activity",
+    },
+  ];
+
   return (
     <div className="card">
       <div className="position-relative w-100" style={{ height: "200px" }}>
@@ -103,44 +138,22 @@ export default function HeaderMainProfile() {
 
       <div className="card-footer mt-3 pt-2 pb-0">
         <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
-          <li className="nav-item">
-            <Link className="nav-link active" href="/profile">
-              Posts
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" href="/profile/about">
-              About
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" href="/profile/friends">
-              Friends{" "}
-              <span className="badge bg-success bg-opacity-10 text-success small">
-                230
-              </span>
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" href="/profile/media">
-              Media
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" href="my-profile-videos.html">
-              Videos
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" href="my-profile-events.html">
-              Events
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" href="my-profile-activity.html">
-              Activity
-            </Link>
-          </li>
+          {menus.map((menu) => (
+            <li key={menu.href} className="nav-item">
+              <Link
+                className={clsx("nav-link", pathname === menu.href && "active")}
+                href={menu.href}
+              >
+                {menu.title}
+
+                {menu.title === "Friends" && (
+                  <span className="badge bg-success bg-opacity-10 text-success small">
+                    230
+                  </span>
+                )}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

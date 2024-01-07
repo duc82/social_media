@@ -5,34 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import Avatar from "../Avatar";
-import { useTheme } from "next-themes";
-import useBootstrap from "@/app/hooks/useBootstrap";
-import { useEffect } from "react";
+import dynamic from "next/dynamic";
+import useTooltip from "@/app/hooks/useTooltip";
+const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
 export default function Header() {
+  useTooltip();
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
-
-  const handleChangeTheme = (theme: "light" | "dark" | "system") => {
-    setTheme(theme);
-  };
-
-  const bootstrap = useBootstrap();
-
-  useEffect(() => {
-    if (!bootstrap) return;
-
-    const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
-    );
-    const tooltipList = [...tooltipTriggerList].map(
-      (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
-    );
-
-    return () => {
-      tooltipList.forEach((tooltip) => tooltip.dispose());
-    };
-  }, []);
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">
@@ -207,36 +186,7 @@ export default function Header() {
 
               <li className="d-flex align-items-center justify-content-center gap-3 p-2">
                 <span>Mode:</span>
-                <button
-                  type="button"
-                  className={clsx("btn", theme === "light" && "btn-primary")}
-                  onClick={() => handleChangeTheme("light")}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  data-bs-title="Light"
-                >
-                  <i className="bi bi-sun"></i>
-                </button>
-                <button
-                  type="button"
-                  className={clsx("btn", theme === "dark" && "btn-primary")}
-                  onClick={() => handleChangeTheme("dark")}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  data-bs-title="Dark"
-                >
-                  <i className="bi bi-moon-stars"></i>
-                </button>
-                <button
-                  type="button"
-                  className={clsx("btn", theme === "system" && "btn-primary")}
-                  onClick={() => handleChangeTheme("system")}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  data-bs-title="System"
-                >
-                  <i className="bi bi-circle-half"></i>
-                </button>
+                <SwitchTheme />
               </li>
             </ul>
           </li>

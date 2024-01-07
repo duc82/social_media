@@ -57,3 +57,8 @@ $input-focus-bg: $input-bg;
     }
   }
 }
+
+$form-select-indicator-padding: 0;
+$form-select-bg-position: right 0.5rem center;
+$form-select-color: $gray-700;
+$form-select-indicator-color: $form-select-color;

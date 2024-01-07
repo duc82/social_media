@@ -6,7 +6,7 @@ import {
   ImageFill,
 } from "react-bootstrap-icons";
 
-export default function ShareFeed() {
+export default function SharePost() {
   return (
     <div className="card card-body flex-grow-0">
       <div className="d-flex mb-3">
@@ -22,6 +22,8 @@ export default function ShareFeed() {
           <input
             className="form-control pe-4 border-0"
             placeholder="Share your thoughts..."
+            data-bs-toggle="modal"
+            data-bs-target="#createPostModal"
           />
         </form>
       </div>
