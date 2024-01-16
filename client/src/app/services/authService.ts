@@ -1,4 +1,4 @@
-import { SignInResponse, SignUpResponse } from "../types/auth";
+import { RefreshResponse, SignInResponse, SignUpResponse } from "../types/auth";
 import { FullUser } from "../types/user";
 import { SignInDto, SignUpDto } from "../utils/validation";
 import apiRequest from "./api";
@@ -11,6 +11,12 @@ const signIn = async (signInDto: SignInDto): Promise<SignInResponse> => {
   return apiRequest<SignInResponse>("/auth/signin", "POST", signInDto);
 };
 
+const refresh = async (refreshToken: string): Promise<RefreshResponse> => {
+  return apiRequest<RefreshResponse>("/auth/refresh", "POST", {
+    refreshToken,
+  });
+};
+
 const getProfile = async (accessToken?: string): Promise<FullUser> => {
   return apiRequest<FullUser>("/auth/profile", "GET", null, {
     headers: {
@@ -19,4 +25,4 @@ const getProfile = async (accessToken?: string): Promise<FullUser> => {
   });
 };
 
-export { signUp, signIn, getProfile };
+export { signUp, signIn, getProfile, refresh };

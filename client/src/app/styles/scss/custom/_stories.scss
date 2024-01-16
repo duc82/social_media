@@ -1,0 +1,38 @@
+.stories.carousel {
+  .story {
+    height: 150px !important;
+    width: 120px !important;
+    max-width: inherit !important;
+
+    .item-link {
+      height: 100% !important;
+
+      .item-preview {
+        border-radius: 5px !important;
+        object-fit: cover !important;
+        max-height: inherit !important;
+        padding: 0 !important;
+        height: inherit !important;
+
+        img {
+          border-radius: 5px !important;
+          border: none !important;
+        }
+      }
+
+      .info {
+        position: absolute;
+        left: 10px;
+        bottom: 6px;
+        color: $white;
+        text-align: left;
+        z-index: 1;
+
+        .name {
+          font-weight: 500 !important;
+          font-size: 0.8203125rem;
+        }
+      }
+    }
+  }
+}

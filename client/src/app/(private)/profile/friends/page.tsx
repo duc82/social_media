@@ -35,7 +35,10 @@ export default function Friends() {
           </div>
 
           <div className="ms-md-auto d-flex">
-            <button type="button" className="btn btn-danger btn-sm mb-0 me-2">
+            <button
+              type="button"
+              className="btn btn-danger-soft btn-sm mb-0 me-2"
+            >
               Remove
             </button>
             <button type="button" className="btn btn-primary-soft btn-sm mb-0">

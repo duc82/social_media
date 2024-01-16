@@ -1,4 +1,4 @@
-import { signIn } from "@/app/services/authService";
+import { refresh, signIn } from "@/app/services/authService";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -20,9 +20,9 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         if (credentials) {
           try {
-            const { user, accessToken } = await signIn(credentials);
+            const data = await signIn(credentials);
 
-            return { ...user, accessToken };
+            return { ...data, ...data.user };
           } catch (error) {
             throw error;
           }
@@ -40,7 +40,23 @@ export const authOptions: AuthOptions = {
         token.fullName = user.fullName;
         token.email = user.email;
         token.createdAt = user.createdAt;
-        token.accessToken = user.accessToken;
+
+        let accessToken = user.accessToken;
+        let expiresIn = user.expiresIn;
+        if (Date.now() > expiresIn) {
+          console.log("refreshing token");
+          try {
+            const data = await refresh(user.refreshToken);
+            accessToken = data.accessToken;
+            expiresIn = data.expiresIn;
+          } catch (error) {
+            throw error;
+          }
+        }
+
+        token.accessToken = accessToken;
+        token.refreshToken = user.refreshToken;
+        token.expiresIn = expiresIn;
       }
 
       return token;
@@ -52,7 +68,6 @@ export const authOptions: AuthOptions = {
       session.user.email = token.email;
       session.user.createdAt = token.createdAt;
       session.accessToken = token.accessToken;
-
       return session;
     },
   },

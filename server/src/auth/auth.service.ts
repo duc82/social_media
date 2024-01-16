@@ -7,18 +7,23 @@ import { Role } from "src/users/entity/user.entity";
 @Injectable()
 export class AuthService {
   private readonly accessTokenExpired: number;
+  private readonly refreshTokenExpired: number;
 
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {
     const accessTokenExpired = process.env.ACCESS_TOKEN_EXPIRED;
+    const refreshTokenExpired = process.env.REFRESH_TOKEN_EXPIRED;
 
-    if (!accessTokenExpired) {
-      throw new Error("Please provide ACCESS_TOKEN_EXPIRED in .env");
+    if (!accessTokenExpired || !refreshTokenExpired) {
+      throw new Error(
+        "ACCESS_TOKEN_EXPIRED, REFRESH_TOKEN_EXPIRED must be defined",
+      );
     }
 
     this.accessTokenExpired = +accessTokenExpired;
+    this.refreshTokenExpired = +refreshTokenExpired;
   }
 
   async generateToken(
@@ -65,10 +70,44 @@ export class AuthService {
       expiresIn: this.accessTokenExpired / 1000,
     });
 
+    const refreshToken = await this.generateToken(payload, {
+      expiresIn: this.refreshTokenExpired / 1000,
+    });
+
     return {
       user,
       accessToken,
+      refreshToken,
+      expiresIn: this.accessTokenExpired,
       message: "User logged in successfully",
+    };
+  }
+
+  async refresh(refreshToken: string) {
+    const payload = await this.jwtService.verifyAsync(refreshToken);
+
+    if (!payload) {
+      throw new BadRequestException("Invalid token");
+    }
+
+    const user = await this.usersService.findById(payload.userId);
+
+    if (!user) {
+      throw new BadRequestException("User not found");
+    }
+
+    const newPayload = {
+      userId: user.id,
+      role: user.role,
+    };
+
+    const accessToken = await this.generateToken(newPayload, {
+      expiresIn: this.accessTokenExpired / 1000,
+    });
+
+    return {
+      accessToken,
+      message: "Token refreshed successfully",
     };
   }
 }

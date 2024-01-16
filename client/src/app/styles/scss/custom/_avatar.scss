@@ -7,6 +7,44 @@ $avatar-size-xl: 5.125rem;
 $avatar-size-xxl: 8rem;
 $avatar-size-xxxl: 11rem;
 
+// Avatar status
+[class*="status-"]:before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  border-radius: 100%;
+  border: 2px solid $white;
+  height: 12px;
+  width: 12px;
+  right: -2px;
+  top: -2px;
+}
+.status-online:before {
+  background-color: $success;
+}
+.status-away:before {
+  background-color: $warning;
+}
+.status-offline:before {
+  background-color: $danger;
+}
+.avatar.avatar-lg[class*="status-"]:before {
+  right: 2px;
+  top: 2px;
+}
+.avatar.avatar-xl[class*="status-"]:before {
+  right: 4px;
+  top: 4px;
+}
+.avatar.avatar-xxl[class*="status-"]:before {
+  right: 12px;
+  top: 12px;
+}
+.avatar.avatar-xxxl[class*="status-"]:before {
+  right: 18px;
+  top: 18px;
+}
+
 // Avatar
 .avatar {
   height: $avatar-size-base;

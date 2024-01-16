@@ -8,6 +8,10 @@ interface SignUpResponse {
 interface SignInResponse extends SignUpResponse {
   accessToken: string;
   refreshToken: string;
+  expiresIn: number;
 }
 
-export type { SignUpResponse, SignInResponse };
+interface RefreshResponse
+  extends Pick<SignInResponse, "accessToken" | "message" | "expiresIn"> {}
+
+export type { SignUpResponse, SignInResponse, RefreshResponse };

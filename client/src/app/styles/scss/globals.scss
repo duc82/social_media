@@ -24,20 +24,30 @@
 @import "~bootstrap/scss/utilities";
 @import "~bootstrap/scss/reboot";
 
+@import "./custom/typography";
+
 // Body
 $body-color: rgb(102, 105, 120);
-$body-bg: rgb(239, 242, 246);
-$font-size-base: 0.9375rem;
-$headings-color-dark: $white;
+$body-bg: $gray-200;
+$font-size-base: $h6-font-size;
+
+$enable-negative-margins: true;
 
 .bg-mode {
   background-color: $white;
 }
 
-$enable-negative-margins: true;
-
 a {
   transition: all 0.3s ease-in-out;
+}
+
+small,
+.small {
+  font-weight: 400;
+}
+
+li {
+  list-style: none;
 }
 
 .cursor-pointer {
@@ -45,29 +55,17 @@ a {
 }
 
 $list-inline-padding: 0.75rem;
-
+@import "./custom/stories";
 @import "./custom/utilities";
+@import "./custom/offcanvas";
 @import "./custom/modal";
 @import "./custom/card";
 @import "./custom/avatar";
 @import "./custom/dropdown";
 @import "./custom/container";
-@import "./custom/font-size";
-@import "./custom/typography";
 @import "./custom/form";
 @import "./custom/navbar";
 @import "./custom/button";
 @import "./custom/darkmode";
 @import "~bootstrap/scss/bootstrap";
 @import "./custom/general";
-
-.btn-primary-soft {
-  background-color: rgba(15, 111, 236, 0.1);
-  color: rgb(15, 111, 236);
-  &:hover,
-  :focus,
-  :active {
-    background-color: rgba(15, 111, 236) !important;
-    color: white !important;
-  }
-}

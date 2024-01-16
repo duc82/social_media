@@ -6,6 +6,7 @@ $navbar-light-hover-color: $primary;
 $nav-link-font-weight: 600;
 $nav-link-font-size: $h6-font-size;
 $nav-link-color: $navbar-light-color;
+$nav-link-padding-y: 0.25rem;
 $navbar-nav-link-padding-x: 1rem;
 
 .navbar-nav {
@@ -63,6 +64,11 @@ $navbar-nav-link-padding-x: 1rem;
   .nav-item .nav-link.active {
     color: $primary;
   }
+}
+
+.nav-pills-soft .nav-link.active,
+.nav-pills-soft .show > .nav-link {
+  background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
 }
 
 @include media-breakpoint-down(lg) {

@@ -4,7 +4,7 @@ const API_BASE_URL: string | undefined = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if (!API_BASE_URL) {
   throw new Error(
-    "Please define the NEXT_PUBLIC_API_BASE_URL environment variable inside .env"
+    "NEXT_PUBLIC_API_BASE_URL must be defined. Please add it to .env file."
   );
 }
 
@@ -17,7 +17,7 @@ export default async function apiRequest<T>(
   try {
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
-      body: body ? JSON.stringify(body) : null,
+      body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
         ...init.headers,

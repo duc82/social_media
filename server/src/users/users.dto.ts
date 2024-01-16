@@ -7,7 +7,7 @@ import {
   ValidateIf,
   IsString,
 } from "class-validator";
-import { Gender, Status } from "./entity/profile.entity";
+import { Gender, MarialStatus } from "./entity/profile.entity";
 
 export class CreateUserDto {
   @MinLength(2)
@@ -40,8 +40,12 @@ export class UpdateUserProfileDto {
   bornAt: Date;
 
   @ValidateIf((o) => o.status)
-  @IsEnum(Status)
-  status: Status;
+  @IsEnum(MarialStatus)
+  marialStatus: MarialStatus;
+
+  @ValidateIf((o) => o.job)
+  @IsString()
+  job: string;
 
   @ValidateIf((o) => o.address)
   @IsString()

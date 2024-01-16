@@ -772,7 +772,7 @@ export default async function AuthLayout({
               </div>
             </div>
 
-            <div className="col-sm-10 col-md-8 col-lg-6 position-relative z-1">
+            <div className="col-sm-10 col-md-8 col-lg-6 position-relative">
               {children}
             </div>
           </div>

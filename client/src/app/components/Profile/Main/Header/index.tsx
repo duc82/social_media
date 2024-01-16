@@ -13,7 +13,7 @@ import {
   PlusLg,
 } from "react-bootstrap-icons";
 
-export default function HeaderMainProfile() {
+export default function ProfileMainHeader() {
   const pathname = usePathname();
   const menus = [
     {
@@ -144,8 +144,7 @@ export default function HeaderMainProfile() {
                 className={clsx("nav-link", pathname === menu.href && "active")}
                 href={menu.href}
               >
-                {menu.title}
-
+                {menu.title}{" "}
                 {menu.title === "Friends" && (
                   <span className="badge bg-success bg-opacity-10 text-success small">
                     230

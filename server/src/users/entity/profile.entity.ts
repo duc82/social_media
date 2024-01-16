@@ -7,9 +7,11 @@ export enum Gender {
   OTHER = "other",
 }
 
-export enum Status {
+export enum MarialStatus {
   SINGLE = "single",
   MARRIED = "married",
+  DIVORCED = "divorced",
+  WIDOWED = "widowed",
 }
 
 @Entity()
@@ -38,10 +40,15 @@ export class Profile {
 
   @Column({
     type: "enum",
-    enum: Status,
+    enum: MarialStatus,
     nullable: true,
   })
-  status: Status;
+  marialStatus: MarialStatus;
+
+  @Column({
+    nullable: true,
+  })
+  job: string;
 
   @Column({
     nullable: true,

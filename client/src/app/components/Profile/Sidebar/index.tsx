@@ -11,7 +11,7 @@ import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Sidebar() {
+export default function ProfileSidebar() {
   return (
     <div className="col-lg-4">
       <div className="row g-4">

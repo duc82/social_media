@@ -3,16 +3,15 @@ import { JwtModule } from "@nestjs/jwt";
 import { AuthController } from "./auth.controller";
 import { UsersModule } from "src/users/users.module";
 import { AuthService } from "./auth.service";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 @Module({
   imports: [
     UsersModule,
     JwtModule.register({
+      secret: process.env.JWT_SECRET,
       global: true,
-      secret: "secret",
-      signOptions: {
-        expiresIn: "5m",
-      },
     }),
   ],
   controllers: [AuthController],

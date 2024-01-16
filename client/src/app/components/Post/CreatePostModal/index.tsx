@@ -1,8 +1,6 @@
-"use client";
 import {
   Calendar2EventFill,
   CameraReelsFill,
-  CameraVideoFill,
   EmojiSmileFill,
   GeoAltFill,
   ImageFill,
@@ -12,13 +10,7 @@ import Avatar from "../../Avatar";
 
 export default function CreatePostModal() {
   return (
-    <div
-      className="modal fade"
-      id="createPostModal"
-      tabIndex={-1}
-      aria-labelledby="createPostModal"
-      role="dialog"
-    >
+    <div className="modal fade" id="createPostModal" tabIndex={-1}>
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div className="modal-content">
           <div className="modal-header">
@@ -84,16 +76,16 @@ export default function CreatePostModal() {
                   hidden
                 />
               </label>
-              <a
-                className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle"
-                href="#"
+              <button
+                className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle border-0"
+                type="button"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
                 aria-label="Events"
                 data-bs-original-title="Events"
               >
                 <Calendar2EventFill />
-              </a>
+              </button>
               <a
                 className="icon-md bg-warning bg-opacity-10 text-warning rounded-circle"
                 href="#"

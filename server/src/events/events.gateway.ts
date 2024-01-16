@@ -11,7 +11,7 @@ import { Socket, Server } from "socket.io";
 
 @WebSocketGateway({
   cors: {
-    origin: "*",
+    origin: process.env.CLIENT_URL,
   },
   transports: ["websocket"],
 })

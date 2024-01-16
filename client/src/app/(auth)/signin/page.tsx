@@ -38,7 +38,7 @@ export default function SignIn() {
 
   useEffect(() => {
     const error = new URLSearchParams(window.location.search).get("error");
-
+    console.log(error);
     if (error) {
       toast.error(error);
     }
