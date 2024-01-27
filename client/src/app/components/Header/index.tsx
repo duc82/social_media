@@ -1,17 +1,16 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import clsx from "clsx";
 import Avatar from "../Avatar";
 import dynamic from "next/dynamic";
-import useTooltip from "@/app/hooks/useTooltip";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import Menu from "./Menu";
+
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
-export default function Header() {
-  useTooltip();
-  const pathname = usePathname();
+export default async function Header() {
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user;
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">
@@ -58,35 +57,7 @@ export default function Header() {
             </form>
           </div>
 
-          <ul className="navbar-nav navbar-nav-scroll ms-auto mx-lg-auto">
-            <li className="nav-item">
-              <Link
-                href="/"
-                className={clsx("nav-link", pathname === "/" && "active")}
-              >
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                href="/profile/friends"
-                className={clsx(
-                  "nav-link",
-                  pathname === "/profile/friends" && "active"
-                )}
-              >
-                Friends
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                href="/groups"
-                className={clsx("nav-link", pathname === "/groups" && "active")}
-              >
-                Groups
-              </Link>
-            </li>
-          </ul>
+          <Menu />
         </div>
 
         <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
@@ -125,22 +96,28 @@ export default function Header() {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <Avatar src="/07.jpg" />
+              <Avatar
+                src={currentUser?.profile.avatar ?? ""}
+                alt={currentUser?.fullName}
+              />
             </button>
 
             <ul className="dropdown-menu dropdown-menu-end pt-3 small me-md-n3 shadow-menu">
               <li className="px-3">
                 <div className="d-flex align-items-center">
                   <Avatar
-                    src="/07.jpg"
+                    src={currentUser?.profile.avatar ?? ""}
+                    alt={currentUser?.fullName}
                     width={48}
                     height={48}
                     className="rounded-circle"
                     wrapperClassName="me-3"
                   />
                   <div>
-                    <h6 className="mb-1">Duc Dang</h6>
-                    <p className="small m-0">Web Developer</p>
+                    <h6 className="mb-1">{currentUser?.fullName}</h6>
+                    {currentUser?.profile.job && (
+                      <p className="small m-0">{currentUser.profile.job}</p>
+                    )}
                   </div>
                 </div>
 

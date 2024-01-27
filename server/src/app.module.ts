@@ -9,7 +9,9 @@ import { AuthModule } from "./auth/auth.module";
 import { PostsModule } from "./posts/posts.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
-import { EventsGateway } from './events/events.gateway';
+import { EventsGateway } from "./events/events.gateway";
+import { CloudinaryModule } from "./cloudinary/cloudinary.module";
+import { AvatarInitialsModule } from "./avatar-initials/avatar-initials.module";
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { EventsGateway } from './events/events.gateway';
     UsersModule,
     AuthModule,
     PostsModule,
+    CloudinaryModule,
+    AvatarInitialsModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

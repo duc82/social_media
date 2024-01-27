@@ -14,8 +14,10 @@ declare module "next-auth" {
     expiresIn: number;
   }
 
+  type CurrentUser = Omit<User, "accessToken"> & DefaultSession["user"];
+
   interface Session {
-    user: Omit<User, "accessToken"> & DefaultSession["user"];
+    user: CurrentUser;
     accessToken: string;
     refreshToken: string;
     expiresIn: number;

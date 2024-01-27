@@ -10,8 +10,8 @@ import { useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/app/services/authService";
 import handlingError from "@/app/utils/error";
+import authService from "@/app/services/authService";
 
 const classNameScore: Record<number, string> = {
   0: "",
@@ -47,7 +47,7 @@ export default function Signup() {
     const { confirmPassword, ...signUpDto } = data;
 
     try {
-      const value = await signUp(signUpDto);
+      const value = await authService.signUp(signUpDto);
       toast.success(value.message);
       router.push("/signin");
     } catch (error) {

@@ -49,7 +49,7 @@ export class User {
   })
   role: Role;
 
-  @OneToOne(() => Profile, (profile) => profile.user, {
+  @OneToOne(() => Profile, {
     cascade: true,
     onDelete: "CASCADE",
   })

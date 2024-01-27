@@ -9,20 +9,7 @@ import {
 } from "class-validator";
 import { Gender, MarialStatus } from "./entity/profile.entity";
 
-export class CreateUserDto {
-  @MinLength(2)
-  @IsNotEmpty()
-  fullName: string;
-
-  @IsEmail()
-  email: string;
-
-  @MinLength(8)
-  @IsNotEmpty()
-  password: string;
-}
-
-export class UpdateUserProfileDto {
+export class ProfileDto {
   @ValidateIf((o) => o.gender)
   @IsEnum(Gender)
   gender: Gender;
@@ -54,4 +41,19 @@ export class UpdateUserProfileDto {
   @ValidateIf((o) => o.overview)
   @IsString()
   overview: string;
+}
+
+export class CreateUserDto {
+  @MinLength(2)
+  @IsNotEmpty()
+  fullName: string;
+
+  @IsEmail()
+  email: string;
+
+  @MinLength(8)
+  @IsNotEmpty()
+  password: string;
+
+  profile: ProfileDto;
 }

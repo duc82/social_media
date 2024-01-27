@@ -1,9 +1,6 @@
-"use client";
 import Avatar from "@/app/components/Avatar";
-import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   Briefcase,
   Calendar2Plus,
@@ -12,39 +9,13 @@ import {
   PencilFill,
   PlusLg,
 } from "react-bootstrap-icons";
+import ProfileMainHeaderMenu from "./ProfileMainHeaderMenu";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default function ProfileMainHeader() {
-  const pathname = usePathname();
-  const menus = [
-    {
-      title: "Posts",
-      href: "/profile",
-    },
-    {
-      title: "About",
-      href: "/profile/about",
-    },
-    {
-      title: "Friends",
-      href: "/profile/friends",
-    },
-    {
-      title: "Media",
-      href: "/profile/media",
-    },
-    {
-      title: "Videos",
-      href: "/profile/videos",
-    },
-    {
-      title: "Events",
-      href: "/profile/events",
-    },
-    {
-      title: "Activity",
-      href: "/profile/activity",
-    },
-  ];
+export default async function ProfileMainHeader() {
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user;
 
   return (
     <div className="card">
@@ -55,15 +26,16 @@ export default function ProfileMainHeader() {
       <div className="card-body py-0">
         <div className="d-md-flex align-items-start text-center text-md-start">
           <Avatar
-            src="/07.jpg"
-            alt="Avatar"
+            src={currentUser?.profile.avatar ?? ""}
+            alt={currentUser?.fullName}
             wrapperClassName="avatar avatar-xxl mt-n5 mb-3"
             className="rounded-circle border border-3 border-white "
           />
 
           <div className="ms-md-4 mt-md-3">
             <h1 className="mb-0 h5">
-              Sam Lanson <PatchCheckFill className="text-success small" />
+              {currentUser?.fullName}{" "}
+              <PatchCheckFill className="text-success small" />
             </h1>
             <p>250 friends</p>
           </div>
@@ -137,23 +109,7 @@ export default function ProfileMainHeader() {
       </div>
 
       <div className="card-footer mt-3 pt-2 pb-0">
-        <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
-          {menus.map((menu) => (
-            <li key={menu.href} className="nav-item">
-              <Link
-                className={clsx("nav-link", pathname === menu.href && "active")}
-                href={menu.href}
-              >
-                {menu.title}{" "}
-                {menu.title === "Friends" && (
-                  <span className="badge bg-success bg-opacity-10 text-success small">
-                    230
-                  </span>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <ProfileMainHeaderMenu />
       </div>
     </div>
   );

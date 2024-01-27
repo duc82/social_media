@@ -3,6 +3,11 @@ import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { UsersService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
 import { Role } from "src/users/entity/user.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Profile } from "src/users/entity/profile.entity";
+import { Repository } from "typeorm";
+import { CloudinaryService } from "src/cloudinary/cloudinary.service";
+import { AvatarInitialsService } from "src/avatar-initials/avatar-initials.service";
 
 @Injectable()
 export class AuthService {
@@ -12,6 +17,10 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private avatarInitialsService: AvatarInitialsService,
+    private cloudinaryService: CloudinaryService,
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
   ) {
     const accessTokenExpired = process.env.ACCESS_TOKEN_EXPIRED;
     const refreshTokenExpired = process.env.REFRESH_TOKEN_EXPIRED;
@@ -40,7 +49,21 @@ export class AuthService {
       throw new BadRequestException("User already exists");
     }
 
-    const newUser = await this.usersService.create(signUpDto);
+    const buffer = this.avatarInitialsService.generateAvatarInitials(
+      signUpDto.fullName,
+    );
+
+    const cloudinaryResponse =
+      await this.cloudinaryService.uploadFileFromBuffer(buffer);
+
+    const profile = this.profileRepository.create({
+      avatar: cloudinaryResponse.secure_url,
+    });
+
+    const newUser = await this.usersService.create({
+      ...signUpDto,
+      profile,
+    });
 
     return {
       user: newUser,
@@ -49,7 +72,9 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findByEmail(signInDto.email);
+    const user = await this.usersService.findByEmail(signInDto.email, {
+      relations: ["profile"],
+    });
 
     if (!user) {
       throw new BadRequestException("Email or password is incorrect");

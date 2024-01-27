@@ -1,5 +1,7 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreatePostModal";
-import Image from "next/image";
+import { getServerSession } from "next-auth";
 import {
   Calendar2EventFill,
   CameraReelsFill,
@@ -7,20 +9,21 @@ import {
   ImageFill,
 } from "react-bootstrap-icons";
 
-export default function SharePost() {
+export default async function SharePost() {
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user;
+
   return (
     <>
       <CreatePostModal />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">
-          <div className="avatar avatar-xs me-2">
-            <Image
-              className="avatar-img rounded-circle"
-              src="/07.jpg"
-              fill
-              alt="Avatar"
-            />
-          </div>
+          <Avatar
+            wrapperClassName="avatar avatar-xs me-2"
+            className="avatar-img rounded-circle"
+            src={currentUser?.profile.avatar ?? ""}
+            alt={currentUser?.fullName}
+          />
           <form className="w-100">
             <input
               className="form-control pe-4 border-0"

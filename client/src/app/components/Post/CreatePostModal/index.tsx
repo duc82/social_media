@@ -7,8 +7,13 @@ import {
   TagFill,
 } from "react-bootstrap-icons";
 import Avatar from "../../Avatar";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default function CreatePostModal() {
+export default async function CreatePostModal() {
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user;
+
   return (
     <div className="modal fade" id="createPostModal" tabIndex={-1}>
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -25,13 +30,12 @@ export default function CreatePostModal() {
 
           <div className="modal-body">
             <div className="d-flex mb-3">
-              <div className="avatar avatar-xs me-2">
-                <Avatar
-                  className="avatar-img rounded-circle"
-                  src="/03.jpg"
-                  alt=""
-                />
-              </div>
+              <Avatar
+                wrapperClassName="avatar avatar-xs me-2"
+                className="avatar-img rounded-circle"
+                src={currentUser?.profile.avatar ?? ""}
+                alt={currentUser?.fullName}
+              />
               <form className="w-100">
                 <textarea
                   className="form-control pe-4 fs-3 lh-1 border-0"

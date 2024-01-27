@@ -1,4 +1,4 @@
-export type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
+type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
 const API_BASE_URL: string | undefined = process.env.NEXT_PUBLIC_API_BASE_URL;
 

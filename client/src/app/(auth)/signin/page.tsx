@@ -6,9 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 export default function SignIn() {
   const {
@@ -19,6 +19,8 @@ export default function SignIn() {
     resolver: zodResolver(signInSchema),
     mode: "onChange",
   });
+  const urlSearchParams = useSearchParams();
+  const error = urlSearchParams.get("error");
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
@@ -36,14 +38,6 @@ export default function SignIn() {
     });
   };
 
-  useEffect(() => {
-    const error = new URLSearchParams(window.location.search).get("error");
-    console.log(error);
-    if (error) {
-      toast.error(error);
-    }
-  }, []);
-
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
@@ -53,6 +47,12 @@ export default function SignIn() {
           <Link href="/signup">Click here to sign up</Link>
         </span>
       </div>
+      {error && (
+        <div className="alert alert-danger mt-4 mb-0" role="alert">
+          {error}
+        </div>
+      )}
+
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-3 input-group-lg">
           <input
@@ -72,7 +72,7 @@ export default function SignIn() {
           <div className="mb-0 input-group input-group-lg">
             <input
               type={passwordType}
-              placeholder="Enter new password"
+              placeholder="Enter password"
               className="form-control"
               {...register("password")}
               aria-describedby="passwordHelpBlock"

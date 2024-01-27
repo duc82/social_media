@@ -1,12 +1,6 @@
-import { refresh, signIn } from "@/app/services/authService";
+import authService from "@/app/services/authService";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-const secret = process.env.NEXTAUTH_SECRET;
-
-if (!secret) {
-  throw new Error("NEXTAUTH_SECRET must be defined in .env");
-}
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -20,7 +14,7 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         if (credentials) {
           try {
-            const data = await signIn(credentials);
+            const data = await authService.signIn(credentials);
 
             return { ...data, ...data.user };
           } catch (error) {
@@ -39,14 +33,14 @@ export const authOptions: AuthOptions = {
         token.id = user.id;
         token.fullName = user.fullName;
         token.email = user.email;
+        token.profile = user.profile;
         token.createdAt = user.createdAt;
 
         let accessToken = user.accessToken;
         let expiresIn = user.expiresIn;
         if (Date.now() > expiresIn) {
-          console.log("refreshing token");
           try {
-            const data = await refresh(user.refreshToken);
+            const data = await authService.refresh(user.refreshToken);
             accessToken = data.accessToken;
             expiresIn = data.expiresIn;
           } catch (error) {
@@ -66,6 +60,7 @@ export const authOptions: AuthOptions = {
       session.user.id = token.id;
       session.user.fullName = token.fullName;
       session.user.email = token.email;
+      session.user.profile = token.profile;
       session.user.createdAt = token.createdAt;
       session.accessToken = token.accessToken;
       return session;
@@ -79,7 +74,7 @@ export const authOptions: AuthOptions = {
     newUser: "/",
   },
 
-  secret,
+  secret: process.env.NEXTAUTH_SECRET,
 
   debug: process.env.NODE_ENV === "development",
 };

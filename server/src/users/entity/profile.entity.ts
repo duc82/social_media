@@ -1,5 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum Gender {
   MALE = "male",
@@ -29,7 +28,9 @@ export class Profile {
   @Column()
   avatar: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   wallpaper: string;
 
   @Column({
@@ -59,7 +60,4 @@ export class Profile {
     nullable: true,
   })
   overview: string;
-
-  @OneToOne(() => User, (user) => user.profile)
-  user: User;
 }

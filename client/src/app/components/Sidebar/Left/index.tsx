@@ -3,8 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default function LeftSidebar() {
+export default async function LeftSidebar() {
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user;
+
   return (
     <div className="col-lg-3">
       <button
@@ -51,15 +56,19 @@ export default function LeftSidebar() {
               <div className="card-body pt-0">
                 <div className="text-center">
                   <Avatar
-                    src="/07.jpg"
+                    src={currentUser?.profile.avatar ?? ""}
+                    alt={currentUser?.fullName}
                     height="4rem"
                     width="4rem"
                     wrapperClassName="d-inline-block mt-n4 mb-2"
                     className="border border-3 border-white"
                   />
 
-                  <h5 className="mb-0">Sam Lanson</h5>
-                  <small>Web Developer at Webestica</small>
+                  <h5 className="mb-0">{currentUser?.fullName}</h5>
+                  {currentUser?.profile.job && (
+                    <small>{currentUser.profile.job}</small>
+                  )}
+
                   <p className="mt-3">
                     I'd love to change the world, but they won't give me the
                     source code.

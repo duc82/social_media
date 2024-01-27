@@ -1,5 +1,4 @@
 import Header from "../components/Header";
-import { SocketProvider } from "../hooks/useSocket";
 
 export default function PrivateLayout({
   children,
