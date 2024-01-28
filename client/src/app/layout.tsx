@@ -6,6 +6,7 @@ import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
 import BootstrapProvider from "./providers/BootstrapProvider";
 import GLightboxProvider from "./providers/GLightboxProvider";
+import TooltipProvider from "./providers/TooltipProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
               {children}
               <GLightboxProvider />
               <ToastProvider />
+              <TooltipProvider />
             </BootstrapProvider>
           </NextThemeProvider>
         </NextAuthProvider>

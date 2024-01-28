@@ -2,26 +2,21 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "./entity/post.entity";
 import { Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { CreatePostDto } from "./posts.dto";
+import { CreatePostDto } from "./dto/posts.dto";
 import { UsersService } from "src/users/users.service";
+import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
     private readonly usersService: UsersService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(post: CreatePostDto) {
-    const newPost = this.postRepository.create(post);
-
-    newPost.user = await this.usersService.findById(post.userId, {
-      relations: ["profile"],
-    });
-
-    await this.postRepository.save(newPost);
-
-    return newPost;
+  async create(post: CreatePostDto, files: Array<Express.Multer.File>) {
+    if (files.length > 0) {
+    }
   }
 
   async findAll(userId: string) {
@@ -33,11 +28,6 @@ export class PostsService {
 
   async findById(id: string) {
     return await this.postRepository.findOne({ where: { id } });
-  }
-
-  async update(id: string, post: Partial<CreatePostDto>) {
-    await this.postRepository.update({ id }, post);
-    return await this.findById(id);
   }
 
   async deleteOne(id: string) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { SignInDto, signInSchema } from "@/app/utils/validation";
+import { signInSchema } from "@/app/schemas/auth";
+import { SignInDto } from "@/app/types/auth";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";

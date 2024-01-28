@@ -42,7 +42,7 @@ export class AvatarInitialsService {
 
     // Draw text
     ctx.fillStyle = options?.fontColor ?? "white";
-    ctx.font = options?.font ?? "bold 120px Arial";
+    ctx.font = options?.font ?? "bold 100px Arial";
 
     const textWidth = ctx.measureText(initials).width;
     const textHeight = ctx.measureText(initials).actualBoundingBoxAscent;

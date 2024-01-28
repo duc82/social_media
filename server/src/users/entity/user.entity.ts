@@ -5,11 +5,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import { Profile } from "./profile.entity";
 import { Exclude } from "class-transformer";
@@ -22,6 +24,9 @@ export enum Role {
 }
 
 @Entity()
+@Index(["email"], { unique: true })
+@Index(["fullName"])
+@Unique(["email"])
 export class User {
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
@@ -36,9 +41,7 @@ export class User {
   @Column()
   email: string;
 
-  @Column({
-    length: 255,
-  })
+  @Column()
   @Exclude()
   password: string;
 
@@ -59,7 +62,9 @@ export class User {
   @OneToMany(() => User, (user) => user.friends)
   friends: User[];
 
-  @OneToMany(() => Post, (post) => post.user)
+  @OneToMany(() => Post, (post) => post.user, {
+    cascade: true,
+  })
   posts: Post[];
 
   @OneToMany(() => Comment, (comment) => comment.user)

@@ -1,6 +1,11 @@
-import { RefreshResponse, SignInResponse, SignUpResponse } from "../types/auth";
+import {
+  RefreshResponse,
+  SignInDto,
+  SignInResponse,
+  SignUpDto,
+  SignUpResponse,
+} from "../types/auth";
 import { FullUser } from "../types/user";
-import { SignInDto, SignUpDto } from "../utils/validation";
 import apiRequest from "./api";
 
 const authService = {

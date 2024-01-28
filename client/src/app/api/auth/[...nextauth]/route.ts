@@ -13,13 +13,8 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (credentials) {
-          try {
-            const data = await authService.signIn(credentials);
-
-            return { ...data, ...data.user };
-          } catch (error) {
-            throw error;
-          }
+          const data = await authService.signIn(credentials);
+          return { ...data, ...data.user };
         }
 
         throw new Error("Credentials not provided");
@@ -44,7 +39,7 @@ export const authOptions: AuthOptions = {
             accessToken = data.accessToken;
             expiresIn = data.expiresIn;
           } catch (error) {
-            throw error;
+            window.location.href = "/signin";
           }
         }
 

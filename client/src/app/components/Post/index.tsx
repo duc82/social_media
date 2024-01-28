@@ -173,7 +173,7 @@ export default function Post() {
             <Link href="#!">
               <Avatar
                 className="avatar-img rounded-circle"
-                src="/10.jpg"
+                src="/01.jpg"
                 alt=""
               />
             </Link>
@@ -276,7 +276,7 @@ export default function Post() {
                     <Link href="#!">
                       <Avatar
                         className="avatar-img rounded-circle"
-                        src="/08.jpg"
+                        src="/01.jpg"
                         alt=""
                       />
                     </Link>
@@ -330,7 +330,7 @@ export default function Post() {
                 <Link href="#!">
                   <Avatar
                     className="avatar-img rounded-circle"
-                    src="/09.jpg"
+                    src="/01.jpg"
                     alt=""
                   />
                 </Link>

@@ -55,6 +55,7 @@ li {
 }
 
 $list-inline-padding: 0.75rem;
+@import "./custom/dropzone";
 @import "./custom/stories";
 @import "./custom/utilities";
 @import "./custom/offcanvas";

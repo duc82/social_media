@@ -1,8 +1,11 @@
+"use client";
 import { useEffect } from "react";
-import useBootstrap from "./useBootstrap";
+import useBootstrap from "../hooks/useBootstrap";
+import { usePathname } from "next/navigation";
 
-export default function useTooltip() {
+export default function TooltipProvider() {
   const bootstrap = useBootstrap();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!bootstrap) return;
@@ -18,5 +21,7 @@ export default function useTooltip() {
     return () => {
       tooltipList.forEach((tooltip) => tooltip.dispose());
     };
-  }, [bootstrap]);
+  }, [bootstrap, pathname]);
+
+  return null;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { SignUpDto, signUpSchema } from "@/app/utils/validation";
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -12,6 +11,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import handlingError from "@/app/utils/error";
 import authService from "@/app/services/authService";
+import { SignUpDto } from "@/app/types/auth";
+import { signUpSchema } from "@/app/schemas/auth";
 
 const classNameScore: Record<number, string> = {
   0: "",

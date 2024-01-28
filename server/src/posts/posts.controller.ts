@@ -6,21 +6,29 @@ import {
   Post,
   Put,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
-import { CreatePostDto } from "./posts.dto";
+import { CreatePostDto } from "./dto/posts.dto";
 import { AuthGuard } from "src/auth/auth.guard";
 import { Request } from "express";
 import { Role } from "src/users/entity/user.entity";
+import { FilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("api/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post("create")
-  async create(@Body() post: CreatePostDto) {
-    return this.postsService.create(post);
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FilesInterceptor("files", 10))
+  async create(
+    @Body() post: CreatePostDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    return this.postsService.create(post, files);
   }
 
   @UseGuards(AuthGuard)
@@ -34,11 +42,6 @@ export class PostsController {
   @Get(":id")
   async findOneById(@Param() id: string) {
     return this.postsService.findById(id);
-  }
-
-  @Put("update/:id")
-  async update(@Param() id: string, @Body() post: Partial<CreatePostDto>) {
-    return this.postsService.update(id, post);
   }
 
   @Put("delete/:id")

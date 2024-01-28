@@ -15,7 +15,7 @@ export default async function SharePost() {
 
   return (
     <>
-      <CreatePostModal />
+      <CreatePostModal session={session} />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">
           <Avatar

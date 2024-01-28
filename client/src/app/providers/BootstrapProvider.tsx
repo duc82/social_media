@@ -11,7 +11,6 @@ export default function BootstrapProvider({
 
   useEffect(() => {
     const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
-
     setBootstrap(bootstrap);
   }, []);
 

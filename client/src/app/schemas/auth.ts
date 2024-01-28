@@ -3,7 +3,7 @@ import { z } from "zod";
 // regex one uppercase, one lowercase, one number, one special character, 8 characters minimum
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
 
-const signUpSchema = z
+export const signUpSchema = z
   .object({
     fullName: z
       .string({
@@ -32,7 +32,7 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-const signInSchema = z.object({
+export const signInSchema = z.object({
   email: z
     .string({
       required_error: "Email is required",
@@ -40,10 +40,3 @@ const signInSchema = z.object({
     .email("Invalid email address"),
   password: z.string({ required_error: "Password is required" }),
 });
-
-interface SignUpDto
-  extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {}
-interface SignInDto extends z.infer<typeof signInSchema> {}
-
-export { signUpSchema, signInSchema };
-export type { SignInDto, SignUpDto };

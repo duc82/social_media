@@ -1,13 +1,11 @@
 "use client";
-import useTooltip from "@/app/hooks/useTooltip";
+
 import clsx from "clsx";
 import { useTheme } from "next-themes";
 import { CircleHalf, MoonStars, Sun } from "react-bootstrap-icons";
 
 export default function SwitchTheme() {
   const { theme, setTheme } = useTheme();
-
-  useTooltip();
 
   const handleChangeTheme = (theme: "light" | "dark" | "system") => {
     setTheme(theme);
