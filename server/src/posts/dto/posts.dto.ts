@@ -6,9 +6,6 @@ export class CreatePostDto {
   @IsString()
   content: string;
 
-  @ValidateIf((o) => o.files)
-  files: File[];
-
   @IsEnum(Audience)
   audience: Audience;
 }

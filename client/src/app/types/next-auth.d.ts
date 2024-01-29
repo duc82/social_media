@@ -11,7 +11,7 @@ declare module "next-auth" {
   interface User extends FullUser {
     accessToken: string;
     refreshToken: string;
-    expiresIn: number;
+    expired: number;
   }
 
   type CurrentUser = Omit<User, "accessToken"> & DefaultSession["user"];
@@ -19,8 +19,6 @@ declare module "next-auth" {
   interface Session {
     user: CurrentUser;
     accessToken: string;
-    refreshToken: string;
-    expiresIn: number;
   }
 }
 
@@ -31,7 +29,7 @@ declare module "next-auth/jwt" {
     accessToken: string;
     /** OpenID Refresh Token */
     refreshToken: string;
-    /** OpenID Access Token Expiration Time */
-    expiresIn: number;
+    /** OpenID ID Token expiry time in seconds since 01/01/1970 */
+    expired: number;
   }
 }

@@ -14,7 +14,13 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         if (credentials) {
           const data = await authService.signIn(credentials);
-          return { ...data, ...data.user };
+          console.log({ data });
+          return {
+            ...data.user,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            expired: data.expiresIn,
+          };
         }
 
         throw new Error("Credentials not provided");
@@ -30,22 +36,21 @@ export const authOptions: AuthOptions = {
         token.email = user.email;
         token.profile = user.profile;
         token.createdAt = user.createdAt;
-
-        let accessToken = user.accessToken;
-        let expiresIn = user.expiresIn;
-        if (Date.now() > expiresIn) {
-          try {
-            const data = await authService.refresh(user.refreshToken);
-            accessToken = data.accessToken;
-            expiresIn = data.expiresIn;
-          } catch (error) {
-            window.location.href = "/signin";
-          }
-        }
-
-        token.accessToken = accessToken;
+        token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
-        token.expiresIn = expiresIn;
+        token.expired = user.expired;
+      }
+
+      console.log(token.expired);
+
+      if (Date.now() > token.expired) {
+        try {
+          const data = await authService.refresh(user.refreshToken);
+          token.accessToken = data.accessToken;
+          token.expired = data.expiresIn;
+        } catch (error) {
+          window.location.href = "/signin";
+        }
       }
 
       return token;

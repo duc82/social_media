@@ -9,19 +9,15 @@ import {
   EmojiSmileFill,
   GeoAltFill,
   ImageFill,
-  Images,
   TagFill,
 } from "react-bootstrap-icons";
-import { useEffect, useRef, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import postService from "@/app/services/postService";
 import handlingError from "@/app/utils/error";
 import useBootstrap from "@/app/hooks/useBootstrap";
-
-interface FilePreview extends File {
-  preview: string;
-}
+import { FilePreview } from "@/app/types";
+import Dropzone from "./Dropzone";
 
 export default function CreatePostModal({
   session,
@@ -34,15 +30,16 @@ export default function CreatePostModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const bootstrap = useBootstrap();
 
+  const { register, handleSubmit, reset } = useForm<PostDto>();
+
   const closeModal = () => {
+    setFiles([]);
+    setActivePhotoVideo(false);
+    reset();
     if (modalRef.current && bootstrap) {
       bootstrap.Modal.getOrCreateInstance(modalRef.current).hide();
     }
   };
-
-  const { register, handleSubmit } = useForm<PostDto>({
-    mode: "onChange",
-  });
 
   const onSubmit = async (data: PostDto) => {
     if (!data.content && !files.length) {
@@ -58,39 +55,20 @@ export default function CreatePostModal({
       formData.append("files[]", file);
     }
 
-    // try {
-    //   const value = await postService.create(
-    //     formData,
-    //     session?.accessToken ?? ""
-    //   );
-    // } catch (error) {
-    //   toast.error(handlingError(error));
-    // }
-    closeModal();
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/*": [],
-      "video/*": [],
-    },
-    onDrop: (acceptedFiles) => {
-      const images = acceptedFiles.map((file: File) =>
-        Object.assign(file, { preview: URL.createObjectURL(file) })
+    try {
+      const value = await postService.create(
+        formData,
+        session?.accessToken ?? ""
       );
-      setFiles(images);
-    },
-  });
-
-  useEffect(() => {
-    return () => {
-      files.forEach((file) => URL.revokeObjectURL(file.preview));
-    };
-  }, []);
+      closeModal();
+    } catch (error) {
+      toast.error(handlingError(error));
+    }
+  };
 
   return (
     <div className="modal fade" id="createPostModal" ref={modalRef}>
-      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Create post</h5>
@@ -121,17 +99,24 @@ export default function CreatePostModal({
                 ></textarea>
               </div>
               {isActivePhotoVideo && (
-                <div className="mb-4">
-                  <label htmlFor="" className="form-label">
-                    Upload attachment
-                  </label>
-                  <div {...getRootProps({ className: "dropzone" })}>
-                    <input {...getInputProps()} />
-                    <div className="dz-message">
-                      <Images className="display-3" />
-                      <p>Drag here or click to upload photo/video.</p>
+                <Dropzone files={files} setFiles={setFiles} />
+              )}
+              {files.length > 0 && (
+                <div className="row g-2 mb-3">
+                  {files.map((file) => (
+                    <div className="col-3" key={file.preview}>
+                      <div className="card">
+                        <img
+                          src={file.preview}
+                          alt={file.name}
+                          width={120}
+                          height={120}
+                          className="card-img object-fit-cover"
+                          onLoad={() => URL.revokeObjectURL(file.preview)}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               )}
               <div className="hstack gap-2">

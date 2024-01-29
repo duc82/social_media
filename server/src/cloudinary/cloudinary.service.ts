@@ -4,17 +4,6 @@ import { CloudinaryResponse } from "./cloudinary.interface";
 
 @Injectable()
 export class CloudinaryService {
-  async uploadFile(
-    file: Express.Multer.File,
-    options?: UploadApiOptions,
-  ): Promise<CloudinaryResponse> {
-    const cloudinaryResponse = await cloudinary.uploader.upload(file.path, {
-      folder: "social_media",
-      ...options,
-    });
-    return cloudinaryResponse;
-  }
-
   uploadFileFromBuffer(
     buffer: Buffer,
     options?: UploadApiOptions,

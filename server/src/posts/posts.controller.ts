@@ -16,6 +16,7 @@ import { AuthGuard } from "src/auth/auth.guard";
 import { Request } from "express";
 import { Role } from "src/users/entity/user.entity";
 import { FilesInterceptor } from "@nestjs/platform-express";
+import { User } from "src/users/users.decorator";
 
 @Controller("api/posts")
 export class PostsController {
@@ -23,12 +24,13 @@ export class PostsController {
 
   @Post("create")
   @UseGuards(AuthGuard)
-  @UseInterceptors(FilesInterceptor("files", 10))
+  @UseInterceptors(FilesInterceptor("files[]", 4))
   async create(
     @Body() post: CreatePostDto,
+    @User("userId") userId: string,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return this.postsService.create(post, files);
+    return this.postsService.create(post, userId, files);
   }
 
   @UseGuards(AuthGuard)

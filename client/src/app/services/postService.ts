@@ -1,14 +1,29 @@
 import { PostResponse } from "../types/post";
-import apiRequest from "./api";
 
 const postService = {
-  create: (formData: FormData, acessToken: string) => {
-    return apiRequest<PostResponse>("/posts", "POST", formData, {
-      headers: {
-        Authorization: `Bearer ${acessToken}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+  create: async (formData: FormData, acessToken: string) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/create`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${acessToken}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      return data as PostResponse;
+    } catch (error) {
+      throw error;
+    }
   },
 };
 
