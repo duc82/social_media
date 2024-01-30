@@ -9,7 +9,7 @@ import {
   PencilFill,
   PlusLg,
 } from "react-bootstrap-icons";
-import ProfileMainHeaderMenu from "./ProfileMainHeaderMenu";
+import ProfileMainHeaderMenu from "./Menu";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 

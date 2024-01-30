@@ -1,4 +1,5 @@
 import authService from "@/app/services/authService";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -14,13 +15,7 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         if (credentials) {
           const data = await authService.signIn(credentials);
-          console.log({ data });
-          return {
-            ...data.user,
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-            expired: data.expiresIn,
-          };
+          return { ...data, ...data.user };
         }
 
         throw new Error("Credentials not provided");
@@ -38,19 +33,6 @@ export const authOptions: AuthOptions = {
         token.createdAt = user.createdAt;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
-        token.expired = user.expired;
-      }
-
-      console.log(token.expired);
-
-      if (Date.now() > token.expired) {
-        try {
-          const data = await authService.refresh(user.refreshToken);
-          token.accessToken = data.accessToken;
-          token.expired = data.expiresIn;
-        } catch (error) {
-          window.location.href = "/signin";
-        }
       }
 
       return token;
@@ -63,6 +45,22 @@ export const authOptions: AuthOptions = {
       session.user.profile = token.profile;
       session.user.createdAt = token.createdAt;
       session.accessToken = token.accessToken;
+
+      const decoded = jwtDecode<JwtPayload>(session.accessToken);
+
+      if (!decoded.exp) {
+        throw new Error("Token has no expiration date");
+      }
+
+      if (Date.now() >= decoded.exp * 1000) {
+        try {
+          const data = await authService.refresh(token.refreshToken);
+          session.accessToken = data.accessToken;
+        } catch (error) {
+          throw error;
+        }
+      }
+
       return session;
     },
   },

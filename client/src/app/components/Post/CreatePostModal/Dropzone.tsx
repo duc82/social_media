@@ -5,23 +5,23 @@ import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
 
 interface DropzoneProps {
-  files: FilePreview[];
   setFiles: React.Dispatch<React.SetStateAction<FilePreview[]>>;
 }
 
-export default function Dropzone({ files, setFiles }: DropzoneProps) {
-  const { getRootProps, getInputProps, isDragReject } = useDropzone({
+export default function Dropzone({ setFiles }: DropzoneProps) {
+  const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
       "video/*": [],
     },
     maxFiles: 4,
+    maxSize: 1024 * 1024 * 1024,
     onDrop: (acceptedFiles, fileRejections) => {
       if (fileRejections.length) {
         switch (fileRejections[0].errors[0].code) {
-          // case "file-too-large":
-          //   toast.error("File too large. Max file size is 5MB.");
-          //   break;
+          case "file-too-large":
+            toast.error("File too large. Max file size is 1GB.");
+            break;
           case "too-many-files":
             toast.error("Too many files. Max files is 4.");
             break;
@@ -47,7 +47,7 @@ export default function Dropzone({ files, setFiles }: DropzoneProps) {
   return (
     <div className="mb-3">
       <label htmlFor="" className="form-label">
-        Upload attachment
+        Upload attachment (Max 4 files, max 1GB)
       </label>
       <div {...getRootProps({ className: "dropzone" })}>
         <input {...getInputProps()} />

@@ -10,6 +10,7 @@ import {
   GeoAltFill,
   ImageFill,
   TagFill,
+  XLg,
 } from "react-bootstrap-icons";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -19,12 +20,29 @@ import useBootstrap from "@/app/hooks/useBootstrap";
 import { FilePreview } from "@/app/types";
 import Dropzone from "./Dropzone";
 
+const colLengthClassName = (length: number) => {
+  const obj: Record<number, string> = {
+    1: "col-12",
+    2: "col-6",
+    3: "col-4",
+    4: "col-3",
+  };
+
+  if (length > 4) {
+    return "col-3";
+  }
+
+  return obj[length];
+};
+
 export default function CreatePostModal({
   session,
+  initialActiveDropzone = false,
 }: {
   session: Session | null;
+  initialActiveDropzone?: boolean;
 }) {
-  const [isActivePhotoVideo, setActivePhotoVideo] = useState(false);
+  const [isActiveDropzone, setActiveDropzone] = useState(initialActiveDropzone);
   const [files, setFiles] = useState<FilePreview[]>([]);
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -34,7 +52,7 @@ export default function CreatePostModal({
 
   const closeModal = () => {
     setFiles([]);
-    setActivePhotoVideo(false);
+    setActiveDropzone(false);
     reset();
     if (modalRef.current && bootstrap) {
       bootstrap.Modal.getOrCreateInstance(modalRef.current).hide();
@@ -56,10 +74,7 @@ export default function CreatePostModal({
     }
 
     try {
-      const value = await postService.create(
-        formData,
-        session?.accessToken ?? ""
-      );
+      await postService.create(formData, session?.accessToken ?? "");
       closeModal();
     } catch (error) {
       toast.error(handlingError(error));
@@ -81,7 +96,10 @@ export default function CreatePostModal({
           </div>
 
           <form className="w-100" onSubmit={handleSubmit(onSubmit)}>
-            <div className="modal-body">
+            <div
+              className="modal-body overflow-y-auto"
+              style={{ maxHeight: 400 }}
+            >
               <div className="d-flex mb-3">
                 <Avatar
                   wrapperClassName="avatar avatar-xs me-2"
@@ -98,25 +116,33 @@ export default function CreatePostModal({
                   {...register("content")}
                 ></textarea>
               </div>
-              {isActivePhotoVideo && (
-                <Dropzone files={files} setFiles={setFiles} />
+              {isActiveDropzone && !files.length && (
+                <Dropzone setFiles={setFiles} />
               )}
               {files.length > 0 && (
-                <div className="row g-2 mb-3">
+                <div className="row g-2 mb-3 position-relative">
                   {files.map((file) => (
-                    <div className="col-3" key={file.preview}>
-                      <div className="card">
+                    <div
+                      className={colLengthClassName(files.length)}
+                      key={file.preview}
+                    >
+                      <div className="card border-0">
                         <img
                           src={file.preview}
                           alt={file.name}
-                          width={120}
-                          height={120}
                           className="card-img object-fit-cover"
                           onLoad={() => URL.revokeObjectURL(file.preview)}
                         />
                       </div>
                     </div>
                   ))}
+
+                  <button
+                    type="button"
+                    className="position-absolute top-0 end-0 mt-0"
+                  >
+                    <XLg />
+                  </button>
                 </div>
               )}
               <div className="hstack gap-2">
@@ -126,7 +152,8 @@ export default function CreatePostModal({
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   data-bs-title="Photo/Video"
-                  onClick={() => setActivePhotoVideo(!isActivePhotoVideo)}
+                  data-bs-trigger="hover"
+                  onClick={() => setActiveDropzone(!isActiveDropzone)}
                 >
                   <ImageFill />
                 </button>

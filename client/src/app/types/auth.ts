@@ -7,10 +7,10 @@ interface SignUpResponse {
   message: string;
 }
 
-interface SignInResponse extends SignUpResponse {
+interface SignInResponse {
   accessToken: string;
   refreshToken: string;
-  expiresIn: number;
+  user: FullUser;
 }
 
 interface SignUpDto
@@ -18,8 +18,10 @@ interface SignUpDto
 
 interface SignInDto extends z.infer<typeof signInSchema> {}
 
-interface RefreshResponse
-  extends Pick<SignInResponse, "accessToken" | "message" | "expiresIn"> {}
+interface RefreshResponse {
+  message: string;
+  accessToken: string;
+}
 
 export type {
   SignUpResponse,

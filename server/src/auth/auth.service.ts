@@ -103,7 +103,6 @@ export class AuthService {
       user,
       accessToken,
       refreshToken,
-      expiresIn: this.accessTokenExpired,
       message: "User logged in successfully",
     };
   }
