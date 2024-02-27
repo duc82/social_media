@@ -1,18 +1,18 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Post } from "./entity/post.entity";
 import { Repository } from "typeorm";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePostDto } from "./dto/posts.dto";
-import { UsersService } from "src/users/users.service";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { File } from "./entity/file.entity";
+import { User } from "src/users/entity/user.entity";
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
     @InjectRepository(File) private readonly fileRepository: Repository<File>,
-    private readonly usersService: UsersService,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
@@ -21,11 +21,21 @@ export class PostsService {
     userId: string,
     files: Array<Express.Multer.File>,
   ) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ["profile"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
     const newPost = this.postRepository.create({
       ...post,
-      user: {
-        id: userId,
-      },
+      user,
+      files: [],
+      likes: [],
+      comments: [],
     });
 
     if (files.length) {
@@ -52,20 +62,15 @@ export class PostsService {
     };
   }
 
-  async findAll(userId: string) {
+  async getAll() {
     return await this.postRepository.find({
-      where: { user: { id: userId } },
-      relations: ["user"],
+      relations: ["user", "user.profile", "files", "likes", "comments"],
     });
-  }
-
-  async findById(id: string) {
-    return await this.postRepository.findOne({ where: { id } });
   }
 
   async deleteOne(id: string) {
     await this.postRepository.delete({ id });
-    return { deleted: true };
+    return { message: "Post deleted successfully" };
   }
 
   async deleteMany(ids: string[]) {

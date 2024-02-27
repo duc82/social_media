@@ -1,6 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreatePostModal";
+import EmojiModal from "@/app/components/Post/CreatePostModal/EmojiModal";
 import { getServerSession } from "next-auth";
 import {
   Calendar2EventFill,
@@ -16,6 +17,7 @@ export default async function SharePost() {
   return (
     <>
       <CreatePostModal session={session} />
+      <EmojiModal />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">
           <Avatar

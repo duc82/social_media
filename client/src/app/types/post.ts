@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { postSchema } from "../schemas/post";
+import { User } from "./user";
 
 interface File {
   id: string;
@@ -11,9 +12,11 @@ interface File {
 
 interface Post {
   id: string;
-  content: string;
+  content?: string;
   files: File[];
-  userId: string;
+  user: User;
+  likes: User[];
+  comments: User[];
   audience: "public" | "friends" | "private";
   createdAt: string;
 }

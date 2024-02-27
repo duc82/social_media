@@ -20,4 +20,13 @@ export class CloudinaryService {
         .end(buffer);
     });
   }
+
+  resizeImage(publicId: string, width: number, height: number, crop: string) {
+    return cloudinary.image(publicId, {
+      width,
+      height,
+      crop,
+      secure: true,
+    });
+  }
 }

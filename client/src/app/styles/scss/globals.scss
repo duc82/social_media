@@ -29,7 +29,6 @@
 // Body
 $body-color: rgb(102, 105, 120);
 $body-bg: $gray-200;
-$font-size-base: $h6-font-size;
 
 $enable-negative-margins: true;
 
@@ -44,6 +43,11 @@ a {
 small,
 .small {
   font-weight: 400;
+}
+
+ol,
+ul {
+  padding: 0 !important;
 }
 
 li {

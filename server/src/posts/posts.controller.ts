@@ -1,11 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
-  Put,
-  Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -13,18 +12,16 @@ import {
 import { PostsService } from "./posts.service";
 import { CreatePostDto } from "./dto/posts.dto";
 import { AuthGuard } from "src/auth/auth.guard";
-import { Request } from "express";
-import { Role } from "src/users/entity/user.entity";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { User } from "src/users/users.decorator";
 
+@UseGuards(AuthGuard)
 @Controller("api/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post("create")
-  @UseGuards(AuthGuard)
-  @UseInterceptors(FilesInterceptor("files[]", 4))
+  @UseInterceptors(FilesInterceptor("file[]", 12))
   async create(
     @Body() post: CreatePostDto,
     @User("userId") userId: string,
@@ -33,25 +30,17 @@ export class PostsController {
     return this.postsService.create(post, userId, files);
   }
 
-  @UseGuards(AuthGuard)
   @Get()
-  async findAll(
-    @Req() req: Request & { user: { userId: string; role: Role } },
-  ) {
-    return this.postsService.findAll(req.user.userId);
+  async getAll() {
+    return this.postsService.getAll();
   }
 
-  @Get(":id")
-  async findOneById(@Param() id: string) {
-    return this.postsService.findById(id);
-  }
-
-  @Put("delete/:id")
-  async deleteOne(@Param() id: string) {
+  @Delete("delete/:id")
+  async deleteOne(@Param("id") id: string) {
     return this.postsService.deleteOne(id);
   }
 
-  @Post("delete")
+  @Delete("deleteMany")
   async deleteMany(@Body() ids: string[]) {
     return this.postsService.deleteMany(ids);
   }

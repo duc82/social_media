@@ -14,19 +14,19 @@ $utilities: (
     ),
   ),
 
-  "width": (
-    property: width,
-    class: w,
-    values: (
-      "40px": 40px,
-      25: 25%,
-      50: 50%,
-      75: 75%,
-      100: 100%,
-      auto: auto,
+  "width":
+    map-merge(
+      map-get($utilities, "width"),
+      (
+        values:
+          map-merge(
+            map-get(map-get($utilities, "width"), "values"),
+            (
+              "40px": 40px,
+            )
+          ),
+      )
     ),
-  ),
-
   "shadow": (
     property: box-shadow,
     class: shadow,
@@ -38,4 +38,18 @@ $utilities: (
       none: none,
     ),
   ),
+
+  "color":
+    map-merge(
+      map-get($utilities, "color"),
+      (
+        values:
+          map-merge(
+            map-get(map-get($utilities, "color"), "values"),
+            (
+              "gray-700": $gray-700,
+            )
+          ),
+      )
+    ),
 );

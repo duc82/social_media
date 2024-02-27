@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import Avatar from "../Avatar";
@@ -12,8 +13,16 @@ import {
   ThreeDots,
   XCircle,
 } from "react-bootstrap-icons";
+import { Post } from "@/app/types/post";
+import formatDateTime from "@/app/utils/formatDateTime";
 
-export default function Post() {
+export default function Post({
+  post,
+  handleDeletePost,
+}: {
+  post: Post;
+  handleDeletePost: (id: string) => Promise<void>;
+}) {
   return (
     <div className="card">
       <div className="card-header border-0 pb-0">
@@ -22,18 +31,26 @@ export default function Post() {
             <Link href="#!" className="avatar avatar-story me-2">
               <Avatar
                 className="avatar-img rounded-circle"
-                src="/04.jpg"
-                alt="Avatar"
+                src={post.user.profile.avatar}
+                alt={post.user.fullName}
               />
             </Link>
             <div>
               <div className="nav nav-divider">
                 <Link href="#!" className="nav-item card- mb-0 h6">
-                  Lori Ferguson
+                  {post.user.fullName}
                 </Link>
-                <span className="nav-item small"> 2hr</span>
+                <span
+                  className="nav-item small"
+                  title={new Date(post.createdAt).toLocaleString("en-US", {
+                    dateStyle: "full",
+                    timeStyle: "short",
+                  })}
+                >
+                  {formatDateTime(post.createdAt)}
+                </span>
               </div>
-              <p className="mb-0 small">Web Developer at Webestica</p>
+              <p className="mb-0 small">{post.user.profile.job}</p>
             </div>
           </div>
           <div className="dropdown">
@@ -63,10 +80,13 @@ export default function Post() {
                 </Link>
               </li>
               <li>
-                <Link className="dropdown-item" href="#">
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleDeletePost(post.id)}
+                >
                   <XCircle className="fa-fw pe-2" />
-                  Hide post
-                </Link>
+                  Remove post
+                </button>
               </li>
               <li>
                 <Link className="dropdown-item" href="#">
@@ -88,18 +108,25 @@ export default function Post() {
         </div>
       </div>
       <div className="card-body">
-        <p>
-          I'm thrilled href share that I've completed a graduate certificate
-          course in project management with the president's honor roll.
-        </p>
-        <Image
-          src="/01.jpg"
-          alt="Post"
-          width={0}
-          height={0}
-          sizes="100vw"
-          className="card-img h-auto"
-        />
+        {post.content && <p className="mb-0 text-black">{post.content}</p>}
+        {post.files.length > 0 && post.files[0].type === "image" && (
+          <div className="row mt-2 gx-2">
+            {post.files.map((file) => (
+              <div className="col-6 position-relative" key={file.id}>
+                <Image
+                  src={file.url}
+                  alt={post.id}
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  className="card-img"
+                  style={{ height: 300 }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
         <ul className="nav nav-stack py-3 small">
           <li className="nav-item">
             <Link
@@ -107,7 +134,7 @@ export default function Post() {
               href="#!"
             >
               <HandThumbsUpFill className="pe-1" size={18} />
-              Liked (56)
+              Liked ({post.likes.length})
             </Link>
           </li>
           <li className="nav-item">
@@ -116,7 +143,7 @@ export default function Post() {
               href="#!"
             >
               <ChatFill className="pe-1" size={18} />
-              Comments (12)
+              Comments ({})
             </Link>
           </li>
           <li className="nav-item dropdown ms-sm-auto">
@@ -168,13 +195,13 @@ export default function Post() {
           </li>
         </ul>
 
-        <div className="d-flex mb-3">
+        <div className="d-flex align-items-center mb-3">
           <div className="avatar avatar-xs me-2">
             <Link href="#!">
               <Avatar
                 className="avatar-img rounded-circle"
-                src="/01.jpg"
-                alt=""
+                src={post.user.profile.avatar}
+                alt={post.user.fullName}
               />
             </Link>
           </div>
@@ -186,205 +213,6 @@ export default function Post() {
             />
           </form>
         </div>
-        <ul className="comment-wrap list-unstyled">
-          <li className="comment-item">
-            <div className="d-flex position-relative">
-              <div className="avatar avatar-xs">
-                <Link href="#!">
-                  <Avatar
-                    className="avatar-img rounded-circle"
-                    src="/05.jpg"
-                    alt=""
-                  />
-                </Link>
-              </div>
-              <div className="ms-2">
-                <div className="bg-light rounded-start-top-0 p-3 rounded">
-                  <div className="d-flex justify-content-between">
-                    <h6 className="mb-1">
-                      <Link href="#!"> Frances Guerrero </Link>
-                    </h6>
-                    <small className="ms-2">5hr</small>
-                  </div>
-                  <p className="small mb-0">
-                    Removed demands expense account in outward tedious do.
-                    Particular way thoroughly unaffected projection.
-                  </p>
-                </div>
-                <ul className="nav nav-divider py-2 small">
-                  <li className="nav-item">
-                    <Link href="#!" className="nav-link">
-                      Like (3)
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link href="#!" className="nav-link">
-                      Reply
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link href="#!" className="nav-link">
-                      View 5 replies
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <ul className="comment-item-nested list-unstyled">
-              <li className="comment-item">
-                <div className="d-flex">
-                  <div className="avatar avatar-xs">
-                    <Link href="#!">
-                      <Avatar
-                        className="avatar-img rounded-circle"
-                        src="/07.jpg"
-                        alt=""
-                      />
-                    </Link>
-                  </div>
-                  <div className="ms-2">
-                    <div className="bg-light p-3 rounded">
-                      <div className="d-flex justify-content-between">
-                        <h6 className="mb-1">
-                          <Link href="#!"> Lori Stevens </Link>{" "}
-                        </h6>
-                        <small className="ms-2">2hr</small>
-                      </div>
-                      <p className="small mb-0">
-                        See resolved goodness felicity shy civility domestic had
-                        but Drawings offended yet answered Jennings perceive.
-                      </p>
-                    </div>
-                    <ul className="nav nav-divider py-2 small">
-                      <li className="nav-item">
-                        <Link href="#!" className="nav-link">
-                          Like (5)
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link href="#!" className="nav-link">
-                          Reply
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </li>
-              <li className="comment-item">
-                <div className="d-flex">
-                  <div className="avatar avatar-story avatar-xs">
-                    <Link href="#!">
-                      <Avatar
-                        className="avatar-img rounded-circle"
-                        src="/01.jpg"
-                        alt=""
-                      />
-                    </Link>
-                  </div>
-                  <div className="ms-2">
-                    <div className="bg-light p-3 rounded">
-                      <div className="d-flex justify-content-between">
-                        <h6 className="mb-1">
-                          <Link href="#!"> Billy Vasquez </Link>{" "}
-                        </h6>
-                        <small className="ms-2">15min</small>
-                      </div>
-                      <p className="small mb-0">
-                        Wishing calling is warrant settled was lucky.
-                      </p>
-                    </div>
-                    <ul className="nav nav-divider py-2 small">
-                      <li className="nav-item">
-                        <Link href="#!" className="nav-link">
-                          Like
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link href="#!" className="nav-link">
-                          Reply
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </li>
-            </ul>
-            <Link
-              href="#!"
-              role="button"
-              className="btn btn-link btn-link-loader btn-sm text-secondary d-flex align-items-center mb-3 ms-5"
-              data-bs-toggle="button"
-              aria-pressed="true"
-            >
-              <div className="spinner-dots me-2">
-                <span className="spinner-dot"></span>
-                <span className="spinner-dot"></span>
-                <span className="spinner-dot"></span>
-              </div>
-              Load more replies
-            </Link>
-          </li>
-          <li className="comment-item">
-            <div className="d-flex">
-              <div className="avatar avatar-xs">
-                <Link href="#!">
-                  <Avatar
-                    className="avatar-img rounded-circle"
-                    src="/01.jpg"
-                    alt=""
-                  />
-                </Link>
-              </div>
-              <div className="ms-2">
-                <div className="bg-light p-3 rounded">
-                  <div className="d-flex justify-content-between">
-                    <h6 className="mb-1">
-                      <Link href="#!"> Frances Guerrero </Link>{" "}
-                    </h6>
-                    <small className="ms-2">4min</small>
-                  </div>
-                  <p className="small mb-0">
-                    Removed demands expense account in outward tedious do.
-                    Particular way thoroughly unaffected projection.
-                  </p>
-                </div>
-                <ul className="nav nav-divider pt-2 small">
-                  <li className="nav-item">
-                    <Link href="#!" className="nav-link">
-                      Like (1)
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link href="#!" className="nav-link">
-                      Reply
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link href="#!" className="nav-link">
-                      View 6 replies
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div className="card-footer border-0 pt-0">
-        <Link
-          href="#!"
-          role="button"
-          className="btn btn-link btn-link-loader btn-sm text-secondary d-flex align-items-center"
-          data-bs-toggle="button"
-          aria-pressed="true"
-        >
-          <div className="spinner-dots me-2">
-            <span className="spinner-dot"></span>
-            <span className="spinner-dot"></span>
-            <span className="spinner-dot"></span>
-          </div>
-          Load more comments
-        </Link>
       </div>
     </div>
   );

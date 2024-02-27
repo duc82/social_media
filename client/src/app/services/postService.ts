@@ -1,29 +1,30 @@
-import { PostResponse } from "../types/post";
+import { Post, PostResponse } from "../types/post";
+import apiRequest from "./api";
 
 const postService = {
   create: async (formData: FormData, acessToken: string) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/create`,
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${acessToken}`,
-          },
-        }
-      );
+    return apiRequest<PostResponse>("/posts/create", "POST", {
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${acessToken}`,
+      },
+    });
+  },
 
-      const data = await res.json();
+  getAll: async (accessToken: string) => {
+    return apiRequest<Post[]>("/posts", "GET", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
 
-      if (!res.ok) {
-        throw new Error(data.message);
-      }
-
-      return data as PostResponse;
-    } catch (error) {
-      throw error;
-    }
+  delete: async (id: string, accessToken: string) => {
+    return apiRequest<{ message: string }>(`/posts/delete/${id}`, "DELETE", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
   },
 };
 

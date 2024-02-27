@@ -11,7 +11,7 @@ export default function TooltipProvider() {
     if (!bootstrap) return;
 
     const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
+      '[data-bs-tooltip="tooltip"]'
     );
 
     const tooltipList = [...tooltipTriggerList].map(

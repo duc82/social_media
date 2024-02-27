@@ -1,14 +1,15 @@
-import Post from "@/app/components/Post";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import Posts from "@/app/components/Posts";
 import SharePost from "@/app/components/Profile/Main/SharePost";
+import { getServerSession } from "next-auth";
 
-export default function Profile() {
+export default async function Profile() {
+  const session = await getServerSession(authOptions);
+
   return (
     <>
       <SharePost />
-
-      {[...Array(10)].map((_, i) => (
-        <Post key={i} />
-      ))}
+      <Posts accessToken={session?.accessToken!} />
     </>
   );
 }

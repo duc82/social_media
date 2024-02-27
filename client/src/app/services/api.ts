@@ -11,13 +11,11 @@ if (!API_BASE_URL) {
 export default async function apiRequest<T>(
   endpoint: string,
   method: Method = "GET",
-  body: any = null,
   init: RequestInit = {}
 ): Promise<T> {
   try {
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
-      body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
         ...init.headers,
