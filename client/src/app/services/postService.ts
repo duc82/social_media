@@ -11,8 +11,12 @@ const postService = {
     });
   },
 
-  getAll: async (accessToken: string) => {
-    return apiRequest<Post[]>("/posts", "GET", {
+  getAll: async () => {
+    return apiRequest<Post[]>("/posts", "GET");
+  },
+
+  getMyPosts: async (accessToken: string) => {
+    return apiRequest<Post[]>("/posts/me", "GET", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

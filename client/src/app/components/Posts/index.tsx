@@ -1,10 +1,10 @@
 "use client";
+import usePost from "@/app/hooks/usePost";
 import Post from "../Post";
 import postService from "@/app/services/postService";
-import usePosts from "@/app/hooks/usePosts";
 
 export default function Posts({ accessToken }: { accessToken: string }) {
-  const { posts, removePost, setPosts } = usePosts((state) => state);
+  const { posts, removePost } = usePost();
 
   const handleDeletePost = async (id: string) => {
     await postService.delete(id, accessToken);

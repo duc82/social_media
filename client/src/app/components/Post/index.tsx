@@ -110,7 +110,7 @@ export default function Post({
       <div className="card-body">
         {post.content && <p className="mb-0 text-black">{post.content}</p>}
         {post.files.length > 0 && post.files[0].type === "image" && (
-          <div className="row mt-2 gx-2">
+          <div className="row mt-2 g-2">
             {post.files.map((file) => (
               <div className="col-6 position-relative" key={file.id}>
                 <Image
@@ -121,6 +121,7 @@ export default function Post({
                   sizes="100vw"
                   className="card-img"
                   style={{ height: 300 }}
+                  objectFit="cover"
                 />
               </div>
             ))}

@@ -15,11 +15,11 @@ import { AuthGuard } from "src/auth/auth.guard";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { User } from "src/users/users.decorator";
 
-@UseGuards(AuthGuard)
 @Controller("api/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @UseGuards(AuthGuard)
   @Post("create")
   @UseInterceptors(FilesInterceptor("file[]", 12))
   async create(
@@ -35,11 +35,19 @@ export class PostsController {
     return this.postsService.getAll();
   }
 
+  @UseGuards(AuthGuard)
+  @Get("me")
+  async getMyPosts(@User("userId") userId: string) {
+    return this.postsService.getMyPosts(userId);
+  }
+
+  @UseGuards(AuthGuard)
   @Delete("delete/:id")
   async deleteOne(@Param("id") id: string) {
     return this.postsService.deleteOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Delete("deleteMany")
   async deleteMany(@Body() ids: string[]) {
     return this.postsService.deleteMany(ids);

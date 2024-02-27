@@ -68,6 +68,13 @@ export class PostsService {
     });
   }
 
+  async getMyPosts(userId: string) {
+    return await this.postRepository.find({
+      where: { user: { id: userId } },
+      relations: ["user", "user.profile", "files", "likes", "comments"],
+    });
+  }
+
   async deleteOne(id: string) {
     await this.postRepository.delete({ id });
     return { message: "Post deleted successfully" };

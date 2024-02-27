@@ -58,7 +58,7 @@ export class UsersService {
 
   async getUserProfile(id: string) {
     const user = await this.findById(id, {
-      relations: ["profile", "posts"],
+      relations: ["profile"],
     });
     return user;
   }

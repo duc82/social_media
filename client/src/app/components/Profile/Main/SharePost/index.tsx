@@ -32,6 +32,7 @@ export default async function SharePost() {
               placeholder="Share your thoughts..."
               data-bs-toggle="modal"
               data-bs-target="#createPostModal"
+              readOnly
             />
           </form>
         </div>

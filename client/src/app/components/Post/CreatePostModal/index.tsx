@@ -20,8 +20,7 @@ import useBootstrap from "@/app/hooks/useBootstrap";
 import { FilePreview } from "@/app/types";
 import Dropzone from "./Dropzone";
 import clsx from "clsx";
-import useEmoji from "@/app/hooks/useEmoji";
-import usePosts from "@/app/hooks/usePosts";
+import usePost from "@/app/hooks/usePost";
 
 export default function CreatePostModal({
   session,
@@ -32,8 +31,7 @@ export default function CreatePostModal({
 }) {
   const [isActiveDropzone, setActiveDropzone] = useState(initialActiveDropzone);
   const [files, setFiles] = useState<FilePreview[]>([]);
-  const feeling = useEmoji((state) => state.feeling);
-  const addPost = usePosts((state) => state.addPost);
+  const { addPost } = usePost();
 
   const modalRef = useRef<HTMLDivElement>(null);
   const bootstrap = useBootstrap();
@@ -114,11 +112,11 @@ export default function CreatePostModal({
 
                 <span className="fw-semibold text-gray-700">
                   {session?.user.fullName}{" "}
-                  {feeling && (
+                  {/* {feeling && (
                     <span>
                       is {feeling.emoji} feeling {feeling.meaning}
                     </span>
-                  )}
+                  )} */}
                 </span>
               </div>
 

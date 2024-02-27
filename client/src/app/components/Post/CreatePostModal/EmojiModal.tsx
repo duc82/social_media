@@ -1,6 +1,5 @@
 "use client";
 import feelings from "@/app/data/emojis/feelings.json";
-import useEmoji from "@/app/hooks/useEmoji";
 import clsx from "clsx";
 import { useState } from "react";
 import { Search } from "react-bootstrap-icons";
@@ -9,7 +8,6 @@ export default function EmojiModal() {
   const [activeTab, setActiveTab] = useState<"Feelings" | "Activities">(
     "Feelings"
   );
-  const handleFeeling = useEmoji((state) => state.handleFeeling);
 
   const changeTab = (tab: "Feelings" | "Activities") => {
     setActiveTab(tab);
@@ -69,7 +67,6 @@ export default function EmojiModal() {
                 <div className="col-6" key={feeling.emoji}>
                   <div
                     className="w-100 d-flex align-items-center cursor-pointer"
-                    onClick={() => handleFeeling(feeling)}
                     data-bs-toggle="modal"
                     data-bs-target="#createPostModal"
                   >
