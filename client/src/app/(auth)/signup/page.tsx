@@ -32,7 +32,7 @@ export default function Signup() {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
@@ -151,7 +151,11 @@ export default function Signup() {
           )}
         </div>
 
-        <button type="submit" className="btn btn-lg btn-primary w-100">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn btn-lg btn-primary w-100"
+        >
           Sign me up
         </button>
 

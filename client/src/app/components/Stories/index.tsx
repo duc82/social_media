@@ -1,6 +1,5 @@
 "use client";
-import "zuck.js/css";
-import "zuck.js/skins/snapgram";
+
 import { Zuck } from "zuck.js";
 import { useEffect, useRef } from "react";
 

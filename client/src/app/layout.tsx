@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import "zuck.js/css";
+import "zuck.js/skins/snapgram";
 import "./styles/scss/globals.scss";
 import ToastProvider from "./providers/ToastProvider";
 import NextAuthProvider from "./providers/NextAuthProvider";

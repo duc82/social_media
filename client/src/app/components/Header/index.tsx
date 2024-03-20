@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Menu from "./Menu";
+import { Search } from "react-bootstrap-icons";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
@@ -39,22 +40,26 @@ export default async function Header() {
 
         {/* Collapse */}
         <div className="navbar-collapse collapse" id="navbarCollapse">
-          {/* Nav Search */}
           <div className="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
-            <form className="position-relative w-100">
-              <input
-                type="search"
-                className="form-control ps-5 bg-light"
-                placeholder="Search..."
-                aria-label="Search"
-              />
+            {/* <input
+              type="search"
+              className="form-control bg-light"
+              placeholder="Search..."
+            /> */}
+            <div className="nav-item w-100">
               <button
-                type="submit"
-                className="position-absolute top-50 start-0 btn bg-transparent px-2 py-0 translate-middle-y"
+                type="button"
+                className="btn btn-light d-flex justify-content-between align-items-center"
+                data-bs-toggle="modal"
+                data-bs-target="#searchModal"
               >
-                <i className="bi bi-search fs-5"></i>
+                <div>
+                  <Search className="fs-5" />
+                  <span>Search</span>
+                </div>
+                <kbd>Ctrl K</kbd>
               </button>
-            </form>
+            </div>
           </div>
 
           <Menu />

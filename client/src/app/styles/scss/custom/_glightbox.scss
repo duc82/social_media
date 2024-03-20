@@ -1,0 +1,6 @@
+.gslider:has(> .gslide:last-child:nth-child(1)) {
+  & ~ .gprev,
+  & ~ .gnext {
+    display: none;
+  }
+}

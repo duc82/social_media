@@ -39,4 +39,9 @@ export const signInSchema = z.object({
     })
     .email("Invalid email address"),
   password: z.string({ required_error: "Password is required" }),
+  isRemember: z.boolean().default(true),
 });
+
+export const forgotPasswordSchema = signInSchema.pick({ email: true });
+
+export const resetPasswordSchema = signInSchema.pick({ password: true });

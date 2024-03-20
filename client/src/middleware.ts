@@ -11,7 +11,7 @@ export default withAuth({
 
 export const config = {
   matcher: [
-    // Match all route exclude /signup and /signin
-    "/((?!signin|signup).*)",
+    // Match all route exclude /signup, /signin and /forgotPassword
+    "/((?!signin|signup|forgotPassword|resetPassword).*)",
   ],
 };

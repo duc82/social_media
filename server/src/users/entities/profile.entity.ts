@@ -1,17 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
-export enum Gender {
-  MALE = "male",
-  FEMALE = "female",
-  OTHER = "other",
-}
-
-export enum MarialStatus {
-  SINGLE = "single",
-  MARRIED = "married",
-  DIVORCED = "divorced",
-  WIDOWED = "widowed",
-}
+import { Gender, MarialStatus } from "../interfaces/profile.interface";
 
 @Entity()
 export class Profile {
@@ -60,4 +48,9 @@ export class Profile {
     nullable: true,
   })
   overview: string;
+
+  @Column({
+    nullable: true,
+  })
+  location: string;
 }

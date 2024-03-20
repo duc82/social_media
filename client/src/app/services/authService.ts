@@ -31,6 +31,18 @@ const authService = {
       },
     });
   },
+
+  forgotPassword: async (email: string) => {
+    return apiRequest<{ message: string }>("/auth/forgot-password", "POST", {
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  resetPassword: async (token: string, password: string) => {
+    return apiRequest<{ message: string }>("/auth/reset-password", "POST", {
+      body: JSON.stringify({ password, token }),
+    });
+  },
 };
 
 export default authService;

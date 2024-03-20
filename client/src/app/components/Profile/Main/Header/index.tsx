@@ -19,8 +19,20 @@ export default async function ProfileMainHeader() {
 
   return (
     <div className="card">
-      <div className="position-relative w-100" style={{ height: "200px" }}>
-        <Image src="/01.jpg" fill alt="Wallpaper" className="rounded-top" />
+      <div style={{ height: "200px" }}>
+        <Link
+          href={currentUser?.profile.wallpaper ?? "/wallpaper.jpg"}
+          className="d-block h-100 position-relative"
+          data-glightbox
+          data-gallery="wallpaper"
+        >
+          <Image
+            src={currentUser?.profile.wallpaper ?? "/wallpaper.jpg"}
+            fill
+            alt="Wallpaper"
+            className="rounded-top object-fit-cover"
+          />
+        </Link>
       </div>
 
       <div className="card-body py-0">
@@ -97,13 +109,21 @@ export default async function ProfileMainHeader() {
 
         <ul className="list-inline mb-0 text-center text-md-start mt-3 mt-md-0">
           <li className="list-inline-item d-inline-flex align-items-center">
-            <Briefcase className="me-1" /> Lead Developer
+            <Briefcase className="me-1" />{" "}
+            {currentUser?.profile.job ?? "Web Developer"}
           </li>
           <li className="list-inline-item d-inline-flex align-items-center">
-            <GeoAlt className="me-1" /> New Hampshire
+            <GeoAlt className="me-1" />{" "}
+            {currentUser?.profile.location ?? "New Hampshire"}
           </li>
           <li className="list-inline-item d-inline-flex align-items-center">
-            <Calendar2Plus className="me-1" /> Joined on Nov 26, 2019
+            <Calendar2Plus className="me-1" /> Joined on{" "}
+            {new Date(currentUser?.createdAt ?? Date.now()).toLocaleDateString(
+              "en",
+              {
+                dateStyle: "medium",
+              }
+            )}
           </li>
         </ul>
       </div>

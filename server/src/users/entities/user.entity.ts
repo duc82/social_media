@@ -15,13 +15,10 @@ import {
 } from "typeorm";
 import { Profile } from "./profile.entity";
 import { Exclude } from "class-transformer";
-import { Post } from "src/posts/entity/post.entity";
-import { Comment } from "src/posts/entity/comment.entity";
-
-export enum Role {
-  USER = "user",
-  ADMIN = "admin",
-}
+import { Post } from "src/posts/entities/post.entity";
+import { Comment } from "src/posts/entities/comment.entity";
+import { Token } from "./token.entity";
+import { Role } from "../interfaces/user.interface";
 
 @Entity()
 @Index(["email"], { unique: true })
@@ -59,8 +56,12 @@ export class User {
   @JoinColumn()
   profile: Profile;
 
-  @OneToMany(() => User, (user) => user.friends)
-  friends: User[];
+  @OneToOne(() => Token, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
+  token: Token;
 
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,

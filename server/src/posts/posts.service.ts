@@ -1,14 +1,22 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Post } from "./entity/post.entity";
+import { Post } from "./entities/post.entity";
 import { Repository } from "typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePostDto } from "./dto/posts.dto";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
-import { File } from "./entity/file.entity";
-import { User } from "src/users/entity/user.entity";
+import { File } from "./entities/file.entity";
+import { User } from "src/users/entities/user.entity";
 
 @Injectable()
 export class PostsService {
+  private readonly postRelations: string[] = [
+    "user",
+    "user.profile",
+    "files",
+    "likes",
+    "comments",
+  ];
+
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
     @InjectRepository(File) private readonly fileRepository: Repository<File>,
@@ -64,14 +72,20 @@ export class PostsService {
 
   async getAll() {
     return await this.postRepository.find({
-      relations: ["user", "user.profile", "files", "likes", "comments"],
+      order: {
+        createdAt: "DESC",
+      },
+      relations: this.postRelations,
     });
   }
 
   async getMyPosts(userId: string) {
     return await this.postRepository.find({
       where: { user: { id: userId } },
-      relations: ["user", "user.profile", "files", "likes", "comments"],
+      order: {
+        createdAt: "DESC",
+      },
+      relations: this.postRelations,
     });
   }
 

@@ -10,8 +10,6 @@ export default async function Profile() {
 
   const posts = await postService.getMyPosts(session?.accessToken!);
 
-  console.log(posts);
-
   return (
     <PostProvider initialPosts={posts}>
       <SharePost />

@@ -1,13 +1,16 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
-import { UsersService } from "src/users/users.service";
+import { UserService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
-import { Role } from "src/users/entity/user.entity";
+import { User } from "src/users/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Profile } from "src/users/entity/profile.entity";
+import { Profile } from "src/users/entities/profile.entity";
 import { Repository } from "typeorm";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { AvatarInitialsService } from "src/avatar-initials/avatar-initials.service";
+import { MailerService } from "@nestjs-modules/mailer";
+import { Token } from "src/users/entities/token.entity";
+import { Role, UserPayload } from "src/users/interfaces/user.interface";
 
 @Injectable()
 export class AuthService {
@@ -15,12 +18,17 @@ export class AuthService {
   private readonly refreshTokenExpired: number;
 
   constructor(
-    private usersService: UsersService,
+    private usersService: UserService,
     private jwtService: JwtService,
     private avatarInitialsService: AvatarInitialsService,
     private cloudinaryService: CloudinaryService,
+    private readonly mailService: MailerService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
+    @InjectRepository(Token)
+    private readonly tokenRepository: Repository<Token>,
   ) {
     const accessTokenExpired = process.env.ACCESS_TOKEN_EXPIRED;
     const refreshTokenExpired = process.env.REFRESH_TOKEN_EXPIRED;
@@ -65,6 +73,28 @@ export class AuthService {
       profile,
     });
 
+    // send verify email
+    const payload: UserPayload = {
+      userId: newUser.id,
+      role: newUser.role,
+    };
+
+    const token = await this.generateToken(payload, {
+      expiresIn: "1h",
+    });
+
+    const link = `${process.env.CLIENT_URL}/verify?token=${token}`;
+
+    await this.mailService.sendMail({
+      to: signUpDto.email,
+      subject: "Verify email",
+      template: "verify-email",
+      context: {
+        fullName: signUpDto.fullName,
+        link,
+      },
+    });
+
     return {
       user: newUser,
       message: "User created successfully",
@@ -94,6 +124,14 @@ export class AuthService {
     const accessToken = await this.generateToken(payload, {
       expiresIn: this.accessTokenExpired / 1000,
     });
+
+    if (!signInDto.isRemember) {
+      return {
+        user,
+        accessToken,
+        message: "User logged in successfully",
+      };
+    }
 
     const refreshToken = await this.generateToken(payload, {
       expiresIn: this.refreshTokenExpired / 1000,
@@ -133,5 +171,85 @@ export class AuthService {
       accessToken,
       message: "Token refreshed successfully",
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.usersService.findByEmail(email, {
+      relations: ["token"],
+      select: ["id", "fullName"],
+    });
+
+    if (!user) {
+      throw new BadRequestException("User not found");
+    }
+
+    const payload = {
+      userId: user.id,
+      role: user.role,
+    };
+
+    const token = await this.generateToken(payload, {
+      expiresIn: "1h",
+    });
+
+    const oneHour = 60 * 60 * 1000;
+
+    if (user.token) {
+      user.token.resetToken = token;
+      user.token.resetTokenExpires = new Date(Date.now() + oneHour);
+    } else {
+      const newToken = this.tokenRepository.create({
+        resetToken: token,
+        resetTokenExpires: new Date(Date.now() + oneHour),
+      });
+      user.token = newToken;
+    }
+
+    await this.userRepository.save(user);
+
+    const link = `${process.env.CLIENT_URL}/resetPassword?token=${token}`;
+
+    // send email with reset password link
+    await this.mailService.sendMail({
+      to: email,
+      subject: "Reset password",
+      template: "forgot-password",
+      context: {
+        fullName: user.fullName,
+        link,
+      },
+    });
+
+    return {
+      message: "Email sent successfully",
+    };
+  }
+
+  async resetPassword(token: string, password: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token);
+      const user = await this.usersService.findById(payload.userId, {
+        relations: ["token"],
+      });
+
+      if (
+        user?.token?.resetToken !== token ||
+        user?.token?.resetTokenExpires < new Date()
+      ) {
+        throw new BadRequestException("Invalid token or token expired");
+      }
+
+      user.password = password;
+      user.token.resetToken = null;
+      user.token.resetTokenExpires = null;
+
+      await this.userRepository.save(user);
+
+      return {
+        message: "Password reset successfully",
+      };
+    } catch (error) {
+      throw new BadRequestException("Invalid token or token expired");
+    }
   }
 }

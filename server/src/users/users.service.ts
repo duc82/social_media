@@ -1,16 +1,24 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./entity/user.entity";
+import { User } from "./entities/user.entity";
 import { FindOneOptions, Repository } from "typeorm";
-import { CreateUserDto, ProfileDto } from "./users.dto";
-import { Profile } from "./entity/profile.entity";
+import { CreateUserDto, ProfileDto } from "./dto/user.dto";
+import { Profile } from "./entities/profile.entity";
+import { FriendShip } from "./entities/friendship.entity";
+import { FriendshipStatus } from "./interfaces/friendship.interface";
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
+    @InjectRepository(FriendShip)
+    private readonly friendShipRepository: Repository<FriendShip>,
   ) {}
 
   async findByEmail(email: string, options: FindOneOptions<User> = {}) {
@@ -27,6 +35,25 @@ export class UsersService {
       },
       ...options,
     });
+  }
+
+  async getAll(search: string, userId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const users = await this.userRepository
+      .createQueryBuilder("u")
+      .leftJoinAndSelect("u.profile", "profile")
+      .where('unaccent(u."fullName") ILIKE unaccent(:search)', {
+        search: `%${search}%`,
+      })
+      .andWhere("u.id != :userId", { userId })
+      .skip(skip)
+      .take(limit)
+      .getMany();
+
+    const total = await this.userRepository.count();
+
+    return { users, total, page, limit };
   }
 
   async create(user: CreateUserDto) {
@@ -91,5 +118,79 @@ export class UsersService {
 
     await this.userRepository.save(user);
     return { user, message: "Profile updated successfully" };
+  }
+
+  async sendFriendRequest(userId: string, friendId: string) {
+    const existsingFriendship = await this.friendShipRepository.findOne({
+      where: {
+        user: { id: userId },
+        friend: { id: friendId },
+      },
+    });
+
+    if (existsingFriendship) {
+      throw new BadRequestException("Friendship already exists");
+    }
+
+    const newFriendship = this.friendShipRepository.create({
+      user: { id: userId },
+      friend: { id: friendId },
+    });
+
+    await this.friendShipRepository.save(newFriendship);
+
+    return newFriendship;
+  }
+
+  async acceptFriendRequest(userId: string, friendId: string) {
+    const friendship = await this.friendShipRepository.findOne({
+      where: {
+        user: { id: friendId },
+        friend: { id: userId },
+      },
+    });
+
+    if (!friendship) {
+      throw new NotFoundException("Friendship not found");
+    }
+
+    friendship.status = FriendshipStatus.ACCEPTED;
+    await this.friendShipRepository.save(friendship);
+
+    return friendship;
+  }
+
+  async getFriends(
+    userId: string,
+    status: FriendshipStatus = FriendshipStatus.ACCEPTED,
+    page = 1,
+    limit = 10,
+  ) {
+    const skip = (page - 1) * limit;
+    const friendships = await this.friendShipRepository.find({
+      where: [
+        { user: { id: userId }, status },
+        { friend: { id: userId }, status },
+      ],
+      skip,
+      take: limit,
+      relations: ["user", "friend", "user.profile", "friend.profile"],
+    });
+
+    const friends = friendships.map((friendship) => {
+      if (friendship.user.id === userId) {
+        return friendship.friend;
+      }
+      return friendship.user;
+    });
+
+    const total = await this.friendShipRepository.count({
+      where: [
+        { user: { id: userId }, status },
+        { friend: { id: userId }, status },
+      ],
+    });
+
+    return { friends, total, page, limit };
   }
 }

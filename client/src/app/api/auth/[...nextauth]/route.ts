@@ -57,7 +57,7 @@ export const authOptions: AuthOptions = {
           const data = await authService.refresh(token.refreshToken);
           session.accessToken = data.accessToken;
         } catch (error) {
-          window.location.href = "/signin";
+          throw new Error("Failed to refresh token");
         }
       }
 

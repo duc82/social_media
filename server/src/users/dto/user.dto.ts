@@ -7,7 +7,7 @@ import {
   ValidateIf,
   IsString,
 } from "class-validator";
-import { Gender, MarialStatus } from "./entity/profile.entity";
+import { Gender, MarialStatus } from "../interfaces/profile.interface";
 
 export class ProfileDto {
   @ValidateIf((o) => o.gender)

@@ -15,7 +15,7 @@ export default function usePasswordScore(password: string) {
     // regex one number
     const numbers = /[0-9]/g;
     // regex one special character
-    const special = /[!@#$%^&*(),.?":{}|<>]/g;
+    const special = /[^A-Za-z0-9]/g;
     // regex length 8
     const length = 8;
 
@@ -26,7 +26,6 @@ export default function usePasswordScore(password: string) {
       password.match(special),
       password.length >= length,
     ].filter(Boolean).length;
-
     setScore(scores);
   }, [password]);
 

@@ -45,12 +45,7 @@ export default function ProfileMainHeaderMenu() {
             className={clsx("nav-link", pathname === menu.href && "active")}
             href={menu.href}
           >
-            {menu.title}{" "}
-            {menu.title === "Friends" && (
-              <span className="badge bg-success bg-opacity-10 text-success small">
-                230
-              </span>
-            )}
+            {menu.title}
           </Link>
         </li>
       ))}

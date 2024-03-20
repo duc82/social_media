@@ -180,7 +180,7 @@ export default async function AuthLayout({
               <h1 className="display-4 text-white mb-4 position-relative">
                 Welcome back!
               </h1>
-              <div className="m-0 position-relative z-1">
+              <div className="m-0 position-relative z-2">
                 <svg
                   className="col-sm-8 col-lg-4"
                   version="1.1"
@@ -772,7 +772,7 @@ export default async function AuthLayout({
               </div>
             </div>
 
-            <div className="col-sm-10 col-md-8 col-lg-6 position-relative">
+            <div className="col-sm-10 col-md-8 col-lg-6 position-relative z-1">
               {children}
             </div>
           </div>
@@ -787,20 +787,17 @@ export default async function AuthLayout({
                 {/* Nav */}
                 <ul className="nav">
                   <li className="nav-item">
-                    <Link
-                      href={"/terms"}
-                      className="nav-link fw-bold ps-0 pe-2"
-                    >
+                    <Link href="/terms" className="nav-link fw-bold ps-0 pe-2">
                       Terms
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link href={"/privacy"} className="nav-link fw-bold pe-2">
+                    <Link href="/privacy" className="nav-link fw-bold pe-2">
                       Privacy
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link href={"/cookies"} className="nav-link fw-bold pe-2">
+                    <Link href="/cookies" className="nav-link fw-bold pe-2">
                       Cookies
                     </Link>
                   </li>
@@ -810,7 +807,8 @@ export default async function AuthLayout({
                 <ul className="nav justify-content-center justify-content-sm-end">
                   <li className="nav-item">
                     <Link
-                      href={"https://www.facebook.com"}
+                      href="https://www.facebook.com"
+                      target="_blank"
                       className="nav-link px-2 fs-5"
                     >
                       <FontAwesomeIcon icon={faSquareFacebook} />
@@ -818,7 +816,8 @@ export default async function AuthLayout({
                   </li>
                   <li className="nav-item">
                     <Link
-                      href={"https://www.twitter.com"}
+                      href="https://www.twitter.com"
+                      target="_blank"
                       className="nav-link px-2 fs-5"
                     >
                       <FontAwesomeIcon icon={faSquareTwitter} />
@@ -826,7 +825,8 @@ export default async function AuthLayout({
                   </li>
                   <li className="nav-item">
                     <Link
-                      href={"https://www.linkedin.com"}
+                      href="https://www.linkedin.com"
+                      target="_blank"
                       className="nav-link px-2 fs-5"
                     >
                       <FontAwesomeIcon icon={faLinkedin} />
@@ -834,7 +834,8 @@ export default async function AuthLayout({
                   </li>
                   <li className="nav-item">
                     <Link
-                      href={"https://www.youtube.com"}
+                      href="https://www.youtube.com"
+                      target="_blank"
                       className="nav-link px-2 fs-5"
                     >
                       <FontAwesomeIcon icon={faSquareYoutube} />

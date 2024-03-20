@@ -1,29 +1,32 @@
 "use client";
-import { signInSchema } from "@/app/schemas/auth";
-import { SignInDto } from "@/app/types/auth";
+import { resetPasswordSchema } from "@/app/schemas/auth";
+import authService from "@/app/services/authService";
+import { ResetPasswordDto } from "@/app/types/auth";
+import handlingError from "@/app/utils/error";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
-export default function SignIn() {
+function ResetPassword() {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignInDto>({
-    resolver: zodResolver(signInSchema),
+  } = useForm<ResetPasswordDto>({
     mode: "onChange",
-    defaultValues: {
-      isRemember: true,
-    },
+    resolver: zodResolver(resetPasswordSchema),
   });
+  const router = useRouter();
   const urlSearchParams = useSearchParams();
+
   const error = urlSearchParams.get("error");
+  const token = urlSearchParams.get("token");
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
@@ -33,44 +36,35 @@ export default function SignIn() {
     setPasswordType((prev) => (prev === "password" ? "text" : "password"));
   };
 
-  const onSubmit = async (data: SignInDto) => {
-    await signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
-      ...data,
-    });
+  const onSubmit = async (data: ResetPasswordDto) => {
+    if (!token) return;
+
+    try {
+      const res = await authService.resetPassword(token, data.password);
+      toast.success(res.message);
+      router.push("/signin");
+    } catch (error) {
+      toast.error(handlingError(error));
+    }
   };
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/signin");
+    }
+  }, [token]);
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
-        <h1 className="h1 mb-2">Sign in</h1>
+        <h1 className="h1 mb-2">Reset password?</h1>
         <span className="d-block">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup">Click here to sign up</Link>
+          Enter the new password for your account.
         </span>
       </div>
-      {error && (
-        <div className="alert alert-danger mt-4 mb-0" role="alert">
-          {error}
-        </div>
-      )}
+      {error && <div className="alert alert-danger mt-4 mb-0">{error}</div>}
 
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3 input-group-lg">
-          <input
-            type="email"
-            placeholder="Enter email"
-            className="form-control"
-            {...register("email")}
-          />
-          {errors.email && (
-            <div className="form-text text-danger mt-1">
-              {errors.email.message}
-            </div>
-          )}
-        </div>
-
         <div className="mb-3 position-relative">
           <div className="mb-0 input-group input-group-lg">
             <input
@@ -100,19 +94,10 @@ export default function SignIn() {
           </div>
         </div>
 
-        <div className="mb-3 d-sm-flex justify-content-between">
-          <div>
-            <input
-              type="checkbox"
-              className="form-check-input me-1"
-              id="rememberCheck"
-              {...register("isRemember")}
-            />
-            <label className="form-check-label" htmlFor="rememberCheck">
-              Remember me?
-            </label>
-          </div>
-          <Link href="/forgotPassword">Forgot password?</Link>
+        <div className="mb-3">
+          <p className="text-center">
+            Back to <Link href="/signin">Sign in</Link>
+          </p>
         </div>
 
         <button
@@ -120,7 +105,7 @@ export default function SignIn() {
           disabled={isSubmitting}
           className="btn btn-lg btn-primary w-100"
         >
-          Login
+          Reset password
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">
@@ -134,3 +119,5 @@ export default function SignIn() {
     </div>
   );
 }
+
+export default ResetPassword;

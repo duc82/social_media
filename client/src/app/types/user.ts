@@ -8,6 +8,7 @@ interface Profile {
   job: string | null;
   address: string | null;
   overview: string | null;
+  location: string | null;
 }
 
 interface User {
@@ -23,4 +24,11 @@ interface FullUser extends User {
   createdAt: string;
 }
 
-export type { User, FullUser };
+interface UsersReponse {
+  users: FullUser[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export type { User, FullUser, UsersReponse };
