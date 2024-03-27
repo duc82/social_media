@@ -28,8 +28,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
         logging:
           configService.get<string | undefined>("NODE_ENV") !== "production",
-        synchronize:
-          configService.get<string | undefined>("NODE_ENV") !== "production",
         autoLoadEntities: true,
       }),
     }),

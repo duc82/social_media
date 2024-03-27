@@ -18,7 +18,7 @@ export const authOptions: AuthOptions = {
           return { ...data, ...data.user };
         }
 
-        throw new Error("Credentials not provided");
+        throw new Error("Login failed");
       },
     }),
   ],

@@ -28,8 +28,7 @@ export default function RootLayout({
         <NextAuthProvider>
           <NextThemeProvider>
             <BootstrapProvider>
-              {children}
-              <GLightboxProvider />
+              <GLightboxProvider>{children}</GLightboxProvider>
               <ToastProvider />
               <TooltipProvider />
             </BootstrapProvider>

@@ -27,6 +27,19 @@ $utilities: (
           ),
       )
     ),
+  "height":
+    map-merge(
+      map-get($utilities, "height"),
+      (
+        values:
+          map-merge(
+            map-get(map-get($utilities, "height"), "values"),
+            (
+              "40px": 40px,
+            )
+          ),
+      )
+    ),
   "shadow": (
     property: box-shadow,
     class: shadow,
@@ -48,6 +61,7 @@ $utilities: (
             map-get(map-get($utilities, "color"), "values"),
             (
               "gray-700": $gray-700,
+              "gray-800": $gray-800,
             )
           ),
       )

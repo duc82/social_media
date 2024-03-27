@@ -44,12 +44,13 @@ export default async function Header() {
             <div className="nav-item w-100">
               <button
                 type="button"
-                className="btn btn-light d-flex justify-content-between align-items-center"
+                className="btn btn-light d-flex justify-content-between align-items-center text-body"
                 data-bs-toggle="modal"
                 data-bs-target="#searchModal"
+                style={{ width: "260px" }}
               >
                 <div>
-                  <Search className="fs-5" />
+                  <Search className="fs-5 me-2" />
                   <span>Search</span>
                 </div>
                 <kbd>Ctrl K</kbd>

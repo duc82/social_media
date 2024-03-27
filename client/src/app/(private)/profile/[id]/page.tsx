@@ -1,15 +1,26 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Posts from "@/app/components/Posts";
-import ProfileMainHeader from "@/app/components/Profile/Main/Header";
 import SharePost from "@/app/components/Profile/Main/SharePost";
-import ProfileSidebar from "@/app/components/Profile/Sidebar";
 import PostProvider from "@/app/providers/PostProvider";
 import postService from "@/app/services/postService";
 import userService from "@/app/services/userService";
+import { FullUser } from "@/app/types/user";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
-const getProfile = async (id: string) => {
+const getProfile = async (id?: string): Promise<FullUser> => {
+  const session = await getServerSession(authOptions);
+
+  const currentUser = session?.user! as FullUser;
+
+  if (!id) {
+    return currentUser;
+  }
+
+  if (session?.user.id === id) {
+    return currentUser;
+  }
+
   try {
     const user = await userService.getUserProfile(id);
     return user;
@@ -18,14 +29,8 @@ const getProfile = async (id: string) => {
   }
 };
 
-export default async function Profile({
-  searchParams,
-}: {
-  searchParams: { id?: string };
-}) {
-  const session = await getServerSession(authOptions);
-
-  const user = await getProfile(searchParams.id || session?.user.id!);
+export default async function Profile({ params }: { params: { id?: string } }) {
+  const user = await getProfile(params?.id);
 
   const { posts } = await postService.getAll({
     userId: user.id,
@@ -33,8 +38,8 @@ export default async function Profile({
 
   return (
     <PostProvider initialPosts={posts}>
-      {searchParams.id === session?.user.id && <SharePost />}
-      <Posts accessToken={session?.accessToken!} />
+      {params.id === user.id && <SharePost />}
+      <Posts />
     </PostProvider>
   );
 }

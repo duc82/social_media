@@ -12,8 +12,6 @@ const dataSource = new DataSource({
   entities: [__dirname + "/**/*.entity{.ts,.js}"],
   migrations: ["migrations/*{.ts,.js}"],
   logging: configService.get<string | undefined>("NODE_ENV") !== "production",
-  synchronize:
-    configService.get<string | undefined>("NODE_ENV") !== "production",
 });
 
 export default dataSource;

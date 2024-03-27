@@ -62,9 +62,34 @@ $navbar-nav-link-padding-x: 1rem;
   }
 }
 
-.nav-pills-soft .nav-link.active,
-.nav-pills-soft .show > .nav-link {
-  background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+.nav-pills-soft {
+  .nav-link {
+    color: $gray-800;
+
+    &.active {
+      color: $primary !important;
+      background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+      .svg-circle {
+        background-color: $primary;
+        color: white;
+      }
+    }
+
+    &:hover {
+      color: $gray-800;
+      background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+    }
+  }
+
+  .svg-circle {
+    background-color: $gray-400;
+    color: $gray-800;
+  }
+
+  .show > .nav-link {
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+    color: $gray-800;
+  }
 }
 
 @include media-breakpoint-down(lg) {

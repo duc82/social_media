@@ -1,5 +1,5 @@
 // 1. Import external libraries
-@import "~bootstrap-icons/font/bootstrap-icons";
+@import "bootstrap-icons/font/bootstrap-icons";
 @import "@fortawesome/fontawesome-svg-core/styles.css";
 @import "~glightbox/dist/css/glightbox.min.css";
 
@@ -25,6 +25,8 @@
 @import "~bootstrap/scss/reboot";
 
 @import "./custom/typography";
+
+$kbd-padding-y: 0.1rem;
 
 // Body
 $body-color: rgb(102, 105, 120);

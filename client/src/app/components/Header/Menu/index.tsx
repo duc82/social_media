@@ -19,11 +19,8 @@ export default function Menu({ userId }: { userId: string }) {
       </li>
       <li className="nav-item">
         <Link
-          href={`/profile/${userId}/friends`}
-          className={clsx(
-            "nav-link",
-            pathname === "/profile/friends" && "active"
-          )}
+          href="/friends"
+          className={clsx("nav-link", pathname === "/friends" && "active")}
         >
           Friends
         </Link>
