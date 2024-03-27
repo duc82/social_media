@@ -1,5 +1,6 @@
 import { User } from "src/users/entities/user.entity";
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -19,7 +20,7 @@ export enum Audience {
 }
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string; // Completed
 

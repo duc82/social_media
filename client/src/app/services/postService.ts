@@ -1,4 +1,5 @@
-import { Post, PostResponse } from "../types/post";
+import { Options } from "../types";
+import { Post, PostResponse, PostsReponse } from "../types/post";
 import apiRequest from "./api";
 
 const postService = {
@@ -11,16 +12,16 @@ const postService = {
     });
   },
 
-  getAll: async () => {
-    return apiRequest<Post[]>("/posts", "GET");
-  },
+  getAll: async (options: Options) => {
+    const { page = 1, limit = 10, search = "", userId } = options;
 
-  getMyPosts: async (accessToken: string) => {
-    return apiRequest<Post[]>("/posts/me", "GET", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    let url = `/posts?page=${page}&limit=${limit}&search=${search}`;
+
+    if (userId) {
+      url += `&userId=${userId}`;
+    }
+
+    return apiRequest<PostsReponse>(url, "GET");
   },
 
   delete: async (id: string, accessToken: string) => {

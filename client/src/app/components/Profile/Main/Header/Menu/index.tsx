@@ -1,54 +1,61 @@
 "use client";
 import clsx from "clsx";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 const menus = [
   {
     title: "Posts",
-    href: "/profile",
+    route: "",
   },
   {
     title: "About",
-    href: "/profile/about",
+    route: "about",
   },
   {
     title: "Friends",
-    href: "/profile/friends",
+    route: "friends",
   },
   {
     title: "Media",
-    href: "/profile/media",
+    route: "media",
   },
   {
     title: "Videos",
-    href: "/profile/videos",
+    route: "videos",
   },
   {
     title: "Events",
-    href: "/profile/events",
+    route: "events",
   },
   {
     title: "Activity",
-    href: "/profile/activity",
+    route: "activity",
   },
 ];
 
 export default function ProfileMainHeaderMenu() {
   const pathname = usePathname();
+  const id = useParams().id as string;
 
   return (
     <ul className="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
-      {menus.map((menu) => (
-        <li key={menu.href} className="nav-item">
-          <Link
-            className={clsx("nav-link", pathname === menu.href && "active")}
-            href={menu.href}
-          >
-            {menu.title}
-          </Link>
-        </li>
-      ))}
+      {menus.map((menu) => {
+        const url = menu.route
+          ? `/profile/${id}/${menu.route}`
+          : `/profile/${id}`;
+
+        return (
+          <li key={menu.route} className="nav-item">
+            <Link
+              className={clsx("nav-link", pathname === url && "active")}
+              href={url}
+            >
+              {menu.title}
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }

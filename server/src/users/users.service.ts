@@ -3,33 +3,27 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
-import { FindOneOptions, Repository } from "typeorm";
-import { CreateUserDto, ProfileDto } from "./dto/user.dto";
+import { DataSource, FindOneOptions } from "typeorm";
+import { CreateUserDto, ListFriendsDto, ProfileDto } from "./dto/user.dto";
 import { Profile } from "./entities/profile.entity";
 import { FriendShip } from "./entities/friendship.entity";
 import { FriendshipStatus } from "./interfaces/friendship.interface";
+import { QueryDto } from "src/dto/query.dto";
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Profile)
-    private readonly profileRepository: Repository<Profile>,
-    @InjectRepository(FriendShip)
-    private readonly friendShipRepository: Repository<FriendShip>,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
   async findByEmail(email: string, options: FindOneOptions<User> = {}) {
-    return this.userRepository.findOne({
+    return this.dataSource.getRepository(User).findOne({
       where: { email },
       ...options,
     });
   }
 
   async findById(id: string, options: FindOneOptions<User> = {}) {
-    return this.userRepository.findOne({
+    return this.dataSource.getRepository(User).findOne({
       where: {
         id,
       },
@@ -37,33 +31,35 @@ export class UserService {
     });
   }
 
-  async getAll(search: string, userId: string, page = 1, limit = 10) {
+  async getAll(query: QueryDto) {
+    const { search = "", page = 1, limit = 10 } = query;
+
     const skip = (page - 1) * limit;
 
-    const users = await this.userRepository
+    const users = await this.dataSource
+      .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
       .where('unaccent(u."fullName") ILIKE unaccent(:search)', {
         search: `%${search}%`,
       })
-      .andWhere("u.id != :userId", { userId })
       .skip(skip)
       .take(limit)
       .getMany();
 
-    const total = await this.userRepository.count();
+    const total = await this.dataSource.getRepository(User).count();
 
     return { users, total, page, limit };
   }
 
   async create(user: CreateUserDto) {
-    const newUser = this.userRepository.create(user);
-    await this.userRepository.save(newUser);
+    const newUser = this.dataSource.getRepository(User).create(user);
+    await this.dataSource.getRepository(User).save(newUser);
     return newUser;
   }
 
   async update(id: string, attrs: Partial<User>) {
-    await this.userRepository.update({ id }, attrs);
+    await this.dataSource.getRepository(User).update({ id }, attrs);
     return this.findById(id);
   }
 
@@ -74,12 +70,14 @@ export class UserService {
       throw new NotFoundException("User not found");
     }
 
-    const deletedResult = await this.userRepository.delete({ id });
+    const deletedResult = await this.dataSource
+      .getRepository(User)
+      .delete({ id });
     return { message: "User deleted successfully", deletedResult };
   }
 
   async deleteMany(ids: string[]) {
-    const deletedResult = await this.userRepository.delete(ids);
+    const deletedResult = await this.dataSource.getRepository(User).delete(ids);
     return deletedResult;
   }
 
@@ -107,43 +105,48 @@ export class UserService {
 
     // Upsert profile
     if (!user.profile) {
-      const newProfile = this.profileRepository.create(profile);
+      const newProfile = this.dataSource.getRepository(Profile).create(profile);
       user.profile = newProfile;
     } else {
-      await this.profileRepository.update({ id: user.profile.id }, profile);
-      user.profile = await this.profileRepository.findOne({
+      await this.dataSource
+        .getRepository(Profile)
+        .update({ id: user.profile.id }, profile);
+      user.profile = await this.dataSource.getRepository(Profile).findOne({
         where: { id: user.profile.id },
       });
     }
 
-    await this.userRepository.save(user);
+    await this.dataSource.getRepository(User).save(user);
     return { user, message: "Profile updated successfully" };
   }
 
   async sendFriendRequest(userId: string, friendId: string) {
-    const existsingFriendship = await this.friendShipRepository.findOne({
-      where: {
-        user: { id: userId },
-        friend: { id: friendId },
-      },
-    });
+    const existsingFriendship = await this.dataSource
+      .getRepository(FriendShip)
+      .findOne({
+        where: {
+          user: { id: userId },
+          friend: { id: friendId },
+        },
+      });
+    // SELECT * FROM friend_ship WHERE userId = ${userId} AND friendId = ${friendId}
 
     if (existsingFriendship) {
       throw new BadRequestException("Friendship already exists");
     }
 
-    const newFriendship = this.friendShipRepository.create({
+    const newFriendship = this.dataSource.getRepository(FriendShip).create({
       user: { id: userId },
       friend: { id: friendId },
     });
 
-    await this.friendShipRepository.save(newFriendship);
+    await this.dataSource.getRepository(FriendShip).save(newFriendship);
 
     return newFriendship;
   }
 
   async acceptFriendRequest(userId: string, friendId: string) {
-    const friendship = await this.friendShipRepository.findOne({
+    const friendship = await this.dataSource.getRepository(FriendShip).findOne({
       where: {
         user: { id: friendId },
         friend: { id: userId },
@@ -155,27 +158,31 @@ export class UserService {
     }
 
     friendship.status = FriendshipStatus.ACCEPTED;
-    await this.friendShipRepository.save(friendship);
+    await this.dataSource.getRepository(FriendShip).save(friendship);
 
     return friendship;
   }
 
-  async getFriends(
-    userId: string,
-    status: FriendshipStatus = FriendshipStatus.ACCEPTED,
-    page = 1,
-    limit = 10,
-  ) {
+  async getFriends(query: ListFriendsDto) {
+    const { page = 1, limit = 10, status, userId } = query;
     const skip = (page - 1) * limit;
-    const friendships = await this.friendShipRepository.find({
-      where: [
-        { user: { id: userId }, status },
-        { friend: { id: userId }, status },
-      ],
+
+    const where: Record<string, Record<string, string> | FriendshipStatus>[] = [
+      { user: { id: userId } },
+      { friend: { id: userId } },
+    ];
+
+    if (status) {
+      where.push({ status });
+    }
+
+    const friendships = await this.dataSource.getRepository(FriendShip).find({
+      where,
       skip,
       take: limit,
       relations: ["user", "friend", "user.profile", "friend.profile"],
     });
+    // SELECT * FROM friend_ship WHERE (userId = ${userId} OR friendId = ${userId}) AND status = ${status}
 
     const friends = friendships.map((friendship) => {
       if (friendship.user.id === userId) {
@@ -184,11 +191,8 @@ export class UserService {
       return friendship.user;
     });
 
-    const total = await this.friendShipRepository.count({
-      where: [
-        { user: { id: userId }, status },
-        { friend: { id: userId }, status },
-      ],
+    const total = await this.dataSource.getRepository(FriendShip).count({
+      where,
     });
 
     return { friends, total, page, limit };

@@ -31,4 +31,11 @@ interface UsersReponse {
   limit: number;
 }
 
-export type { User, FullUser, UsersReponse };
+interface FriendsResponse {
+  friends: FullUser[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export type { User, FullUser, UsersReponse, FriendsResponse };

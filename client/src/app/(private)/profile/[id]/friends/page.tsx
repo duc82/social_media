@@ -1,13 +1,8 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Avatar from "@/app/components/Avatar";
 import userService from "@/app/services/userService";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 
-export default async function Friends() {
-  const session = await getServerSession(authOptions);
-  const friends = await userService.getFriends(session?.accessToken!);
-
+export default async function Friends({ params }: { params: { id?: string } }) {
   return (
     <div className="card">
       <div className="card-header pb-0">

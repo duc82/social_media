@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Menu() {
+export default function Menu({ userId }: { userId: string }) {
   const pathname = usePathname();
 
   return (
@@ -19,7 +19,7 @@ export default function Menu() {
       </li>
       <li className="nav-item">
         <Link
-          href="/profile/friends"
+          href={`/profile/${userId}/friends`}
           className={clsx(
             "nav-link",
             pathname === "/profile/friends" && "active"

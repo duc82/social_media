@@ -3,11 +3,10 @@ import useBootstrap from "@/app/hooks/useBootstrap";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import debounce from "@/app/utils/debounce";
-import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Search } from "react-bootstrap-icons";
 
-export default function SearchModal({ accessToken }: { accessToken: string }) {
+export default function SearchModal() {
   const bootstrap = useBootstrap();
   const searchModalRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +17,9 @@ export default function SearchModal({ accessToken }: { accessToken: string }) {
     if (!value) return setUsers([]);
 
     try {
-      const data = await userService.getAll(accessToken, value);
+      const data = await userService.getAll({
+        search: value,
+      });
       setUsers(data.users);
     } catch (error) {
       console.error(error);

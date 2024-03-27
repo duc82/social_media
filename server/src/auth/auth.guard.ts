@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
 import { UserPayload } from "src/users/interfaces/user.interface";
 
 @Injectable()
@@ -22,12 +21,8 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync<UserPayload>(
-        accessToken,
-        {
-          secret: process.env.JWT_SECRET,
-        },
-      );
+      const payload =
+        await this.jwtService.verifyAsync<UserPayload>(accessToken);
 
       request.user = payload;
     } catch (error) {
@@ -35,11 +30,6 @@ export class AuthGuard implements CanActivate {
     }
 
     return true;
-  }
-
-  private extractTokenFromCookie(req: Request): string | undefined {
-    const accessToken = req.cookies.accessToken;
-    return accessToken;
   }
 
   private extractTokenFromHeader(request: any): string | undefined {

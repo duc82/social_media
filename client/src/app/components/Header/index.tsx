@@ -41,11 +41,6 @@ export default async function Header() {
         {/* Collapse */}
         <div className="navbar-collapse collapse" id="navbarCollapse">
           <div className="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
-            {/* <input
-              type="search"
-              className="form-control bg-light"
-              placeholder="Search..."
-            /> */}
             <div className="nav-item w-100">
               <button
                 type="button"
@@ -62,7 +57,7 @@ export default async function Header() {
             </div>
           </div>
 
-          <Menu />
+          <Menu userId={currentUser?.id!} />
         </div>
 
         <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
@@ -127,7 +122,7 @@ export default async function Header() {
                 </div>
 
                 <Link
-                  href="/profile"
+                  href={`/profile/${currentUser?.id}`}
                   className="dropdown-item btn btn-primary-soft btn-sm my-2 text-center fw-medium"
                 >
                   View profile

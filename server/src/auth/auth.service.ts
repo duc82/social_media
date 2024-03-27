@@ -2,15 +2,15 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { UserService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
-import { User } from "src/users/entities/user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Profile } from "src/users/entities/profile.entity";
-import { Repository } from "typeorm";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { AvatarInitialsService } from "src/avatar-initials/avatar-initials.service";
 import { MailerService } from "@nestjs-modules/mailer";
-import { Token } from "src/users/entities/token.entity";
 import { Role, UserPayload } from "src/users/interfaces/user.interface";
+import { Token } from "src/users/entities/token.entity";
+import { User } from "src/users/entities/user.entity";
+import { ConfigService } from "@nestjs/config";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class AuthService {
@@ -22,25 +22,16 @@ export class AuthService {
     private jwtService: JwtService,
     private avatarInitialsService: AvatarInitialsService,
     private cloudinaryService: CloudinaryService,
-    private readonly mailService: MailerService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Profile)
-    private readonly profileRepository: Repository<Profile>,
-    @InjectRepository(Token)
-    private readonly tokenRepository: Repository<Token>,
+    private mailService: MailerService,
+    private configService: ConfigService,
+    private dataSource: DataSource,
   ) {
-    const accessTokenExpired = process.env.ACCESS_TOKEN_EXPIRED;
-    const refreshTokenExpired = process.env.REFRESH_TOKEN_EXPIRED;
-
-    if (!accessTokenExpired || !refreshTokenExpired) {
-      throw new Error(
-        "ACCESS_TOKEN_EXPIRED, REFRESH_TOKEN_EXPIRED must be defined",
-      );
-    }
-
-    this.accessTokenExpired = +accessTokenExpired;
-    this.refreshTokenExpired = +refreshTokenExpired;
+    this.accessTokenExpired = parseInt(
+      this.configService.getOrThrow<string>("ACCESS_TOKEN_EXPIRED"),
+    );
+    this.refreshTokenExpired = parseInt(
+      this.configService.getOrThrow<string>("REFRESH_TOKEN_EXPIRED"),
+    );
   }
 
   async generateToken(
@@ -64,7 +55,7 @@ export class AuthService {
     const cloudinaryResponse =
       await this.cloudinaryService.uploadFileFromBuffer(buffer);
 
-    const profile = this.profileRepository.create({
+    const profile = this.dataSource.getRepository(Profile).create({
       avatar: cloudinaryResponse.secure_url,
     });
 
@@ -198,14 +189,14 @@ export class AuthService {
       user.token.resetToken = token;
       user.token.resetTokenExpires = new Date(Date.now() + oneHour);
     } else {
-      const newToken = this.tokenRepository.create({
+      const newToken = this.dataSource.getRepository(Token).create({
         resetToken: token,
         resetTokenExpires: new Date(Date.now() + oneHour),
       });
       user.token = newToken;
     }
 
-    await this.userRepository.save(user);
+    await this.dataSource.getRepository(User).save(user);
 
     const link = `${process.env.CLIENT_URL}/resetPassword?token=${token}`;
 
@@ -243,7 +234,7 @@ export class AuthService {
       user.token.resetToken = null;
       user.token.resetTokenExpires = null;
 
-      await this.userRepository.save(user);
+      await this.dataSource.getRepository(User).save(user);
 
       return {
         message: "Password reset successfully",

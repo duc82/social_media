@@ -6,8 +6,11 @@ import {
   IsDateString,
   ValidateIf,
   IsString,
+  IsOptional,
 } from "class-validator";
 import { Gender, MarialStatus } from "../interfaces/profile.interface";
+import { QueryDto } from "src/dto/query.dto";
+import { FriendshipStatus } from "../interfaces/friendship.interface";
 
 export class ProfileDto {
   @ValidateIf((o) => o.gender)
@@ -56,4 +59,13 @@ export class CreateUserDto {
   password: string;
 
   profile: ProfileDto;
+}
+
+export class ListFriendsDto extends QueryDto {
+  @IsString()
+  userId?: string;
+
+  @IsOptional()
+  @IsEnum(FriendshipStatus)
+  status?: FriendshipStatus;
 }

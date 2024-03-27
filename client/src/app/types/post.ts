@@ -30,4 +30,11 @@ interface PostDto extends z.infer<typeof postSchema> {
   preview: string;
 }
 
-export type { Post, File, PostDto, PostResponse };
+interface PostsReponse {
+  posts: Post[];
+  total: number;
+  limit: number;
+  page: number;
+}
+
+export type { Post, File, PostDto, PostResponse, PostsReponse };

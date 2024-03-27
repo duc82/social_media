@@ -1,5 +1,6 @@
 import * as bcrypt from "bcrypt";
 import {
+  BaseEntity,
   BeforeInsert,
   BeforeUpdate,
   Column,
@@ -24,8 +25,9 @@ import { Role } from "../interfaces/user.interface";
 @Index(["email"], { unique: true })
 @Index(["fullName"])
 @Unique(["email"])
-export class User {
+export class User extends BaseEntity {
   constructor(partial: Partial<User>) {
+    super();
     Object.assign(this, partial);
   }
 

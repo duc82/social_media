@@ -8,9 +8,9 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        fullName: { label: "Full Name", type: "text" },
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        isRemember: { label: "Remember me", type: "checkbox" },
       },
       async authorize(credentials) {
         if (credentials) {

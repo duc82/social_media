@@ -2,10 +2,7 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigModule } from "@nestjs/config";
-import { DataSource } from "typeorm";
-import { AuthModule } from "./auth/auth.module";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PostsModule } from "./posts/posts.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
@@ -14,19 +11,27 @@ import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { AvatarInitialsModule } from "./avatar-initials/avatar-initials.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
+import { AuthModule } from "./auth/auth.module";
+import { CoreModule } from "./core/core.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
 
-    // Typeorm configuration
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      url: process.env.DATABASE_URL,
-      entities: ["dist/**/*.entity{.ts,.js}"],
-      synchronize: true,
-      autoLoadEntities: true,
-      logging: true,
+    // TypeORM configuration
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: "postgres",
+        url: configService.getOrThrow<string>("DATABASE_URL"),
+        entities: [__dirname + "/**/*.entity{.ts,.js}"],
+        logging:
+          configService.get<string | undefined>("NODE_ENV") !== "production",
+        synchronize:
+          configService.get<string | undefined>("NODE_ENV") !== "production",
+        autoLoadEntities: true,
+      }),
     }),
 
     // Serve static files
@@ -35,31 +40,34 @@ import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
     }),
 
     // Mailer configuration
-    MailerModule.forRoot({
-      transport: {
-        service: "gmail",
-        secure: true,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      },
-      defaults: {
-        from: process.env.SMTP_FROM,
-      },
-      template: {
-        dir: process.cwd() + "/templates/mail/",
-        adapter: new EjsAdapter({
-          inlineCssEnabled: true,
-          inlineCssOptions: {
-            baseUrl: "file://" + "templates/mail/",
+    MailerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          service: "gmail",
+          secure: true,
+          auth: {
+            user: configService.getOrThrow<string>("SMTP_USER"),
+            pass: configService.getOrThrow<string>("SMTP_PASSWORD"),
           },
-        }),
-      },
+        },
+        defaults: {
+          from: configService.getOrThrow<string>("SMTP_FROM"),
+        },
+        template: {
+          dir: process.cwd() + "/templates/mail/",
+          adapter: new EjsAdapter({
+            inlineCssEnabled: true,
+            inlineCssOptions: {
+              baseUrl: "file://" + "templates/mail/",
+            },
+          }),
+        },
+      }),
     }),
-
-    UsersModule,
+    CoreModule,
     AuthModule,
+    UsersModule,
     PostsModule,
     CloudinaryModule,
     AvatarInitialsModule,

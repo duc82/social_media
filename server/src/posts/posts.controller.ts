@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UploadedFiles,
@@ -11,7 +12,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
-import { CreatePostDto } from "./dto/posts.dto";
+import { CreatePostDto, ListAllPostsDto } from "./dto/posts.dto";
 import { AuthGuard } from "src/auth/auth.guard";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { User } from "src/users/users.decorator";
@@ -32,14 +33,8 @@ export class PostsController {
   }
 
   @Get()
-  async getAll() {
-    return this.postsService.getAll();
-  }
-
-  @UseGuards(AuthGuard)
-  @Get("me")
-  async getMyPosts(@User("userId") userId: string) {
-    return this.postsService.getMyPosts(userId);
+  async getAll(@Query() query: ListAllPostsDto) {
+    return this.postsService.getAll(query);
   }
 
   @UseGuards(AuthGuard)

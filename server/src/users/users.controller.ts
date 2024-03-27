@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -13,27 +12,20 @@ import {
 import { UserService } from "./users.service";
 import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "./users.decorator";
-import { ProfileDto } from "./dto/user.dto";
-import { FriendshipStatus } from "./interfaces/friendship.interface";
+import { ListFriendsDto, ProfileDto } from "./dto/user.dto";
+import { QueryDto } from "src/dto/query.dto";
 
 @Controller("api/users")
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
-  @UseGuards(AuthGuard)
   @Get()
-  async getAllUsers(
-    @Query("search") search: string,
-    @Query("page", ParseIntPipe) page: number,
-    @Query("limit", ParseIntPipe) limit: number,
-    @User("userId") userId: string,
-  ) {
-    return this.usersService.getAll(search, userId, page, limit);
+  async getAllUsers(@Query() query: QueryDto) {
+    return this.usersService.getAll(query);
   }
 
-  @UseGuards(AuthGuard)
-  @Get("profile")
-  async getUserProfile(@User("userId") userId: string) {
+  @Get(":id/profile")
+  async getUserProfile(@Param("id") userId: string) {
     return this.usersService.getUserProfile(userId);
   }
 
@@ -52,34 +44,9 @@ export class UsersController {
     return this.usersService.delete(id);
   }
 
-  @UseGuards(AuthGuard)
   @Get("friends")
-  async getFriends(
-    @User("userId") userId: string,
-    @Query("page", ParseIntPipe) page: number,
-    @Query("limit", ParseIntPipe) limit: number,
-  ) {
-    return this.usersService.getFriends(
-      userId,
-      FriendshipStatus.ACCEPTED,
-      page,
-      limit,
-    );
-  }
-
-  @UseGuards(AuthGuard)
-  @Get("friends/pending")
-  async getPendingFriendRequests(
-    @User("userId") userId: string,
-    @Query("page", ParseIntPipe) page: number,
-    @Query("limit", ParseIntPipe) limit: number,
-  ) {
-    return this.usersService.getFriends(
-      userId,
-      FriendshipStatus.PENDING,
-      page,
-      limit,
-    );
+  async getFriends(@Query() query: ListFriendsDto) {
+    return this.usersService.getFriends(query);
   }
 
   @UseGuards(AuthGuard)

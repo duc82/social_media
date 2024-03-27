@@ -96,7 +96,7 @@ export default async function LeftSidebar() {
                 <ul className="nav nav-link-secondary flex-column fw-bold gap-2">
                   <li className="nav-item">
                     <Link
-                      href="/profile"
+                      href={`/profile/${currentUser?.id}`}
                       className="nav-link d-flex align-items-center"
                     >
                       <Image
@@ -112,7 +112,7 @@ export default async function LeftSidebar() {
                   <li className="nav-item">
                     <Link
                       className="nav-link d-flex align-items-center"
-                      href="/profile/friends"
+                      href={`/profile/${currentUser?.id}/friends`}
                     >
                       <Image
                         className="me-2"
