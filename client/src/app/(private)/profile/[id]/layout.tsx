@@ -1,11 +1,24 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ProfileMainHeader from "@/app/components/Profile/Main/Header";
 import ProfileSidebar from "@/app/components/Profile/Sidebar";
+import FriendProvider from "@/app/providers/FriendProvider";
 import userService from "@/app/services/userService";
+import { FullUser } from "@/app/types/user";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
-const getProfile = async (id: string) => {
+const getProfile = async (
+  id: string | undefined,
+  currentUser: FullUser
+): Promise<FullUser> => {
+  if (!id) {
+    return currentUser;
+  }
+
+  if (currentUser.id === id) {
+    return currentUser;
+  }
+
   try {
     const user = await userService.getUserProfile(id);
     return user;
@@ -22,18 +35,33 @@ export default async function ProfileLayout({
   params: { id?: string };
 }) {
   const session = await getServerSession(authOptions);
-  const user = await getProfile(params.id || session?.user.id!);
+  const currentUser = session?.user as FullUser;
+  const user = await getProfile(params.id, currentUser);
+
+  const {
+    friends,
+    total: totalFriends,
+    page,
+    limit,
+  } = await userService.getFriends(user.id);
 
   return (
-    <div className="row g-4">
-      <div className="col-lg-8 vstack gap-4">
-        <ProfileMainHeader
-          user={user}
-          isUserLoggedIn={session?.user.id === user.id}
-        />
-        {children}
+    <FriendProvider
+      friends={friends}
+      total={totalFriends}
+      page={page}
+      limit={limit}
+    >
+      <div className="row g-4">
+        <div className="col-lg-8 vstack gap-4">
+          <ProfileMainHeader
+            user={user}
+            isMyProfile={currentUser.id === user.id}
+          />
+          {children}
+        </div>
+        <ProfileSidebar />
       </div>
-      <ProfileSidebar />
-    </div>
+    </FriendProvider>
   );
 }

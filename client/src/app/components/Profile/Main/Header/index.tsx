@@ -1,3 +1,4 @@
+"use client";
 import Avatar from "@/app/components/Avatar";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,17 +11,17 @@ import {
   PlusLg,
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
-import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
+import useFriends from "@/app/hooks/useFriend";
 
-export default async function ProfileMainHeader({
+export default function ProfileMainHeader({
   user,
-  isUserLoggedIn,
+  isMyProfile,
 }: {
   user: FullUser;
-  isUserLoggedIn: boolean;
+  isMyProfile: boolean;
 }) {
-  const { total: totalFriends } = await userService.getFriends(user.id);
+  const { total: totalFriends } = useFriends((state) => state);
 
   return (
     <div className="card">
@@ -56,7 +57,7 @@ export default async function ProfileMainHeader({
             <p>{totalFriends} friends</p>
           </div>
 
-          {isUserLoggedIn ? (
+          {isMyProfile ? (
             <div className="d-flex mt-3 justify-content-center ms-md-auto">
               <button
                 type="button"

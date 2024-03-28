@@ -1,17 +1,14 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
 import Header from "../components/Header";
 import SearchModal from "../components/Header/SearchModal";
 
-export default async function PrivateLayout({
+export default function PrivateLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
   return (
     <>
-      <SearchModal accessToken={session?.accessToken!} />
+      <SearchModal />
       <Header />
       <main>
         <div className="container">{children}</div>

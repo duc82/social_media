@@ -8,16 +8,15 @@ import { FullUser } from "@/app/types/user";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
-const getProfile = async (id?: string): Promise<FullUser> => {
-  const session = await getServerSession(authOptions);
-
-  const currentUser = session?.user! as FullUser;
-
+const getProfile = async (
+  id: string | undefined,
+  currentUser: FullUser
+): Promise<FullUser> => {
   if (!id) {
     return currentUser;
   }
 
-  if (session?.user.id === id) {
+  if (currentUser.id === id) {
     return currentUser;
   }
 
@@ -30,7 +29,9 @@ const getProfile = async (id?: string): Promise<FullUser> => {
 };
 
 export default async function Profile({ params }: { params: { id?: string } }) {
-  const user = await getProfile(params?.id);
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user as FullUser;
+  const user = await getProfile(params.id, currentUser);
 
   const { posts } = await postService.getAll({
     userId: user.id,
@@ -38,7 +39,7 @@ export default async function Profile({ params }: { params: { id?: string } }) {
 
   return (
     <PostProvider initialPosts={posts}>
-      {params.id === user.id && <SharePost />}
+      {currentUser.id === user.id && <SharePost />}
       <Posts />
     </PostProvider>
   );
