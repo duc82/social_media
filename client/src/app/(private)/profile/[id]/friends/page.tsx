@@ -1,6 +1,6 @@
 "use client";
 import Avatar from "@/app/components/Avatar";
-import useFriends from "@/app/hooks/useFriend";
+import useFriends from "@/app/hooks/useFriends";
 import Link from "next/link";
 
 export default function Friends() {

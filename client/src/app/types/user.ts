@@ -1,3 +1,5 @@
+type FriendshipStatus = "pending" | "accepted" | "rejected";
+
 interface Profile {
   id: string;
   gender: "male" | "female" | "other" | null;
@@ -38,4 +40,18 @@ interface FriendsResponse {
   limit: number;
 }
 
-export type { User, FullUser, UsersReponse, FriendsResponse };
+interface Friendship {
+  id: string;
+  status: FriendshipStatus;
+  user: FullUser;
+  friend: FullUser;
+}
+
+export type {
+  User,
+  FullUser,
+  UsersReponse,
+  FriendsResponse,
+  FriendshipStatus,
+  Friendship,
+};

@@ -8,6 +8,7 @@ $btn-font-size-lg: 1rem;
 $btn-border-radius-lg: 0.2rem;
 $btn-font-size: $font-size-base;
 $btn-transition: all 0.3s ease-in-out;
+$btn-font-weight: 500;
 
 // button soft
 @mixin button-soft-variant($color, $soft-background: rgba($color, 0.1)) {

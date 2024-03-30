@@ -24,7 +24,7 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
               <h5 className="card-title">About</h5>
             </div>
             <div className="card-body position-relative pt-0">
-              <p>{user.profile.overview}</p>
+              {user.profile.overview && <p>{user.profile.overview}</p>}
               <ul className="list-unstyled mt-3 mb-0">
                 <li className="mb-2">
                   <CalendarDate className="pe-1" size={20} />

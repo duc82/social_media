@@ -28,11 +28,12 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {
-        console.log(errors);
         const firstError = Object.values(errors[0].constraints)[0];
         return new BadRequestException(firstError);
       },
       stopAtFirstError: true,
+      // transfrom the payload to the DTO object
+      transform: true,
     }),
   );
 

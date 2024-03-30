@@ -11,7 +11,7 @@ const dataSource = new DataSource({
   url: configService.getOrThrow<string>("DATABASE_URL"),
   entities: [__dirname + "/**/*.entity{.ts,.js}"],
   migrations: ["migrations/*{.ts,.js}"],
-  logging: configService.get<string | undefined>("NODE_ENV") !== "production",
+  logging: configService.get<string>("NODE_ENV") !== "production",
 });
 
 export default dataSource;

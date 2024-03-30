@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { User } from "./entities/user.entity";
 import { DataSource, FindOneOptions } from "typeorm";
-import { CreateUserDto, ListFriendsDto, ProfileDto } from "./dto/user.dto";
+import { CreateUserDto, ProfileDto } from "./dto/user.dto";
 import { Profile } from "./entities/profile.entity";
 import { FriendShip } from "./entities/friendship.entity";
 import { FriendshipStatus } from "./interfaces/friendship.interface";
@@ -121,17 +121,15 @@ export class UserService {
   }
 
   async sendFriendRequest(userId: string, friendId: string) {
-    const existsingFriendship = await this.dataSource
-      .getRepository(FriendShip)
-      .findOne({
-        where: {
-          user: { id: userId },
-          friend: { id: friendId },
-        },
-      });
-    // SELECT * FROM friend_ship WHERE userId = ${userId} AND friendId = ${friendId}
+    const isExists = await this.dataSource.getRepository(FriendShip).exists({
+      where: {
+        user: { id: userId },
+        friend: { id: friendId },
+      },
+    });
+    // SELECT EXISTS(SELECT 1 FROM friend_ship WHERE userId = ${userId} AND friendId = ${friendId})
 
-    if (existsingFriendship) {
+    if (isExists) {
       throw new BadRequestException("Friendship already exists");
     }
 
@@ -139,10 +137,30 @@ export class UserService {
       user: { id: userId },
       friend: { id: friendId },
     });
+    // INSERT INTO friend_ship (userId, friendId) VALUES (${userId}, ${friendId})
 
     await this.dataSource.getRepository(FriendShip).save(newFriendship);
 
     return newFriendship;
+  }
+
+  async cancelFriendRequest(userId: string, friendId: string) {
+    const friendship = await this.dataSource.getRepository(FriendShip).findOne({
+      where: {
+        user: { id: userId },
+        friend: { id: friendId },
+      },
+      select: ["id"],
+    });
+
+    if (!friendship) {
+      throw new NotFoundException("Friendship not found");
+    }
+
+    await this.dataSource.getRepository(FriendShip).delete(friendship.id);
+    // DELETE FROM friend_ship WHERE id = ${friendship.id}
+
+    return friendship;
   }
 
   async acceptFriendRequest(userId: string, friendId: string) {
@@ -150,6 +168,7 @@ export class UserService {
       where: {
         user: { id: friendId },
         friend: { id: userId },
+        status: FriendshipStatus.PENDING,
       },
     });
 
@@ -163,18 +182,14 @@ export class UserService {
     return friendship;
   }
 
-  async getFriends(query: ListFriendsDto) {
-    const { page = 1, limit = 10, status, userId } = query;
+  async getFriends(userId: string, status: FriendshipStatus, query: QueryDto) {
+    const { page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
     const where: Record<string, Record<string, string> | FriendshipStatus>[] = [
-      { user: { id: userId } },
-      { friend: { id: userId } },
+      { user: { id: userId }, status },
+      { friend: { id: userId }, status },
     ];
-
-    if (status) {
-      where.push({ status });
-    }
 
     const friendships = await this.dataSource.getRepository(FriendShip).find({
       where,
@@ -182,7 +197,7 @@ export class UserService {
       take: limit,
       relations: ["user", "friend", "user.profile", "friend.profile"],
     });
-    // SELECT * FROM friend_ship WHERE (userId = ${userId} OR friendId = ${userId}) AND status = ${status}
+    // SELECT * FROM friend_ship WHERE (userId = ${userId} OR friendId = ${userId}) AND status = ${status} LIMIT ${limit} OFFSET ${skip}
 
     const friends = friendships.map((friendship) => {
       if (friendship.user.id === userId) {
@@ -196,5 +211,25 @@ export class UserService {
     });
 
     return { friends, total, page, limit };
+  }
+
+  async getFriendship(
+    userId: string,
+    friendId: string,
+    status: FriendshipStatus,
+  ) {
+    const friendship = await this.dataSource.getRepository(FriendShip).findOne({
+      where: [
+        { user: { id: userId }, friend: { id: friendId }, status },
+        { user: { id: friendId }, friend: { id: userId }, status },
+      ],
+      relations: ["user", "friend"],
+    });
+
+    if (!friendship) {
+      throw new NotFoundException("Friendship not found");
+    }
+
+    return friendship;
   }
 }

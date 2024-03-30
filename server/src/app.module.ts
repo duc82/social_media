@@ -26,8 +26,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging:
-          configService.get<string | undefined>("NODE_ENV") !== "production",
+        logging: false,
         autoLoadEntities: true,
       }),
     }),

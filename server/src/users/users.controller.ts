@@ -12,8 +12,9 @@ import {
 import { UserService } from "./users.service";
 import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "./users.decorator";
-import { ListFriendsDto, ProfileDto } from "./dto/user.dto";
+import { ProfileDto } from "./dto/user.dto";
 import { QueryDto } from "src/dto/query.dto";
+import { GetFriendsParams } from "./dto/friend.dto";
 
 @Controller("api/users")
 export class UsersController {
@@ -44,18 +45,36 @@ export class UsersController {
     return this.usersService.delete(id);
   }
 
-  @Get("friends")
-  async getFriends(@Query() query: ListFriendsDto) {
-    return this.usersService.getFriends(query);
+  @Get(":id/friends/:status")
+  async getFriends(@Param() param: GetFriendsParams, @Query() query: QueryDto) {
+    return this.usersService.getFriends(param.id, param.status, query);
   }
 
   @UseGuards(AuthGuard)
-  @Post("friends/request")
+  @Get("friends/:id/friendship/:status")
+  async getFriendship(
+    @User("userId") userId: string,
+    @Param() param: GetFriendsParams,
+  ) {
+    return this.usersService.getFriendship(userId, param.id, param.status);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post("friends/send")
   async sendFriendRequest(
     @User("userId") userId: string,
     @Body("id") friendId: string,
   ) {
     return this.usersService.sendFriendRequest(userId, friendId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete("friends/cancel/:id")
+  async cancelFriendRequest(
+    @User("userId") userId: string,
+    @Param("id") friendId: string,
+  ) {
+    return this.usersService.cancelFriendRequest(userId, friendId);
   }
 
   @UseGuards(AuthGuard)

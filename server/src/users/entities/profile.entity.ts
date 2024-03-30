@@ -52,5 +52,10 @@ export class Profile extends BaseEntity {
   @Column({
     nullable: true,
   })
-  location: string;
+  education: string;
+
+  @Column({
+    nullable: true,
+  })
+  workplace: string;
 }
