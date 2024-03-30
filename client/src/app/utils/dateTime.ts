@@ -31,4 +31,10 @@ function formatDateTime(time: string): string {
   });
 }
 
-export default formatDateTime;
+const formatDate = (date: string | number | Date) => {
+  return new Date(date).toLocaleDateString("en", {
+    dateStyle: "medium",
+  });
+};
+
+export { formatDateTime, formatDate };

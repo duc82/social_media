@@ -14,7 +14,7 @@ import {
   XCircle,
 } from "react-bootstrap-icons";
 import { Post } from "@/app/types/post";
-import formatDateTime from "@/app/utils/formatDateTime";
+import { formatDateTime } from "@/app/utils/dateTime";
 
 export default function Post({
   post,

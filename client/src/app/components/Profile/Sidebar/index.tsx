@@ -10,8 +10,10 @@ import {
 import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
+import { FullUser } from "@/app/types/user";
+import { formatDate } from "@/app/utils/dateTime";
 
-export default function ProfileSidebar() {
+export default function ProfileSidebar({ user }: { user: FullUser }) {
   return (
     <div className="col-lg-4">
       <div className="row g-4">
@@ -22,22 +24,21 @@ export default function ProfileSidebar() {
               <h5 className="card-title">About</h5>
             </div>
             <div className="card-body position-relative pt-0">
-              <p>
-                He moonlights difficult engrossed it, sportsmen. Interested has
-                all Devonshire difficulty gay assistance joy.
-              </p>
+              <p>{user.profile.overview}</p>
               <ul className="list-unstyled mt-3 mb-0">
                 <li className="mb-2">
                   <CalendarDate className="pe-1" size={20} />
-                  Born: <strong> October 20, 1990 </strong>{" "}
+                  Born: <strong>{formatDate(user.createdAt)}</strong>{" "}
                 </li>
-                <li className="mb-2">
-                  <Heart className="pe-1" size={20} />
-                  Status: <strong> Single </strong>{" "}
-                </li>
+                {user.profile.maritalStatus && (
+                  <li className="mb-2">
+                    <Heart className="pe-1" size={20} />
+                    Status: <strong> {user.profile.maritalStatus} </strong>{" "}
+                  </li>
+                )}
                 <li>
                   <Envelope className="pe-1" size={20} />
-                  Email: <strong> webestica@gmail.com </strong>{" "}
+                  Email: <strong> {user.email} </strong>{" "}
                 </li>
               </ul>
             </div>

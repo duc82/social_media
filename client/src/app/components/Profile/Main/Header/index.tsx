@@ -13,6 +13,7 @@ import {
 import ProfileMainHeaderMenu from "./Menu";
 import { FullUser } from "@/app/types/user";
 import useFriends from "@/app/hooks/useFriend";
+import { formatDate } from "@/app/utils/dateTime";
 
 export default function ProfileMainHeader({
   user,
@@ -120,6 +121,13 @@ export default function ProfileMainHeader({
                 <PlusLg className="pe-1" />
                 Add friend
               </button>
+              <button
+                type="button"
+                className="btn btn-danger-soft d-flex align-items-center me-2"
+              >
+                <PencilFill className="pe-1" />
+                Message
+              </button>
               <div className="dropdown">
                 <button
                   type="button"
@@ -171,9 +179,7 @@ export default function ProfileMainHeader({
           </li>
           <li className="list-inline-item d-inline-flex align-items-center">
             <Calendar2Plus className="me-1" /> Joined on{" "}
-            {new Date(user.createdAt ?? Date.now()).toLocaleDateString("en", {
-              dateStyle: "medium",
-            })}
+            {formatDate(user.createdAt)}
           </li>
         </ul>
       </div>
