@@ -1,0 +1,16 @@
+.badge-unread {
+  background-color: $light;
+  &:hover {
+    background-color: $light;
+  }
+  &:before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background: $primary;
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+    left: 4px;
+  }
+}

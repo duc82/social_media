@@ -3,16 +3,22 @@ import Avatar from "@/app/components/Avatar";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  Bookmark,
   Briefcase,
   Calendar2Plus,
   ChatLeftTextFill,
+  FileEarmarkPdf,
+  FileEarmarkPdfFill,
+  Gear,
   GeoAlt,
+  Lock,
   PatchCheckFill,
   PencilFill,
   PersonCheckFill,
   PersonPlusFill,
   PersonXFill,
   PlusLg,
+  ThreeDots,
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friendship, FullUser } from "@/app/types/user";
@@ -23,6 +29,8 @@ import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
 import userService from "@/app/services/userService";
 import FriendButton from "./FriendButton";
+
+const isMyProfile = true;
 
 export default function ProfileMainHeader() {
   //   {
@@ -38,6 +46,7 @@ export default function ProfileMainHeader() {
   //   friendship: Friendship | null;
   //   initialSentFriendRequest: boolean;
   // }
+
   const [isLoading, setIsLoading] = useState(false);
   // const [isSentFriendRequest, setIsSentFriendRequest] = useState(
   //   initialSentFriendRequest
@@ -114,46 +123,46 @@ export default function ProfileMainHeader() {
             <p>{10} friends</p>
           </div>
 
-          {/* <div className="d-flex mt-3 justify-content-center ms-md-auto">
+          {/* <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
             <button
               type="button"
-              className="btn btn-primary-soft d-flex align-items-center me-2"
+              className="btn btn-primary-soft d-flex align-items-center"
             >
-              <PlusLg className="me-2" />
+              <PlusLg width={16} height={16} className="me-2" />
               Add to story
             </button>
             <button
               type="button"
-              className="btn btn-danger-soft d-flex align-items-center me-2"
+              className="btn btn-danger-soft d-flex align-items-center"
             >
-              <PencilFill className="me-2" />
+              <PencilFill width={16} height={16} className="me-2" />
               Edit profile
             </button>
             <div className="dropdown">
               <button
                 type="button"
-                className="icon-md btn btn-light"
+                className="icon-md btn btn-light p-0"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
               >
-                <i className="bi bi-three-dots"></i>
+                <ThreeDots />
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-bookmark fa-fw pe-2"></i>Share profile
-                    in a message
+                    <Bookmark width={23} height={19} className="pe-2" />
+                    Share profile in a message
                   </Link>
                 </li>
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-file-earmark-pdf fa-fw pe-2"></i>Save
-                    your profile to PDF
+                    <FileEarmarkPdf width={23} height={19} className="pe-2" />
+                    Save your profile to PDF
                   </Link>
                 </li>
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-lock fa-fw pe-2"></i>Lock profile
+                    <Lock width={23} height={19} className="pe-2" />
+                    Lock profile
                   </Link>
                 </li>
                 <li>
@@ -161,7 +170,8 @@ export default function ProfileMainHeader() {
                 </li>
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-gear fa-fw pe-2"></i>Profile settings
+                    <Gear width={23} height={19} className="pe-2" />
+                    Profile settings
                   </Link>
                 </li>
               </ul>
@@ -169,12 +179,11 @@ export default function ProfileMainHeader() {
           </div> */}
 
           <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
-            <FriendButton isLoading={isLoading} status="pending" />
-            <FriendButton isLoading={isLoading} status="cancel" />
+            <FriendButton isLoading={isLoading} status="friends" />
 
             <Link
               href="/chats"
-              className="btn btn-light d-flex align-items-center me-2"
+              className="btn btn-light d-flex align-items-center"
             >
               <ChatLeftTextFill width={16} height={16} className="me-2" />
               <span>Message</span>
@@ -183,28 +192,28 @@ export default function ProfileMainHeader() {
             <div className="dropdown">
               <button
                 type="button"
-                className="icon-md btn btn-light"
+                className="icon-md btn btn-light p-0"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
               >
-                <i className="bi bi-three-dots"></i>
+                <ThreeDots />
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-bookmark fa-fw pe-2"></i>Share profile
-                    in a message
+                    <Bookmark width={23} height={19} className="pe-2" />
+                    Share profile in a message
                   </Link>
                 </li>
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-file-earmark-pdf fa-fw pe-2"></i>Save
-                    your profile to PDF
+                    <FileEarmarkPdf width={23} height={19} className="pe-2" />
+                    Save your profile to PDF
                   </Link>
                 </li>
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-lock fa-fw pe-2"></i>Lock profile
+                    <Lock width={23} height={19} className="pe-2" />
+                    Lock profile
                   </Link>
                 </li>
                 <li>
@@ -212,7 +221,8 @@ export default function ProfileMainHeader() {
                 </li>
                 <li>
                   <Link className="dropdown-item" href="#">
-                    <i className="bi bi-gear fa-fw pe-2"></i>Profile settings
+                    <Gear width={23} height={19} className="pe-2" />
+                    Profile settings
                   </Link>
                 </li>
               </ul>

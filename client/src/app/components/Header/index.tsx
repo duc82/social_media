@@ -4,8 +4,17 @@ import Avatar from "../Avatar";
 import dynamic from "next/dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import Menu from "./Menu";
-import { Search } from "react-bootstrap-icons";
+import {
+  BellFill,
+  CardText,
+  ChatLeftTextFill,
+  GearFill,
+  LifePreserver,
+  Power,
+  Search,
+} from "react-bootstrap-icons";
+import NotificationsDropdown from "./NotificationsDropdown";
+import HeaderMenu from "./HeaderMenu";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
@@ -58,37 +67,44 @@ export default async function Header() {
             </div>
           </div>
 
-          <Menu userId={currentUser?.id!} />
+          <HeaderMenu userId={currentUser?.id!} />
         </div>
 
         <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
           <li className="nav-item ms-2">
             <Link
               href="/chats"
+              title="Chats"
               className="nav-link bg-light icon-md btn btn-light p-0"
             >
-              <i className="bi bi-chat-left-text-fill fs-6"></i>
+              <ChatLeftTextFill className="fs-6" />
             </Link>
           </li>
           <li className="nav-item ms-2">
             <Link
               href="/settings"
+              title="Settings"
               className="nav-link bg-light icon-md btn btn-light p-0"
             >
-              <i className="bi bi-gear-fill fs-6"></i>
+              <GearFill className="fs-6" />
             </Link>
           </li>
-          <li className="nav-item ms-2">
+          {/* Notifications */}
+          <li className="nav-item ms-2 dropdown">
             <button
               type="button"
+              title="Notifications"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
               className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
             >
-              <i className="bi bi-bell-fill fs-6"></i>
+              <BellFill className="fs-6" />
               <span
                 className="position-absolute top-0 p-1 bg-danger rounded-circle"
                 style={{ right: "-3px" }}
               ></span>
             </button>
+            <NotificationsDropdown />
           </li>
           <li className="nav-item ms-2 dropdown">
             <button
@@ -130,20 +146,28 @@ export default async function Header() {
                 </Link>
               </li>
               <li>
-                <Link href="/settings" className="dropdown-item">
-                  <i className="bi bi-gear me-2"></i>
+                <Link
+                  href="/settings"
+                  title="Settings"
+                  className="dropdown-item"
+                >
+                  <GearFill className="me-2" />
                   Settings & Privacy
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="dropdown-item">
-                  <i className="bi bi-life-preserver me-2"></i>
+                <Link href="/support" title="Support" className="dropdown-item">
+                  <LifePreserver className="me-2" />
                   Support
                 </Link>
               </li>
               <li>
-                <Link href="/documentation" className="dropdown-item">
-                  <i className="bi bi-card-text me-2"></i>
+                <Link
+                  href="/documentation"
+                  title="Documentation"
+                  className="dropdown-item"
+                >
+                  <CardText className="me-2" />
                   Documentation
                 </Link>
               </li>
@@ -153,8 +177,12 @@ export default async function Header() {
               </li>
 
               <li>
-                <Link href="/signout" className="dropdown-item">
-                  <i className="bi bi-power me-2"></i>
+                <Link
+                  href="/signout"
+                  title="Sign Out"
+                  className="dropdown-item"
+                >
+                  <Power className="me-2" />
                   Sign Out
                 </Link>
               </li>

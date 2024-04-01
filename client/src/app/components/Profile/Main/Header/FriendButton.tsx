@@ -8,7 +8,7 @@ import {
 
 interface FriendButtonProps {
   isLoading?: boolean;
-  status: "none" | "accepted" | "pending" | "cancel";
+  status: "none" | "accept" | "friends" | "cancel";
   className?: string;
 }
 
@@ -30,12 +30,12 @@ const FriendButton = ({
       icon: <PersonPlusFill width={16} height={16} />,
       className: "btn-primary",
     },
-    accepted: {
+    friends: {
       name: "Friends",
       icon: <PersonCheckFill width={16} height={16} />,
-      className: "btn-success",
+      className: "btn-primary",
     },
-    pending: {
+    accept: {
       name: "Accept",
       icon: <PersonCheckFill width={16} height={16} />,
       className: "btn-success",

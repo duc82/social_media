@@ -1,7 +1,5 @@
 // 1. Import external libraries
-@import "bootstrap-icons/font/bootstrap-icons";
 @import "@fortawesome/fontawesome-svg-core/styles.css";
-@import "~glightbox/dist/css/glightbox.min.css";
 
 // 2. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "~bootstrap/scss/functions";
@@ -75,5 +73,5 @@ $list-inline-padding: 0.75rem;
 @import "./custom/button";
 @import "./custom/darkmode";
 @import "~bootstrap/scss/bootstrap";
+@import "./custom/badge";
 @import "./custom/general";
-@import "./custom/glightbox";

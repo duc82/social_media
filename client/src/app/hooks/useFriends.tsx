@@ -3,7 +3,7 @@ import { FriendState } from "../stores/FriendStore";
 import FriendContext from "../context/FriendContext";
 import { useStore } from "zustand";
 
-function useFriends<T>(selector: (state: FriendState) => T): T {
+export default function useFriends<T>(selector: (state: FriendState) => T): T {
   const store = useContext(FriendContext);
 
   if (!store) {
@@ -12,5 +12,3 @@ function useFriends<T>(selector: (state: FriendState) => T): T {
 
   return useStore(store, selector);
 }
-
-export default useFriends;

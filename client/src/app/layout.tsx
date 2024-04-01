@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "zuck.js/css";
 import "zuck.js/skins/snapgram";
-import "./styles/scss/globals.scss";
-import ToastProvider from "./providers/ToastProvider";
+import "./styles/globals.scss";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
 import BootstrapProvider from "./providers/BootstrapProvider";
-import GLightboxProvider from "./providers/GLightboxProvider";
-import TooltipProvider from "./providers/TooltipProvider";
+import Toaster from "./libs/Toaster";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Social Media",
@@ -24,13 +22,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={font.className}>
         <NextAuthProvider>
           <NextThemeProvider>
             <BootstrapProvider>
-              <GLightboxProvider>{children}</GLightboxProvider>
-              <ToastProvider />
-              <TooltipProvider />
+              {children}
+              <Toaster />
             </BootstrapProvider>
           </NextThemeProvider>
         </NextAuthProvider>
