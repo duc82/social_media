@@ -60,6 +60,7 @@ $utilities: (
           map-merge(
             map-get(map-get($utilities, "color"), "values"),
             (
+              "gray-600": $gray-600,
               "gray-700": $gray-700,
               "gray-800": $gray-800,
             )
