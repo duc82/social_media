@@ -11,7 +11,7 @@ import {
   GearFill,
   LifePreserver,
   Power,
-  Search,
+  Search
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
@@ -73,8 +73,8 @@ export default async function Header() {
         <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
           <li className="nav-item ms-2">
             <Link
-              href="/chats"
-              title="Chats"
+              href="/messages"
+              title="Messages"
               className="nav-link bg-light icon-md btn btn-light p-0"
             >
               <ChatLeftTextFill className="fs-6" />

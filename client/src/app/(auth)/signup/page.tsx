@@ -20,7 +20,7 @@ const classNameScore: Record<number, string> = {
   2: "psms-40",
   3: "psms-60",
   4: "psms-80",
-  5: "psms-100",
+  5: "psms-100"
 };
 
 interface FormValue extends SignUpDto {
@@ -32,10 +32,10 @@ export default function Signup() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
@@ -67,7 +67,10 @@ export default function Signup() {
       <div className="text-center">
         <h1 className="h1 mb-2">Sign up</h1>
         <span className="d-block">
-          Already have an account? <Link href="/signin">Sign in here</Link>
+          Already have an account?{" "}
+          <Link href="/signin" className="link-primary">
+            Sign in here
+          </Link>
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
@@ -127,12 +130,16 @@ export default function Signup() {
             ></div>
           </div>
           <div className="d-flex mt-1">
-            {errors.password ? (
-              <div className="form-text text-danger mt-1">
+            {errors.password && (
+              <p className="form-text text-danger mt-1">
                 {errors.password.message}
-              </div>
-            ) : (
-              <small>Write your password...</small>
+              </p>
+            )}
+            {!errors.password && passwordScore === 0 && (
+              <p>Write your password...</p>
+            )}
+            {!errors.password && passwordScore === 5 && (
+              <p>Yeah! that password rocks :))</p>
             )}
           </div>
         </div>

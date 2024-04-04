@@ -1,6 +1,5 @@
 $light: rgb(238, 240, 242);
 $secondary: rgb(20, 25, 30);
-
 $gray-100: rgb(247, 248, 249);
 $gray-200: rgb(239, 242, 246);
 $gray-300: rgb(238, 240, 242);
@@ -12,3 +11,16 @@ $gray-800: rgb(20, 25, 30);
 $gray-900: rgb(15, 15, 16);
 
 $border-color: rgba(0, 0, 0, 0.1);
+$list-group-bg: transparent;
+$list-group-hover-bg: $light;
+
+$kbd-padding-y: 0.1rem;
+$enable-negative-margins: true;
+
+// Body
+// Dark
+$body-color-dark: $gray-500;
+$body-bg-dark: rgb(25 26 31);
+// Light
+$body-color: rgb(102, 105, 120);
+$body-bg: $gray-200;

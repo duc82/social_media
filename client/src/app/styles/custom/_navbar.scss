@@ -1,6 +1,6 @@
 $navbar-padding-y: 0;
 $navbar-toggler-focus-width: 0;
-$navbar-light-color: rgb(103, 106, 121);
+$navbar-light-color: $gray-600;
 $navbar-light-active-color: $primary;
 $navbar-light-hover-color: $primary;
 $nav-link-font-weight: 600;
@@ -178,6 +178,16 @@ nav {
     & + main {
       padding-top: calc(1.5rem + 56px);
       margin-bottom: 1.5rem;
+    }
+  }
+}
+
+@include color-mode(dark) {
+  .nav-link {
+    color: $gray-500;
+    &:hover,
+    &:focus {
+      color: $primary;
     }
   }
 }

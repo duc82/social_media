@@ -3,7 +3,7 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
-
+// Light
 $input-color: $gray-700;
 $input-focus-color: $input-color;
 $input-border-color: $gray-400;
@@ -67,4 +67,27 @@ $form-select-indicator-color: $form-select-color;
 
 textarea.form-control {
   min-height: calc(1.5em + 1rem + 2px) !important;
+}
+
+// Dark
+@include color-mode(dark) {
+  $gray-700: #ffffffb3;
+  $gray-100: rgb(49, 50, 53);
+
+  // input color
+  .form-control {
+    border-color: $gray-100;
+    background-color: $body-bg-dark;
+    color: $gray-700;
+
+    &:focus {
+      color: $gray-700;
+      background-color: $body-bg-dark;
+    }
+  }
+
+  .input-group-text {
+    background-color: #464950;
+    color: $gray-700;
+  }
 }

@@ -14,13 +14,13 @@ export default function SignIn() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm<SignInDto>({
     resolver: zodResolver(signInSchema),
     mode: "onChange",
     defaultValues: {
-      isRemember: true,
-    },
+      isRemember: true
+    }
   });
   const urlSearchParams = useSearchParams();
   const error = urlSearchParams.get("error");
@@ -37,7 +37,7 @@ export default function SignIn() {
     await signIn("credentials", {
       redirect: true,
       callbackUrl: "/",
-      ...data,
+      ...data
     });
   };
 
@@ -47,7 +47,9 @@ export default function SignIn() {
         <h1 className="h1 mb-2">Sign in</h1>
         <span className="d-block">
           Don&apos;t have an account?{" "}
-          <Link href="/signup">Click here to sign up</Link>
+          <Link href="/signup" className="link-primary">
+            Click here to sign up
+          </Link>
         </span>
       </div>
       {error && (
@@ -112,13 +114,15 @@ export default function SignIn() {
               Remember me?
             </label>
           </div>
-          <Link href="/forgotPassword">Forgot password?</Link>
+          <Link href="/forgotPassword" className="link-primary">
+            Forgot password?
+          </Link>
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary-soft w-100"
         >
           Login
         </button>

@@ -2,35 +2,34 @@
 @import "@fortawesome/fontawesome-svg-core/styles.css";
 
 // 2. Include functions first (so you can manipulate colors, SVGs, calc, etc)
-@import "~bootstrap/scss/functions";
+@import "../../../node_modules/bootstrap/scss/functions";
 
 // 3. Include any default variable overrides here
 @import "./custom/variables";
 
 // 4. Include remainder of required Bootstrap stylesheets (including any separate color mode style
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/variables-dark";
+@import "../../../node_modules/bootstrap/scss/variables";
+@import "../../../node_modules/bootstrap/scss/variables-dark";
 
 // 5. Include any default map overrides here
 
-// 6. Include remainder of required parts
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/root";
-
-// 7. Optionally include any other parts as needed
-@import "~bootstrap/scss/utilities";
-@import "~bootstrap/scss/reboot";
-
 @import "./custom/typography";
 
-$kbd-padding-y: 0.1rem;
+// 6. Include remainder of required parts
+@import "../../../node_modules/bootstrap/scss/maps";
+@import "../../../node_modules/bootstrap/scss/mixins";
+@import "../../../node_modules/bootstrap/scss/root";
 
-// Body
-$body-color: rgb(102, 105, 120);
-$body-bg: $gray-200;
+// 7. Optionally include any other parts as needed
+@import "../../../node_modules/bootstrap/scss/utilities";
+@import "../../../node_modules/bootstrap/scss/reboot";
+@import "../../../node_modules/bootstrap/scss/type";
+@import "../../../node_modules/bootstrap/scss/containers";
 
-$enable-negative-margins: true;
+// 8. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "../../../node_modules/bootstrap/scss/utilities/api";
+
+// 9. Include custom styles
 
 .bg-mode {
   background-color: $white;
@@ -59,6 +58,7 @@ li {
 }
 
 $list-inline-padding: 0.75rem;
+
 @import "./custom/dropzone";
 @import "./custom/stories";
 @import "./custom/utilities";
@@ -71,7 +71,7 @@ $list-inline-padding: 0.75rem;
 @import "./custom/form";
 @import "./custom/navbar";
 @import "./custom/button";
-@import "./custom/darkmode";
-@import "~bootstrap/scss/bootstrap";
 @import "./custom/badge";
+@import "./custom/darkmode";
+@import "../../../node_modules/bootstrap/scss/bootstrap";
 @import "./custom/general";
