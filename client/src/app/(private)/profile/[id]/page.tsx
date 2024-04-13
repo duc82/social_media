@@ -1,5 +1,4 @@
 import profileAction from "@/app/actions/profileAction";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import SharePost from "@/app/components/Post/SharePost";
 import Posts from "@/app/components/Posts";
 import PostProvider from "@/app/providers/PostProvider";

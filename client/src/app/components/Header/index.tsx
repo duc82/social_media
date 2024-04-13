@@ -3,7 +3,6 @@ import Link from "next/link";
 import Avatar from "../Avatar";
 import dynamic from "next/dynamic";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import {
   BellFill,
   CardText,
@@ -15,6 +14,7 @@ import {
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
