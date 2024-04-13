@@ -1,4 +1,4 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreatePostModal";
 import EmojiModal from "@/app/components/Post/CreatePostModal/EmojiModal";
