@@ -12,7 +12,7 @@ const timestamp = function () {
     60 * 60 * 2,
     60 * 60 * 25,
     60 * 60 * 24 * 4,
-    60 * 60 * 24 * 10,
+    60 * 60 * 24 * 10
   ];
 
   const shift = shifts[timeIndex++] || 0;
@@ -52,11 +52,11 @@ export default function Stories() {
               length: 5,
               name: "John Doe",
               src: "/01.jpg",
-              time: timestamp(),
-            },
-          ],
-        },
-      ],
+              time: timestamp()
+            }
+          ]
+        }
+      ]
     });
   }, []);
 

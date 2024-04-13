@@ -1,5 +1,6 @@
 import path from "path";
 
+// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -15,9 +16,9 @@ const nextConfig = {
     ]
   },
   sassOptions: {
-    includePaths: [path.join(__dirname, "styles")]
+    includePaths: [path.join(import.meta.dirname, "styles")]
   },
   reactStrictMode: true
 };
 
-module.exports = nextConfig;
+export default nextConfig;
