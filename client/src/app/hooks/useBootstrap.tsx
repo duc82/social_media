@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import BootstrapContext from "../context/BootstrapContext";
+import BootstrapContext from "../contexts/BootstrapContext";
 
 export default function useBootstrap() {
   return useContext(BootstrapContext);

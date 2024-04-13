@@ -13,21 +13,15 @@ import handlingError from "@/app/utils/error";
 import authService from "@/app/services/authService";
 import { SignUpDto } from "@/app/types/auth";
 import { signUpSchema } from "@/app/schemas/auth";
-
-const classNameScore: Record<number, string> = {
-  0: "",
-  1: "psms-20",
-  2: "psms-40",
-  3: "psms-60",
-  4: "psms-80",
-  5: "psms-100"
-};
+import clsx from "clsx";
+import { InfoCircle } from "react-bootstrap-icons";
 
 interface FormValue extends SignUpDto {
   confirmPassword: string;
 }
 
 export default function Signup() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -41,8 +35,6 @@ export default function Signup() {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-
-  const router = useRouter();
 
   const onSubmit = async (data: FormValue) => {
     const { confirmPassword, ...signUpDto } = data;
@@ -60,7 +52,7 @@ export default function Signup() {
     setPasswordType((prev) => (prev === "password" ? "text" : "password"));
   };
 
-  const passwordScore = usePasswordScore(watch("password"));
+  const { pwdScore, pwdScoreClassName } = usePasswordScore(watch("password"));
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
@@ -126,21 +118,34 @@ export default function Signup() {
           </div>
           <div className="mt-2 password-strength-meter">
             <div
-              className={`password-strength-meter-score ${classNameScore[passwordScore]}`}
+              className={clsx(
+                "password-strength-meter-score",
+                pwdScoreClassName
+              )}
             ></div>
           </div>
           <div className="d-flex mt-1">
-            {errors.password && (
-              <p className="form-text text-danger mt-1">
-                {errors.password.message}
-              </p>
-            )}
-            {!errors.password && passwordScore === 0 && (
-              <p>Write your password...</p>
-            )}
-            {!errors.password && passwordScore === 5 && (
-              <p>Yeah! that password rocks :))</p>
-            )}
+            <div>
+              {errors.password && (
+                <p className="form-text text-danger mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+              {!errors.password && pwdScore === 0 && (
+                <p>Write your password...</p>
+              )}
+              {!errors.password && pwdScore === 5 && (
+                <p>Yeah! that password rocks :))</p>
+              )}
+            </div>
+            <div className="ms-auto">
+              <InfoCircle
+                size={16}
+                data-bs-toggle="popover"
+                data-bs-placement="top"
+                data-bs-content="Include at least one uppercase, one lowercase, one special character, one number and 8 characters long."
+              />
+            </div>
           </div>
         </div>
 

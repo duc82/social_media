@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import SearchModal from "../components/Header/SearchModal";
 
 export default function PrivateLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

@@ -1,11 +1,11 @@
 "use client";
 import { ReactNode, useState } from "react";
 import { Post } from "../types/post";
-import PostContext from "../context/PostContext";
+import PostContext from "../contexts/PostContext";
 
 export default function PostProvider({
   children,
-  initialPosts,
+  initialPosts
 }: {
   children: ReactNode;
   initialPosts: Post[];

@@ -7,7 +7,7 @@ import {
   Calendar2EventFill,
   CameraReelsFill,
   EmojiSmileFill,
-  ImageFill,
+  ImageFill
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
@@ -27,13 +27,15 @@ export default async function SharePost() {
             alt={currentUser?.fullName}
           />
           <form className="w-100">
-            <input
-              className="form-control pe-4 border-0"
+            <textarea
+              className="form-control pe-4 border-0 resize-none"
               placeholder="Share your thoughts..."
               data-bs-toggle="modal"
               data-bs-target="#createPostModal"
               readOnly
-            />
+              rows={2}
+              style={{ height: 61 }}
+            ></textarea>
           </form>
         </div>
 

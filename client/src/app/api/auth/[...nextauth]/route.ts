@@ -1,4 +1,5 @@
 import authService from "@/app/services/authService";
+import { SignInDto } from "@/app/types/auth";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -9,18 +10,17 @@ export const authOptions: AuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-        isRemember: { label: "Remember me", type: "checkbox" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         if (credentials) {
-          const data = await authService.signIn(credentials);
+          const data = await authService.signIn(credentials as SignInDto);
           return { ...data, ...data.user };
         }
 
         throw new Error("Login failed");
-      },
-    }),
+      }
+    })
   ],
 
   callbacks: {
@@ -62,19 +62,19 @@ export const authOptions: AuthOptions = {
       }
 
       return session;
-    },
+    }
   },
 
   pages: {
     signIn: "/signin",
     error: "/signin",
     signOut: "/signout",
-    newUser: "/",
+    newUser: "/"
   },
 
   secret: process.env.NEXTAUTH_SECRET,
 
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === "development"
 };
 
 const handler = NextAuth(authOptions);

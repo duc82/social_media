@@ -11,16 +11,16 @@ import {
   ReplyFill,
   SlashCircle,
   ThreeDots,
-  XCircle,
+  XCircle
 } from "react-bootstrap-icons";
-import { Post } from "@/app/types/post";
 import { formatDateTime } from "@/app/utils/dateTime";
+import { Post as IPost } from "@/app/types/post";
 
 export default function Post({
   post,
-  handleDeletePost,
+  handleDeletePost
 }: {
-  post: Post;
+  post: IPost;
   handleDeletePost: (id: string) => Promise<void>;
 }) {
   return (
@@ -44,7 +44,7 @@ export default function Post({
                   className="nav-item small"
                   title={new Date(post.createdAt).toLocaleString("en-US", {
                     dateStyle: "full",
-                    timeStyle: "short",
+                    timeStyle: "short"
                   })}
                 >
                   {formatDateTime(post.createdAt)}

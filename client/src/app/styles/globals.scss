@@ -12,7 +12,6 @@
 @import "../../../node_modules/bootstrap/scss/variables-dark";
 
 // 5. Include any default map overrides here
-
 @import "./custom/typography";
 
 // 6. Include remainder of required parts
@@ -30,11 +29,6 @@
 @import "../../../node_modules/bootstrap/scss/utilities/api";
 
 // 9. Include custom styles
-
-.bg-mode {
-  background-color: $white;
-}
-
 a {
   transition: all 0.3s ease-in-out;
 }
@@ -53,25 +47,14 @@ li {
   list-style: none;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 $list-inline-padding: 0.75rem;
 
-@import "./custom/dropzone";
-@import "./custom/stories";
+.resize-none {
+  resize: none;
+}
+
 @import "./custom/utilities";
-@import "./custom/offcanvas";
-@import "./custom/modal";
-@import "./custom/card";
-@import "./custom/avatar";
-@import "./custom/dropdown";
-@import "./custom/container";
-@import "./custom/form";
-@import "./custom/navbar";
-@import "./custom/button";
-@import "./custom/badge";
+@import "./custom/lightmode";
 @import "./custom/darkmode";
 @import "../../../node_modules/bootstrap/scss/bootstrap";
 @import "./custom/general";

@@ -6,19 +6,18 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
-        pathname: "/**",
+        hostname: "res.cloudinary.com"
       },
       {
         protocol: "https",
-        hostname: "cdn.dummyjson.com",
-      },
-    ],
+        hostname: "cdn.dummyjson.com"
+      }
+    ]
   },
   sassOptions: {
-    includePaths: [path.join(__dirname, "styles")],
+    includePaths: [path.join(__dirname, "styles")]
   },
-  reactStrictMode: true,
+  reactStrictMode: true
 };
 
 module.exports = nextConfig;

@@ -1,9 +1,71 @@
+@import "./variables-dark";
+
 @include color-mode(dark) {
+  // Main
+  main {
+    background-color: $body-bg-dark;
+  }
+  // Card
   .card {
-    --bs-card-bg: rgb(20, 21, 25);
+    background-color: $card-dark;
+
+    .card-header {
+      background-color: $card-dark;
+
+      .card-title {
+        color: $white;
+      }
+    }
   }
 
+  // Background
   .bg-mode {
-    background-color: rgb(15, 15, 16);
+    background-color: $mode;
+  }
+
+  .bg-light {
+    background-color: $light !important;
+  }
+
+  // Form
+  .form-control {
+    border-color: $gray-100;
+    background-color: $body-bg-dark;
+    color: $gray-700;
+
+    &:focus {
+      color: $gray-700;
+      background-color: $body-bg-dark;
+    }
+  }
+
+  .input-group-text {
+    background-color: #464950;
+    color: $gray-700;
+  }
+
+  .password-strength-meter {
+    background-color: $gray-200;
+  }
+
+  // Navbar
+  .nav-link {
+    color: $gray-500;
+    &:hover,
+    &:focus {
+      color: $primary;
+    }
+  }
+
+  // Button
+  .btn-light {
+    background-color: $light;
+    color: $gray-800;
+    border-color: $light;
+
+    &:hover {
+      background-color: $gray-400;
+      color: $gray-900;
+    }
   }
 }

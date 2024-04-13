@@ -3,9 +3,9 @@
 import { PropsWithChildren, useRef } from "react";
 import createFriendStore, {
   FriendProps,
-  FriendStore,
+  FriendStore
 } from "../stores/FriendStore";
-import FriendContext from "../context/FriendContext";
+import FriendContext from "../contexts/FriendContext";
 
 type FriendProviderProps = PropsWithChildren<FriendProps>;
 

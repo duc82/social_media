@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { FriendState } from "../stores/FriendStore";
-import FriendContext from "../context/FriendContext";
+import FriendContext from "../contexts/FriendContext";
 import { useStore } from "zustand";
 
 export default function useFriends<T>(selector: (state: FriendState) => T): T {

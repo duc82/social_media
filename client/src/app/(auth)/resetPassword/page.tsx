@@ -1,4 +1,5 @@
 "use client";
+import usePasswordScore from "@/app/hooks/usePasswordScore";
 import { resetPasswordSchema } from "@/app/schemas/auth";
 import authService from "@/app/services/authService";
 import { ResetPasswordDto } from "@/app/types/auth";
@@ -6,24 +7,27 @@ import handlingError from "@/app/utils/error";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
+import clsx from "clsx";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { InfoCircle } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 function ResetPassword() {
+  const router = useRouter();
+  const urlSearchParams = useSearchParams();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    watch,
+    formState: { errors, isSubmitting }
   } = useForm<ResetPasswordDto>({
     mode: "onChange",
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(resetPasswordSchema)
   });
-  const router = useRouter();
-  const urlSearchParams = useSearchParams();
 
   const error = urlSearchParams.get("error");
   const token = urlSearchParams.get("token");
@@ -48,6 +52,8 @@ function ResetPassword() {
     }
   };
 
+  const { pwdScore, pwdScoreClassName } = usePasswordScore(watch("password"));
+
   useEffect(() => {
     if (!token) {
       router.push("/signin");
@@ -69,7 +75,7 @@ function ResetPassword() {
           <div className="mb-0 input-group input-group-lg">
             <input
               type={passwordType}
-              placeholder="Enter password"
+              placeholder="Enter new password"
               className="form-control"
               {...register("password")}
               aria-describedby="passwordHelpBlock"
@@ -85,18 +91,45 @@ function ResetPassword() {
               />
             </span>
           </div>
+          <div className="mt-2 password-strength-meter">
+            <div
+              className={clsx(
+                "password-strength-meter-score",
+                pwdScoreClassName
+              )}
+            ></div>
+          </div>
           <div className="d-flex mt-1">
-            {errors.password && (
-              <div className="form-text text-danger mt-1">
-                {errors.password.message}
-              </div>
-            )}
+            <div>
+              {errors.password && (
+                <p className="form-text text-danger mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+              {!errors.password && pwdScore === 0 && (
+                <p>Write your password...</p>
+              )}
+              {!errors.password && pwdScore === 5 && (
+                <p>Yeah! that password rocks :))</p>
+              )}
+            </div>
+            <div className="ms-auto">
+              <InfoCircle
+                size={16}
+                data-bs-toggle="popover"
+                data-bs-placement="top"
+                data-bs-content="Include at least one uppercase, one lowercase, one special character, one number and 8 characters long."
+              />
+            </div>
           </div>
         </div>
 
         <div className="mb-3">
           <p className="text-center">
-            Back to <Link href="/signin">Sign in</Link>
+            Back to{" "}
+            <Link href="/signin" className="link-primary">
+              Sign in
+            </Link>
           </p>
         </div>
 

@@ -14,10 +14,10 @@ export default function ForgotPassword() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    resetField,
+    resetField
   } = useForm<ForgotPasswordDto>({
     mode: "onChange",
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(forgotPasswordSchema)
   });
   const urlSearchParams = useSearchParams();
   const error = urlSearchParams.get("error");
@@ -35,7 +35,7 @@ export default function ForgotPassword() {
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
-        <h1 className="h1 mb-2">Forgot password?</h1>
+        <h1 className="h1 mb-2 mt-4">Forgot password?</h1>
         <span className="d-block">
           Enter the email address associated with account.
         </span>
@@ -59,7 +59,10 @@ export default function ForgotPassword() {
 
         <div className="mb-3">
           <p className="text-center">
-            Back to <Link href="/signin">Sign in</Link>
+            Back to{" "}
+            <Link href="/signin" className="link-primary">
+              Sign in
+            </Link>
           </p>
         </div>
 

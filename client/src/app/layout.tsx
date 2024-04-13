@@ -12,11 +12,11 @@ const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Social Media",
-  description: "Social",
+  description: "Social"
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -24,12 +24,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={font.className}>
         <NextAuthProvider>
-          <NextThemeProvider>
-            <BootstrapProvider>
+          <BootstrapProvider>
+            <NextThemeProvider>
               {children}
               <Toaster />
-            </BootstrapProvider>
-          </NextThemeProvider>
+            </NextThemeProvider>
+          </BootstrapProvider>
         </NextAuthProvider>
       </body>
     </html>

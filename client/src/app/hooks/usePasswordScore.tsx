@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 
+const classNameScore: Record<number, string> = {
+  0: "",
+  1: "psms-20",
+  2: "psms-40",
+  3: "psms-60",
+  4: "psms-80",
+  5: "psms-100"
+};
+
 export default function usePasswordScore(password: string) {
   const [score, setScore] = useState(0);
 
@@ -24,10 +33,10 @@ export default function usePasswordScore(password: string) {
       password.match(upperCaseLetters),
       password.match(numbers),
       password.match(special),
-      password.length >= length,
+      password.length >= length
     ].filter(Boolean).length;
     setScore(scores);
   }, [password]);
 
-  return score;
+  return { pwdScore: score, pwdScoreClassName: classNameScore[score] };
 }

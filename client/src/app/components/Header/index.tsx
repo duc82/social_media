@@ -111,10 +111,9 @@ export default async function Header() {
               type="button"
               className="nav-link icon-md btn p-0"
               data-bs-toggle="dropdown"
-              aria-expanded="false"
             >
               <Avatar
-                src={currentUser?.profile.avatar ?? ""}
+                src={currentUser?.profile.avatar ?? "/01.jpg"}
                 alt={currentUser?.fullName}
               />
             </button>
@@ -123,7 +122,7 @@ export default async function Header() {
               <li className="px-3">
                 <div className="d-flex align-items-center">
                   <Avatar
-                    src={currentUser?.profile.avatar ?? ""}
+                    src={currentUser?.profile.avatar ?? "/01.jpg"}
                     alt={currentUser?.fullName}
                     width={48}
                     height={48}

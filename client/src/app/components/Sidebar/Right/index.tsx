@@ -6,8 +6,14 @@ import { faPlus, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 export default function RightSidebar() {
   return (
     <div className="col-lg-3">
-      <div className="row g-4">
-        <div className="col-sm-6 col-lg-12">
+      <div
+        className="row g-4 flex-nowrap flex-column position-sticky justify-content-start"
+        style={{
+          top: "56px",
+          height: "calc(100vh - 56px - 1.5rem)"
+        }}
+      >
+        <div className="col-sm-6 col-lg-12 flex-fill">
           <div className="card">
             <div className="card-header pb-0 border-0">
               <h5 className="card-title mb-0">Who to follow</h5>
@@ -143,8 +149,8 @@ export default function RightSidebar() {
           </div>
         </div>
 
-        <div className="col-sm-6 col-lg-12">
-          <div className="card">
+        <div className="col-sm-6 col-lg-12 flex-fill">
+          <div className="card h-100 overflow-y-auto">
             <div className="card-header pb-0 border-0">
               <h5 className="card-title mb-0">Today's news</h5>
             </div>
