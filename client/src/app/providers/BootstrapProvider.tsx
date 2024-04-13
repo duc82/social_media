@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import BootstrapContext from "../contexts/BootstrapContext";
 import { usePathname } from "next/navigation";
-import type { Tooltip, Popover } from "bootstrap";
+import { Tooltip, Popover } from "bootstrap";
 
 export default function BootstrapProvider({
   children
