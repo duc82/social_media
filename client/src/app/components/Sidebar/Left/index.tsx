@@ -3,12 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import userAction from "@/app/actions/userAction";
 
 export default async function LeftSidebar() {
-  const session = await getServerSession(authOptions);
-  const currentUser = session?.user;
+  const currentUser = await userAction.getCurrentUser();
 
   return (
     <div className="col-lg-3">
@@ -50,7 +48,7 @@ export default async function LeftSidebar() {
                     backgroundImage: "url('/01.jpg')",
                     backgroundPosition: "center",
                     backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat"
+                    backgroundRepeat: "no-repeat",
                   }}
                 ></div>
 
@@ -202,7 +200,69 @@ export default async function LeftSidebar() {
                     </li>
                   </ul>
                 </div>
+
+                <div className="card-footer text-center py-2">
+                  <Link
+                    href={`/profile/${currentUser?.id}`}
+                    className="btn btn-link btn-sm"
+                  >
+                    View Profile
+                  </Link>
+                </div>
               </div>
+
+              <ul className="nav small mt-4 justify-content-center lh-1">
+                <li className="nav-item">
+                  <Link className="nav-link" href="my-profile-about.html">
+                    About
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" href="settings.html">
+                    Settings
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    className="nav-link"
+                    target="_blank"
+                    href="https://support.webestica.com/login"
+                  >
+                    Support{" "}
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    className="nav-link"
+                    target="_blank"
+                    href="docs/index.html"
+                  >
+                    Docs{" "}
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" href="help.html">
+                    Help
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" href="privacy-and-terms.html">
+                    Privacy &amp; terms
+                  </Link>
+                </li>
+              </ul>
+
+              <p className="small text-center mt-1">
+                ©{new Date().getFullYear()}{" "}
+                <Link
+                  className="text-reset"
+                  target="_blank"
+                  href="https://www.webestica.com/"
+                >
+                  {" "}
+                  Webestica{" "}
+                </Link>
+              </p>
             </div>
           </div>
         </div>

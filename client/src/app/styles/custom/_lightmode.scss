@@ -78,9 +78,6 @@ main {
 // Offcanvas
 $offcanvas-bg-color: $white;
 
-// Modal
-$modal-content-bg: $white;
-
 // Card
 $card-bg: $white;
 $card-cap-bg: $white;
@@ -88,203 +85,13 @@ $card-title-color: $gray-800;
 $card-cap-padding-y: 1.25rem;
 $card-spacer-y: 1.25rem;
 
-// Avatar
-$avatar-size-base: 3rem;
-$avatar-size-xxs: 1.5rem;
-$avatar-size-xs: 2.1875rem;
-$avatar-size-sm: 2.5rem;
-$avatar-size-lg: 4rem;
-$avatar-size-xl: 5.125rem;
-$avatar-size-xxl: 8rem;
-$avatar-size-xxxl: 11rem;
-
-// Avatar status
-[class*="status-"]:before {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  border-radius: 100%;
-  border: 2px solid $white;
-  height: 12px;
-  width: 12px;
-  right: -2px;
-  top: -2px;
-}
-.status-online:before {
-  background-color: $success;
-}
-.status-away:before {
-  background-color: $warning;
-}
-.status-offline:before {
-  background-color: $danger;
-}
-.avatar.avatar-lg[class*="status-"]:before {
-  right: 2px;
-  top: 2px;
-}
-.avatar.avatar-xl[class*="status-"]:before {
-  right: 4px;
-  top: 4px;
-}
-.avatar.avatar-xxl[class*="status-"]:before {
-  right: 12px;
-  top: 12px;
-}
-.avatar.avatar-xxxl[class*="status-"]:before {
-  right: 18px;
-  top: 18px;
-}
-
-// Avatar
-.avatar {
-  height: $avatar-size-base;
-  width: $avatar-size-base;
-  position: relative;
-  display: inline-block;
-  flex-shrink: 0 !important;
-}
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-// Avatar group
-.avatar-group {
-  padding: 0;
-  display: flex;
-  > li {
-    position: relative;
-    &:not(:last-child) {
-      margin-right: -0.8rem;
-    }
-  }
-  .avatar-img {
-    border: 2px solid $white;
-  }
-}
-
-// Avatar 2 person
-.avatar-group-two {
-  display: inline-flex;
-  padding: 0;
-  > li {
-    margin-top: 0.8rem;
-    position: relative;
-    &:not(:last-child) {
-      margin-right: -1.2rem;
-      margin-top: 0;
-    }
-  }
-}
-
-// Avatar 3 person
-.avatar-group-three {
-  display: inline-flex;
-  padding: 0;
-  padding-right: 1.2rem;
-  position: relative;
-  > li {
-    position: relative;
-    &:not(:last-child) {
-      margin-right: -1.2rem;
-    }
-
-    &:last-child {
-      position: absolute;
-      bottom: -30px;
-      left: 50%;
-      top: 0;
-      transform: translate(-50%, 50%);
-    }
-  }
-}
-
-// Avatar 4 person
-.avatar-group-four {
-  display: inline-grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: auto auto;
-  gap: 0px 0px;
-  li {
-    margin: 0;
-    &:not(:last-child) {
-      margin: 0;
-    }
-  }
-}
-
-// avatar Sizing
-.avatar-xxs {
-  height: $avatar-size-xxs;
-  width: $avatar-size-xxs;
-}
-.avatar-xs {
-  height: $avatar-size-xs;
-  width: $avatar-size-xs;
-}
-.avatar-sm {
-  height: $avatar-size-sm;
-  width: $avatar-size-sm;
-}
-.avatar-lg {
-  height: $avatar-size-lg;
-  width: $avatar-size-lg;
-}
-.avatar-xl {
-  height: $avatar-size-xl;
-  width: $avatar-size-xl;
-}
-.avatar-xxl {
-  height: $avatar-size-xl;
-  width: $avatar-size-xl;
-  @include media-breakpoint-up(md) {
-    width: $avatar-size-xxl;
-    height: $avatar-size-xxl;
-  }
-}
-.avatar-xxxl {
-  height: $avatar-size-xxl;
-  width: $avatar-size-xxl;
-  @include media-breakpoint-up(md) {
-    width: $avatar-size-xxxl;
-    height: $avatar-size-xxxl;
-  }
-}
-
-// avatar story
-.avatar-story {
-  position: relative;
-  padding: 4px;
-  z-index: 1;
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-    border: 2px solid $primary;
-    z-index: -1;
-  }
-}
-
-// Dropdown
-$dropdown-min-width: 15rem;
-$dropdown-item-padding-y: 0.4rem;
-$dropdown-border-color: rgba(0, 0, 0, 0.06);
-$dropdown-bg: $white;
-
 // Container
 $container-max-widths: (
   sm: 96%,
   md: 100%,
   lg: 100%,
   xl: 1140px,
-  xxl: 1200px
+  xxl: 1200px,
 );
 
 // Form
@@ -357,6 +164,10 @@ $form-select-indicator-color: $form-select-color;
 textarea.form-control {
   min-height: calc(1.5em + 1rem + 2px) !important;
 }
+
+// Dropdown
+$dropdown-bg: $white;
+$dropdown-divider-bg: rgba(0, 0, 0, 0.1);
 
 // Navbar
 $navbar-padding-y: 0;

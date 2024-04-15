@@ -2,17 +2,12 @@ import Link from "next/link";
 import Avatar from "../../Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import SpinnerDots from "../../SpinnerDots";
 
 export default function RightSidebar() {
   return (
     <div className="col-lg-3">
-      <div
-        className="row g-4 flex-nowrap flex-column position-sticky justify-content-start"
-        style={{
-          top: "56px",
-          height: "calc(100vh - 56px - 1.5rem)"
-        }}
-      >
+      <div className="row g-4 flex-nowrap flex-column justify-content-start">
         <div className="col-sm-6 col-lg-12 flex-fill">
           <div className="card">
             <div className="card-header pb-0 border-0">
@@ -189,16 +184,12 @@ export default function RightSidebar() {
               </div>
               <button
                 type="button"
-                className="btn btn-link btn-link-loader btn-sm text-secondary d-flex align-items-center"
+                className="btn btn-link btn-link-loader btn-sm text-secondary d-flex align-items-center p-0"
                 data-bs-toggle="button"
                 aria-pressed="true"
               >
-                <div className="spinner-dots me-2">
-                  <span className="spinner-dot"></span>
-                  <span className="spinner-dot"></span>
-                  <span className="spinner-dot"></span>
-                </div>
-                View all latest news
+                <SpinnerDots className="me-2" />
+                <span>View all latest news</span>
               </button>
             </div>
           </div>

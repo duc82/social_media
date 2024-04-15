@@ -10,7 +10,7 @@ import {
   GearFill,
   LifePreserver,
   Power,
-  Search
+  Search,
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
@@ -54,6 +54,7 @@ export default async function Header() {
               <button
                 type="button"
                 className="btn btn-light d-flex justify-content-between align-items-center text-body"
+                id="searchButton"
                 data-bs-toggle="modal"
                 data-bs-target="#searchModal"
                 style={{ width: "260px" }}

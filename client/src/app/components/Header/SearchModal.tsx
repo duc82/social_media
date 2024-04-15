@@ -3,8 +3,10 @@ import useBootstrap from "@/app/hooks/useBootstrap";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import debounce from "@/app/utils/debounce";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Search } from "react-bootstrap-icons";
+import Avatar from "../Avatar";
 
 export default function SearchModal() {
   const bootstrap = useBootstrap();
@@ -34,7 +36,7 @@ export default function SearchModal() {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
-    getSearchResults(value);
+    // getSearchResults(value);
   };
 
   useEffect(() => {
@@ -87,12 +89,21 @@ export default function SearchModal() {
             <ul className="list-group">
               {users.map((user) => (
                 <li key={user.id} className="list-group-item">
-                  {user.fullName}
+                  <Link
+                    href={`/profile/${user.id}`}
+                    className="d-flex align-items-center"
+                  >
+                    <Avatar
+                      src={user.profile.avatar}
+                      alt={user.fullName}
+                      className="me-2"
+                    />
+                    <span>{user.fullName}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="modal-footer"></div>
         </div>
       </div>
     </div>
