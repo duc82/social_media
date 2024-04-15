@@ -1,12 +1,10 @@
-// Main
-main {
-  background-color: $body-bg;
-}
-
 // Background
 .bg-mode {
   background-color: $white;
 }
+
+// Modal
+$modal-content-bg: $white;
 
 // Dropzone
 .dropzone {
@@ -91,11 +89,10 @@ $container-max-widths: (
   md: 100%,
   lg: 100%,
   xl: 1140px,
-  xxl: 1200px,
+  xxl: 1200px
 );
 
 // Form
-
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
@@ -105,6 +102,7 @@ $input-focus-color: $input-color;
 $input-border-color: $gray-400;
 $input-border-radius-lg: 0.2rem;
 $input-font-size-lg: 1rem;
+$input-font-size: $font-size-base;
 $input-padding-y: 0.5rem;
 $input-padding-x: 1rem;
 $input-padding-y-lg: 0.8rem;
@@ -175,10 +173,9 @@ $navbar-toggler-focus-width: 0;
 $navbar-light-color: $gray-600;
 $navbar-light-active-color: $primary;
 $navbar-light-hover-color: $primary;
-$nav-link-font-weight: 600;
-$nav-link-font-size: $h6-font-size;
 $nav-link-color: $navbar-light-color;
 $nav-link-padding-y: 0.25rem;
+$nav-link-padding-x: 0.75rem;
 $navbar-nav-link-padding-x: 1rem;
 
 .navbar-nav {
@@ -187,8 +184,11 @@ $navbar-nav-link-padding-x: 1rem;
   }
 
   .nav-link {
-    line-height: 56px;
     padding: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    line-height: 56px;
   }
 }
 
@@ -197,6 +197,10 @@ $navbar-nav-link-padding-x: 1rem;
     .nav-link {
       background: transparent;
       border-bottom: 3px solid transparent;
+      border: transparent;
+      font-weight: 600;
+      padding: 0.75rem 0.975rem;
+
       &.active {
         background: transparent;
         color: $primary;
@@ -365,7 +369,7 @@ $btn-font-size-lg: 1rem;
 $btn-border-radius-lg: 0.2rem;
 $btn-font-size: $font-size-base;
 $btn-transition: all 0.3s ease-in-out;
-$btn-font-weight: 500;
+$btn-font-weight: 500 !important;
 
 // button soft
 @mixin button-soft-variant($color, $soft-background: rgba($color, 0.1)) {

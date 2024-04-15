@@ -8,7 +8,7 @@ export default function HeaderMenu({ userId }: { userId: string }) {
   const pathname = usePathname();
 
   return (
-    <ul className="navbar-nav navbar-nav-scroll ms-auto mx-lg-auto">
+    <ul className="navbar-nav ms-auto mx-lg-auto">
       <li className="nav-item">
         <Link
           href="/"

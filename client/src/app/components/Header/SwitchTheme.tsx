@@ -7,16 +7,12 @@ import { CircleHalf, MoonStars, Sun } from "react-bootstrap-icons";
 export default function SwitchTheme() {
   const { theme, setTheme } = useTheme();
 
-  const handleChangeTheme = (theme: "light" | "dark" | "system") => {
-    setTheme(theme);
-  };
-
   return (
     <>
       <button
         type="button"
         className={clsx("btn", theme === "light" && "btn-primary")}
-        onClick={() => handleChangeTheme("light")}
+        onClick={() => setTheme("light")}
         data-bs-toggle="tooltip"
         data-bs-placement="top"
         data-bs-title="Light"
@@ -26,7 +22,7 @@ export default function SwitchTheme() {
       <button
         type="button"
         className={clsx("btn", theme === "dark" && "btn-primary")}
-        onClick={() => handleChangeTheme("dark")}
+        onClick={() => setTheme("dark")}
         data-bs-toggle="tooltip"
         data-bs-placement="top"
         data-bs-title="Dark"
@@ -36,7 +32,7 @@ export default function SwitchTheme() {
       <button
         type="button"
         className={clsx("btn", theme === "system" && "btn-primary")}
-        onClick={() => handleChangeTheme("system")}
+        onClick={() => setTheme("system")}
         data-bs-toggle="tooltip"
         data-bs-placement="top"
         data-bs-title="System"

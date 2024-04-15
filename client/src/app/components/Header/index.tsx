@@ -2,25 +2,23 @@ import Image from "next/image";
 import Link from "next/link";
 import Avatar from "../Avatar";
 import dynamic from "next/dynamic";
-import { getServerSession } from "next-auth";
 import {
   BellFill,
   CardText,
   ChatLeftTextFill,
   GearFill,
   LifePreserver,
-  Power,
-  Search,
+  Power
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import userAction from "@/app/actions/userAction";
+import SearchDropdown from "./SearchDropdown";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
 export default async function Header() {
-  const session = await getServerSession(authOptions);
-  const currentUser = session?.user;
+  const currentUser = await userAction.getCurrentUser();
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">
@@ -50,22 +48,7 @@ export default async function Header() {
         {/* Collapse */}
         <div className="navbar-collapse collapse" id="navbarCollapse">
           <div className="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
-            <div className="nav-item w-100">
-              <button
-                type="button"
-                className="btn btn-light d-flex justify-content-between align-items-center text-body"
-                id="searchButton"
-                data-bs-toggle="modal"
-                data-bs-target="#searchModal"
-                style={{ width: "260px" }}
-              >
-                <div>
-                  <Search className="fs-5 me-2" />
-                  <span>Search</span>
-                </div>
-                <kbd>Ctrl K</kbd>
-              </button>
-            </div>
+            <SearchDropdown />
           </div>
 
           <HeaderMenu userId={currentUser?.id!} />
@@ -123,7 +106,7 @@ export default async function Header() {
               <li className="px-3">
                 <div className="d-flex align-items-center">
                   <Avatar
-                    src={currentUser?.profile.avatar ?? "/01.jpg"}
+                    src={currentUser?.profile.avatar ?? "/07.jpg"}
                     alt={currentUser?.fullName}
                     width={48}
                     height={48}
@@ -131,7 +114,9 @@ export default async function Header() {
                     wrapperClassName="me-3"
                   />
                   <div>
-                    <h6 className="mb-1">{currentUser?.fullName}</h6>
+                    <h6 className="mb-1">
+                      {currentUser?.fullName ?? "Liu Tiu Diu"}
+                    </h6>
                     {currentUser?.profile.job && (
                       <p className="small m-0">{currentUser.profile.job}</p>
                     )}

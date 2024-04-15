@@ -48,7 +48,7 @@ export default async function LeftSidebar() {
                     backgroundImage: "url('/01.jpg')",
                     backgroundPosition: "center",
                     backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
+                    backgroundRepeat: "no-repeat"
                   }}
                 ></div>
 
@@ -204,7 +204,7 @@ export default async function LeftSidebar() {
                 <div className="card-footer text-center py-2">
                   <Link
                     href={`/profile/${currentUser?.id}`}
-                    className="btn btn-link btn-sm"
+                    className="btn btn-link btn-sm p-0"
                   >
                     View Profile
                   </Link>

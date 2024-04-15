@@ -12,7 +12,7 @@ import {
   Envelope,
   ImageFill,
   PencilSquare,
-  ThreeDots,
+  ThreeDots
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
@@ -28,19 +28,16 @@ export default async function SharePost() {
           <Avatar
             wrapperClassName="avatar avatar-xs me-2"
             className="avatar-img rounded-circle"
-            src={currentUser?.profile.avatar ?? ""}
+            src={currentUser?.profile.avatar ?? "/07.jpg"}
             alt={currentUser?.fullName}
           />
           <form className="w-100">
-            <textarea
-              className="form-control pe-4 border-0 resize-none"
+            <input
+              className="form-control pe-4 border-0"
               placeholder="Share your thoughts..."
               data-bs-toggle="modal"
               data-bs-target="#createPostModal"
-              readOnly
-              rows={2}
-              style={{ height: 61 }}
-            ></textarea>
+            />
           </form>
         </div>
 

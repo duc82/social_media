@@ -3,8 +3,47 @@ import Avatar from "../../Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 import SpinnerDots from "../../SpinnerDots";
+import clsx from "clsx";
 
 export default function RightSidebar() {
+  const users = [
+    {
+      id: 1,
+      name: "Judy Nguyen",
+      bio: "News anchor",
+      avatar: "/07.jpg",
+      isSendRequest: false
+    },
+    {
+      id: 2,
+      name: "Amanda Reed",
+      bio: "Web Developer at Webestica",
+      avatar: "/07.jpg",
+      isSendRequest: false
+    },
+    {
+      id: 3,
+      name: "Billy Vasquez",
+      bio: "News anchor",
+      avatar: "/07.jpg",
+      isSendRequest: true
+    },
+    {
+      id: 4,
+      name: "Lori Ferguson",
+      bio: "Web Developer at Webestica",
+      avatar: "/07.jpg",
+      isSendRequest: false
+    },
+    {
+      id: 5,
+      name: "Carolyn Ortiz",
+      bio: "News anchor",
+      avatar: "/07.jpg",
+      isSendRequest: false
+    }
+  ];
+
   return (
     <div className="col-lg-3">
       <div className="row g-4 flex-nowrap flex-column justify-content-start">
@@ -14,126 +53,36 @@ export default function RightSidebar() {
               <h5 className="card-title mb-0">Who to follow</h5>
             </div>
             <div className="card-body">
-              <div className="hstack gap-2 mb-3">
-                <div className="avatar">
-                  <Link href="#!">
-                    <Avatar
-                      className="avatar-img rounded-circle"
-                      src="/01.jpg"
-                      alt=""
+              {users.map((user) => (
+                <div key={user.id} className="hstack gap-2 mb-3">
+                  <div className="avatar">
+                    <Link href="#!">
+                      <Avatar
+                        className="avatar-img rounded-circle"
+                        src={user.avatar}
+                        alt={user.name}
+                      />
+                    </Link>
+                  </div>
+                  <div className="overflow-hidden">
+                    <Link className="h6 mb-0 text-truncate" href="#!">
+                      {user.name}
+                    </Link>
+                    <p className="mb-0 small text-truncate">{user.bio}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className={clsx(
+                      "btn rounded-circle icon-md ms-auto",
+                      user.isSendRequest ? "btn-primary" : "btn-primary-soft"
+                    )}
+                  >
+                    <FontAwesomeIcon
+                      icon={user.isSendRequest ? faUserCheck : faPlus}
                     />
-                  </Link>
+                  </button>
                 </div>
-                <div className="overflow-hidden">
-                  <Link className="h6 mb-0" href="#!">
-                    Judy Nguyen{" "}
-                  </Link>
-                  <p className="mb-0 small text-truncate">News anchor</p>
-                </div>
-                <Link
-                  className="btn btn-primary-soft rounded-circle icon-md ms-auto"
-                  href="#"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </Link>
-              </div>
-              <div className="hstack gap-2 mb-3">
-                <div className="avatar avatar-story">
-                  <Link href="#!">
-                    <Avatar
-                      className="avatar-img rounded-circle"
-                      src="/01.jpg"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-                <div className="overflow-hidden">
-                  <Link className="h6 mb-0" href="#!">
-                    Amanda Reed{" "}
-                  </Link>
-                  <p className="mb-0 small text-truncate">Web Developer</p>
-                </div>
-                <Link
-                  className="btn btn-primary-soft rounded-circle icon-md ms-auto"
-                  href="#"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </Link>
-              </div>
-
-              <div className="hstack gap-2 mb-3">
-                <div className="avatar">
-                  <Link href="#">
-                    <Avatar
-                      className="avatar-img rounded-circle"
-                      src="/01.jpg"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-                <div className="overflow-hidden">
-                  <Link className="h6 mb-0" href="#!">
-                    Billy Vasquez{" "}
-                  </Link>
-                  <p className="mb-0 small text-truncate">News anchor</p>
-                </div>
-                <Link
-                  className="btn btn-primary rounded-circle icon-md ms-auto"
-                  href="#"
-                >
-                  <FontAwesomeIcon icon={faUserCheck} />
-                </Link>
-              </div>
-
-              <div className="hstack gap-2 mb-3">
-                <div className="avatar">
-                  <Link href="#">
-                    <Avatar
-                      className="avatar-img rounded-circle"
-                      src="/01.jpg"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-                <div className="overflow-hidden">
-                  <Link className="h6 mb-0" href="#!">
-                    Lori Ferguson{" "}
-                  </Link>
-                  <p className="mb-0 small text-truncate">
-                    Web Developer at Webestica
-                  </p>
-                </div>
-                <Link
-                  className="btn btn-primary-soft rounded-circle icon-md ms-auto"
-                  href="#"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </Link>
-              </div>
-
-              <div className="hstack gap-2 mb-3">
-                <div className="avatar">
-                  <Link href="#">
-                    <Avatar
-                      className="avatar-img rounded-circle"
-                      src="/01.jpg"
-                      alt=""
-                    />{" "}
-                  </Link>
-                </div>
-                <div className="overflow-hidden">
-                  <Link className="h6 mb-0" href="#!">
-                    Carolyn Ortiz{" "}
-                  </Link>
-                  <p className="mb-0 small text-truncate">News anchor</p>
-                </div>
-                <Link
-                  className="btn btn-primary-soft rounded-circle icon-md ms-auto"
-                  href="#"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </Link>
-              </div>
+              ))}
 
               <div className="d-grid mt-3">
                 <Link className="btn btn-sm btn-primary-soft" href="#!">

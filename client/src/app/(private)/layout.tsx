@@ -1,5 +1,4 @@
 import Header from "../components/Header";
-import SearchModal from "../components/Header/SearchModal";
 
 export default function PrivateLayout({
   children
@@ -8,7 +7,6 @@ export default function PrivateLayout({
 }) {
   return (
     <>
-      <SearchModal />
       <Header />
       <main>
         <div className="container">{children}</div>
