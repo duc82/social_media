@@ -9,6 +9,18 @@ import {
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 
+interface Message {
+  id: string;
+  username: string;
+  message: string;
+  sentAt?: string;
+}
+
+interface Typing {
+  typing: boolean;
+  username: string;
+}
+
 @WebSocketGateway({
   cors: {
     origin: process.env.CLIENT_URL,
@@ -34,7 +46,18 @@ export class EventsGateway
   }
 
   @SubscribeMessage("message")
-  handleMessage(client: Socket, payload: string) {
-    this.server.emit("message", "Hello World!");
+  handleMessage(client: Socket, payload: Message) {
+    payload.id = client.id;
+    payload.sentAt = new Date().toLocaleString("vi-VN", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+    this.handleTyping(client, { typing: false, username: payload.username });
+    this.server.emit("message", payload);
+  }
+
+  @SubscribeMessage("typing")
+  handleTyping(client: Socket, payload: Typing) {
+    client.broadcast.emit("typing", payload);
   }
 }

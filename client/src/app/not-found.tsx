@@ -2,20 +2,15 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="py-5">
-      <div className="container">
-        <div className="h-100px d-none d-lg-block"></div>
-        <div className="row align-items-center text-center py-sm-5">
+    <main className="py-5 vh-100">
+      <div className="container h-100">
+        <div className="row h-100 align-items-center text-center">
           <div className="col-lg-8 mx-auto">
             <figure className="m-0 pt-5 pt-md-0">
               <svg
                 className="col-sm-7 col-lg-5"
-                version="1.1"
-                id="Layer_1"
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"
-                x="0px"
-                y="0px"
                 viewBox="0 0 1285.3 712.4"
                 xmlSpace="preserve"
               >
@@ -183,11 +178,14 @@ export default function NotFound() {
                             style={{ stopColor: "#0E2253" }}
                           ></stop>
                         </linearGradient>
+
                         <path
+                          className="st10"
                           d="M484,594.6
                     c0,0-144.6-153.4-197.1-240.3c-52.5-87-81.5-150.6-100.5-247.1L340,63.8c0,0,79,172.5,146.3,248.7S657,560.6,657,560.6
                     L484,594.6z"
                         ></path>
+
                         <polygon
                           className="st8"
                           points="829.9,267.8 866.9,239.3 759.3,96.2 740.4,142.8 				"
@@ -226,6 +224,7 @@ export default function NotFound() {
                           ></stop>
                         </linearGradient>
                         <path
+                          className="st11"
                           d="M579.3,707.5c-16,0-31.8-0.1-47.3-0.3
                     c-83.2-0.6-159.4-2.2-222.8-4.5c-3.1-0.1-6.3-0.3-9.4-0.3c-3.7-9.3-7.8-21.9-11.3-33.9c-4.2-14.4-7.5-27.8-7.8-33.5
                     c0-0.3,0-0.7,0-1c0.1-11.5,77-64.1,190.8-42.1c4.1,0.8,8.3,1.7,12.5,2.7c39.6,9.4,65.5,35.8,80.9,68.4
@@ -251,6 +250,7 @@ export default function NotFound() {
                           ></stop>
                         </linearGradient>
                         <path
+                          className="st12"
                           d="M957.4,701.2
                     c-10.7,0.5-21.9,0.9-33.6,1.4c-52.4,2-114.1,3.4-181.4,4.3c-1.2,0-2.5,0-3.7,0c-5.9,0.1-11.9,0.2-17.9,0.2
                     c6.4-14.7,12.9-29.4,19.2-43.4c7.4-16.2,14.5-31.4,21.1-44.7l0,0c12.9-25.9,23.6-44.5,29.4-48.3c23.7-15.6,51.6-12.5,99.9,25.1
@@ -276,6 +276,7 @@ export default function NotFound() {
                           ></stop>
                         </linearGradient>
                         <path
+                          className="st13"
                           d="M761,619L761,619c-0.2,2.1-0.5,4-0.8,6
                     c-1.6,10.1-4.7,23.6-8.8,38.9c-3.6,13.3-8,27.9-12.8,43c-5.9,0.1-11.9,0.2-17.9,0.2c-34.7,0.3-70.8,0.5-107.9,0.5
                     c-11.3,0-22.5,0-33.5-0.1c-16,0-31.8-0.1-47.3-0.3c-4.6-16.6-10.7-31.1-17.4-43.9c-17.1-33.2-37.5-55-43.1-71.5
@@ -298,7 +299,6 @@ export default function NotFound() {
             </Link>
           </div>
         </div>
-        <div className="h-100px d-none d-lg-block"></div>
       </div>
     </main>
   );

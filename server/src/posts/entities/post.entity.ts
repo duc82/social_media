@@ -19,7 +19,9 @@ export enum Audience {
   PRIVATE = "private",
 }
 
-@Entity()
+@Entity({
+  name: "posts",
+})
 export class Post extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string; // Completed

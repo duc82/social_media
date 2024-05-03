@@ -21,7 +21,9 @@ import { Comment } from "src/posts/entities/comment.entity";
 import { Token } from "./token.entity";
 import { Role } from "../interfaces/user.interface";
 
-@Entity()
+@Entity({
+  name: "users",
+})
 @Index(["email"], { unique: true })
 @Index(["fullName"])
 @Unique(["email"])

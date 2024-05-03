@@ -122,7 +122,7 @@ export default function SignIn() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary-soft w-100"
+          className="btn btn-lg btn-primary w-100"
         >
           Login
         </button>

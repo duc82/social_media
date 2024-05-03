@@ -8,6 +8,7 @@
   // Card
   .card {
     background-color: $card-dark;
+    border-color: $light;
 
     .card-header {
       background-color: $card-dark;
@@ -57,13 +58,24 @@
     }
   }
 
+  .dropdown-menu {
+    background-color: $mode;
+
+    .dropdown-item {
+      &:hover {
+        background-color: $mode;
+        color: $primary;
+      }
+    }
+  }
+
   // Button
   .btn-light {
-    background-color: $light;
-    color: $gray-800;
-    border-color: $light;
+    background-color: $light !important;
+    color: $gray-700 !important;
+    border-color: $gray-100 !important;
 
-    &:hover {
+    &:not(#searchButton):hover {
       background-color: $gray-400;
       color: $gray-900;
     }

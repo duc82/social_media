@@ -21,7 +21,7 @@ export default function BootstrapProvider({
     if (!bootstrap) return;
 
     const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-tooltip="tooltip"]'
+      '[data-bs-toggle="tooltip"], [data-bs-tooltip="true"]'
     );
 
     const tooltips: Tooltip[] = [...tooltipTriggerList].map(
@@ -29,7 +29,7 @@ export default function BootstrapProvider({
     );
 
     const popoverTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="popover"]'
+      '[data-bs-toggle="popover"], [data-bs-popover="true"]'
     );
 
     const popovers: Popover[] = [...popoverTriggerList].map(

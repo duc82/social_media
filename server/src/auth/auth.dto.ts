@@ -1,8 +1,12 @@
 import { OmitType } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 import { CreateUserDto } from "src/users/dto/user.dto";
 
-export class SignUpDto extends CreateUserDto {}
+export class SignUpDto extends CreateUserDto {
+  @IsNotEmpty()
+  @IsString()
+  avatar: string;
+}
 
 export class SignInDto extends OmitType(CreateUserDto, [
   "fullName",

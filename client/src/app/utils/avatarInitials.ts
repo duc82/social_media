@@ -1,6 +1,3 @@
-import { Injectable } from "@nestjs/common";
-import { createCanvas } from "canvas";
-
 interface AvatarInitialsOptions {
   width: number;
   height: number;
@@ -9,9 +6,8 @@ interface AvatarInitialsOptions {
   background: string;
 }
 
-@Injectable()
-export class AvatarInitialsService {
-  generateHsl() {
+class AvatarInitials {
+  static generateHsl() {
     function randomInt(min: number, max: number) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -27,14 +23,28 @@ export class AvatarInitialsService {
     return `hsl(${h}, ${s}%, ${l}%)`;
   }
 
-  generateAvatarInitials(
-    name: string,
-    options?: Partial<AvatarInitialsOptions>,
-  ) {
-    const initials = name[0].toUpperCase();
+  static createCanvas(width: number, height: number) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
+  }
 
-    const canvas = createCanvas(options?.width ?? 200, options?.height ?? 200);
-    const ctx = canvas.getContext("2d");
+  static getInitials(name: string) {
+    return name[0].toUpperCase();
+  }
+
+  static async generateAvatar(
+    name: string,
+    options?: Partial<AvatarInitialsOptions>
+  ) {
+    const initials = this.getInitials(name);
+
+    const canvas = this.createCanvas(
+      options?.width ?? 200,
+      options?.height ?? 200
+    );
+    const ctx = canvas.getContext("2d")!;
 
     // Draw background
     ctx.fillStyle = options?.background ?? `${this.generateHsl()}`;
@@ -52,7 +62,14 @@ export class AvatarInitialsService {
 
     ctx.fillText(initials, x, y);
 
-    const buffer = canvas.toBuffer("image/png");
-    return buffer;
+    const blob = new Promise<Blob>((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob!);
+      });
+    });
+
+    return blob;
   }
 }
+
+export default AvatarInitials;

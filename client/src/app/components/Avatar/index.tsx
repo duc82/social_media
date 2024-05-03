@@ -18,13 +18,10 @@ export default function Avatar({
   height,
   wrapperClassName = "w-100 h-100",
   className,
-  sizes = "100%",
+  sizes = "100%"
 }: AvatarProps) {
   return (
-    <div
-      className={clsx("position-relative", wrapperClassName)}
-      style={{ width, height }}
-    >
+    <div className={clsx("avatar", wrapperClassName)} style={{ width, height }}>
       <Image
         src={src}
         alt={alt ?? "Avatar"}

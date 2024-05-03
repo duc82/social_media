@@ -13,13 +13,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("signup")
-  async signup(@Body() body: SignUpDto) {
+  async signUp(@Body() body: SignUpDto) {
     return this.authService.signUp(body);
   }
 
   @Post("signin")
   @HttpCode(HttpStatus.OK)
-  async signin(@Body() body: SignInDto) {
+  async signIn(@Body() body: SignInDto) {
     return this.authService.signIn(body);
   }
 

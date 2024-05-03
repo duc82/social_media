@@ -1,18 +1,22 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import userAction from "@/app/actions/userAction";
 import Avatar from "@/app/components/Avatar";
-import CreatePostModal from "@/app/components/Post/CreatePostModal";
-import EmojiModal from "@/app/components/Post/CreatePostModal/EmojiModal";
-import { getServerSession } from "next-auth";
+import CreatePostModal from "@/app/components/Post/CreateModal";
+import EmojiModal from "@/app/components/Post/CreateModal/EmojiModal";
+import Link from "next/link";
 import {
+  BookmarkCheck,
   Calendar2EventFill,
   CameraReelsFill,
   EmojiSmileFill,
-  ImageFill
+  Envelope,
+  ImageFill,
+  PencilSquare,
+  ThreeDots
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
-  const session = await getServerSession(authOptions);
-  const currentUser = session?.user;
+  const session = await userAction.getServerSession();
+  const currentUser = await userAction.getCurrentUser(session);
 
   return (
     <>
@@ -23,19 +27,16 @@ export default async function SharePost() {
           <Avatar
             wrapperClassName="avatar avatar-xs me-2"
             className="avatar-img rounded-circle"
-            src={currentUser?.profile.avatar ?? ""}
+            src={currentUser?.profile.avatar ?? "/07.jpg"}
             alt={currentUser?.fullName}
           />
           <form className="w-100">
-            <textarea
-              className="form-control pe-4 border-0 resize-none"
+            <input
+              className="form-control pe-4 border-0"
               placeholder="Share your thoughts..."
               data-bs-toggle="modal"
               data-bs-target="#createPostModal"
-              readOnly
-              rows={2}
-              style={{ height: 61 }}
-            ></textarea>
+            />
           </form>
         </div>
 
@@ -79,35 +80,37 @@ export default async function SharePost() {
           <li className="nav-item dropdown ms-sm-auto">
             <button
               type="button"
-              className="nav-link bg-light py-1 px-2 mb-0"
+              className="nav-link bg-light py-1 px-2 mb-0 rounded-2"
               id="feedActionShare"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <i className="bi bi-three-dots"></i>
+              <ThreeDots />
             </button>
             <ul
               className="dropdown-menu dropdown-menu-end"
               aria-labelledby="feedActionShare"
             >
               <li>
-                <a className="dropdown-item" href="#">
-                  <i className="bi bi-envelope fa-fw pe-2"></i>Create a poll
-                </a>
+                <Link className="dropdown-item" href="#">
+                  <Envelope width={23} className="pe-2" />
+                  Create a poll
+                </Link>
               </li>
               <li>
-                <a className="dropdown-item" href="#">
-                  <i className="bi bi-bookmark-check fa-fw pe-2"></i>Ask a
-                  question
-                </a>
+                <Link className="dropdown-item" href="#">
+                  <BookmarkCheck width={23} className="pe-2" />
+                  Ask a question
+                </Link>
               </li>
               <li>
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <a className="dropdown-item" href="#">
-                  <i className="bi bi-pencil-square fa-fw pe-2"></i>Help
-                </a>
+                <Link className="dropdown-item" href="#">
+                  <PencilSquare width={23} className="pe-2" />
+                  Help
+                </Link>
               </li>
             </ul>
           </li>

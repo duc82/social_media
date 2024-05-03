@@ -5,10 +5,7 @@ import { UsersModule } from "./users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PostsModule } from "./posts/posts.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
-import { join } from "path";
 import { EventsGateway } from "./events/events.gateway";
-import { CloudinaryModule } from "./cloudinary/cloudinary.module";
-import { AvatarInitialsModule } from "./avatar-initials/avatar-initials.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
 import { AuthModule } from "./auth/auth.module";
@@ -33,7 +30,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
     // Serve static files
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "public"),
+      rootPath: process.cwd() + "/public",
     }),
 
     // Mailer configuration
@@ -66,8 +63,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     AuthModule,
     UsersModule,
     PostsModule,
-    CloudinaryModule,
-    AvatarInitialsModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

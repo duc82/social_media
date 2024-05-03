@@ -18,7 +18,7 @@ import {
   PersonPlusFill,
   PersonXFill,
   PlusLg,
-  ThreeDots,
+  ThreeDots
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friendship, FullUser } from "@/app/types/user";
@@ -29,6 +29,7 @@ import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
 import userService from "@/app/services/userService";
 import FriendButton from "./FriendButton";
+import Fancybox from "@/app/libs/FancyBox";
 
 const isMyProfile = true;
 
@@ -92,29 +93,32 @@ export default function ProfileMainHeader() {
 
   return (
     <div className="card">
-      <div style={{ height: "200px" }}>
+      <Fancybox style={{ height: "200px" }}>
         <Link
-          href={"/wallpaper.jpg"}
+          href="/wallpaper.jpg"
+          data-fancybox="wallpaper"
           className="d-block h-100 position-relative"
-          data-glightbox
-          data-gallery="wallpaper"
         >
           <Image
-            src={"/wallpaper.jpg"}
+            src="/wallpaper.jpg"
             fill
             alt="Wallpaper"
             className="rounded-top object-fit-cover"
           />
         </Link>
-      </div>
+      </Fancybox>
 
       <div className="card-body py-0">
         <div className="d-md-flex align-items-start text-center text-md-start">
-          <Avatar
-            src={"/01.jpg"}
-            wrapperClassName="avatar avatar-xxl mt-n5 mb-3"
-            className="rounded-circle border border-3 border-white "
-          />
+          <Fancybox>
+            <Link href="/07.jpg" data-fancybox="avatar">
+              <Avatar
+                src="/07.jpg"
+                wrapperClassName="avatar-story avatar-xxl mt-n5 mb-3"
+                className="rounded-circle border border-3 border-white "
+              />
+            </Link>
+          </Fancybox>
 
           <div className="ms-md-4 mt-md-3">
             <h1 className="mb-0 h5">
@@ -179,7 +183,7 @@ export default function ProfileMainHeader() {
           </div> */}
 
           <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
-            <FriendButton isLoading={isLoading} status="friends" />
+            <FriendButton isLoading={isLoading} status="none" />
 
             <Link
               href="/chats"

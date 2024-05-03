@@ -10,7 +10,8 @@ interface Profile {
   job: string | null;
   address: string | null;
   overview: string | null;
-  location: string | null;
+  education: string | null;
+  workplace: string | null;
 }
 
 interface User {
@@ -53,5 +54,5 @@ export type {
   UsersReponse,
   FriendsResponse,
   FriendshipStatus,
-  Friendship,
+  Friendship
 };

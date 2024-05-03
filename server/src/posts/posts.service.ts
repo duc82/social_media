@@ -1,7 +1,6 @@
 import { Post } from "./entities/post.entity";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePostDto, ListAllPostsDto } from "./dto/posts.dto";
-import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { User } from "src/users/entities/user.entity";
 import { File } from "./entities/file.entity";
 import { DataSource, ILike } from "typeorm";
@@ -16,16 +15,9 @@ export class PostsService {
     "comments",
   ];
 
-  constructor(
-    private dataSource: DataSource,
-    private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
-  async create(
-    post: CreatePostDto,
-    userId: string,
-    files: Array<Express.Multer.File>,
-  ) {
+  async create(post: CreatePostDto, userId: string) {
     const user = await this.dataSource.getRepository(User).findOne({
       where: { id: userId },
       relations: ["profile"],
@@ -35,29 +27,20 @@ export class PostsService {
       throw new NotFoundException("User not found");
     }
 
+    if (post.files.length > 0) {
+      post.files = post.files.map((file) =>
+        this.dataSource.getRepository(File).create(file),
+      ) as File[];
+    }
+
     const newPost = this.dataSource.getRepository(Post).create({
-      ...post,
-      user,
-      files: [],
+      audience: post.audience,
+      content: post.content,
+      files: post.files,
       likes: [],
       comments: [],
+      user,
     });
-
-    if (files.length) {
-      const newFiles = await Promise.all(
-        files.map(async (file) => {
-          const uploadedFile =
-            await this.cloudinaryService.uploadFileFromBuffer(file.buffer);
-
-          return this.dataSource.getRepository(File).create({
-            url: uploadedFile.secure_url,
-            type: uploadedFile.resource_type,
-          });
-        }),
-      );
-
-      newPost.files = newFiles;
-    }
 
     await this.dataSource.getRepository(Post).save(newPost);
 

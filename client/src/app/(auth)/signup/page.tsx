@@ -15,6 +15,8 @@ import { SignUpDto } from "@/app/types/auth";
 import { signUpSchema } from "@/app/schemas/auth";
 import clsx from "clsx";
 import { InfoCircle } from "react-bootstrap-icons";
+import AvatarInitials from "@/app/utils/avatarInitials";
+import { uploadFile } from "@/app/libs/firebase";
 
 interface FormValue extends SignUpDto {
   confirmPassword: string;
@@ -40,6 +42,13 @@ export default function Signup() {
     const { confirmPassword, ...signUpDto } = data;
 
     try {
+      const avatarInitials = await AvatarInitials.generateAvatar(
+        signUpDto.fullName
+      );
+      signUpDto.avatar = await uploadFile(
+        `avatars/${signUpDto.email}`,
+        avatarInitials
+      );
       const value = await authService.signUp(signUpDto);
       toast.success(value.message);
       router.push("/signin");

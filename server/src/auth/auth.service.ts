@@ -3,8 +3,6 @@ import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { UserService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
 import { Profile } from "src/users/entities/profile.entity";
-import { CloudinaryService } from "src/cloudinary/cloudinary.service";
-import { AvatarInitialsService } from "src/avatar-initials/avatar-initials.service";
 import { MailerService } from "@nestjs-modules/mailer";
 import { Role, UserPayload } from "src/users/interfaces/user.interface";
 import { Token } from "src/users/entities/token.entity";
@@ -20,8 +18,6 @@ export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-    private avatarInitialsService: AvatarInitialsService,
-    private cloudinaryService: CloudinaryService,
     private mailService: MailerService,
     private configService: ConfigService,
     private dataSource: DataSource,
@@ -48,19 +44,14 @@ export class AuthService {
       throw new BadRequestException("User already exists");
     }
 
-    const buffer = this.avatarInitialsService.generateAvatarInitials(
-      signUpDto.fullName,
-    );
-
-    const cloudinaryResponse =
-      await this.cloudinaryService.uploadFileFromBuffer(buffer);
-
     const profile = this.dataSource.getRepository(Profile).create({
-      avatar: cloudinaryResponse.secure_url,
+      avatar: signUpDto.avatar,
     });
 
     const newUser = await this.usersService.create({
-      ...signUpDto,
+      email: signUpDto.email,
+      fullName: signUpDto.fullName,
+      password: signUpDto.password,
       profile,
     });
 
@@ -78,8 +69,8 @@ export class AuthService {
 
     await this.mailService.sendMail({
       to: signUpDto.email,
-      subject: "Verify email",
-      template: "verify-email",
+      subject: "Verify your account",
+      template: "verify-account",
       context: {
         fullName: signUpDto.fullName,
         link,
@@ -88,7 +79,7 @@ export class AuthService {
 
     return {
       user: newUser,
-      message: "User created successfully",
+      message: "Sign up successfully, please verify your account",
     };
   }
 

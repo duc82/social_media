@@ -10,7 +10,7 @@ import {
   GeoAltFill,
   ImageFill,
   TagFill,
-  XLg,
+  XLg
 } from "react-bootstrap-icons";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -24,7 +24,7 @@ import usePost from "@/app/hooks/usePost";
 
 export default function CreatePostModal({
   session,
-  initialActiveDropzone = false,
+  initialActiveDropzone = false
 }: {
   session: Session | null;
   initialActiveDropzone?: boolean;
@@ -69,7 +69,7 @@ export default function CreatePostModal({
     }
 
     toast.loading("Creating post...", {
-      id: "createPost",
+      id: "createPost"
     });
 
     try {
@@ -106,7 +106,7 @@ export default function CreatePostModal({
                 <Avatar
                   wrapperClassName="avatar avatar-xs me-2"
                   className="avatar-img rounded-circle"
-                  src={session?.user.profile.avatar ?? ""}
+                  src={session?.user.profile.avatar ?? "/07.jpg"}
                   alt={session?.user.fullName}
                 />
 
@@ -173,7 +173,7 @@ export default function CreatePostModal({
                 <button
                   type="button"
                   className="icon-md bg-success bg-opacity-10 text-success rounded-circle cursor-pointer border-0"
-                  data-bs-tooltip="tooltip"
+                  data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   data-bs-title="Photo/Video"
                   data-bs-trigger="hover"
@@ -184,7 +184,7 @@ export default function CreatePostModal({
                 <button
                   className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle border-0"
                   type="button"
-                  data-bs-tooltip="tooltip"
+                  data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   data-bs-trigger="hover"
                   data-bs-title="Events"
@@ -194,7 +194,7 @@ export default function CreatePostModal({
                 <button
                   type="button"
                   className="icon-md bg-warning bg-opacity-10 text-warning rounded-circle border-0"
-                  data-bs-tooltip="tooltip"
+                  data-bs-tooltip="true"
                   data-bs-placement="top"
                   data-bs-title="Feeling/Activity"
                   data-bs-trigger="hover"
@@ -206,7 +206,7 @@ export default function CreatePostModal({
                 <button
                   type="button"
                   className="icon-md bg-light text-secondary rounded-circle border-0"
-                  data-bs-tooltip="tooltip"
+                  data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   data-bs-trigger="hover"
                   data-bs-title="Check in"
@@ -216,7 +216,7 @@ export default function CreatePostModal({
                 <button
                   type="button"
                   className="icon-md bg-primary bg-opacity-10 text-primary rounded-circle border-0"
-                  data-bs-tooltip="tooltip"
+                  data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   data-bs-trigger="hover"
                   data-bs-title="Tag people on top"

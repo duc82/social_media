@@ -6,7 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-@Entity()
+@Entity({
+  name: "tokens",
+})
 export class Token extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;

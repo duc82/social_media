@@ -1,8 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { DataSource } from "typeorm";
-import { config } from "dotenv";
-
-config();
+import "dotenv/config";
 
 const configService = new ConfigService();
 
@@ -10,7 +8,7 @@ const dataSource = new DataSource({
   type: "postgres",
   url: configService.getOrThrow<string>("DATABASE_URL"),
   entities: [__dirname + "/**/*.entity{.ts,.js}"],
-  migrations: ["migrations/*{.ts,.js}"],
+  migrations: ["./migrations/*{.ts,.js}"], // Path to the migration files
   logging: configService.get<string>("NODE_ENV") !== "production",
 });
 

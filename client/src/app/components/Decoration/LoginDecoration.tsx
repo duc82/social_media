@@ -2,17 +2,12 @@ export default function LoginDecoration() {
   return (
     <svg
       className="col-sm-8 col-lg-4"
-      version="1.1"
-      id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      x="0px"
-      y="0px"
       viewBox="0 0 291.3 235.4"
-      enableBackground="new 0 0 291.3 235.4"
       xmlSpace="preserve"
     >
-      <g id="freepik--character-1--inject-16">
+      <g>
         <path
           className="fill-white"
           d="M66,211.6c0,0,10.6-1.2,12.4-2.1s4.2,0.3,2.9,1.7c-2.5,2.7-5.2,5.2-8,7.6c-2.5,1.9-8.1,5.8-9.6,5.3
@@ -198,7 +193,7 @@ export default function LoginDecoration() {
   s0.5-0.1,0.7,0.1c0.2,0.2,4.5,6,4.2,10.8C27.6,86.8,27.4,87,27.1,87z"
         ></path>
       </g>
-      <g id="freepik--character-2--inject-16">
+      <g>
         <path
           className="fill-dark"
           d="M153.1,5.7c0,0,2.3-5.4,7.9-4.6s10,12.5,10.3,17.7s-2.6,11.1-1.8,13.9s7-0.2,7,3.3s-2.3,9.2-9.7,9.8
@@ -403,7 +398,7 @@ export default function LoginDecoration() {
   c0,0.4-0.1,0.7-0.1,1c-0.3,2.3-0.3,3.4,1.1,3.9c1.1,0.4,7.9-2.6,14.3-6C137,64,136.3,63.4,135.9,62.6z"
         ></path>
       </g>
-      <g id="freepik--character-3--inject-16">
+      <g>
         <path
           className="fill-white"
           d="M241.7,217.2c0,0-7.7,3.6-9.1,6s0.1,2.5,2.6,2.3s6.5-1.5,8.7-2.1s4.3,0,4.6-2.3c0.2-1.2,0.1-2.4-0.2-3.6
