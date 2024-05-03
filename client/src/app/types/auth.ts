@@ -2,7 +2,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
-  signUpSchema,
+  signUpSchema
 } from "../schemas/auth";
 import { FullUser } from "./user";
 import { z } from "zod";
@@ -19,7 +19,9 @@ interface SignInResponse {
 }
 
 interface SignUpDto
-  extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {}
+  extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {
+  avatar: string;
+}
 
 interface SignInDto extends z.infer<typeof signInSchema> {}
 
@@ -39,5 +41,5 @@ export type {
   SignInDto,
   SignUpDto,
   ForgotPasswordDto,
-  ResetPasswordDto,
+  ResetPasswordDto
 };

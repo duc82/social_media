@@ -7,5 +7,5 @@ export default function SignOut() {
     signOut();
   }, []);
 
-  return <div>SignOut</div>;
+  return <div></div>;
 }

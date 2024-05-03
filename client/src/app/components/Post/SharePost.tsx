@@ -1,8 +1,7 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import userAction from "@/app/actions/userAction";
 import Avatar from "@/app/components/Avatar";
-import CreatePostModal from "@/app/components/Post/CreatePostModal";
-import EmojiModal from "@/app/components/Post/CreatePostModal/EmojiModal";
-import { getServerSession } from "next-auth";
+import CreatePostModal from "@/app/components/Post/CreateModal";
+import EmojiModal from "@/app/components/Post/CreateModal/EmojiModal";
 import Link from "next/link";
 import {
   BookmarkCheck,
@@ -16,8 +15,8 @@ import {
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
-  const session = await getServerSession(authOptions);
-  const currentUser = session?.user;
+  const session = await userAction.getServerSession();
+  const currentUser = await userAction.getCurrentUser(session);
 
   return (
     <>

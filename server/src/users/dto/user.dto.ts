@@ -8,7 +8,6 @@ import {
   IsString,
 } from "class-validator";
 import { Gender, MarialStatus } from "../interfaces/profile.interface";
-import { FriendshipStatus } from "../interfaces/friendship.interface";
 
 export class ProfileDto {
   @ValidateIf((o) => o.gender)
@@ -42,6 +41,14 @@ export class ProfileDto {
   @ValidateIf((o) => o.overview)
   @IsString()
   overview: string;
+
+  @ValidateIf((o) => o.education)
+  @IsString()
+  education: string;
+
+  @ValidateIf((o) => o.workplace)
+  @IsString()
+  workplace: string;
 }
 
 export class CreateUserDto {

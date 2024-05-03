@@ -10,18 +10,18 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: "cdn.dummyjson.com"
       },
       {
         protocol: "https",
-        hostname: "cdn.dummyjson.com",
-      },
-    ],
+        hostname: "firebasestorage.googleapis.com"
+      }
+    ]
   },
   sassOptions: {
-    includePaths: [path.join(__dirname, "src/app", "styles")],
+    includePaths: [path.join(__dirname, "src/app", "styles")]
   },
-  reactStrictMode: true,
+  reactStrictMode: true
 };
 
 export default nextConfig;

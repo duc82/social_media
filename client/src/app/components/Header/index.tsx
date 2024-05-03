@@ -7,13 +7,13 @@ import {
   CardText,
   ChatLeftTextFill,
   GearFill,
-  LifePreserver,
-  Power
+  LifePreserver
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
 import userAction from "@/app/actions/userAction";
 import SearchDropdown from "./SearchDropdown";
+import ButtonSignOut from "./ButtonSignOut";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
@@ -162,14 +162,7 @@ export default async function Header() {
               </li>
 
               <li>
-                <Link
-                  href="/signout"
-                  title="Sign Out"
-                  className="dropdown-item"
-                >
-                  <Power className="me-2" />
-                  Sign Out
-                </Link>
+                <ButtonSignOut />
               </li>
               <li>
                 <hr className="dropdown-divider" />

@@ -43,14 +43,6 @@
   @extend .icon;
 }
 
-.fill-dark {
-  fill: $gray-800;
-}
-
-.fill-white {
-  fill: white;
-}
-
 .flip-horizontal {
   transform: scaleX(-1);
   display: inline-block;
@@ -271,5 +263,51 @@ $avatar-size-xxxl: 11rem;
 
   .border-end-lg-0 {
     border-right: 0;
+  }
+}
+
+#illustration {
+  .st0 {
+    opacity: 0.2;
+    fill: #0b2252;
+  }
+  .st1 {
+    fill: #daeeff;
+  }
+  .st2 {
+    fill: #6ac1ff;
+  }
+  .st3 {
+    fill: #3fb790;
+  }
+  .st4 {
+    fill: #34916f;
+  }
+  .st5 {
+    fill: #90dad8;
+  }
+  .st6 {
+    fill: #ffffff;
+  }
+  .st7 {
+    fill: url(#SVGID_1_);
+  }
+  .st8 {
+    fill: #14336d;
+  }
+  .st9 {
+    fill: #ffaa9d;
+  }
+  .st10 {
+    fill: url(#SVGID_00000017490826837838658910000002142626527740690084_);
+  }
+  .st11 {
+    fill: url(#SVGID_00000034068006629406653660000012692420182534256547_);
+  }
+  .st12 {
+    fill: url(#SVGID_00000101803975007610050020000011470946412395280313_);
+  }
+  .st13 {
+    fill: url(#SVGID_00000030466211624571626890000017464207134027537062_);
   }
 }

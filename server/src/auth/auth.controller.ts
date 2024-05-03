@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import {
   ForgotPasswordDto,
@@ -7,19 +14,20 @@ import {
   SignInDto,
   SignUpDto,
 } from "./auth.dto";
+import { Response } from "express";
 
 @Controller("api/auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("signup")
-  async signup(@Body() body: SignUpDto) {
+  async signUp(@Body() body: SignUpDto) {
     return this.authService.signUp(body);
   }
 
   @Post("signin")
   @HttpCode(HttpStatus.OK)
-  async signin(@Body() body: SignInDto) {
+  async signIn(@Body() body: SignInDto) {
     return this.authService.signIn(body);
   }
 
