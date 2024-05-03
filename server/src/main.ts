@@ -12,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const allowedOrigin = [
-    process.env.CLIENT_ORIGIN,
+    process.env.CLIENT_URL,
     "http://localhost:3000",
     "http://127.0.0.1:3000",
   ];
