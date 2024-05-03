@@ -1,7 +1,9 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Gender, MarialStatus } from "../interfaces/profile.interface";
 
-@Entity()
+@Entity({
+  name: "profiles",
+})
 export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;

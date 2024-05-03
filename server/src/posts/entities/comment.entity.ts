@@ -11,7 +11,9 @@ import {
 } from "typeorm";
 import { Post } from "./post.entity";
 
-@Entity()
+@Entity({
+  name: "post_comments",
+})
 export class Comment {
   @PrimaryGeneratedColumn("uuid")
   id: string;

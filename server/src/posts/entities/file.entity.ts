@@ -12,7 +12,9 @@ export enum FileType {
   VIDEO = "video",
 }
 
-@Entity()
+@Entity({
+  name: "post_files",
+})
 export class File {
   @PrimaryGeneratedColumn("uuid")
   id: string;

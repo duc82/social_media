@@ -8,7 +8,9 @@ import {
 import { FriendshipStatus } from "../interfaces/friendship.interface";
 import { User } from "./user.entity";
 
-@Entity()
+@Entity({
+  name: "friendships",
+})
 export class FriendShip extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;

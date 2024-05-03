@@ -8,7 +8,7 @@ const dataSource = new DataSource({
   type: "postgres",
   url: configService.getOrThrow<string>("DATABASE_URL"),
   entities: [__dirname + "/**/*.entity{.ts,.js}"],
-  migrations: ["migrations/*{.ts,.js}"],
+  migrations: ["./migrations/*{.ts,.js}"], // Path to the migration files
   logging: configService.get<string>("NODE_ENV") !== "production",
 });
 
