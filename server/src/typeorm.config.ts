@@ -7,9 +7,11 @@ const configService = new ConfigService();
 const dataSource = new DataSource({
   type: "postgres",
   url: configService.getOrThrow<string>("DATABASE_URL"),
+  ssl: {
+    rejectUnauthorized: false,
+  },
   entities: [__dirname + "/**/*.entity{.ts,.js}"],
   migrations: ["./migrations/*{.ts,.js}"], // Path to the migration files
-  logging: configService.get<string>("NODE_ENV") !== "production",
 });
 
 export default dataSource;
