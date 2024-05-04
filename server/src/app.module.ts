@@ -4,7 +4,6 @@ import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PostsModule } from "./posts/posts.module";
-import { ServeStaticModule } from "@nestjs/serve-static";
 import { EventsGateway } from "./events/events.gateway";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
@@ -23,14 +22,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging: false,
+        logging: configService.get<string>("NODE_ENV") !== "production",
         autoLoadEntities: true,
       }),
-    }),
-
-    // Serve static files
-    ServeStaticModule.forRoot({
-      rootPath: process.cwd() + "/public",
     }),
 
     // Mailer configuration
