@@ -1,33 +1,49 @@
 import authService from "@/app/services/authService";
 import { SignInDto } from "@/app/types/auth";
 import { FullUser } from "@/app/types/user";
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth, { CredentialsSignin, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { JwtPayload, jwtDecode } from "jwt-decode";
+import "next-auth/jwt";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     CredentialsProvider({
       credentials: {
-        email: {},
-        password: {},
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "Enter email"
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "Enter password"
+        }
       },
       async authorize(credentials) {
         if (credentials) {
-          const data = await authService.signIn(credentials as SignInDto);
-          return {
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-            ...data.user,
-          };
+          try {
+            const data = await authService.signIn(credentials as SignInDto);
+            return {
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              ...data.user
+            };
+          } catch (error) {
+            const newError = new CredentialsSignin();
+            newError.code = (error as Error).message;
+            throw newError;
+          }
         }
 
-        throw new Error("Login failed");
-      },
-    }),
+        throw new CredentialsSignin("Invalid credentials");
+      }
+    })
   ],
 
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id as string;
         token.name = user.name;
@@ -38,6 +54,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.profile = user.profile;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
+      }
+
+      const decoded = jwtDecode<JwtPayload>(token.accessToken);
+
+      if (!decoded.exp) {
+        throw new Error("Access token is invalid");
+      }
+
+      if (decoded.exp * 1000 <= Date.now()) {
+        try {
+          const data = await authService.refresh(token.refreshToken);
+          token.accessToken = data.accessToken;
+          console.log("refresh");
+
+          return { ...token, accessToken: data.accessToken };
+        } catch (error) {
+          throw new Error("Access token is invalid");
+        }
       }
 
       return token;
@@ -54,33 +88,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.refreshToken = token.refreshToken;
 
       return session;
-    },
+    }
   },
 
   session: {
-    strategy: "jwt",
+    strategy: "jwt"
   },
 
   pages: {
     signIn: "/signin",
     error: "/signin",
     signOut: "/signout",
-    newUser: "/",
+    newUser: "/"
   },
 
-  logger: {
-    error(code, ...message) {
-      console.error(code, message);
-    },
-    warn(code, ...message) {
-      console.warn(code, message);
-    },
-    debug(code, ...message) {
-      console.debug(code, message);
-    },
-  },
-
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === "development"
 });
 
 declare module "next-auth" {
@@ -99,8 +121,6 @@ declare module "next-auth" {
     refreshToken: string;
   }
 }
-
-import "next-auth/jwt";
 
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */

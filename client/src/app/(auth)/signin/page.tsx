@@ -23,7 +23,8 @@ export default function SignIn() {
     }
   });
   const urlSearchParams = useSearchParams();
-  const error = urlSearchParams.get("error");
+
+  const code = urlSearchParams.get("code");
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
@@ -52,9 +53,9 @@ export default function SignIn() {
           </Link>
         </span>
       </div>
-      {error && (
+      {code && (
         <div className="alert alert-danger mt-4 mb-0" role="alert">
-          {error}
+          {code}
         </div>
       )}
 

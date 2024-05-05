@@ -14,7 +14,7 @@ import {
   PatchCheckFill,
   PencilFill,
   PlusLg,
-  ThreeDots,
+  ThreeDots
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friendship, FullUser } from "@/app/types/user";
@@ -27,14 +27,13 @@ import userService from "@/app/services/userService";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
 import useSocket from "@/app/hooks/useSocket";
+import { useSession } from "next-auth/react";
 
 export default function ProfileMainHeader({
   user,
   initialFriendship,
-  currentUser,
-  accessToken,
+  currentUser
 }: {
-  accessToken: string;
   user: FullUser;
   initialFriendship: Friendship | null;
   currentUser: FullUser;
@@ -44,6 +43,9 @@ export default function ProfileMainHeader({
   const [friendship, setFriendship] = useState<Friendship | null>(
     initialFriendship
   );
+  const { data: session } = useSession();
+
+  const accessToken = session?.accessToken as string;
 
   const isSentFriendRequest = useMemo(
     () =>
@@ -94,7 +96,7 @@ export default function ProfileMainHeader({
       setFriendship(null);
       socket?.emit("friendRequest", {
         userId: user.id,
-        friendship: null,
+        friendship: null
       });
     } catch (error) {
       toast.error(handlingError(error));
@@ -113,7 +115,7 @@ export default function ProfileMainHeader({
       setFriendship(friendship);
       socket?.emit("friendRequest", {
         userId: user.id,
-        friendship,
+        friendship
       });
     } catch (error) {
       toast.error(handlingError(error));
@@ -132,7 +134,7 @@ export default function ProfileMainHeader({
       setFriendship(friendship);
       socket?.emit("friendRequest", {
         userId: user.id,
-        friendship,
+        friendship
       });
     } catch (error) {
       toast.error(handlingError(error));
@@ -152,10 +154,6 @@ export default function ProfileMainHeader({
       socket?.off("friendRequest");
     };
   }, [socket]);
-
-  useEffect(() => {
-    console.log(accessToken);
-  }, [accessToken]);
 
   return (
     <div className="card">
