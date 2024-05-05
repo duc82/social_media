@@ -6,7 +6,6 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { AllExceptionsFilter } from "./all-exceptions/all-exceptions.filter";
-import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +20,6 @@ async function bootstrap() {
     origin: allowedOrigin,
     credentials: true,
   });
-  app.use(cookieParser());
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
