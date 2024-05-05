@@ -8,6 +8,7 @@ import {
   WebSocketServer,
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
+import { FriendShip } from "src/users/entities/friendship.entity";
 
 interface Message {
   id: string;
@@ -19,6 +20,11 @@ interface Message {
 interface Typing {
   typing: boolean;
   username: string;
+}
+
+interface FriendRequest {
+  userId: string;
+  friendship: FriendShip | null;
 }
 
 @WebSocketGateway({
@@ -43,6 +49,11 @@ export class EventsGateway
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client Connected: ${client.id}`);
+  }
+
+  @SubscribeMessage("friendRequest")
+  handleFriendRequest(client: Socket, payload: FriendRequest) {
+    client.broadcast.emit("friendRequest", payload);
   }
 
   @SubscribeMessage("message")

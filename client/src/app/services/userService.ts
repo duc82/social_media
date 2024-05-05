@@ -54,13 +54,9 @@ const userService = {
     });
   },
 
-  getFriendship: async (
-    accessToken: string,
-    friendId: string,
-    status: FriendshipStatus
-  ) => {
+  getFriendship: async (accessToken: string, friendId: string) => {
     return apiRequest<Friendship>(
-      `/users/friends/${friendId}/friendship/${status}`,
+      `/users/friends/${friendId}/friendship`,
       "GET",
       {
         headers: {
@@ -74,6 +70,15 @@ const userService = {
   acceptFriendRequest: async (accessToken: string, userId: string) => {
     return apiRequest<Friendship>("/users/friends/accept", "POST", {
       body: JSON.stringify({ id: userId }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  declineFriendRequest: async (accessToken: string, userId: string) => {
+    return apiRequest<Friendship>(`/users/friends/decline/${userId}`, "PUT", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,

@@ -1,18 +1,9 @@
 import userService from "../services/userService";
-import { FriendshipStatus } from "../types/user";
 
 const friendAction = {
-  getFriendship: async (
-    accessToken: string,
-    friendId: string,
-    status: FriendshipStatus
-  ) => {
+  getFriendship: async (accessToken: string, friendId: string) => {
     try {
-      const friendShip = await userService.getFriendship(
-        accessToken,
-        friendId,
-        status
-      );
+      const friendShip = await userService.getFriendship(accessToken, friendId);
       return friendShip;
     } catch (error) {
       return null;

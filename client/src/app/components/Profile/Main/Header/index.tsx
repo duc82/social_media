@@ -8,88 +8,154 @@ import {
   Calendar2Plus,
   ChatLeftTextFill,
   FileEarmarkPdf,
-  FileEarmarkPdfFill,
   Gear,
   GeoAlt,
   Lock,
   PatchCheckFill,
   PencilFill,
-  PersonCheckFill,
-  PersonPlusFill,
-  PersonXFill,
   PlusLg,
-  ThreeDots
+  ThreeDots,
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friendship, FullUser } from "@/app/types/user";
 import useFriends from "@/app/hooks/useFriends";
 import { formatDate } from "@/app/utils/dateTime";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
 import userService from "@/app/services/userService";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
+import useSocket from "@/app/hooks/useSocket";
 
-const isMyProfile = true;
-
-export default function ProfileMainHeader() {
-  //   {
-  //   accessToken,
-  //   user,
-  //   isMyProfile,
-  //   friendship,
-  //   initialSentFriendRequest,
-  // }: {
-  //   accessToken: string;
-  //   user: FullUser;
-  //   isMyProfile: boolean;
-  //   friendship: Friendship | null;
-  //   initialSentFriendRequest: boolean;
-  // }
-
+export default function ProfileMainHeader({
+  user,
+  initialFriendship,
+  currentUser,
+  accessToken,
+}: {
+  accessToken: string;
+  user: FullUser;
+  initialFriendship: Friendship | null;
+  currentUser: FullUser;
+}) {
+  const socket = useSocket();
   const [isLoading, setIsLoading] = useState(false);
-  // const [isSentFriendRequest, setIsSentFriendRequest] = useState(
-  //   initialSentFriendRequest
-  // );
-  // const [isFriend, setIsFriend] = useState(friendship?.status === "accepted");
-  // const { total: totalFriends } = useFriends((state) => state);
+  const [friendship, setFriendship] = useState<Friendship | null>(
+    initialFriendship
+  );
 
-  // const handleSendFriendRequest = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     await userService.sendFriendRequest(accessToken, user.id);
-  //     setIsSentFriendRequest(true);
-  //   } catch (error) {
-  //     toast.error(handlingError(error));
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const isSentFriendRequest = useMemo(
+    () =>
+      friendship?.status === "pending" && friendship.user.id === currentUser.id,
+    [friendship, currentUser]
+  );
 
-  // const handleCancelFriendRequest = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     await userService.cancelFriendRequest(accessToken, user.id);
-  //     setIsSentFriendRequest(false);
-  //   } catch (error) {
-  //     toast.error(handlingError(error));
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const isReceivedFriendRequest = useMemo(
+    () =>
+      friendship?.status === "pending" &&
+      friendship.friend.id === currentUser.id,
+    [friendship, currentUser]
+  );
 
-  // const handleAcceptFriendRequest = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     await userService.acceptFriendRequest(accessToken, user.id);
-  //     setIsFriend(true);
-  //   } catch (error) {
-  //     toast.error(handlingError(error));
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const isFriend = useMemo(
+    () => friendship?.status === "accepted",
+    [friendship]
+  );
+
+  const isMyProfile = useMemo(
+    () => user.id === currentUser.id,
+    [user, currentUser]
+  );
+
+  const { total: totalFriends } = useFriends((state) => state);
+
+  const handleSendFriendRequest = async () => {
+    try {
+      setIsLoading(true);
+      const friendship = await userService.sendFriendRequest(
+        accessToken,
+        user.id
+      );
+      setFriendship(friendship);
+      socket?.emit("friendRequest", { userId: user.id, friendship });
+    } catch (error) {
+      toast.error(handlingError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelFriendRequest = async () => {
+    try {
+      setIsLoading(true);
+      await userService.cancelFriendRequest(accessToken, user.id);
+
+      setFriendship(null);
+      socket?.emit("friendRequest", {
+        userId: user.id,
+        friendship: null,
+      });
+    } catch (error) {
+      toast.error(handlingError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAcceptFriendRequest = async () => {
+    try {
+      setIsLoading(true);
+      const friendship = await userService.acceptFriendRequest(
+        accessToken,
+        user.id
+      );
+      setFriendship(friendship);
+      socket?.emit("friendRequest", {
+        userId: user.id,
+        friendship,
+      });
+    } catch (error) {
+      toast.error(handlingError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelinceFriendRequest = async () => {
+    try {
+      setIsLoading(true);
+      const friendship = await userService.declineFriendRequest(
+        accessToken,
+        user.id
+      );
+      setFriendship(friendship);
+      socket?.emit("friendRequest", {
+        userId: user.id,
+        friendship,
+      });
+    } catch (error) {
+      toast.error(handlingError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    socket?.on("friendRequest", ({ userId, friendship }) => {
+      if (userId === currentUser.id) {
+        setFriendship(friendship);
+      }
+    });
+
+    return () => {
+      socket?.off("friendRequest");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    console.log(accessToken);
+  }, [accessToken]);
 
   return (
     <div className="card">
@@ -111,127 +177,167 @@ export default function ProfileMainHeader() {
       <div className="card-body py-0">
         <div className="d-md-flex align-items-start text-center text-md-start">
           <Fancybox>
-            <Link href="/07.jpg" data-fancybox="avatar">
+            <Link href={user.profile.avatar} data-fancybox="avatar">
               <Avatar
-                src="/07.jpg"
-                wrapperClassName="avatar-story avatar-xxl mt-n5 mb-3"
-                className="rounded-circle border border-3 border-white "
+                src={user.profile.avatar}
+                wrapperClassName="avatar-xxl mt-n5 mb-3"
+                className="rounded-circle border border-3 border-white"
               />
             </Link>
           </Fancybox>
 
           <div className="ms-md-4 mt-md-3">
             <h1 className="mb-0 h5">
-              {"Liu Tiu Diu"} <PatchCheckFill className="text-success small" />
+              {user.fullName} <PatchCheckFill className="text-success small" />
             </h1>
-            <p>{10} friends</p>
+            <p>{totalFriends} friends</p>
           </div>
 
-          {/* <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
-            <button
-              type="button"
-              className="btn btn-primary-soft d-flex align-items-center"
-            >
-              <PlusLg width={16} height={16} className="me-2" />
-              Add to story
-            </button>
-            <button
-              type="button"
-              className="btn btn-danger-soft d-flex align-items-center"
-            >
-              <PencilFill width={16} height={16} className="me-2" />
-              Edit profile
-            </button>
-            <div className="dropdown">
+          {isMyProfile && (
+            <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
               <button
                 type="button"
-                className="icon-md btn btn-light p-0"
-                data-bs-toggle="dropdown"
+                className="btn btn-primary-soft d-flex align-items-center"
               >
-                <ThreeDots />
+                <PlusLg width={16} height={16} className="me-2" />
+                Add to story
               </button>
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <Bookmark width={23} height={19} className="pe-2" />
-                    Share profile in a message
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <FileEarmarkPdf width={23} height={19} className="pe-2" />
-                    Save your profile to PDF
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <Lock width={23} height={19} className="pe-2" />
-                    Lock profile
-                  </Link>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <Gear width={23} height={19} className="pe-2" />
-                    Profile settings
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div> */}
-
-          <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
-            <FriendButton isLoading={isLoading} status="none" />
-
-            <Link
-              href="/chats"
-              className="btn btn-light d-flex align-items-center"
-            >
-              <ChatLeftTextFill width={16} height={16} className="me-2" />
-              <span>Message</span>
-            </Link>
-
-            <div className="dropdown">
               <button
                 type="button"
-                className="icon-md btn btn-light p-0"
-                data-bs-toggle="dropdown"
+                className="btn btn-danger-soft d-flex align-items-center"
               >
-                <ThreeDots />
+                <PencilFill width={16} height={16} className="me-2" />
+                Edit profile
               </button>
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <Bookmark width={23} height={19} className="pe-2" />
-                    Share profile in a message
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <FileEarmarkPdf width={23} height={19} className="pe-2" />
-                    Save your profile to PDF
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <Lock width={23} height={19} className="pe-2" />
-                    Lock profile
-                  </Link>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <Link className="dropdown-item" href="#">
-                    <Gear width={23} height={19} className="pe-2" />
-                    Profile settings
-                  </Link>
-                </li>
-              </ul>
+              <div className="dropdown">
+                <button
+                  type="button"
+                  className="icon-md btn btn-light p-0"
+                  data-bs-toggle="dropdown"
+                >
+                  <ThreeDots />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <Bookmark width={23} height={19} className="pe-2" />
+                      Share profile in a message
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <FileEarmarkPdf width={23} height={19} className="pe-2" />
+                      Save your profile to PDF
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <Lock width={23} height={19} className="pe-2" />
+                      Lock profile
+                    </Link>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <Gear width={23} height={19} className="pe-2" />
+                      Profile settings
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
+
+          {!isMyProfile && (
+            <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
+              {!isFriend &&
+                !isReceivedFriendRequest &&
+                (friendship?.user.id === currentUser.id ||
+                  friendship?.status !== "declined") && (
+                  <FriendButton
+                    isLoading={isLoading}
+                    status={isSentFriendRequest ? "cancel" : "none"}
+                    onClick={
+                      isSentFriendRequest
+                        ? handleCancelFriendRequest
+                        : handleSendFriendRequest
+                    }
+                  />
+                )}
+
+              {isFriend && (
+                <FriendButton
+                  isLoading={isLoading}
+                  status="friends"
+                  onClick={() => {}}
+                />
+              )}
+
+              {isReceivedFriendRequest && !isFriend && (
+                <>
+                  <FriendButton
+                    isLoading={isLoading}
+                    status="accept"
+                    onClick={handleAcceptFriendRequest}
+                  />
+                  <FriendButton
+                    isLoading={isLoading}
+                    status="decline"
+                    onClick={handleDelinceFriendRequest}
+                  />
+                </>
+              )}
+
+              <Link
+                href="/chats"
+                className="btn btn-light d-flex align-items-center"
+              >
+                <ChatLeftTextFill width={16} height={16} className="me-2" />
+                <span>Message</span>
+              </Link>
+
+              <div className="dropdown">
+                <button
+                  type="button"
+                  className="icon-md btn btn-light p-0"
+                  data-bs-toggle="dropdown"
+                >
+                  <ThreeDots />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <Bookmark width={23} height={19} className="pe-2" />
+                      Share profile in a message
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <FileEarmarkPdf width={23} height={19} className="pe-2" />
+                      Save your profile to PDF
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <Lock width={23} height={19} className="pe-2" />
+                      Lock profile
+                    </Link>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="#">
+                      <Gear width={23} height={19} className="pe-2" />
+                      Profile settings
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
 
         <ul className="list-inline mb-0 text-center text-md-start mt-3 mt-md-0">

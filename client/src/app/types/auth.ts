@@ -2,7 +2,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
-  signUpSchema
+  signUpSchema,
 } from "../schemas/auth";
 import { FullUser } from "./user";
 import { z } from "zod";
@@ -41,5 +41,5 @@ export type {
   SignInDto,
   SignUpDto,
   ForgotPasswordDto,
-  ResetPasswordDto
+  ResetPasswordDto,
 };

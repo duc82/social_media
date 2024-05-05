@@ -6,5 +6,5 @@ export default function NextAuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  return <SessionProvider>{children}</SessionProvider>;
+  return <SessionProvider refetchInterval={30}>{children}</SessionProvider>;
 }

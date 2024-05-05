@@ -1,10 +1,10 @@
 type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
-const API_BASE_URL: string | undefined = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_URL: string | undefined = process.env.NEXT_PUBLIC_API_URL;
 
-if (!API_BASE_URL) {
+if (!API_URL) {
   throw new Error(
-    "NEXT_PUBLIC_API_BASE_URL must be defined. Please add it to .env file."
+    "NEXT_PUBLIC_API_URL must be defined. Please add it to .env file."
   );
 }
 
@@ -14,7 +14,7 @@ export default async function apiRequest<T>(
   init: RequestInit = {}
 ): Promise<T> {
   try {
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const res = await fetch(`${API_URL}/api${endpoint}`, {
       method,
       headers: {
         "Content-Type": "application/json",

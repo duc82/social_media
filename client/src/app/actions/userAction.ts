@@ -1,16 +1,17 @@
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { Session } from "next-auth";
+import { FullUser } from "../types/user";
+import { auth } from "../api/auth/[...nextauth]/auth";
 
 const userAction = {
-  getServerSession: async () => await getServerSession(authOptions),
+  getServerSession: async () => await auth(),
   getCurrentUser: async function (session?: Session | null) {
     if (session !== undefined) {
-      return session?.user!;
+      return session?.user! as FullUser;
     }
 
     const newSession = await this.getServerSession();
-    return newSession?.user!;
-  }
+    return newSession?.user! as FullUser;
+  },
 };
 
 export default userAction;

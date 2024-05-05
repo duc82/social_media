@@ -1,4 +1,4 @@
-type FriendshipStatus = "pending" | "accepted" | "rejected";
+type FriendshipStatus = "pending" | "accepted" | "declined";
 
 interface Profile {
   id: string;
@@ -54,5 +54,5 @@ export type {
   UsersReponse,
   FriendsResponse,
   FriendshipStatus,
-  Friendship
+  Friendship,
 };
