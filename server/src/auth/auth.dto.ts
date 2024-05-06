@@ -22,6 +22,7 @@ export class SignInDto extends OmitType(CreateUserDto, [
 
 export class RefreshDto {
   @IsNotEmpty()
+  @IsString()
   refreshToken: string;
 }
 

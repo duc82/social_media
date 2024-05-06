@@ -32,6 +32,13 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @Get("current")
+  async getCurrentUser(@User("userId") userId: string) {
+    console.log("get current");
+    return this.usersService.getUserProfile(userId);
+  }
+
+  @UseGuards(AuthGuard)
   @Post("profile/update")
   async updateUserProfile(
     @User("userId") userId: string,

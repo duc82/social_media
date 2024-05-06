@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import SocketProvider from "../providers/SocketProvider";
 
 export default function PrivateLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

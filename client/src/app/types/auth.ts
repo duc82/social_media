@@ -2,7 +2,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
-  signUpSchema,
+  signUpSchema
 } from "../schemas/auth";
 import { FullUser } from "./user";
 import { z } from "zod";
@@ -14,8 +14,9 @@ interface SignUpResponse {
 
 interface SignInResponse {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
   user: FullUser;
+  accessTokenExpired: number;
 }
 
 interface SignUpDto
@@ -32,6 +33,7 @@ interface ResetPasswordDto extends z.infer<typeof resetPasswordSchema> {}
 interface RefreshResponse {
   message: string;
   accessToken: string;
+  accessTokenExpired: number;
 }
 
 export type {
@@ -41,5 +43,5 @@ export type {
   SignInDto,
   SignUpDto,
   ForgotPasswordDto,
-  ResetPasswordDto,
+  ResetPasswordDto
 };

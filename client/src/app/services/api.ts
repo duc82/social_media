@@ -1,5 +1,9 @@
 type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
+interface Options extends RequestInit {
+  method?: Method;
+}
+
 const API_URL: string | undefined = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API_URL) {
@@ -10,17 +14,15 @@ if (!API_URL) {
 
 export default async function apiRequest<T>(
   endpoint: string,
-  method: Method = "GET",
-  init: RequestInit = {}
+  options?: Options
 ): Promise<T> {
   try {
     const res = await fetch(`${API_URL}/api${endpoint}`, {
-      method,
+      ...options,
       headers: {
         "Content-Type": "application/json",
-        ...init.headers,
-      },
-      ...init,
+        ...options?.headers
+      }
     });
 
     const data = await res.json();

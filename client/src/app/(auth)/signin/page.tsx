@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function SignIn() {
@@ -53,6 +53,7 @@ export default function SignIn() {
           </Link>
         </span>
       </div>
+
       {code && (
         <div className="alert alert-danger mt-4 mb-0" role="alert">
           {code}

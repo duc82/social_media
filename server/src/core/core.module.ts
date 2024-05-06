@@ -1,16 +1,13 @@
 import { Global, Module } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 
 @Global()
 @Module({
   imports: [
     JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>("JWT_SECRET"),
+      useFactory: async () => ({
         global: true,
       }),
-      inject: [ConfigService],
     }),
   ],
   exports: [JwtModule],

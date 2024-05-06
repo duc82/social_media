@@ -1,5 +1,7 @@
 type FriendshipStatus = "pending" | "accepted" | "declined";
 
+type Role = "user" | "admin";
+
 interface Profile {
   id: string;
   gender: "male" | "female" | "other" | null;
@@ -18,7 +20,7 @@ interface User {
   fullName: string;
   email: string;
   password: string;
-  role: "user" | "admin";
+  role: Role;
   profile: Profile;
 }
 
@@ -55,4 +57,5 @@ export type {
   FriendsResponse,
   FriendshipStatus,
   Friendship,
+  Role
 };
