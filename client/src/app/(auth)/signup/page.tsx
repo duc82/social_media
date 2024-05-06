@@ -14,9 +14,10 @@ import authService from "@/app/services/authService";
 import { SignUpDto } from "@/app/types/auth";
 import { signUpSchema } from "@/app/schemas/auth";
 import clsx from "clsx";
-import { InfoCircle } from "react-bootstrap-icons";
+import { ExclamationCircleFill, InfoCircle } from "react-bootstrap-icons";
 import AvatarInitials from "@/app/utils/avatarInitials";
 import { uploadFile } from "@/app/libs/firebase";
+import InputGroup from "@/app/components/Form/InputGroup";
 
 interface FormValue extends SignUpDto {
   confirmPassword: string;
@@ -28,10 +29,10 @@ export default function Signup() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
@@ -42,12 +43,12 @@ export default function Signup() {
     const { confirmPassword, ...signUpDto } = data;
 
     try {
-      const avatarInitials = await AvatarInitials.generateAvatar(
+      const avatarBlob = await AvatarInitials.generateAvatar(
         signUpDto.fullName
       );
       signUpDto.avatar = await uploadFile(
         `avatars/${signUpDto.email}`,
-        avatarInitials
+        avatarBlob
       );
       const value = await authService.signUp(signUpDto);
       toast.success(value.message);
@@ -75,35 +76,23 @@ export default function Signup() {
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3 input-group-lg">
-          <input
-            type="text"
-            placeholder="Enter full name"
-            className="form-control"
-            {...register("fullName")}
-          />
-          {errors.fullName && (
-            <div className="form-text text-danger mt-1">
-              {errors.fullName.message}
-            </div>
-          )}
-        </div>
+        <InputGroup
+          {...register("fullName")}
+          id="fullName"
+          placeholder="Enter full name"
+          error={errors.fullName?.message}
+        />
 
-        <div className="mb-3 input-group-lg">
-          <input
-            type="email"
-            placeholder="Enter email"
-            className="form-control"
-            {...register("email")}
-          />
-          {errors.email ? (
-            <div className="form-text text-danger mt-1">
-              {errors.email.message}
-            </div>
-          ) : (
+        <InputGroup
+          {...register("email")}
+          type="email"
+          id="email"
+          placeholder="Enter email"
+          error={errors.email?.message}
+          text={
             <small>We&apos;ll never share your email with anyone else.</small>
-          )}
-        </div>
+          }
+        />
 
         <div className="mb-3 position-relative">
           <div className="mb-0 input-group input-group-lg">
@@ -136,9 +125,10 @@ export default function Signup() {
           <div className="d-flex mt-1">
             <div>
               {errors.password && (
-                <p className="form-text text-danger mt-1">
-                  {errors.password.message}
-                </p>
+                <div className="form-text text-danger mt-1">
+                  <ExclamationCircleFill size={16} className="me-2" />
+                  <span>{errors.password.message}</span>
+                </div>
               )}
               {!errors.password && pwdScore === 0 && (
                 <p>Write your password...</p>
@@ -158,19 +148,13 @@ export default function Signup() {
           </div>
         </div>
 
-        <div className="mb-3 input-group-lg">
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            className="form-control"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword && (
-            <div className="form-text text-danger mt-1">
-              {errors.confirmPassword.message}
-            </div>
-          )}
-        </div>
+        <InputGroup
+          {...register("confirmPassword")}
+          type="password"
+          id="confirmPassword"
+          placeholder="Confirm Password"
+          error={errors.confirmPassword?.message}
+        />
 
         <button
           type="submit"

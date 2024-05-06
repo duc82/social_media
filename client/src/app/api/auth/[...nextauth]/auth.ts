@@ -17,31 +17,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {
           label: "Email",
           type: "email",
-          placeholder: "Enter email"
+          placeholder: "Enter email",
         },
         password: {
           label: "Password",
           type: "password",
-          placeholder: "Enter password"
-        }
+          placeholder: "Enter password",
+        },
+        isRemember: {
+          label: "Remember me",
+          type: "checkbox",
+        },
       },
       async authorize(credentials) {
-        if (credentials) {
-          try {
-            const data = await authService.signIn(credentials as SignInDto);
-            return { ...data, ...data.user };
-          } catch (error) {
-            if (error instanceof Error) {
-              throw new SignInError(error.message);
-            }
+        try {
+          const data = {
+            email: credentials.email,
+            password: credentials.password,
+            isRemember: credentials.isRemember,
+          } as SignInDto;
 
-            throw new SignInError("Invalid credentials");
+          const result = await authService.signIn(data);
+
+          return { ...result, ...result.user };
+        } catch (error) {
+          if (error instanceof Error) {
+            throw new SignInError(error.message);
           }
-        }
 
-        throw new SignInError("Invalid credentials");
-      }
-    })
+          throw new SignInError("Invalid credentials");
+        }
+      },
+    }),
   ],
 
   callbacks: {
@@ -77,23 +84,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         fullName: token.fullName,
         role: token.role,
         profile: token.profile,
-        createdAt: token.createdAt
+        emailVerified: token.emailVerified,
+        createdAt: token.createdAt,
       };
 
       return session;
-    }
+    },
   },
 
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
 
   pages: {
     signIn: "/signin",
     error: "/signin",
     newUser: "/",
-    verifyRequest: "/verify"
+    verifyRequest: "/verify",
   },
 
-  debug: process.env.NODE_ENV === "development"
+  debug: process.env.NODE_ENV === "development",
 });

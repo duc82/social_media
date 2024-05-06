@@ -1,4 +1,5 @@
 "use client";
+import InputGroup from "@/app/components/Form/InputGroup";
 import { signInSchema } from "@/app/schemas/auth";
 import { SignInDto } from "@/app/types/auth";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -6,25 +7,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import {
+  ExclamationCircleFill,
+  ExclamationTriangleFill,
+} from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 
 export default function SignIn() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<SignInDto>({
     resolver: zodResolver(signInSchema),
     mode: "onChange",
     defaultValues: {
-      isRemember: true
-    }
+      isRemember: true,
+    },
   });
-  const urlSearchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const code = urlSearchParams.get("code");
+  const code = searchParams.get("code");
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
@@ -38,7 +45,7 @@ export default function SignIn() {
     await signIn("credentials", {
       redirect: true,
       callbackUrl: "/",
-      ...data
+      ...data,
     });
   };
 
@@ -55,25 +62,30 @@ export default function SignIn() {
       </div>
 
       {code && (
-        <div className="alert alert-danger mt-4 mb-0" role="alert">
-          {code}
+        <div
+          className="alert alert-danger lh-1 mt-4 mb-0 d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div className="d-flex align-items-center">
+            <ExclamationTriangleFill size={16} className="me-2 flex-shrink-0" />
+            <span>{code}</span>
+          </div>
+          <button
+            type="button"
+            className="btn-close flex-shrink-0"
+            onClick={() => router.push(pathname)}
+          ></button>
         </div>
       )}
 
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3 input-group-lg">
-          <input
-            type="email"
-            placeholder="Enter email"
-            className="form-control"
-            {...register("email")}
-          />
-          {errors.email && (
-            <div className="form-text text-danger mt-1">
-              {errors.email.message}
-            </div>
-          )}
-        </div>
+        <InputGroup
+          {...register("email")}
+          type="email"
+          id="email"
+          placeholder="Enter email"
+          error={errors.email?.message}
+        />
 
         <div className="mb-3 position-relative">
           <div className="mb-0 input-group input-group-lg">
@@ -82,7 +94,6 @@ export default function SignIn() {
               placeholder="Enter password"
               className="form-control"
               {...register("password")}
-              aria-describedby="passwordHelpBlock"
             />
             <span
               id="passwordHelpBlock"
@@ -95,27 +106,27 @@ export default function SignIn() {
               />
             </span>
           </div>
-          <div className="d-flex mt-1">
-            {errors.password && (
-              <div className="form-text text-danger mt-1">
-                {errors.password.message}
-              </div>
-            )}
-          </div>
+          {errors.password && (
+            <div className="form-text text-danger mt-1">
+              <ExclamationCircleFill size={16} className="me-2" />
+              <span>{errors.password.message}</span>
+            </div>
+          )}
         </div>
 
         <div className="mb-3 d-sm-flex justify-content-between">
-          <div>
-            <input
-              type="checkbox"
-              className="form-check-input me-1"
-              id="rememberCheck"
-              {...register("isRemember")}
-            />
-            <label className="form-check-label" htmlFor="rememberCheck">
-              Remember me?
-            </label>
-          </div>
+          <InputGroup
+            {...register("isRemember")}
+            type="checkbox"
+            wrapperClassName="d-flex align-items-center"
+            className="form-check-input cursor-pointer mt-0 me-2"
+            id="rememberCheck"
+            labelProps={{
+              className: "form-check-label order-2",
+              children: "Remember me?",
+              hidden: false,
+            }}
+          />
           <Link href="/forgotPassword" className="link-primary">
             Forgot password?
           </Link>

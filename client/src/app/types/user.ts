@@ -22,6 +22,7 @@ interface User {
   password: string;
   role: Role;
   profile: Profile;
+  emailVerified: Date | null;
 }
 
 interface FullUser extends User {
@@ -57,5 +58,5 @@ export type {
   FriendsResponse,
   FriendshipStatus,
   Friendship,
-  Role
+  Role,
 };

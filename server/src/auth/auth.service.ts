@@ -21,6 +21,8 @@ export class AuthService {
     this.configService.getOrThrow<string>("ACCESS_SECRET");
   private readonly refreshSecret =
     this.configService.getOrThrow<string>("REFRESH_SECRET");
+  private readonly clientUrl =
+    this.configService.getOrThrow<string>("CLIENT_URL");
 
   constructor(
     private usersService: UserService,
@@ -70,7 +72,7 @@ export class AuthService {
       expiresIn: "1h",
     });
 
-    const link = `${process.env.CLIENT_URL}/verify?token=${token}`;
+    const link = `${this.clientUrl}/verify?token=${token}`;
 
     await this.mailService.sendMail({
       to: signUpDto.email,
@@ -107,6 +109,27 @@ export class AuthService {
       userId: user.id,
       role: user.role,
     };
+
+    const token = await this.generateToken(payload, {
+      expiresIn: "1h",
+    });
+
+    const link = `${this.clientUrl}/verify?token=${token}`;
+
+    if (!user.emailVerified) {
+      await this.mailService.sendMail({
+        to: user.email,
+        subject: "Verify your account",
+        template: "verify-account",
+        context: {
+          fullName: user.fullName,
+          link,
+        },
+      });
+      throw new BadRequestException(
+        "Verify your account, we have sent an email to your email address",
+      );
+    }
 
     const accessTokenExpired = Date.now() + this.accessTokenExpired;
 
@@ -172,6 +195,28 @@ export class AuthService {
     };
   }
 
+  async verifyEmail(token: string) {
+    try {
+      const payload = await this.verifyToken<UserPayload>(token);
+      const user = await this.usersService.findById(payload.userId, {
+        select: ["id", "emailVerified"],
+      });
+
+      if (!user) {
+        throw new BadRequestException("User not found");
+      }
+
+      user.emailVerified = new Date();
+      await this.dataSource.getRepository(User).save(user);
+
+      return {
+        message: "Account verified successfully",
+      };
+    } catch (error) {
+      throw new BadRequestException("Invalid token or token expired");
+    }
+  }
+
   async forgotPassword(email: string) {
     const user = await this.usersService.findByEmail(email, {
       relations: ["token"],
@@ -233,7 +278,7 @@ export class AuthService {
 
       if (
         user?.token?.resetToken !== token ||
-        user?.token?.resetTokenExpires < new Date()
+        user?.token?.resetTokenExpires <= new Date()
       ) {
         throw new BadRequestException("Invalid token or token expired");
       }

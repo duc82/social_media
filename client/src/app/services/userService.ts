@@ -4,7 +4,7 @@ import type {
   Friendship,
   FriendshipStatus,
   FullUser,
-  UsersReponse
+  UsersReponse,
 } from "../types/user";
 import apiRequest from "./api";
 
@@ -25,8 +25,8 @@ const userService = {
   getCurrent: async (accessToken: string) => {
     return apiRequest<FullUser>("/users/current", {
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   },
 
@@ -46,8 +46,8 @@ const userService = {
       method: "POST",
       body: JSON.stringify({ id: userId }),
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   },
 
@@ -55,16 +55,16 @@ const userService = {
     return apiRequest<Friendship>(`/users/friends/cancel/${userId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   },
 
   getFriendship: async (accessToken: string, friendId: string) => {
     return apiRequest<Friendship>(`/users/friends/${friendId}/friendship`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   },
 
@@ -73,8 +73,8 @@ const userService = {
       method: "POST",
       body: JSON.stringify({ id: userId }),
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   },
 
@@ -82,10 +82,10 @@ const userService = {
     return apiRequest<Friendship>(`/users/friends/decline/${userId}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
-  }
+  },
 };
 
 export default userService;

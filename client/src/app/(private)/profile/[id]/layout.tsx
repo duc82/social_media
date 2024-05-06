@@ -8,7 +8,7 @@ import userService from "@/app/services/userService";
 
 export default async function ProfileLayout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params: { id?: string };
@@ -20,7 +20,7 @@ export default async function ProfileLayout({
     friends,
     total: totalFriends,
     page,
-    limit
+    limit,
   } = await userService.getFriends(user.id, "accepted");
 
   const friendship = await friendAction.getFriendship(accessToken, user.id);
@@ -42,7 +42,7 @@ export default async function ProfileLayout({
           {children}
         </FriendProvider>
       </div>
-      {/* <ProfileSidebar user={user} /> */}
+      <ProfileSidebar user={user} />
     </div>
   );
 }
