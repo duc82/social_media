@@ -4,20 +4,21 @@ import {
   faSquareFacebook,
   faSquareTwitter,
   faLinkedin,
-  faSquareYoutube
+  faSquareYoutube,
 } from "@fortawesome/free-brands-svg-icons";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import AuthDecoration from "../components/Decoration/AuthDecoration";
 import BackgroundDecoration from "../components/Decoration/BackgroundDecoration";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { auth } from "../api/auth/[...nextauth]/auth";
+import { redirect } from "next/navigation";
 
 export default async function AuthLayout({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
-  if (await getServerSession(authOptions)) {
+  const session = await auth();
+
+  if (session) {
     redirect("/");
   }
 

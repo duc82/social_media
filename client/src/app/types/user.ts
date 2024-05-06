@@ -1,4 +1,6 @@
-type FriendshipStatus = "pending" | "accepted" | "rejected";
+type FriendshipStatus = "pending" | "accepted" | "declined";
+
+type Role = "user" | "admin";
 
 interface Profile {
   id: string;
@@ -18,8 +20,9 @@ interface User {
   fullName: string;
   email: string;
   password: string;
-  role: "user" | "admin";
+  role: Role;
   profile: Profile;
+  emailVerified: Date | null;
 }
 
 interface FullUser extends User {
@@ -54,5 +57,6 @@ export type {
   UsersReponse,
   FriendsResponse,
   FriendshipStatus,
-  Friendship
+  Friendship,
+  Role,
 };

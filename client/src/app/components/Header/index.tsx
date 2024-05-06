@@ -11,14 +11,14 @@ import {
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
-import userAction from "@/app/actions/userAction";
 import SearchDropdown from "./SearchDropdown";
 import ButtonSignOut from "./ButtonSignOut";
+import getServerSession from "@/app/libs/session";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
 export default async function Header() {
-  const currentUser = await userAction.getCurrentUser();
+  const { currentUser } = await getServerSession();
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">

@@ -1,32 +1,29 @@
-import { Session } from "inspector";
-import NextAuth, { DefaultSession } from "next-auth";
-import { FullUser } from "./user";
-import { JWT } from "next-auth/jwt";
+import "next-auth/jwt";
+import type { FullUser, Role } from "./user";
+import NextAuth, { type DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-
   interface User extends FullUser {
     accessToken: string;
-    refreshToken: string;
+    refreshToken?: string;
+    accessTokenExpired: number;
   }
 
-  type CurrentUser = Omit<User, "accessToken"> & DefaultSession["user"];
-
-  interface Session {
-    user: CurrentUser;
+  interface Session extends DefaultSession {
     accessToken: string;
+    user: FullUser;
   }
 }
 
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT extends FullUser {
-    /** OpenID ID Token */
     accessToken: string;
-    /** OpenID Refresh Token */
-    refreshToken: string;
+    refreshToken?: string;
+    /** Access token expired (miliseconds) */
+    accessTokenExpired: number;
   }
 }

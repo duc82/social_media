@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from "@nestjs/common";
@@ -31,6 +32,13 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @Get("current")
+  async getCurrentUser(@User("userId") userId: string) {
+    console.log("get current");
+    return this.usersService.getUserProfile(userId);
+  }
+
+  @UseGuards(AuthGuard)
   @Post("profile/update")
   async updateUserProfile(
     @User("userId") userId: string,
@@ -51,12 +59,9 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Get("friends/:id/friendship/:status")
-  async getFriendship(
-    @User("userId") userId: string,
-    @Param() param: GetFriendsParams,
-  ) {
-    return this.usersService.getFriendship(userId, param.id, param.status);
+  @Get("friends/:id/friendship")
+  async getFriendship(@User("userId") userId: string, @Param("id") id: string) {
+    return this.usersService.getFriendship(userId, id);
   }
 
   @UseGuards(AuthGuard)
@@ -84,5 +89,14 @@ export class UsersController {
     @Body("id") friendId: string,
   ) {
     return this.usersService.acceptFriendRequest(userId, friendId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put("friends/decline/:id")
+  async declineFriendRequest(
+    @User("userId") userId: string,
+    @Param("id") friendId: string,
+  ) {
+    return this.usersService.declineFriendRequest(userId, friendId);
   }
 }

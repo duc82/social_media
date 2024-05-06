@@ -8,13 +8,15 @@ import {
 
 interface FriendButtonProps {
   isLoading?: boolean;
-  status: "none" | "accept" | "friends" | "cancel";
+  status: "accept" | "friends" | "cancel" | "decline" | "none";
+  onClick: () => void;
   className?: string;
 }
 
 const FriendButton = ({
   isLoading = false,
   status,
+  onClick,
   className,
 }: FriendButtonProps) => {
   const datas: Record<
@@ -45,6 +47,11 @@ const FriendButton = ({
       icon: <PersonXFill width={16} height={16} />,
       className: "btn-danger",
     },
+    decline: {
+      name: "Decline",
+      icon: <PersonXFill width={16} height={16} />,
+      className: "btn-danger",
+    },
   };
 
   return (
@@ -55,6 +62,7 @@ const FriendButton = ({
         datas[status].className,
         className
       )}
+      onClick={onClick}
     >
       {isLoading ? (
         <div

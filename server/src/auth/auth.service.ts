@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { JwtService, JwtSignOptions } from "@nestjs/jwt";
+import { JwtService, JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { UserService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
 import { Profile } from "src/users/entities/profile.entity";
@@ -12,8 +12,17 @@ import { DataSource } from "typeorm";
 
 @Injectable()
 export class AuthService {
-  private readonly accessTokenExpired: number;
-  private readonly refreshTokenExpired: number;
+  // miliseconds
+  private readonly accessTokenExpired: number =
+    +this.configService.getOrThrow<string>("ACCESS_TOKEN_EXPIRED");
+  private readonly refreshTokenExpired: number =
+    +this.configService.getOrThrow<string>("REFRESH_TOKEN_EXPIRED");
+  private readonly accessSecret =
+    this.configService.getOrThrow<string>("ACCESS_SECRET");
+  private readonly refreshSecret =
+    this.configService.getOrThrow<string>("REFRESH_SECRET");
+  private readonly clientUrl =
+    this.configService.getOrThrow<string>("CLIENT_URL");
 
   constructor(
     private usersService: UserService,
@@ -21,20 +30,18 @@ export class AuthService {
     private mailService: MailerService,
     private configService: ConfigService,
     private dataSource: DataSource,
-  ) {
-    this.accessTokenExpired = parseInt(
-      this.configService.getOrThrow<string>("ACCESS_TOKEN_EXPIRED"),
-    );
-    this.refreshTokenExpired = parseInt(
-      this.configService.getOrThrow<string>("REFRESH_TOKEN_EXPIRED"),
-    );
-  }
+  ) {}
 
   async generateToken(
     payload: { userId: string; role: Role },
     options?: JwtSignOptions,
   ) {
     return this.jwtService.signAsync(payload, options);
+  }
+
+  async verifyToken<T>(token: string, options?: JwtVerifyOptions): Promise<T> {
+    const payload = await this.jwtService.verifyAsync(token, options);
+    return payload;
   }
 
   async signUp(signUpDto: SignUpDto) {
@@ -65,7 +72,7 @@ export class AuthService {
       expiresIn: "1h",
     });
 
-    const link = `${process.env.CLIENT_URL}/verify?token=${token}`;
+    const link = `${this.clientUrl}/verify?token=${token}`;
 
     await this.mailService.sendMail({
       to: signUpDto.email,
@@ -92,9 +99,9 @@ export class AuthService {
       throw new BadRequestException("Email or password is incorrect");
     }
 
-    const isPasswordMatching = await user.comparePassword(signInDto.password);
+    const isPasswordCorrect = await user.comparePassword(signInDto.password);
 
-    if (!isPasswordMatching) {
+    if (!isPasswordCorrect) {
       throw new BadRequestException("Email or password is incorrect");
     }
 
@@ -103,8 +110,32 @@ export class AuthService {
       role: user.role,
     };
 
+    const token = await this.generateToken(payload, {
+      expiresIn: "1h",
+    });
+
+    const link = `${this.clientUrl}/verify?token=${token}`;
+
+    if (!user.emailVerified) {
+      await this.mailService.sendMail({
+        to: user.email,
+        subject: "Verify your account",
+        template: "verify-account",
+        context: {
+          fullName: user.fullName,
+          link,
+        },
+      });
+      throw new BadRequestException(
+        "Verify your account, we have sent an email to your email address",
+      );
+    }
+
+    const accessTokenExpired = Date.now() + this.accessTokenExpired;
+
     const accessToken = await this.generateToken(payload, {
-      expiresIn: this.accessTokenExpired / 1000,
+      expiresIn: this.accessTokenExpired / 1000, // seconds
+      secret: this.accessSecret,
     });
 
     if (!signInDto.isRemember) {
@@ -112,11 +143,13 @@ export class AuthService {
         user,
         accessToken,
         message: "User logged in successfully",
+        accessTokenExpired,
       };
     }
 
     const refreshToken = await this.generateToken(payload, {
       expiresIn: this.refreshTokenExpired / 1000,
+      secret: this.refreshSecret,
     });
 
     return {
@@ -124,11 +157,14 @@ export class AuthService {
       accessToken,
       refreshToken,
       message: "User logged in successfully",
+      accessTokenExpired,
     };
   }
 
-  async refresh(refreshToken: string) {
-    const payload = await this.jwtService.verifyAsync(refreshToken);
+  async refreshToken(refreshToken: string) {
+    const payload = await this.verifyToken<UserPayload>(refreshToken, {
+      secret: this.refreshSecret,
+    });
 
     if (!payload) {
       throw new BadRequestException("Invalid token");
@@ -145,14 +181,40 @@ export class AuthService {
       role: user.role,
     };
 
+    const accessTokenExpired = Date.now() + this.accessTokenExpired;
+
     const accessToken = await this.generateToken(newPayload, {
       expiresIn: this.accessTokenExpired / 1000,
+      secret: this.accessSecret,
     });
 
     return {
       accessToken,
       message: "Token refreshed successfully",
+      accessTokenExpired,
     };
+  }
+
+  async verifyEmail(token: string) {
+    try {
+      const payload = await this.verifyToken<UserPayload>(token);
+      const user = await this.usersService.findById(payload.userId, {
+        select: ["id", "emailVerified"],
+      });
+
+      if (!user) {
+        throw new BadRequestException("User not found");
+      }
+
+      user.emailVerified = new Date();
+      await this.dataSource.getRepository(User).save(user);
+
+      return {
+        message: "Account verified successfully",
+      };
+    } catch (error) {
+      throw new BadRequestException("Invalid token or token expired");
+    }
   }
 
   async forgotPassword(email: string) {
@@ -216,7 +278,7 @@ export class AuthService {
 
       if (
         user?.token?.resetToken !== token ||
-        user?.token?.resetTokenExpires < new Date()
+        user?.token?.resetTokenExpires <= new Date()
       ) {
         throw new BadRequestException("Invalid token or token expired");
       }

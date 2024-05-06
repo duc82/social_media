@@ -53,7 +53,7 @@ const FriendSidebar = () => {
             <h4 className="card-title">Friends</h4>
             <ul className="nav nav-pills-soft flex-coloumn fw-bold gap-2">
               {friendMenus.map((menu) => (
-                <li className="nav-item w-100">
+                <li className="nav-item w-100" key={menu.title}>
                   <Link
                     href={menu.link}
                     className={clsx(

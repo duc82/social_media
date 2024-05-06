@@ -23,10 +23,16 @@ export class AuthController {
     return this.authService.signIn(body);
   }
 
-  @Post("refresh")
+  @Post("refresh-token")
   @HttpCode(HttpStatus.OK)
-  async refresh(@Body() body: RefreshDto) {
-    return this.authService.refresh(body.refreshToken);
+  async refreshToken(@Body() body: RefreshDto) {
+    return this.authService.refreshToken(body.refreshToken);
+  }
+
+  @Post("verify-email")
+  @HttpCode(HttpStatus.OK)
+  async verifyEmail(@Body("token") token: string) {
+    return this.authService.verifyEmail(token);
   }
 
   @Post("forgot-password")

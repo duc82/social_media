@@ -21,17 +21,21 @@ import { FilePreview } from "@/app/types";
 import Dropzone from "./Dropzone";
 import clsx from "clsx";
 import usePost from "@/app/hooks/usePost";
+import { useSession } from "next-auth/react";
+import { FullUser } from "@/app/types/user";
 
 export default function CreatePostModal({
-  session,
-  initialActiveDropzone = false
+  initialActiveDropzone = false,
+  currentUser
 }: {
-  session: Session | null;
   initialActiveDropzone?: boolean;
+  currentUser: FullUser;
 }) {
   const [isActiveDropzone, setActiveDropzone] = useState(initialActiveDropzone);
   const [files, setFiles] = useState<FilePreview[]>([]);
   const { addPost } = usePost();
+  const { data: session } = useSession();
+  const accessToken = session?.accessToken!;
 
   const modalRef = useRef<HTMLDivElement>(null);
   const bootstrap = useBootstrap();
@@ -73,7 +77,7 @@ export default function CreatePostModal({
     });
 
     try {
-      const postRes = await postService.create(formData, session?.accessToken!);
+      const postRes = await postService.create(formData, accessToken);
       addPost(postRes.post);
       toast.dismiss("createPost");
       closeModal();
@@ -106,12 +110,12 @@ export default function CreatePostModal({
                 <Avatar
                   wrapperClassName="avatar avatar-xs me-2"
                   className="avatar-img rounded-circle"
-                  src={session?.user.profile.avatar ?? "/07.jpg"}
-                  alt={session?.user.fullName}
+                  src={currentUser.profile.avatar ?? "/07.jpg"}
+                  alt={currentUser.fullName}
                 />
 
                 <span className="fw-semibold text-gray-700">
-                  {session?.user.fullName}{" "}
+                  {currentUser.fullName}{" "}
                   {/* {feeling && (
                     <span>
                       is {feeling.emoji} feeling {feeling.meaning}

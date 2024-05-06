@@ -14,8 +14,9 @@ interface SignUpResponse {
 
 interface SignInResponse {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
   user: FullUser;
+  accessTokenExpired: number;
 }
 
 interface SignUpDto
@@ -32,6 +33,7 @@ interface ResetPasswordDto extends z.infer<typeof resetPasswordSchema> {}
 interface RefreshResponse {
   message: string;
   accessToken: string;
+  accessTokenExpired: number;
 }
 
 export type {

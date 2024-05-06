@@ -1,7 +1,7 @@
-import userAction from "@/app/actions/userAction";
 import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreateModal";
 import EmojiModal from "@/app/components/Post/CreateModal/EmojiModal";
+import getServerSession from "@/app/libs/session";
 import Link from "next/link";
 import {
   BookmarkCheck,
@@ -15,12 +15,11 @@ import {
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
-  const session = await userAction.getServerSession();
-  const currentUser = await userAction.getCurrentUser(session);
+  const { currentUser } = await getServerSession();
 
   return (
     <>
-      <CreatePostModal session={session} />
+      <CreatePostModal currentUser={currentUser} />
       <EmojiModal />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">

@@ -4,11 +4,12 @@ import apiRequest from "./api";
 
 const postService = {
   create: async (formData: FormData, acessToken: string) => {
-    return apiRequest<PostResponse>("/posts/create", "POST", {
+    return apiRequest<PostResponse>("/posts/create", {
+      method: "POST",
       body: formData,
       headers: {
-        Authorization: `Bearer ${acessToken}`,
-      },
+        Authorization: `Bearer ${acessToken}`
+      }
     });
   },
 
@@ -21,16 +22,17 @@ const postService = {
       url += `&userId=${userId}`;
     }
 
-    return apiRequest<PostsReponse>(url, "GET");
+    return apiRequest<PostsReponse>(url);
   },
 
   delete: async (id: string, accessToken: string) => {
-    return apiRequest<{ message: string }>(`/posts/delete/${id}`, "DELETE", {
+    return apiRequest<{ message: string }>(`/posts/delete/${id}`, {
+      method: "DELETE",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
-  },
+  }
 };
 
 export default postService;

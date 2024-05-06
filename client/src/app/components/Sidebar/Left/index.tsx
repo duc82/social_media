@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
-import userAction from "@/app/actions/userAction";
+import getServerSession from "@/app/libs/session";
 
 export default async function LeftSidebar() {
-  const currentUser = await userAction.getCurrentUser();
+  const { currentUser } = await getServerSession();
 
   return (
     <div className="col-lg-3">

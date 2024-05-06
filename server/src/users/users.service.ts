@@ -121,16 +121,21 @@ export class UserService {
   }
 
   async sendFriendRequest(userId: string, friendId: string) {
-    const isExists = await this.dataSource.getRepository(FriendShip).exists({
-      where: {
-        user: { id: userId },
-        friend: { id: friendId },
-      },
-    });
+    const friendshipExist = await this.dataSource
+      .getRepository(FriendShip)
+      .findOne({
+        where: [
+          { user: { id: userId }, friend: { id: friendId } },
+          { user: { id: friendId }, friend: { id: userId } },
+        ],
+        relations: ["user", "friend"],
+      });
     // SELECT EXISTS(SELECT 1 FROM friend_ship WHERE userId = ${userId} AND friendId = ${friendId})
 
-    if (isExists) {
-      throw new BadRequestException("Friendship already exists");
+    if (friendshipExist) {
+      friendshipExist.status = FriendshipStatus.PENDING;
+      await this.dataSource.getRepository(FriendShip).save(friendshipExist);
+      return friendshipExist;
     }
 
     const newFriendship = this.dataSource.getRepository(FriendShip).create({
@@ -150,7 +155,7 @@ export class UserService {
         user: { id: userId },
         friend: { id: friendId },
       },
-      select: ["id"],
+      relations: ["user", "friend"],
     });
 
     if (!friendship) {
@@ -160,7 +165,7 @@ export class UserService {
     await this.dataSource.getRepository(FriendShip).delete(friendship.id);
     // DELETE FROM friend_ship WHERE id = ${friendship.id}
 
-    return friendship;
+    return { message: "Friendship canceled successfully" };
   }
 
   async acceptFriendRequest(userId: string, friendId: string) {
@@ -170,6 +175,7 @@ export class UserService {
         friend: { id: userId },
         status: FriendshipStatus.PENDING,
       },
+      relations: ["user", "friend"],
     });
 
     if (!friendship) {
@@ -178,6 +184,44 @@ export class UserService {
 
     friendship.status = FriendshipStatus.ACCEPTED;
     await this.dataSource.getRepository(FriendShip).save(friendship);
+
+    return friendship;
+  }
+
+  async declineFriendRequest(userId: string, friendId: string) {
+    const friendship = await this.dataSource.getRepository(FriendShip).findOne({
+      where: [
+        { user: { id: friendId }, friend: { id: userId } },
+        { user: { id: userId }, friend: { id: friendId } },
+      ],
+      relations: ["user", "friend"],
+    });
+
+    if (!friendship) {
+      throw new NotFoundException("Friendship not found");
+    }
+
+    friendship.status = FriendshipStatus.DECLINED;
+    friendship.user.id = userId;
+    friendship.friend.id = friendId;
+
+    await this.dataSource.getRepository(FriendShip).save(friendship);
+
+    return friendship;
+  }
+
+  async getFriendship(userId: string, friendId: string) {
+    const friendship = await this.dataSource.getRepository(FriendShip).findOne({
+      where: [
+        { user: { id: userId }, friend: { id: friendId } },
+        { user: { id: friendId }, friend: { id: userId } },
+      ],
+      relations: ["user", "friend"],
+    });
+
+    if (!friendship) {
+      throw new NotFoundException("Friendship not found");
+    }
 
     return friendship;
   }
@@ -211,25 +255,5 @@ export class UserService {
     });
 
     return { friends, total, page, limit };
-  }
-
-  async getFriendship(
-    userId: string,
-    friendId: string,
-    status: FriendshipStatus,
-  ) {
-    const friendship = await this.dataSource.getRepository(FriendShip).findOne({
-      where: [
-        { user: { id: userId }, friend: { id: friendId }, status },
-        { user: { id: friendId }, friend: { id: userId }, status },
-      ],
-      relations: ["user", "friend"],
-    });
-
-    if (!friendship) {
-      throw new NotFoundException("Friendship not found");
-    }
-
-    return friendship;
   }
 }
