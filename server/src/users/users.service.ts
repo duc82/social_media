@@ -1,10 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { User } from "./entities/user.entity";
-import { DataSource, FindOneOptions } from "typeorm";
+import {
+  DataSource,
+  FindOneOptions,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+} from "typeorm";
 import { CreateUserDto, ProfileDto } from "./dto/user.dto";
 import { Profile } from "./entities/profile.entity";
 import { FriendShip } from "./entities/friendship.entity";
@@ -15,14 +18,14 @@ import { QueryDto } from "src/dto/query.dto";
 export class UserService {
   constructor(private dataSource: DataSource) {}
 
-  async findByEmail(email: string, options: FindOneOptions<User> = {}) {
+  async findByEmail(email: string, options?: FindOneOptions<User>) {
     return this.dataSource.getRepository(User).findOne({
       where: { email },
       ...options,
     });
   }
 
-  async findById(id: string, options: FindOneOptions<User> = {}) {
+  async findById(id: string, options?: FindOneOptions<User>) {
     return this.dataSource.getRepository(User).findOne({
       where: {
         id,
@@ -32,7 +35,7 @@ export class UserService {
   }
 
   async getAll(query: QueryDto) {
-    const { search = "", page = 1, limit = 10 } = query;
+    const { search, page, limit } = query;
 
     const skip = (page - 1) * limit;
 
@@ -86,6 +89,57 @@ export class UserService {
       relations: ["profile"],
     });
     return user;
+  }
+
+  async getSuggestedFriends(userId: string, query: QueryDto) {
+    const { page, limit } = query;
+
+    const skip = (page - 1) * limit;
+
+    const friendships = await this.dataSource.getRepository(FriendShip).find({
+      where: [
+        {
+          user: {
+            id: userId,
+          },
+          status: FriendshipStatus.ACCEPTED,
+        },
+        {
+          friend: {
+            id: userId,
+          },
+          status: FriendshipStatus.ACCEPTED,
+        },
+      ],
+      relations: ["user", "friend"],
+    });
+
+    const friendIds = friendships.map((friendship) => {
+      if (friendship.user.id === userId) {
+        return friendship.friend.id;
+      }
+      return friendship.user.id;
+    });
+
+    friendIds.push(userId);
+
+    const where: FindOptionsWhere<User> | FindOptionsWhere<User>[] = {
+      id: Not(In(friendIds)),
+      emailVerified: Not(IsNull()),
+    };
+
+    const suggestedFriends = await this.dataSource.getRepository(User).find({
+      where,
+      relations: ["profile"],
+      skip,
+      take: limit,
+    });
+
+    const total = await this.dataSource.getRepository(User).count({
+      where,
+    });
+
+    return { friends: suggestedFriends, page, limit, total };
   }
 
   async updateUserProfile(id: string, profile: ProfileDto, url: string) {
@@ -227,13 +281,14 @@ export class UserService {
   }
 
   async getFriends(userId: string, status: FriendshipStatus, query: QueryDto) {
-    const { page = 1, limit = 10 } = query;
+    const { page, limit } = query;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, Record<string, string> | FriendshipStatus>[] = [
-      { user: { id: userId }, status },
-      { friend: { id: userId }, status },
-    ];
+    const where: FindOptionsWhere<FriendShip> | FindOptionsWhere<FriendShip>[] =
+      [
+        { user: { id: userId }, status },
+        { friend: { id: userId }, status },
+      ];
 
     const friendships = await this.dataSource.getRepository(FriendShip).find({
       where,

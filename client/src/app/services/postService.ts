@@ -1,5 +1,5 @@
 import { Options } from "../types";
-import { Post, PostResponse, PostsReponse } from "../types/post";
+import { PostResponse, PostsReponse } from "../types/post";
 import apiRequest from "./api";
 
 const postService = {
@@ -8,12 +8,12 @@ const postService = {
       method: "POST",
       body: formData,
       headers: {
-        Authorization: `Bearer ${acessToken}`
-      }
+        Authorization: `Bearer ${acessToken}`,
+      },
     });
   },
 
-  getAll: async (options: Options) => {
+  getAll: async (options: Partial<Options>) => {
     const { page = 1, limit = 10, search = "", userId } = options;
 
     let url = `/posts?page=${page}&limit=${limit}&search=${search}`;
@@ -29,10 +29,10 @@ const postService = {
     return apiRequest<{ message: string }>(`/posts/delete/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
-  }
+  },
 };
 
 export default postService;

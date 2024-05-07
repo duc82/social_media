@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 const ListFriends = async () => {
-  const { currentUser } = await getServerSession();
-  const { friends } = await userService.getFriends(currentUser.id, "accepted");
+  const { accessToken } = await getServerSession();
+  const { friends } = await userService.getFriends(accessToken, "accepted");
 
   return (
     <div className="row">

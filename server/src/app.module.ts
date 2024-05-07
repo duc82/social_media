@@ -23,7 +23,7 @@ import { ConversationsModule } from "./conversations/conversations.module";
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging: false,
+        logging: true,
         autoLoadEntities: true,
       }),
     }),

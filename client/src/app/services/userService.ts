@@ -31,14 +31,30 @@ const userService = {
   },
 
   getFriends: async (
-    userId: string,
+    accessToken: string,
     status: FriendshipStatus,
     options?: GetFriendsOptions
   ) => {
-    const { page = 1, limit = 10 } = options || {};
-    return apiRequest<FriendsResponse>(
-      `/users/${userId}/friends/${status}?page=${page}&limit=${limit}`
-    );
+    const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
+
+    return apiRequest<FriendsResponse>(`/users/friends/${status}${query}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  getSuggestedFriends: async (
+    accessToken: string,
+    options?: GetFriendsOptions
+  ) => {
+    const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
+
+    return apiRequest<FriendsResponse>(`/users/friends/suggested${query}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
   },
 
   sendFriendRequest: async (accessToken: string, userId: string) => {

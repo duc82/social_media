@@ -5,19 +5,19 @@ import { IsInt, IsOptional, IsString } from "class-validator";
 export class SearchDto {
   @IsOptional()
   @IsString()
-  search?: string;
+  search: string = "";
 }
 
 export class PaginationLimitDto {
   @IsOptional()
   @IsInt()
   @Transform(({ value }) => parseInt(value))
-  page?: number;
+  page: number = 1;
 
   @IsOptional()
   @IsInt()
   @Transform(({ value }) => parseInt(value))
-  limit?: number;
+  limit: number = 10;
 }
 
 export class QueryDto extends IntersectionType(SearchDto, PaginationLimitDto) {}

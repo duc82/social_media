@@ -21,19 +21,14 @@ export default async function ProfileLayout({
     total: totalFriends,
     page,
     limit,
-  } = await userService.getFriends(user.id, "accepted");
+  } = await userService.getFriends(accessToken, "accepted");
 
   const friendship = await friendAction.getFriendship(accessToken, user.id);
 
   return (
     <div className="row g-4">
       <div className="col-lg-8 vstack gap-4">
-        <FriendProvider
-          friends={friends}
-          limit={limit}
-          page={page}
-          total={totalFriends}
-        >
+        <FriendProvider initialFriends={friends} initialFriendship={friendship}>
           <ProfileMainHeader
             initialFriendship={friendship}
             user={user}

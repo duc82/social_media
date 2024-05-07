@@ -14,38 +14,32 @@ import {
   PatchCheckFill,
   PencilFill,
   PlusLg,
-  ThreeDots
+  ThreeDots,
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friendship, FullUser } from "@/app/types/user";
 import useFriends from "@/app/hooks/useFriends";
 import { formatDate } from "@/app/utils/dateTime";
-import { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import handlingError from "@/app/utils/error";
-import userService from "@/app/services/userService";
+import { useMemo } from "react";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
-import useSocket from "@/app/hooks/useSocket";
-import { useSession } from "next-auth/react";
 
 export default function ProfileMainHeader({
   user,
-  initialFriendship,
-  currentUser
+  currentUser,
 }: {
   user: FullUser;
   initialFriendship: Friendship | null;
   currentUser: FullUser;
 }) {
-  const socket = useSocket();
-  const [isLoading, setIsLoading] = useState(false);
-  const [friendship, setFriendship] = useState<Friendship | null>(
-    initialFriendship
-  );
-  const { data: session } = useSession();
-
-  const accessToken = session?.accessToken as string;
+  const {
+    friendship,
+    isLoading,
+    sendFriendRequest,
+    cancelFriendRequest,
+    acceptFriendRequest,
+    declineFriendRequest,
+  } = useFriends();
 
   const isSentFriendRequest = useMemo(
     () =>
@@ -69,91 +63,6 @@ export default function ProfileMainHeader({
     () => user.id === currentUser.id,
     [user, currentUser]
   );
-
-  const { total: totalFriends } = useFriends((state) => state);
-
-  const handleSendFriendRequest = async () => {
-    try {
-      setIsLoading(true);
-      const friendship = await userService.sendFriendRequest(
-        accessToken,
-        user.id
-      );
-      setFriendship(friendship);
-      socket?.emit("friendRequest", { userId: user.id, friendship });
-    } catch (error) {
-      toast.error(handlingError(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancelFriendRequest = async () => {
-    try {
-      setIsLoading(true);
-      await userService.cancelFriendRequest(accessToken, user.id);
-
-      setFriendship(null);
-      socket?.emit("friendRequest", {
-        userId: user.id,
-        friendship: null
-      });
-    } catch (error) {
-      toast.error(handlingError(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAcceptFriendRequest = async () => {
-    try {
-      setIsLoading(true);
-      const friendship = await userService.acceptFriendRequest(
-        accessToken,
-        user.id
-      );
-      setFriendship(friendship);
-      socket?.emit("friendRequest", {
-        userId: user.id,
-        friendship
-      });
-    } catch (error) {
-      toast.error(handlingError(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDelinceFriendRequest = async () => {
-    try {
-      setIsLoading(true);
-      const friendship = await userService.declineFriendRequest(
-        accessToken,
-        user.id
-      );
-      setFriendship(friendship);
-      socket?.emit("friendRequest", {
-        userId: user.id,
-        friendship
-      });
-    } catch (error) {
-      toast.error(handlingError(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    socket?.on("friendRequest", ({ userId, friendship }) => {
-      if (userId === currentUser.id) {
-        setFriendship(friendship);
-      }
-    });
-
-    return () => {
-      socket?.off("friendRequest");
-    };
-  }, [socket]);
 
   return (
     <div className="card">
@@ -188,7 +97,7 @@ export default function ProfileMainHeader({
             <h1 className="mb-0 h5">
               {user.fullName} <PatchCheckFill className="text-success small" />
             </h1>
-            <p>{totalFriends} friends</p>
+            <p>{0} friends</p>
           </div>
 
           {isMyProfile && (
@@ -259,8 +168,8 @@ export default function ProfileMainHeader({
                     status={isSentFriendRequest ? "cancel" : "none"}
                     onClick={
                       isSentFriendRequest
-                        ? handleCancelFriendRequest
-                        : handleSendFriendRequest
+                        ? cancelFriendRequest
+                        : sendFriendRequest
                     }
                   />
                 )}
@@ -278,12 +187,12 @@ export default function ProfileMainHeader({
                   <FriendButton
                     isLoading={isLoading}
                     status="accept"
-                    onClick={handleAcceptFriendRequest}
+                    onClick={acceptFriendRequest}
                   />
                   <FriendButton
                     isLoading={isLoading}
                     status="decline"
-                    onClick={handleDelinceFriendRequest}
+                    onClick={declineFriendRequest}
                   />
                 </>
               )}
