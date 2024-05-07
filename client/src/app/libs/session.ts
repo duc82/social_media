@@ -8,8 +8,6 @@ const getServerSession = async () => {
     redirect("/signin");
   }
 
-  console.log(session.accessToken);
-
   const accessToken = session?.accessToken!;
 
   const currentUser = session.user;

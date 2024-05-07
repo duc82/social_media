@@ -11,7 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Comment } from "./comment.entity";
-import { File } from "./file.entity";
+import { PostFile } from "./post_file.entity";
 
 export enum Audience {
   PUBLIC = "public",
@@ -24,37 +24,42 @@ export enum Audience {
 })
 export class Post extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: string; // Completed
+  id: string;
 
   @Column({ nullable: true })
-  content: string; // Completed
+  content: string;
 
   @Column({
     type: "enum",
     enum: Audience,
     default: Audience.PUBLIC,
   })
-  audience: Audience; // Completed
+  audience: Audience;
 
-  @OneToMany(() => File, (file) => file.post, {
+  @Column({
+    default: false,
+  })
+  isStory: boolean;
+
+  @OneToMany(() => PostFile, (file) => file.post, {
     cascade: true,
   })
-  files: File[]; // Completed
+  files: PostFile[];
 
   @OneToMany(() => Comment, (comment) => comment.post, {
     cascade: true,
   })
-  comments: Comment[]; // Completed
+  comments: Comment[];
 
   @ManyToOne(() => User, (user) => user.posts, {
     onDelete: "CASCADE",
   })
-  user: User; // Completed
+  user: User;
 
   @ManyToMany(() => User, (user) => user.likedPosts)
   @JoinTable()
-  likes: User[]; // Completed
+  likes: User[];
 
   @CreateDateColumn()
-  createdAt: Date; // Completed
+  createdAt: Date;
 }

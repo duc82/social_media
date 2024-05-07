@@ -10,6 +10,7 @@ import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
 import { AuthModule } from "./auth/auth.module";
 import { CoreModule } from "./core/core.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConversationsModule } from "./conversations/conversations.module";
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     AuthModule,
     UsersModule,
     PostsModule,
+    ConversationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

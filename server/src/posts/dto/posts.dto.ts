@@ -8,10 +8,10 @@ import {
 import { Audience } from "../entities/post.entity";
 import { QueryDto } from "src/dto/query.dto";
 import { PickType } from "@nestjs/swagger";
-import { File } from "../entities/file.entity";
+import { PostFile } from "../entities/post_file.entity";
 import { Type } from "class-transformer";
 
-class FileUpload extends PickType(File, ["url", "type"]) {}
+class PostFileUpload extends PickType(PostFile, ["url", "type"]) {}
 
 export class CreatePostDto {
   @ValidateIf((o) => o.content)
@@ -22,8 +22,8 @@ export class CreatePostDto {
   audience: Audience;
 
   @IsArray()
-  @Type(() => FileUpload)
-  files: FileUpload[];
+  @Type(() => PostFileUpload)
+  files: PostFileUpload[];
 }
 
 export class ListAllPostsDto extends QueryDto {
