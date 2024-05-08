@@ -1,8 +1,6 @@
 "use client";
 
 import { FullUser } from "@/app/types/user";
-import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import InfiniteScroll from "observer-infinite-scroll";
 import userService from "@/app/services/userService";
@@ -19,7 +17,7 @@ export default function Suggestions({
   initialFriends,
   initialPage,
   limit,
-  accessToken,
+  accessToken
 }: SuggestionsProps) {
   const [friends, setFriends] = useState<FullUser[]>(initialFriends);
   const [hasMore, setHasMore] = useState(true);
@@ -29,7 +27,7 @@ export default function Suggestions({
     try {
       const { friends } = await userService.getSuggestedFriends(accessToken, {
         limit,
-        page,
+        page
       });
 
       if (friends.length === 0) {

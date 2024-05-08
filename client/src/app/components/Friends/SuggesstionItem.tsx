@@ -4,11 +4,15 @@ import { sendFriendRequest } from "@/app/actions/userAction";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import handlingError from "@/app/utils/error";
-import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import {
+  ChatLeftTextFill,
+  PersonPlusFill,
+  PersonXFill
+} from "react-bootstrap-icons";
 import toast from "react-hot-toast";
 
 export default function SuggesstionItem(friend: FullUser) {
@@ -17,10 +21,10 @@ export default function SuggesstionItem(friend: FullUser) {
   const { data } = useSession();
   const accessToken = data?.accessToken!;
 
-  const handleSendFriendRequest = async (friendId: string) => {
+  const handleSendFriendRequest = async () => {
     try {
       setIsLoading(true);
-      await sendFriendRequest(accessToken, friendId);
+      await sendFriendRequest(accessToken, friend.id);
       setStatus("send");
     } catch (error) {
       toast.error(handlingError(error));
@@ -29,10 +33,10 @@ export default function SuggesstionItem(friend: FullUser) {
     }
   };
 
-  const handleCancelFriendRequest = async (friendId: string) => {
+  const handleCancelFriendRequest = async () => {
     try {
       setIsLoading(true);
-      await userService.cancelFriendRequest(accessToken, friendId);
+      await userService.cancelFriendRequest(accessToken, friend.id);
       setStatus("cancel");
     } catch (error) {
       toast.error(handlingError(error));
@@ -54,7 +58,7 @@ export default function SuggesstionItem(friend: FullUser) {
             className="w-100 h-auto rounded-top-2"
           />
         </Link>
-        <div className="card-body p-3">
+        <div className="card-body p-3 d-flex flex-column justify-content-between">
           <Link
             href={`/profile/${friend.id}`}
             className="card-title d-block mb-2"
@@ -71,28 +75,58 @@ export default function SuggesstionItem(friend: FullUser) {
               <>
                 <button
                   type="button"
-                  className="btn btn-secondary mb-2"
-                  onClick={() => handleCancelFriendRequest(friend.id)}
+                  className="btn btn-secondary-soft mb-2 d-flex justify-content-center align-items-center"
+                  onClick={handleCancelFriendRequest}
                   disabled={isLoading}
                 >
-                  Cancel
+                  {isLoading ? (
+                    <div
+                      className="spinner-border spinner-border-sm text-white"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  ) : (
+                    <PersonXFill size={16} />
+                  )}
+
+                  <span className="ms-2">Cancel</span>
                 </button>
-                <button type="button" className="btn btn-primary-soft">
-                  Message
+                <button
+                  type="button"
+                  className="btn btn-primary-soft d-flex justify-content-center align-items-center"
+                >
+                  <ChatLeftTextFill size={16} />
+                  <span className="ms-2">Message</span>
                 </button>
               </>
             ) : (
               <>
                 <button
                   type="button"
-                  className="btn btn-primary-soft mb-2"
-                  onClick={() => handleSendFriendRequest(friend.id)}
+                  className="btn btn-primary-soft mb-2 d-flex justify-content-center align-items-center"
+                  onClick={handleSendFriendRequest}
                   disabled={isLoading}
                 >
-                  Add friend
+                  {isLoading ? (
+                    <div
+                      className="spinner-border spinner-border-sm text-white"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  ) : (
+                    <PersonPlusFill size={16} />
+                  )}
+
+                  <span className="ms-2">Add friend</span>
                 </button>
-                <button type="button" className="btn btn-danger-soft">
-                  Remove
+                <button
+                  type="button"
+                  className="btn btn-danger-soft d-flex justify-content-center align-items-center"
+                >
+                  <PersonXFill size={16} />
+                  <span className="ms-2">Remove</span>
                 </button>
               </>
             )}

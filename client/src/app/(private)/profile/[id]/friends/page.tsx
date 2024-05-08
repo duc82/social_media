@@ -4,7 +4,7 @@ import useFriends from "@/app/hooks/useFriends";
 import Link from "next/link";
 
 export default function Friends() {
-  const { friends } = useFriends((state) => state);
+  const { friends } = useFriends();
 
   return (
     <div className="card">
