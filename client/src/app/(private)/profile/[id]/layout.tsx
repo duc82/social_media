@@ -1,4 +1,4 @@
-import friendAction from "@/app/actions/friendAction";
+import { getFriendship } from "@/app/actions/userAction";
 import profileAction from "@/app/actions/profileAction";
 import ProfileMainHeader from "@/app/components/Profile/Main/Header";
 import ProfileSidebar from "@/app/components/Profile/Sidebar";
@@ -23,7 +23,7 @@ export default async function ProfileLayout({
     limit,
   } = await userService.getFriends(accessToken, "accepted");
 
-  const friendship = await friendAction.getFriendship(accessToken, user.id);
+  const friendship = await getFriendship(accessToken, user.id);
 
   return (
     <div className="row g-4">

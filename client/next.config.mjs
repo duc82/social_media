@@ -1,5 +1,4 @@
 import path from "path";
-import withPlaiceholder from "@plaiceholder/next";
 
 // @ts-check
 
@@ -25,4 +24,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-export default withPlaiceholder(nextConfig);
+export default nextConfig;

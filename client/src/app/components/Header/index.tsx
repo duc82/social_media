@@ -7,7 +7,7 @@ import {
   CardText,
   ChatLeftTextFill,
   GearFill,
-  LifePreserver
+  LifePreserver,
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
@@ -51,7 +51,7 @@ export default async function Header() {
             <SearchDropdown />
           </div>
 
-          <HeaderMenu userId={currentUser?.id!} />
+          <HeaderMenu />
         </div>
 
         <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">

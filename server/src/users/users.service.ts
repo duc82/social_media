@@ -102,13 +102,11 @@ export class UserService {
           user: {
             id: userId,
           },
-          status: FriendshipStatus.ACCEPTED,
         },
         {
           friend: {
             id: userId,
           },
-          status: FriendshipStatus.ACCEPTED,
         },
       ],
       relations: ["user", "friend"],

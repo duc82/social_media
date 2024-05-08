@@ -4,6 +4,7 @@ import SuggestionFriends from "@/app/components/Friends/Suggestions";
 
 export default async function Suggestions() {
   const { accessToken } = await getServerSession();
+
   const { friends, limit, page } = await userService.getSuggestedFriends(
     accessToken,
     {

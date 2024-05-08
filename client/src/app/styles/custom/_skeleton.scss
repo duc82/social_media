@@ -1,0 +1,34 @@
+$skeletonGradientFrom: rgba(0, 0, 0, 0.06);
+$skeletonGradientTo: rgba(0, 0, 0, 0.15);
+
+.skeleton {
+  background-image: linear-gradient(
+    90deg,
+    $skeletonGradientFrom 25%,
+    $skeletonGradientTo 37%,
+    $skeletonGradientFrom 63%
+  );
+  background-size: 400% 100%;
+  background-position: 100% 50%;
+  animation: skeleton 1.4s ease infinite;
+}
+
+@include color-mode(dark) {
+  $skeletonGradientFrom: rgba(255, 255, 255, 0.12);
+  $skeletonGradientTo: rgba(255, 255, 255, 0.18);
+
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      $skeletonGradientFrom 25%,
+      $skeletonGradientTo 37%,
+      $skeletonGradientFrom 63%
+    );
+  }
+}
+
+@keyframes skeleton {
+  100% {
+    background-position: 0 50%;
+  }
+}

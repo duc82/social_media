@@ -6,8 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import InfiniteScroll from "observer-infinite-scroll";
 import userService from "@/app/services/userService";
-import { getImageBase64 } from "@/app/libs/plaiceholder";
-import ImageBlur from "../ImageBlur";
+import SuggesstionItem from "./SuggesstionItem";
 
 interface SuggestionsProps {
   initialFriends: FullUser[];
@@ -52,7 +51,7 @@ export default function Suggestions({
       hasMore={hasMore}
       loader={
         <div className="d-flex justify-content-center">
-          <div className="spinner-border" role="status">
+          <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -60,35 +59,7 @@ export default function Suggestions({
       className="row gy-4 overflow-hidden"
     >
       {friends.map((friend) => (
-        <div key={friend.id} className="col-12 col-md-6 col-lg-4 col-xl-3">
-          <div className="card">
-            <Link href={`/profile/${friend.id}`} className="d-block">
-              <ImageBlur
-                src={friend.profile.avatar}
-                alt={friend.fullName}
-                width={0}
-                height={0}
-                sizes="100vw"
-                className="w-100 h-auto rounded-top-2"
-              />
-            </Link>
-            <div className="p-3">
-              <Link
-                href={`/profile/${friend.id}`}
-                className="card-title d-block mb-3"
-              >
-                <h5 className="mb-0">{friend.fullName}</h5>
-              </Link>
-              <p className="card-text">{friend.profile.overview}</p>
-              <div className="d-flex flex-column justify-content-center">
-                <button type="button" className="btn btn-primary-soft mb-2">
-                  Add friend
-                </button>
-                <button className="btn btn-danger-soft">Remove</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <SuggesstionItem key={friend.id} {...friend} />
       ))}
     </InfiniteScroll>
   );
