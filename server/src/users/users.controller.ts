@@ -15,7 +15,7 @@ import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "./users.decorator";
 import { ProfileDto } from "./dto/user.dto";
 import { QueryDto } from "src/dto/query.dto";
-import { GetFriendsParams } from "./dto/friend.dto";
+import { FriendshipStatus } from "./interfaces/friendship.interface";
 
 @Controller("api/users")
 export class UsersController {
@@ -53,9 +53,32 @@ export class UsersController {
     return this.usersService.delete(id);
   }
 
-  @Get(":id/friends/:status")
-  async getFriends(@Param() param: GetFriendsParams, @Query() query: QueryDto) {
-    return this.usersService.getFriends(param.id, param.status, query);
+  @UseGuards(AuthGuard)
+  @Get("friends/suggested")
+  async getSuggestedFriends(
+    @User("userId") userId: string,
+    @Query() query: QueryDto,
+  ) {
+    return this.usersService.getSuggestedFriends(userId, query);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get("friends/requests")
+  async getFriendRequests(
+    @User("userId") userId: string,
+    @Query() query: QueryDto,
+  ) {
+    return this.usersService.getFriendRequests(userId, query);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get("friends/:status")
+  async getFriends(
+    @User("userId") userId: string,
+    @Param("status") status: FriendshipStatus,
+    @Query() query: QueryDto,
+  ) {
+    return this.usersService.getFriends(userId, status, query);
   }
 
   @UseGuards(AuthGuard)

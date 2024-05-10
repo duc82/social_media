@@ -10,6 +10,8 @@ import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
 import { AuthModule } from "./auth/auth.module";
 import { CoreModule } from "./core/core.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConversationsModule } from "./conversations/conversations.module";
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging: false,
+        logging: true,
         autoLoadEntities: true,
       }),
     }),
@@ -57,6 +59,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     AuthModule,
     UsersModule,
     PostsModule,
+    ConversationsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

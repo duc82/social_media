@@ -1,21 +1,17 @@
 import {
+  BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Post } from "./post.entity";
-
-export enum FileType {
-  IMAGE = "image",
-  VIDEO = "video",
-}
+import { Message } from "./message.entity";
+import { FileType } from "src/interfaces/file.interface";
 
 @Entity({
-  name: "post_files",
+  name: "message_files",
 })
-export class File {
+export class MessageFile extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -28,11 +24,8 @@ export class File {
   })
   type: FileType;
 
-  @ManyToOne(() => Post, (post) => post.files, {
+  @ManyToOne(() => Message, (message) => message.files, {
     onDelete: "CASCADE",
   })
-  post: Post;
-
-  @CreateDateColumn()
-  createdAt: Date;
+  message: Message;
 }

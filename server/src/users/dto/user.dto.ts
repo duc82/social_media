@@ -6,13 +6,14 @@ import {
   IsDateString,
   ValidateIf,
   IsString,
+  IsOptional,
 } from "class-validator";
 import { Gender, MarialStatus } from "../interfaces/profile.interface";
 
 export class ProfileDto {
   @ValidateIf((o) => o.gender)
   @IsEnum(Gender)
-  gender: Gender;
+  gender?: Gender;
 
   @ValidateIf((o) => o.avatar)
   @IsString()
@@ -20,35 +21,35 @@ export class ProfileDto {
 
   @ValidateIf((o) => o.wallpaper)
   @IsString()
-  wallpaper: string;
+  wallpaper?: string;
 
   @ValidateIf((o) => o.bornAt)
   @IsDateString()
-  bornAt: Date;
+  bornAt?: Date;
 
   @ValidateIf((o) => o.status)
   @IsEnum(MarialStatus)
-  marialStatus: MarialStatus;
+  marialStatus?: MarialStatus;
 
   @ValidateIf((o) => o.job)
   @IsString()
-  job: string;
+  job?: string;
 
   @ValidateIf((o) => o.address)
   @IsString()
-  address: string;
+  address?: string;
 
   @ValidateIf((o) => o.overview)
   @IsString()
-  overview: string;
+  overview?: string;
 
   @ValidateIf((o) => o.education)
   @IsString()
-  education: string;
+  education?: string;
 
   @ValidateIf((o) => o.workplace)
   @IsString()
-  workplace: string;
+  workplace?: string;
 }
 
 export class CreateUserDto {
@@ -62,6 +63,9 @@ export class CreateUserDto {
   @MinLength(8)
   @IsNotEmpty()
   password: string;
+
+  @IsOptional()
+  emailVerified?: Date;
 
   profile: ProfileDto;
 }

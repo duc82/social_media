@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidatePath } from "@/app/actions/userAction";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,12 +44,12 @@ const FriendSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="d-none d-md-block col-md-4 col-lg-3 position-sticky">
+    <div className="d-none d-md-block col-md-4 col-lg-3">
       <div
         className="navbar navbar-expand-lg mx-0 position-sticky"
         style={{ top: "calc(1.5rem + 56px)" }}
       >
-        <div className="card overflow-hidden">
+        <div className="card">
           <div className="card-body">
             <h4 className="card-title">Friends</h4>
             <ul className="nav nav-pills-soft flex-coloumn fw-bold gap-2">
@@ -56,6 +57,9 @@ const FriendSidebar = () => {
                 <li className="nav-item w-100" key={menu.title}>
                   <Link
                     href={menu.link}
+                    onClick={() => {
+                      revalidatePath(pathname);
+                    }}
                     className={clsx(
                       "nav-link d-flex align-items-center px-2 rounded-2",
                       menu.link === pathname && "active"

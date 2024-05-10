@@ -2,7 +2,7 @@ import { Post } from "./entities/post.entity";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePostDto, ListAllPostsDto } from "./dto/posts.dto";
 import { User } from "src/users/entities/user.entity";
-import { File } from "./entities/file.entity";
+import { PostFile } from "./entities/post_file.entity";
 import { DataSource, ILike } from "typeorm";
 
 @Injectable()
@@ -29,8 +29,8 @@ export class PostsService {
 
     if (post.files.length > 0) {
       post.files = post.files.map((file) =>
-        this.dataSource.getRepository(File).create(file),
-      ) as File[];
+        this.dataSource.getRepository(PostFile).create(file),
+      ) as PostFile[];
     }
 
     const newPost = this.dataSource.getRepository(Post).create({

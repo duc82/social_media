@@ -3,8 +3,8 @@ interface FilePreview extends File {
 }
 
 interface PaginationLimit {
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
 }
 
 interface Filter {

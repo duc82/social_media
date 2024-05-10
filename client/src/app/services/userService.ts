@@ -8,7 +8,7 @@ import type {
 } from "../types/user";
 import apiRequest from "./api";
 
-interface GetFriendsOptions extends Omit<Options, "userId"> {}
+export interface GetFriendsOptions extends Omit<Options, "userId"> {}
 
 const userService = {
   getAll: async (options?: Options) => {
@@ -31,14 +31,43 @@ const userService = {
   },
 
   getFriends: async (
-    userId: string,
+    accessToken: string,
     status: FriendshipStatus,
     options?: GetFriendsOptions
   ) => {
-    const { page = 1, limit = 10 } = options || {};
-    return apiRequest<FriendsResponse>(
-      `/users/${userId}/friends/${status}?page=${page}&limit=${limit}`
-    );
+    const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
+
+    return apiRequest<FriendsResponse>(`/users/friends/${status}${query}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  getFriendRequests: async (
+    accessToken: string,
+    options: GetFriendsOptions
+  ) => {
+    const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
+
+    return apiRequest<FriendsResponse>(`/users/friends/requests${query}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  getSuggestedFriends: async (
+    accessToken: string,
+    options?: GetFriendsOptions
+  ) => {
+    const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
+
+    return apiRequest<FriendsResponse>(`/users/friends/suggested${query}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
   },
 
   sendFriendRequest: async (accessToken: string, userId: string) => {

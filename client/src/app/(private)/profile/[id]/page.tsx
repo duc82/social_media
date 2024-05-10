@@ -6,11 +6,11 @@ import PostProvider from "@/app/providers/PostProvider";
 import postService from "@/app/services/postService";
 
 export default async function Profile({ params }: { params: { id?: string } }) {
-  const { session, currentUser } = await getServerSession();
+  const { currentUser } = await getServerSession();
   const user = await profileAction.getById(params.id, currentUser);
 
   const { posts } = await postService.getAll({
-    userId: user.id
+    userId: user.id,
   });
 
   const isMyProfile = currentUser.id === user.id;

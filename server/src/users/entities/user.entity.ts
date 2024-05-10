@@ -8,7 +8,6 @@ import {
   Entity,
   Index,
   JoinColumn,
-  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -20,6 +19,7 @@ import { Post } from "src/posts/entities/post.entity";
 import { Comment } from "src/posts/entities/comment.entity";
 import { Token } from "./token.entity";
 import { Role } from "../interfaces/user.interface";
+import { Message } from "src/messages/entities/message.entity";
 
 @Entity({
   name: "users",
@@ -80,8 +80,10 @@ export class User extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @ManyToMany(() => Post, (post) => post.likes)
-  likedPosts: Post[];
+  @OneToMany(() => Message, (message) => message.user, {
+    cascade: true,
+  })
+  messages: Message[];
 
   @CreateDateColumn()
   createdAt: Date;
