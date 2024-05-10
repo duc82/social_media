@@ -11,7 +11,7 @@ import { useState } from "react";
 import {
   ChatLeftTextFill,
   PersonPlusFill,
-  PersonXFill
+  PersonXFill,
 } from "react-bootstrap-icons";
 import toast from "react-hot-toast";
 
@@ -72,64 +72,53 @@ export default function SuggesstionItem(friend: FullUser) {
           </p>
           <div className="d-flex flex-column">
             {status === "send" ? (
-              <>
-                <button
-                  type="button"
-                  className="btn btn-secondary-soft mb-2 d-flex justify-content-center align-items-center"
-                  onClick={handleCancelFriendRequest}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <div
-                      className="spinner-border spinner-border-sm text-white"
-                      role="status"
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  ) : (
-                    <PersonXFill size={16} />
-                  )}
-
-                  <span className="ms-2">Cancel</span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary-soft d-flex justify-content-center align-items-center"
-                >
-                  <ChatLeftTextFill size={16} />
-                  <span className="ms-2">Message</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="btn btn-primary-soft mb-2 d-flex justify-content-center align-items-center"
-                  onClick={handleSendFriendRequest}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <div
-                      className="spinner-border spinner-border-sm text-white"
-                      role="status"
-                    >
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  ) : (
-                    <PersonPlusFill size={16} />
-                  )}
-
-                  <span className="ms-2">Add friend</span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger-soft d-flex justify-content-center align-items-center"
-                >
+              <button
+                type="button"
+                className="btn btn-danger mb-2 d-flex justify-content-center align-items-center"
+                onClick={handleCancelFriendRequest}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div
+                    className="spinner-border spinner-border-sm text-white"
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                ) : (
                   <PersonXFill size={16} />
-                  <span className="ms-2">Remove</span>
-                </button>
-              </>
+                )}
+
+                <span className="ms-2">Cancel</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-primary mb-2 d-flex justify-content-center align-items-center"
+                onClick={handleSendFriendRequest}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div
+                    className="spinner-border spinner-border-sm text-white"
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                ) : (
+                  <PersonPlusFill size={16} />
+                )}
+
+                <span className="ms-2">Add friend</span>
+              </button>
             )}
+            <Link
+              href={`/messages/${friend.id}`}
+              className="btn btn-secondary-soft d-flex justify-content-center align-items-center"
+            >
+              <ChatLeftTextFill size={16} />
+              <span className="ms-2">Message</span>
+            </Link>
           </div>
         </div>
       </div>

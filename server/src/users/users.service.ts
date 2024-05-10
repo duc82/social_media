@@ -309,4 +309,32 @@ export class UserService {
 
     return { friends, total, page, limit };
   }
+
+  async getFriendRequests(userId: string, query: QueryDto) {
+    const { page, limit } = query;
+    const skip = (page - 1) * limit;
+
+    const where: FindOptionsWhere<FriendShip> | FindOptionsWhere<FriendShip>[] =
+      {
+        friend: { id: userId },
+        status: FriendshipStatus.PENDING,
+      };
+
+    const friendships = await this.dataSource.getRepository(FriendShip).find({
+      where,
+      skip,
+      take: limit,
+      relations: ["user", "friend", "user.profile", "friend.profile"],
+    });
+
+    const friends = friendships.map((friendship) => {
+      return friendship.user;
+    });
+
+    const total = await this.dataSource.getRepository(FriendShip).count({
+      where,
+    });
+
+    return { friends, total, page, limit };
+  }
 }

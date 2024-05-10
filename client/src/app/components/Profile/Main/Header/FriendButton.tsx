@@ -29,27 +29,27 @@ const FriendButton = ({
   > = {
     none: {
       name: "Add friend",
-      icon: <PersonPlusFill width={16} height={16} />,
+      icon: <PersonPlusFill size={16} />,
       className: "btn-primary",
     },
     friends: {
       name: "Friends",
-      icon: <PersonCheckFill width={16} height={16} />,
+      icon: <PersonCheckFill size={16} />,
       className: "btn-primary",
     },
     accept: {
       name: "Accept",
-      icon: <PersonCheckFill width={16} height={16} />,
+      icon: <PersonCheckFill size={16} />,
       className: "btn-success",
     },
     cancel: {
       name: "Cancel",
-      icon: <PersonXFill width={16} height={16} />,
+      icon: <PersonXFill size={16} />,
       className: "btn-danger",
     },
     decline: {
       name: "Decline",
-      icon: <PersonXFill width={16} height={16} />,
+      icon: <PersonXFill size={16} />,
       className: "btn-danger",
     },
   };

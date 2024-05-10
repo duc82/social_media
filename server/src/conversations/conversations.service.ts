@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { Conversation } from "./entities/conversation.entity";
 import { User } from "src/users/entities/user.entity";
+import { CreateConversationDto } from "./dto/conversations.dto";
 
 @Injectable()
 export class ConversationsService {
@@ -24,5 +25,30 @@ export class ConversationsService {
       })
       .setParameter("userId", userId)
       .getMany();
+  }
+
+  async create(body: CreateConversationDto) {
+    const userIds = body.users.map((u) => ({ id: u }));
+
+    const conversationExists = await this.dataSource
+      .getRepository(Conversation)
+      .exists({
+        where: {
+          users: userIds,
+        },
+      });
+
+    if (conversationExists) {
+      throw new BadRequestException("Conversation already exists");
+    }
+
+    const conversation = this.dataSource.getRepository(Conversation).create({
+      isGroup: body.isGroup,
+      users: userIds,
+    });
+
+    await conversation.save();
+
+    return conversation;
   }
 }

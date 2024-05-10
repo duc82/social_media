@@ -62,6 +62,16 @@ export class UsersController {
     return this.usersService.getSuggestedFriends(userId, query);
   }
 
+  @UseGuards(AuthGuard)
+  @Get("friends/requests")
+  async getFriendRequests(
+    @User("userId") userId: string,
+    @Query() query: QueryDto,
+  ) {
+    return this.usersService.getFriendRequests(userId, query);
+  }
+
+  @UseGuards(AuthGuard)
   @Get("friends/:status")
   async getFriends(
     @User("userId") userId: string,

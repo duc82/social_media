@@ -3,6 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -16,6 +18,11 @@ export class Conversation extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({
+    nullable: true,
+  })
+  name: string;
+
   @Column()
   isGroup: boolean;
 
@@ -24,9 +31,10 @@ export class Conversation extends BaseEntity {
   })
   messages: Message[];
 
-  @OneToMany(() => User, (user) => user.conversation, {
+  @ManyToMany(() => User, {
     cascade: true,
   })
+  @JoinTable()
   users: User[];
 
   @CreateDateColumn()
