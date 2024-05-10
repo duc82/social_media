@@ -1,4 +1,5 @@
 import {
+  ArrayMaxSize,
   ArrayMinSize,
   IsArray,
   IsBoolean,
@@ -18,5 +19,9 @@ export class CreateConversationDto {
   @IsUUID(undefined, { each: true })
   @ArrayMinSize(1)
   @IsArray()
+  @ValidateIf((o) => !o.isGroup)
+  @ArrayMaxSize(2, {
+    message: "Users array must have at most 2 elements when isGroup is false",
+  })
   users: string[];
 }

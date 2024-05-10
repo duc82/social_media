@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ConversationsService } from "./conversations.service";
 import { User } from "src/users/users.decorator";
-import { CreateConversationDto } from "./dto/conversations.dto";
+import { CreateConversationDto } from "./conversations.dto";
 
 @Controller("api/conversations")
 export class ConversationsController {
@@ -15,5 +15,10 @@ export class ConversationsController {
   @Post("create")
   async create(@Body() body: CreateConversationDto) {
     return this.conversationsService.create(body);
+  }
+
+  @Delete("delete/:id")
+  async delete(@Param("id") id: string) {
+    return this.conversationsService.delete(id);
   }
 }

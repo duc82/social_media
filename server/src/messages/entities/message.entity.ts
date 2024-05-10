@@ -7,12 +7,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Conversation } from "./conversation.entity";
 import { MessageFile } from "./message_file.entity";
 import { User } from "src/users/entities/user.entity";
+import { Conversation } from "src/conversations/conversation.entity";
 
 @Entity({
-  name: "conversation_messages",
+  name: "messages",
 })
 export class Message extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")

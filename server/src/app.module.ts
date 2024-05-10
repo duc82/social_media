@@ -11,6 +11,7 @@ import { AuthModule } from "./auth/auth.module";
 import { CoreModule } from "./core/core.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConversationsModule } from "./conversations/conversations.module";
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { ConversationsModule } from "./conversations/conversations.module";
     UsersModule,
     PostsModule,
     ConversationsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

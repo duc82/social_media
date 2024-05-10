@@ -8,8 +8,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Message } from "./message.entity";
 import { User } from "src/users/entities/user.entity";
+import { Message } from "src/messages/entities/message.entity";
 
 @Entity({
   name: "conversations",

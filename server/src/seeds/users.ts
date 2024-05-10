@@ -1,6 +1,5 @@
 import { UserService } from "src/users/users.service";
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "src/app.module";
+import { INestApplicationContext } from "@nestjs/common";
 
 function generateRandomText(length: number) {
   let result = "";
@@ -12,9 +11,7 @@ function generateRandomText(length: number) {
   return result;
 }
 
-async function bootstrap() {
-  const application = await NestFactory.createApplicationContext(AppModule);
-
+async function seedUsers(application: INestApplicationContext) {
   const userService = application.get(UserService);
 
   for (let i = 0; i < 500; i++) {
@@ -32,8 +29,6 @@ async function bootstrap() {
       },
     });
   }
-
-  await application.close();
 }
 
-bootstrap();
+export default seedUsers;

@@ -19,7 +19,7 @@ import { Post } from "src/posts/entities/post.entity";
 import { Comment } from "src/posts/entities/comment.entity";
 import { Token } from "./token.entity";
 import { Role } from "../interfaces/user.interface";
-import { Message } from "src/conversations/entities/message.entity";
+import { Message } from "src/messages/entities/message.entity";
 
 @Entity({
   name: "users",
