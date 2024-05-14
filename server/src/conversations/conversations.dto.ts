@@ -1,8 +1,6 @@
 import {
-  ArrayMaxSize,
   ArrayMinSize,
   IsArray,
-  IsBoolean,
   IsString,
   IsUUID,
   ValidateIf,
@@ -13,15 +11,15 @@ export class CreateConversationDto {
   @IsString()
   name?: string;
 
-  @IsBoolean()
-  isGroup: boolean;
+  @ValidateIf((o) => o.image)
+  @IsString()
+  image?: string;
 
   @IsUUID(undefined, { each: true })
   @ArrayMinSize(1)
   @IsArray()
-  @ValidateIf((o) => !o.isGroup)
-  @ArrayMaxSize(2, {
-    message: "Users array must have at most 2 elements when isGroup is false",
+  @ArrayMinSize(2, {
+    message: "Members must be at least 2",
   })
-  users: string[];
+  members: string[];
 }

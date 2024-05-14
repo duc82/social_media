@@ -2,13 +2,14 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { UserService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
-import { Profile } from "src/users/entities/profile.entity";
+import { Profile } from "src/users/entities/profiles.entity";
 import { MailerService } from "@nestjs-modules/mailer";
-import { Role, UserPayload } from "src/users/interfaces/user.interface";
-import { Token } from "src/users/entities/token.entity";
-import { User } from "src/users/entities/user.entity";
+import { UserPayload } from "src/users/interfaces/users.interface";
+import { Token } from "src/users/entities/tokens.entity";
+import { User } from "src/users/entities/users.entity";
 import { ConfigService } from "@nestjs/config";
 import { DataSource } from "typeorm";
+import { UserRole } from "src/interfaces/roles.interface";
 
 @Injectable()
 export class AuthService {
@@ -33,7 +34,7 @@ export class AuthService {
   ) {}
 
   async generateToken(
-    payload: { userId: string; role: Role },
+    payload: { userId: string; role: UserRole },
     options?: JwtSignOptions,
   ) {
     return this.jwtService.signAsync(payload, options);
@@ -170,7 +171,7 @@ export class AuthService {
       throw new BadRequestException("Invalid token");
     }
 
-    const user = await this.usersService.findById(payload.userId);
+    const user = await this.usersService.getById(payload.userId);
 
     if (!user) {
       throw new BadRequestException("User not found");
@@ -198,7 +199,7 @@ export class AuthService {
   async verifyEmail(token: string) {
     try {
       const payload = await this.verifyToken<UserPayload>(token);
-      const user = await this.usersService.findById(payload.userId, {
+      const user = await this.usersService.getById(payload.userId, {
         select: ["id", "emailVerified"],
       });
 
@@ -272,7 +273,7 @@ export class AuthService {
   async resetPassword(token: string, password: string) {
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      const user = await this.usersService.findById(payload.userId, {
+      const user = await this.usersService.getById(payload.userId, {
         relations: ["token"],
       });
 

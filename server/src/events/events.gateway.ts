@@ -8,7 +8,7 @@ import {
   WebSocketServer,
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
-import { FriendShip } from "src/users/entities/friendship.entity";
+import { FriendShip } from "src/users/entities/friendships.entity";
 
 interface Message {
   id: string;

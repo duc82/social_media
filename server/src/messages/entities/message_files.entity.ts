@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Message } from "./message.entity";
-import { FileType } from "src/interfaces/file.interface";
+import { Message } from "./messages.entity";
+import { FileType } from "src/interfaces/files.interface";
 
 @Entity({
   name: "message_files",

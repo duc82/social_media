@@ -8,7 +8,7 @@ import {
   IsString,
   IsOptional,
 } from "class-validator";
-import { Gender, MarialStatus } from "../interfaces/profile.interface";
+import { Gender, MarialStatus } from "./interfaces/profiles.interface";
 
 export class ProfileDto {
   @ValidateIf((o) => o.gender)

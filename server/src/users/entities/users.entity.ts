@@ -8,18 +8,24 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from "typeorm";
-import { Profile } from "./profile.entity";
+import { Profile } from "./profiles.entity";
 import { Exclude } from "class-transformer";
-import { Post } from "src/posts/entities/post.entity";
-import { Comment } from "src/posts/entities/comment.entity";
-import { Token } from "./token.entity";
-import { Role } from "../interfaces/user.interface";
-import { Message } from "src/messages/entities/message.entity";
+import { Post } from "src/posts/entities/posts.entity";
+import { Comment } from "src/posts/entities/comments.entity";
+import { Token } from "./tokens.entity";
+import { Message } from "src/messages/entities/messages.entity";
+import { UserRole } from "src/interfaces/roles.interface";
+import { GroupMember } from "src/groups/entities/group_members.entity";
+import { ConversationMember } from "src/conversations/entities/conversation_members.entity";
+import { BlockedUser } from "./blocked_users.entity";
 
 @Entity({
   name: "users",
@@ -53,10 +59,18 @@ export class User extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: Role,
-    default: Role.USER,
+    enum: UserRole,
+    default: UserRole.USER,
   })
-  role: Role;
+  role: UserRole;
+
+  @Column({
+    default: false,
+  })
+  isBan: boolean;
+
+  @OneToMany(() => BlockedUser, (blockerUser) => blockerUser.user)
+  blockedUsers: BlockedUser[];
 
   @OneToOne(() => Profile, {
     cascade: true,
@@ -71,6 +85,16 @@ export class User extends BaseEntity {
   })
   @JoinColumn()
   token: Token;
+
+  @OneToMany(() => GroupMember, (member) => member.user, {
+    cascade: true,
+  })
+  groups: GroupMember[];
+
+  @OneToMany(() => ConversationMember, (member) => member.user, {
+    cascade: true,
+  })
+  conversations: ConversationMember[];
 
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,

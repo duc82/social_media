@@ -1,4 +1,4 @@
-import { User } from "src/users/entities/user.entity";
+import { User } from "src/users/entities/users.entity";
 import {
   Column,
   CreateDateColumn,
@@ -9,7 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Post } from "./post.entity";
+import { Post } from "./posts.entity";
 
 @Entity({
   name: "comments",

@@ -5,10 +5,14 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import { MessagesService } from "./messages.service";
+import { AuthGuard } from "src/auth/auth.guard";
+import { User } from "src/users/users.decorator";
 import { CreateMessageDto } from "./messages.dto";
 
+@UseGuards(AuthGuard)
 @Controller("api/messages")
 export class MessagesController {
   constructor(private readonly messageService: MessagesService) {}
@@ -21,7 +25,10 @@ export class MessagesController {
   }
 
   @Post("create")
-  async create(@Body() body: CreateMessageDto) {
-    return this.messageService.create(body);
+  async create(
+    @Body() body: CreateMessageDto,
+    @User("userId") currentUserId: string,
+  ) {
+    return this.messageService.create(body, currentUserId);
   }
 }

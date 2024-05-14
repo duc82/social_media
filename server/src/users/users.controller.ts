@@ -13,9 +13,9 @@ import {
 import { UserService } from "./users.service";
 import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "./users.decorator";
-import { ProfileDto } from "./dto/user.dto";
+import { ProfileDto } from "./users.dto";
 import { QueryDto } from "src/dto/query.dto";
-import { FriendshipStatus } from "./interfaces/friendship.interface";
+import { FriendshipStatus } from "./interfaces/friendships.interface";
 
 @Controller("api/users")
 export class UsersController {

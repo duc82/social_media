@@ -1,11 +1,9 @@
-import ChatSidebar from "@/app/components/Messages/ChatSidebar";
-import Conversation from "@/app/components/Messages/Conversation";
-
-export default function Messages() {
+export default function HomeChat() {
   return (
-    <div className="row gx-0">
-      <ChatSidebar />
-      <Conversation />
+    <div className="col-lg-8 col-xxl-9">
+      <div className="h-100 d-flex align-items-center justify-content-center">
+        Blank
+      </div>
     </div>
   );
 }

@@ -313,7 +313,7 @@ export default function ProfileMainHeader({
           </li>
           <li className="list-inline-item d-inline-flex align-items-center">
             <Calendar2Plus className="me-1" /> Joined on{" "}
-            {formatDate(Date.now())}
+            {formatDate(Date.now(), { dateStyle: "medium" })}
           </li>
         </ul>
       </div>

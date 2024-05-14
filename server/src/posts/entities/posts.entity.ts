@@ -1,4 +1,4 @@
-import { User } from "src/users/entities/user.entity";
+import { User } from "src/users/entities/users.entity";
 import {
   BaseEntity,
   Column,
@@ -10,10 +10,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Comment } from "./comment.entity";
-import { PostFile } from "./post_file.entity";
+import { Comment } from "./comments.entity";
+import { PostFile } from "./post_files.entity";
 
-export enum Audience {
+export enum PostAccess {
   PUBLIC = "public",
   FRIENDS = "friends",
   PRIVATE = "private",
@@ -31,10 +31,10 @@ export class Post extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: Audience,
-    default: Audience.PUBLIC,
+    enum: PostAccess,
+    default: PostAccess.PUBLIC,
   })
-  audience: Audience;
+  access: PostAccess;
 
   @Column({
     default: false,

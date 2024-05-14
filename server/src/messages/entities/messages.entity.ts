@@ -7,9 +7,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { MessageFile } from "./message_file.entity";
-import { User } from "src/users/entities/user.entity";
-import { Conversation } from "src/conversations/conversation.entity";
+import { MessageFile } from "./message_files.entity";
+import { User } from "src/users/entities/users.entity";
+import { Conversation } from "src/conversations/entities/conversations.entity";
 
 @Entity({
   name: "messages",
@@ -18,8 +18,10 @@ export class Message extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
-  content: string;
+  @Column({
+    nullable: true,
+  })
+  content?: string;
 
   @Column({
     default: false,

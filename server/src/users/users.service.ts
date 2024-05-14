@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { User } from "./entities/user.entity";
+import { User } from "./entities/users.entity";
 import {
   DataSource,
   FindOneOptions,
@@ -8,11 +8,12 @@ import {
   IsNull,
   Not,
 } from "typeorm";
-import { CreateUserDto, ProfileDto } from "./dto/user.dto";
-import { Profile } from "./entities/profile.entity";
-import { FriendShip } from "./entities/friendship.entity";
-import { FriendshipStatus } from "./interfaces/friendship.interface";
+import { CreateUserDto, ProfileDto } from "./users.dto";
+import { Profile } from "./entities/profiles.entity";
+import { FriendShip } from "./entities/friendships.entity";
+import { FriendshipStatus } from "./interfaces/friendships.interface";
 import { QueryDto } from "src/dto/query.dto";
+import { BlockedUser } from "./entities/blocked_users.entity";
 
 @Injectable()
 export class UserService {
@@ -25,7 +26,7 @@ export class UserService {
     });
   }
 
-  async findById(id: string, options?: FindOneOptions<User>) {
+  async getById(id: string, options?: FindOneOptions<User>) {
     return this.dataSource.getRepository(User).findOne({
       where: {
         id,
@@ -34,12 +35,39 @@ export class UserService {
     });
   }
 
+  async getBlockedUsers(userId: string) {
+    const usersBlockedByCurrentUser = await this.dataSource
+      .getRepository(BlockedUser)
+      .find({
+        where: {
+          blockedUserId: userId,
+        },
+      });
+
+    const usersBlockingCurrentUser = await this.dataSource
+      .getRepository(BlockedUser)
+      .find({
+        where: {
+          user: {
+            id: userId,
+          },
+        },
+      });
+
+    return [
+      ...usersBlockedByCurrentUser.map(
+        (blockedUser) => blockedUser.blockedUserId,
+      ),
+      ...usersBlockingCurrentUser.map((blockedUser) => blockedUser.user.id),
+    ];
+  }
+
   async getAll(query: QueryDto) {
     const { search, page, limit } = query;
 
     const skip = (page - 1) * limit;
 
-    const users = await this.dataSource
+    const [users, total] = await this.dataSource
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
@@ -48,9 +76,7 @@ export class UserService {
       })
       .skip(skip)
       .take(limit)
-      .getMany();
-
-    const total = await this.dataSource.getRepository(User).count();
+      .getManyAndCount();
 
     return { users, total, page, limit };
   }
@@ -63,11 +89,11 @@ export class UserService {
 
   async update(id: string, attrs: Partial<User>) {
     await this.dataSource.getRepository(User).update({ id }, attrs);
-    return this.findById(id);
+    return this.getById(id);
   }
 
   async delete(id: string) {
-    const user = await this.findById(id);
+    const user = await this.getById(id);
 
     if (!user) {
       throw new NotFoundException("User not found");
@@ -85,7 +111,7 @@ export class UserService {
   }
 
   async getUserProfile(id: string) {
-    const user = await this.findById(id, {
+    const user = await this.getById(id, {
       relations: ["profile"],
     });
     return user;
@@ -141,7 +167,7 @@ export class UserService {
   }
 
   async updateUserProfile(id: string, profile: ProfileDto, url: string) {
-    const user = await this.findById(id, {
+    const user = await this.getById(id, {
       relations: ["profile"],
     });
 

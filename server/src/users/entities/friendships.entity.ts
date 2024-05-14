@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { FriendshipStatus } from "../interfaces/friendship.interface";
-import { User } from "./user.entity";
+import { FriendshipStatus } from "../interfaces/friendships.interface";
+import { User } from "./users.entity";
 
 @Entity({
   name: "friendships",

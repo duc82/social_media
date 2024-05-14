@@ -6,14 +6,13 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  IsUrl,
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { FileType } from "src/interfaces/file.interface";
+import { FileType } from "src/interfaces/files.interface";
 
 class MessageFileDto {
-  @IsUrl()
+  @IsString()
   url: string;
 
   @IsEnum(FileType)
@@ -36,13 +35,9 @@ export class CreateMessageDto {
     each: true,
   })
   @Type(() => MessageFileDto)
-  files: MessageFileDto[];
+  files: MessageFileDto[] = [];
 
   @IsUUID()
   @IsNotEmpty()
   conversation: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  user: string;
 }

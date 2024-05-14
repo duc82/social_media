@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Post } from "./post.entity";
-import { FileType } from "src/interfaces/file.interface";
+import { Post } from "./posts.entity";
+import { FileType } from "src/interfaces/files.interface";
 
 @Entity({
   name: "post_files",

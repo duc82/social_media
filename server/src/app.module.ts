@@ -12,6 +12,7 @@ import { CoreModule } from "./core/core.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConversationsModule } from "./conversations/conversations.module";
 import { MessagesModule } from './messages/messages.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { MessagesModule } from './messages/messages.module';
     PostsModule,
     ConversationsModule,
     MessagesModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

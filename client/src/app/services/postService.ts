@@ -3,12 +3,12 @@ import { PostResponse, PostsReponse } from "../types/post";
 import apiRequest from "./api";
 
 const postService = {
-  create: async (formData: FormData, acessToken: string) => {
+  create: async (formData: FormData, accessToken: string) => {
     return apiRequest<PostResponse>("/posts/create", {
       method: "POST",
       body: formData,
       headers: {
-        Authorization: `Bearer ${acessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
   },

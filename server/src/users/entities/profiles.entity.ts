@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Gender, MarialStatus } from "../interfaces/profile.interface";
+import { Gender, MarialStatus } from "../interfaces/profiles.interface";
 
 @Entity({
   name: "profiles",

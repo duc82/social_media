@@ -1,107 +1,105 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import { DataSource, Not } from "typeorm";
-import { Conversation } from "./conversation.entity";
-import { User } from "src/users/entities/user.entity";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { DataSource, In } from "typeorm";
+import { Conversation } from "./entities/conversations.entity";
 import { CreateConversationDto } from "./conversations.dto";
+import { User } from "src/users/entities/users.entity";
+import { QueryDto } from "src/dto/query.dto";
+import { MemberRole } from "src/interfaces/roles.interface";
+import { ConversationMember } from "./entities/conversation_members.entity";
 
 @Injectable()
 export class ConversationsService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async getAll(userId: string) {
-    return this.dataSource
+  async getAll(currentUserId: string, query: QueryDto) {
+    const { page, limit, search } = query;
+
+    const skip = (page - 1) * limit;
+
+    const [conversations, total] = await this.dataSource
       .getRepository(Conversation)
       .createQueryBuilder("c")
-      .leftJoinAndSelect("c.users", "users")
-      .leftJoinAndSelect("users.profile", "profile")
+      .leftJoinAndSelect("c.members", "member")
+      .leftJoinAndSelect("member.user", "user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .leftJoinAndSelect(
+        "c.messages",
+        "message",
+        'message.createdAt = (SELECT MAX(m."createdAt") FROM messages m WHERE m."conversationId" = c.id)',
+      )
+      .leftJoinAndSelect("message.files", "file")
+      .where("member.userId = :currentUserId", { currentUserId })
+      .andWhere(search ? "c.name ILIKE :search" : "TRUE", {
+        search: `%${search}%`,
+      })
+      .andWhere("c.isDeleted = false")
+      .orderBy("c.createdAt", "DESC")
+      .take(limit)
+      .skip(skip)
+      .getManyAndCount();
+
+    return { conversations, total, page, limit };
+  }
+
+  async getByUsersOrCreate(userIds: string[]) {
+    const conversation = await this.dataSource
+      .getRepository(Conversation)
+      .createQueryBuilder("c")
       .where((qb) => {
         const subQuery = qb
           .subQuery()
-          .select("user.conversationId")
-          .from(User, "user")
-          .where("user.id = :userId")
+          .select("member.conversationId")
+          .from(ConversationMember, "member")
+          .where("member.userId IN (:...userIds)", { userIds })
+          .groupBy("member.conversationId")
+          .having("COUNT(member.conversationId) = :userCount", {
+            userCount: userIds.length,
+          })
           .getQuery();
-        return "users.conversationId IN " + subQuery;
+
+        return `EXISTS ${subQuery}`;
       })
-      .setParameter("userId", userId)
-      .getMany();
-  }
-
-  async create(body: CreateConversationDto) {
-    const userIds = body.users.map((u) => ({ id: u }));
-
-    const conversationExists = await this.dataSource
-      .getRepository(Conversation)
-      .exists({
-        where: {
-          users: userIds,
-        },
-      });
-
-    if (conversationExists) {
-      throw new BadRequestException("Conversation already exists");
-    }
-
-    const conversation = this.dataSource.getRepository(Conversation).create({
-      isGroup: body.isGroup,
-      name: body.name,
-      users: userIds,
-    });
-
-    await conversation.save();
-
-    return conversation;
-  }
-
-  async getById(id: string) {
-    const conversation = await this.dataSource
-      .getRepository(Conversation)
-      .findOne({ where: { id } });
+      .andWhere("c.isDeleted = false")
+      .getOne();
 
     if (!conversation) {
-      throw new NotFoundException("Conversation not found");
-    }
+      const newConversation = this.dataSource
+        .getRepository(Conversation)
+        .create({
+          members: userIds.map((id, i) => ({
+            user: { id },
+            role: i === 0 ? MemberRole.ADMIN : MemberRole.MEMBER,
+          })),
+        });
 
-    return conversation;
-  }
-
-  async findOrCreate(id: string, body: CreateConversationDto) {
-    const conversation = await this.dataSource
-      .getRepository(Conversation)
-      .find({
-        where: { id },
-      });
-
-    // create
-    if (!conversation) {
-      const newConversation = await this.create(body);
+      await newConversation.save();
       return newConversation;
     }
 
     return conversation;
   }
 
-  async delete(id: string) {
-    const conversationExists = await this.dataSource
-      .getRepository(Conversation)
-      .existsBy({
-        id,
-      });
+  async create(body: CreateConversationDto) {
+    const { members, name, image } = body;
 
-    if (!conversationExists) {
-      throw new NotFoundException("Conversation not found");
+    const users = await this.dataSource.getRepository(User).find({
+      where: { id: In(members) },
+    });
+
+    if (users.length !== members.length) {
+      throw new BadRequestException("Invalid members");
     }
 
-    const deletedResult = await this.dataSource
-      .getRepository(Conversation)
-      .delete({
-        id,
-      });
+    const conversation = this.dataSource.getRepository(Conversation).create({
+      name,
+      image,
+      members: members.map((id, i) => ({
+        user: { id },
+        role: i === 0 ? MemberRole.ADMIN : MemberRole.MEMBER,
+      })),
+    });
+    await conversation.save();
 
-    return { message: "Conversation deleted successfully", deletedResult };
+    return { message: "Conversation created successfully", conversation };
   }
 }
