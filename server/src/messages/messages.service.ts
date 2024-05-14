@@ -5,6 +5,7 @@ import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
 import { UserService } from "src/users/users.service";
 import { MessageFile } from "./entities/message_files.entity";
+import { QueryDto } from "src/dto/query.dto";
 
 @Injectable()
 export class MessagesService {
@@ -14,17 +15,28 @@ export class MessagesService {
     private readonly userService: UserService,
   ) {}
 
-  async getAll(conversationId: string) {
-    const messages = await this.dataSource.getRepository(Message).find({
-      where: {
-        conversation: {
-          id: conversationId,
-        },
-      },
-      relations: ["user", "files"],
-    });
+  async getByConversation(id: string, query: QueryDto) {
+    const { page, limit } = query;
 
-    return messages;
+    const skip = (page - 1) * limit;
+
+    const [messages, total] = await this.dataSource
+      .getRepository(Message)
+      .findAndCount({
+        where: {
+          conversation: {
+            id,
+          },
+        },
+        relations: ["user", "files"],
+        take: limit,
+        skip,
+        order: {
+          createdAt: "DESC",
+        },
+      });
+
+    return { messages, total, page, limit };
   }
 
   async create(body: CreateMessageDto, currentUserId: string) {

@@ -16,9 +16,9 @@ export default function Avatar({
   alt,
   width,
   height,
-  wrapperClassName = "w-100 h-100",
+  wrapperClassName,
   className,
-  sizes = "100%",
+  sizes = "100%"
 }: AvatarProps) {
   return (
     <div className={clsx("avatar", wrapperClassName)} style={{ width, height }}>

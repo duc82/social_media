@@ -16,30 +16,35 @@ export const signUpSchema = z
   .object({
     fullName: z
       .string({
-        required_error: "Full name is required",
+        required_error: "Full name is required"
       })
       .min(2, "Full name must be at least 2 characters long"),
     email,
     password,
     confirmPassword: z.string({
-      required_error: "Passwords do not match",
+      required_error: "Passwords do not match"
     }),
+    dateOfBirth: z.object({
+      day: z.number(),
+      month: z.number(),
+      year: z.number()
+    })
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
+    path: ["confirmPassword"]
   });
 
 export const signInSchema = z.object({
   email,
   password: z.string().min(8, "Password must be at least 8 characters long"),
-  isRemember: z.boolean().default(true),
+  isRemember: z.boolean().default(true)
 });
 
 export const forgotPasswordSchema = z.object({
-  email,
+  email
 });
 
 export const resetPasswordSchema = z.object({
-  password,
+  password
 });

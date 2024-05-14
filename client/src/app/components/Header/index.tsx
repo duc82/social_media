@@ -7,13 +7,13 @@ import {
   CardText,
   ChatLeftTextFill,
   GearFill,
-  LifePreserver,
+  LifePreserver
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
-import SearchDropdown from "./SearchDropdown";
-import ButtonSignOut from "./ButtonSignOut";
 import getServerSession from "@/app/libs/session";
+import HeaderSearch from "./HeaderSearch";
+import ButtonSignOut from "./ButtonSignOut";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
@@ -48,7 +48,7 @@ export default async function Header() {
         {/* Collapse */}
         <div className="navbar-collapse collapse" id="navbarCollapse">
           <div className="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
-            <SearchDropdown />
+            <HeaderSearch />
           </div>
 
           <HeaderMenu />

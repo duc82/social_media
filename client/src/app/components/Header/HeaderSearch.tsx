@@ -7,7 +7,7 @@ import { Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Avatar from "../Avatar";
 
-export default function SearchDropdown() {
+export default function HeaderSearch() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<FullUser[]>([]);
 
@@ -16,7 +16,9 @@ export default function SearchDropdown() {
 
     try {
       const data = await userService.getAll({
-        search: value
+        search: value,
+        page: 1,
+        limit: 10
       });
       setUsers(data.users);
     } catch (error) {
@@ -32,7 +34,7 @@ export default function SearchDropdown() {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
-    // getSearchResults(value);
+    getSearchResults(value);
   };
 
   return (
@@ -45,16 +47,28 @@ export default function SearchDropdown() {
         aria-label="Search"
         value={search}
         onChange={handleSearch}
-      />
-      <button
-        className="btn bg-transparent d-flex align-items-center px-2 py-0 position-absolute top-50 start-0 translate-middle-y"
-        type="button"
         data-bs-toggle="dropdown"
-      >
+      />
+      <div className="bg-transparent d-flex align-items-center px-2 py-0 position-absolute top-50 start-0 translate-middle-y">
         <Search className="fs-5" />
-      </button>
+      </div>
 
-      <ul className="dropdown-menu"></ul>
+      <ul className="dropdown-menu w-100">
+        {users.map((user) => (
+          <li key={user.id} className="dropdown-item">
+            <Link
+              href={`/profile/${user.id}`}
+              className="d-flex align-items-center"
+            >
+              <Avatar src={user.profile.avatar} alt={user.fullName} />
+              <div className="ms-2">
+                <p className="mb-0">{user.fullName}</p>
+                {/* <small className="text-muted">{user.email}</small> */}
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

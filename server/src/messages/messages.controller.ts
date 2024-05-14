@@ -5,12 +5,14 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { MessagesService } from "./messages.service";
 import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "src/users/users.decorator";
 import { CreateMessageDto } from "./messages.dto";
+import { QueryDto } from "src/dto/query.dto";
 
 @UseGuards(AuthGuard)
 @Controller("api/messages")
@@ -18,10 +20,11 @@ export class MessagesController {
   constructor(private readonly messageService: MessagesService) {}
 
   @Get(":conversationId")
-  async getAll(
+  async getByConversation(
     @Param("conversationId", new ParseUUIDPipe()) conversationId: string,
+    @Query() query: QueryDto,
   ) {
-    return this.messageService.getAll(conversationId);
+    return this.messageService.getByConversation(conversationId, query);
   }
 
   @Post("create")

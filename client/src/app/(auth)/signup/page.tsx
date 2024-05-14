@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -23,16 +23,26 @@ interface FormValue extends SignUpDto {
   confirmPassword: string;
 }
 
+const date = new Date();
+
 export default function Signup() {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
+    defaultValues: {
+      dateOfBirth: {
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear()
+      }
+    }
   });
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
@@ -64,6 +74,49 @@ export default function Signup() {
 
   const { pwdScore, pwdScoreClassName } = usePasswordScore(watch("password"));
 
+  const isLeapYear = (year: number) =>
+    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+
+  const getDays = (month: number, year: number) => {
+    const isLeap = isLeapYear(year);
+
+    let length = 31;
+
+    if (month === 2) {
+      length = isLeap ? 29 : 28;
+    }
+
+    if ([4, 6, 9, 11].includes(month)) {
+      length = 30;
+    }
+
+    return Array.from({ length }, (_, i) => (
+      <option key={i + 1} value={i + 1}>
+        {i + 1}
+      </option>
+    ));
+  };
+
+  const getYears = () => {
+    const years = [];
+    const start = date.getFullYear();
+    const end = 1900;
+
+    for (let i = start; i >= end; i--) {
+      years.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
+    }
+
+    return years;
+  };
+
+  useEffect(() => {
+    console.log(watch("dateOfBirth"));
+  }, [watch("dateOfBirth")]);
+
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
@@ -79,7 +132,7 @@ export default function Signup() {
         <InputGroup
           {...register("fullName")}
           id="fullName"
-          placeholder="Enter full name"
+          placeholder="Full name"
           error={errors.fullName?.message}
         />
 
@@ -87,7 +140,7 @@ export default function Signup() {
           {...register("email")}
           type="email"
           id="email"
-          placeholder="Enter email"
+          placeholder="Email address"
           error={errors.email?.message}
           text={
             <small>We&apos;ll never share your email with anyone else.</small>
@@ -98,7 +151,7 @@ export default function Signup() {
           <div className="mb-0 input-group input-group-lg">
             <input
               type={passwordType}
-              placeholder="Enter new password"
+              placeholder="New password"
               className="form-control"
               {...register("password")}
               aria-describedby="passwordHelpBlock"
@@ -131,10 +184,10 @@ export default function Signup() {
                 </div>
               )}
               {!errors.password && pwdScore === 0 && (
-                <p>Write your password...</p>
+                <span>Write your password...</span>
               )}
               {!errors.password && pwdScore === 5 && (
-                <p>Yeah! that password rocks :))</p>
+                <span>Yeah! that password rocks :))</span>
               )}
             </div>
             <div className="ms-auto">
@@ -155,6 +208,41 @@ export default function Signup() {
           placeholder="Confirm Password"
           error={errors.confirmPassword?.message}
         />
+
+        <div className="mb-4">
+          <label htmlFor="dateOfBirth" className="form-label">
+            Date of birth
+          </label>
+
+          <div className="d-flex">
+            <select
+              {...register("dateOfBirth.day", { valueAsNumber: true })}
+              className="form-select me-3"
+            >
+              {getDays(watch("dateOfBirth.month"), watch("dateOfBirth.year"))}
+            </select>
+
+            <select
+              {...register("dateOfBirth.month", { valueAsNumber: true })}
+              className="form-select me-3"
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                <option key={month} value={month}>
+                  {new Date(0, month - 1).toLocaleString("default", {
+                    month: "short"
+                  })}
+                </option>
+              ))}
+            </select>
+
+            <select
+              {...register("dateOfBirth.year", { valueAsNumber: true })}
+              className="form-select"
+            >
+              {getYears()}
+            </select>
+          </div>
+        </div>
 
         <button
           type="submit"
