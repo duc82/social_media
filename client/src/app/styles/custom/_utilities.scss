@@ -23,8 +23,8 @@ $utilities: (
       25: 0.25,
       50: 0.5,
       75: 0.75,
-      100: 1
-    )
+      100: 1,
+    ),
   ),
 
   "width":
@@ -35,9 +35,9 @@ $utilities: (
           map-merge(
             map-get(map-get($utilities, "width"), "values"),
             (
-              "40px": 40px
+              "40px": 40px,
             )
-          )
+          ),
       )
     ),
   "height":
@@ -48,9 +48,9 @@ $utilities: (
           map-merge(
             map-get(map-get($utilities, "height"), "values"),
             (
-              "40px": 40px
+              "40px": 40px,
             )
-          )
+          ),
       )
     ),
   "shadow": (
@@ -61,8 +61,8 @@ $utilities: (
       sm: var(--#{$prefix}box-shadow-sm),
       lg: var(--#{$prefix}box-shadow-lg),
       menu: $box-shadow-menu,
-      none: none
-    )
+      none: none,
+    ),
   ),
   "color":
     map-merge(
@@ -72,7 +72,7 @@ $utilities: (
           map-merge(
             map-get(map-get($utilities, "color"), "values"),
             ($all-colors)
-          )
+          ),
       )
-    )
+    ),
 );

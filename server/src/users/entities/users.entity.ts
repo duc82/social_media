@@ -11,7 +11,6 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 import { Profile } from "./profiles.entity";
 import { Exclude } from "class-transformer";
@@ -27,9 +26,6 @@ import { BlockedUser } from "./blocked_users.entity";
 @Entity({
   name: "users",
 })
-@Index(["email"], { unique: true })
-@Index(["fullName"])
-@Unique(["email"])
 export class User extends BaseEntity {
   constructor(partial: Partial<User>) {
     super();
@@ -39,12 +35,15 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Index("full_name_index")
   @Column()
   fullName: string;
 
+  @Index("email_index", { unique: true })
   @Column()
   email: string;
 
+  @Index("email_verified_index")
   @Column({
     nullable: true,
   })
@@ -61,6 +60,7 @@ export class User extends BaseEntity {
   })
   role: UserRole;
 
+  @Index("is_ban_index")
   @Column({
     default: false,
   })

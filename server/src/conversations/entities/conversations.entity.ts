@@ -29,11 +29,11 @@ export class Conversation extends BaseEntity {
   })
   image: string;
 
-  @Index("IDX_Is_Group")
+  @Index("is_group_index")
   @Column()
   isGroup: boolean;
 
-  @Index("IDX_Is_Deleted")
+  @Index("is_deleted_index")
   @Column({
     default: false,
   })

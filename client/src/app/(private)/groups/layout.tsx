@@ -1,4 +1,4 @@
-import LeftSidebar from "@/app/components/Sidebar/Left";
+import LeftSidebar from "@/app/components/Home/Sidebar/LeftSidebar";
 
 export default function GroupLayout({
   children,

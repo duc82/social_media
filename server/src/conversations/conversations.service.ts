@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { DataSource, In } from "typeorm";
 import { Conversation } from "./entities/conversations.entity";
 import { CreateConversationDto } from "./conversations.dto";
@@ -28,7 +32,17 @@ export class ConversationsService {
         'message.createdAt = (SELECT MAX(m."createdAt") FROM messages m WHERE m."conversationId" = c.id)',
       )
       .leftJoinAndSelect("message.files", "file")
-      .where("member.userId = :currentUserId", { currentUserId })
+      .leftJoinAndSelect("message.user", "message_user")
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("member.conversationId")
+          .from(ConversationMember, "member")
+          .where("member.userId = :currentUserId", { currentUserId })
+          .getQuery();
+
+        return `EXISTS ${subQuery}`;
+      })
       .andWhere(search ? "c.name ILIKE :search" : "TRUE", {
         search: `%${search}%`,
       })
@@ -59,7 +73,6 @@ export class ConversationsService {
 
         return `EXISTS ${subQuery}`;
       })
-      .andWhere("c.isDeleted = false")
       .getOne();
 
     if (!conversation) {
@@ -74,6 +87,29 @@ export class ConversationsService {
 
       await newConversation.save();
       return newConversation;
+    }
+
+    if (conversation.isDeleted) {
+      conversation.isDeleted = false;
+      await conversation.save();
+    }
+
+    return conversation;
+  }
+
+  async getById(id: string) {
+    const conversation = await this.dataSource
+      .getRepository(Conversation)
+      .findOne({
+        where: {
+          id,
+          isDeleted: false,
+        },
+        relations: ["members", "members.user", "members.user.profile"],
+      });
+
+    if (!conversation) {
+      throw new NotFoundException("Conversation not found");
     }
 
     return conversation;

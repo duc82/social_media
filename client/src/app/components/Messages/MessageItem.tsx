@@ -3,24 +3,35 @@ import Avatar from "../Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCheckDouble } from "@fortawesome/free-solid-svg-icons";
 import { Message } from "@/app/types/message";
-import { useSession } from "next-auth/react";
-import clsx from "clsx";
 
-export default function MessageItem(message: Message) {
-  const { data } = useSession();
-  const currentUser = data?.user!;
+interface MessageItemProps {
+  message: Message;
+  isMessageCurrentUser: boolean;
+  isNext: boolean;
+  lastMessage: Message;
+  stepLimit: number;
+  index: number;
+}
 
-  const isMessageCurrentUser = message.user.id === currentUser.id;
-
+export default function MessageItem({
+  message,
+  isMessageCurrentUser,
+  isNext,
+  lastMessage,
+  stepLimit,
+  index,
+}: MessageItemProps) {
   return (
-    <li>
+    <div id={message.id}>
       {/* Chat time */}
-      <div className="text-center small my-2">
-        {formatDate(Date.now(), {
-          timeStyle: "short",
-          dateStyle: "medium",
-        })}
-      </div>
+      {/* {index === stepLimit && (
+          <div className="text-center small my-2">
+            {formatDate(message.createdAt, {
+              timeStyle: "short",
+              dateStyle: "medium",
+            })}
+          </div>
+        )} */}
 
       {/* Chat message left */}
       {!isMessageCurrentUser && (
@@ -28,8 +39,8 @@ export default function MessageItem(message: Message) {
           <Avatar
             wrapperClassName="flex-shrink-0 avatar avatar-xs me-2"
             className="rounded-circle"
-            src="/01.jpg"
-            alt="Avatar"
+            src={message.user.profile.avatar}
+            alt={message.user.fullName}
           />
           <div className="flex-grow-1">
             <div className="w-100">
@@ -37,7 +48,9 @@ export default function MessageItem(message: Message) {
                 <div className="bg-light text-secondary p-2 px-3 rounded-2">
                   {message.content}
                 </div>
-                <div className="small my-2">6:15 AM</div>
+                <div className="small my-2">
+                  {formatDate(message.createdAt, { timeStyle: "short" })}
+                </div>
               </div>
             </div>
           </div>
@@ -51,25 +64,27 @@ export default function MessageItem(message: Message) {
               <div className="bg-primary text-white p-2 px-3 rounded-2">
                 {message.content}
               </div>
-              <div className="d-flex my-2">
-                <div className="small text-secondary">
-                  {formatDate(message.createdAt, { timeStyle: "short" })}
+              {!isNext && (
+                <div className="d-flex my-2">
+                  <div className="small text-secondary">
+                    {formatDate(message.createdAt, { timeStyle: "short" })}
+                  </div>
+                  <div className="small ms-2">
+                    {message.seen ? (
+                      <FontAwesomeIcon
+                        icon={faCheckDouble}
+                        className="text-info"
+                      />
+                    ) : (
+                      <FontAwesomeIcon icon={faCheck} />
+                    )}
+                  </div>
                 </div>
-                <div className="small ms-2">
-                  {message.seen ? (
-                    <FontAwesomeIcon
-                      icon={faCheckDouble}
-                      className="text-info"
-                    />
-                  ) : (
-                    <FontAwesomeIcon icon={faCheck} />
-                  )}
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
       )}
-    </li>
+    </div>
   );
 }

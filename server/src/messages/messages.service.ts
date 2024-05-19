@@ -11,7 +11,6 @@ import { QueryDto } from "src/dto/query.dto";
 export class MessagesService {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly conversationService: ConversationsService,
     private readonly userService: UserService,
   ) {}
 
@@ -28,7 +27,7 @@ export class MessagesService {
             id,
           },
         },
-        relations: ["user", "files"],
+        relations: ["user", "files", "user.profile"],
         take: limit,
         skip,
         order: {
@@ -36,7 +35,9 @@ export class MessagesService {
         },
       });
 
-    return { messages, total, page, limit };
+    const reversedMessages = [...messages].reverse();
+
+    return { messages: reversedMessages, total, page, limit };
   }
 
   async create(body: CreateMessageDto, currentUserId: string) {
@@ -59,9 +60,6 @@ export class MessagesService {
 
     await message.save();
 
-    return {
-      data: message,
-      message: "Message sent successfully",
-    };
+    return message;
   }
 }

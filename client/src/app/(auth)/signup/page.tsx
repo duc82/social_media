@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,8 @@ import clsx from "clsx";
 import { ExclamationCircleFill, InfoCircle } from "react-bootstrap-icons";
 import AvatarInitials from "@/app/utils/avatarInitials";
 import { uploadFile } from "@/app/libs/firebase";
-import InputGroup from "@/app/components/Form/InputGroup";
+import FormControl from "@/app/components/Form/FormControl";
+import Radio from "@/app/components/Form/Radio";
 
 interface FormValue extends SignUpDto {
   confirmPassword: string;
@@ -32,7 +33,7 @@ export default function Signup() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
@@ -40,9 +41,9 @@ export default function Signup() {
       dateOfBirth: {
         day: date.getDate(),
         month: date.getMonth() + 1,
-        year: date.getFullYear()
-      }
-    }
+        year: date.getFullYear(),
+      },
+    },
   });
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
@@ -53,6 +54,13 @@ export default function Signup() {
     const { confirmPassword, ...signUpDto } = data;
 
     try {
+      const birthday = new Date(
+        data.dateOfBirth.year,
+        data.dateOfBirth.month - 1,
+        data.dateOfBirth.day
+      ).toISOString();
+      signUpDto.birthday = birthday;
+
       const avatarBlob = await AvatarInitials.generateAvatar(
         signUpDto.fullName
       );
@@ -60,6 +68,7 @@ export default function Signup() {
         `avatars/${signUpDto.email}`,
         avatarBlob
       );
+
       const value = await authService.signUp(signUpDto);
       toast.success(value.message);
       router.push("/signin");
@@ -77,7 +86,10 @@ export default function Signup() {
   const isLeapYear = (year: number) =>
     (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 
-  const getDays = (month: number, year: number) => {
+  const getDays = () => {
+    const month = watch("dateOfBirth.month");
+    const year = watch("dateOfBirth.year");
+
     const isLeap = isLeapYear(year);
 
     let length = 31;
@@ -93,6 +105,16 @@ export default function Signup() {
     return Array.from({ length }, (_, i) => (
       <option key={i + 1} value={i + 1}>
         {i + 1}
+      </option>
+    ));
+  };
+
+  const getMonths = () => {
+    return Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+      <option key={month} value={month}>
+        {new Date(0, month - 1).toLocaleString("default", {
+          month: "short",
+        })}
       </option>
     ));
   };
@@ -113,10 +135,6 @@ export default function Signup() {
     return years;
   };
 
-  useEffect(() => {
-    console.log(watch("dateOfBirth"));
-  }, [watch("dateOfBirth")]);
-
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
@@ -129,14 +147,14 @@ export default function Signup() {
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <InputGroup
+        <FormControl
           {...register("fullName")}
           id="fullName"
           placeholder="Full name"
           error={errors.fullName?.message}
         />
 
-        <InputGroup
+        <FormControl
           {...register("email")}
           type="email"
           id="email"
@@ -201,7 +219,7 @@ export default function Signup() {
           </div>
         </div>
 
-        <InputGroup
+        <FormControl
           {...register("confirmPassword")}
           type="password"
           id="confirmPassword"
@@ -209,39 +227,69 @@ export default function Signup() {
           error={errors.confirmPassword?.message}
         />
 
-        <div className="mb-4">
-          <label htmlFor="dateOfBirth" className="form-label">
-            Date of birth
-          </label>
+        <div className="mb-3">
+          <p className="mb-1">Date of birth</p>
 
           <div className="d-flex">
             <select
               {...register("dateOfBirth.day", { valueAsNumber: true })}
               className="form-select me-3"
+              defaultValue={date.getDate()}
             >
-              {getDays(watch("dateOfBirth.month"), watch("dateOfBirth.year"))}
+              {getDays()}
             </select>
 
             <select
               {...register("dateOfBirth.month", { valueAsNumber: true })}
               className="form-select me-3"
+              defaultValue={date.getMonth() + 1}
             >
-              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                <option key={month} value={month}>
-                  {new Date(0, month - 1).toLocaleString("default", {
-                    month: "short"
-                  })}
-                </option>
-              ))}
+              {getMonths()}
             </select>
 
             <select
               {...register("dateOfBirth.year", { valueAsNumber: true })}
               className="form-select"
+              defaultValue={date.getFullYear()}
             >
               {getYears()}
             </select>
           </div>
+        </div>
+
+        <div className="mb-3">
+          <p className="mb-1">Gender</p>
+          <div className="d-flex align-items-center">
+            <Radio
+              {...register("gender")}
+              id="male"
+              value="male"
+              wrapperClassName="me-3"
+              text="Male"
+            />
+
+            <Radio
+              {...register("gender")}
+              id="female"
+              value="female"
+              wrapperClassName="me-3"
+              text="Female"
+            />
+
+            <Radio
+              {...register("gender")}
+              id="other"
+              value="other"
+              text="Other"
+            />
+          </div>
+
+          {errors.gender && (
+            <div className="form-text text-danger mt-1">
+              <ExclamationCircleFill size={16} className="me-2" />
+              <span>{errors.gender.message}</span>
+            </div>
+          )}
         </div>
 
         <button
@@ -253,7 +301,7 @@ export default function Signup() {
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">
-          ©{new Date().getFullYear()}{" "}
+          ©{date.getFullYear()}{" "}
           <Link href="/" className="link-primary">
             Social.
           </Link>{" "}

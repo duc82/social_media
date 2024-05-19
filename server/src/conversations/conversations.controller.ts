@@ -27,12 +27,17 @@ export class ConversationsController {
     return this.conversationsService.getAll(currentUserId, query);
   }
 
-  @Get(":id")
+  @Get("by-user/:id")
   async getByUser(
     @User("userId") currentUserId: string,
     @Param("id", new ParseUUIDPipe()) id: string,
   ) {
     return this.conversationsService.getByUsersOrCreate([currentUserId, id]);
+  }
+
+  @Get(":id")
+  async getById(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.conversationsService.getById(id);
   }
 
   @Post("create")

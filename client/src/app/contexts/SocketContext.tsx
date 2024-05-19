@@ -1,6 +1,14 @@
 import { createContext } from "react";
-import { ISocket } from "../types/socket";
+import { ISocket, Online } from "../types/socket";
 
-const SocketContext = createContext<ISocket | null>(null);
+interface SocketContextState {
+  socket: ISocket | null;
+  onlines: Online[];
+}
+
+const SocketContext = createContext<SocketContextState>({
+  socket: null,
+  onlines: [],
+});
 
 export default SocketContext;

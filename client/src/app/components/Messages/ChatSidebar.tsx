@@ -7,6 +7,9 @@ import Avatar from "../Avatar";
 import { Conversation } from "@/app/types/conversation";
 import { useState } from "react";
 import { FullUser } from "@/app/types/user";
+import { usePathname } from "next/navigation";
+import useSocket from "@/app/hooks/useSocket";
+import clsx from "clsx";
 
 interface ChatSidebarProps {
   initialConversations: Conversation[];
@@ -21,6 +24,8 @@ export default function ChatSidebar({
 }: ChatSidebarProps) {
   const [conversations, setConversation] = useState(initialConversations);
   const [total, setTotal] = useState(inititalTotal);
+  const pathname = usePathname();
+  const { onlines } = useSocket();
 
   return (
     <div className="col-lg-4 col-xxl-3">
@@ -82,7 +87,7 @@ export default function ChatSidebar({
                 height: "calc(100vh - 1.5rem - 10.1rem)",
               }}
             >
-              <form className="position-relative" method="GET">
+              <form className="position-relative">
                 <label htmlFor="searchChats" className="visually-hidden">
                   Search Chats
                 </label>
@@ -103,25 +108,31 @@ export default function ChatSidebar({
 
               <ul className="nav flex-column flex-nowrap overflow-y-auto nav-pills nav-pills-soft mt-4">
                 {conversations.map((conversation) => {
-                  const user = conversation.users.find(
-                    (u) => u.id !== currentUser?.id
+                  const member = conversation.members.find(
+                    (member) => member.user.id !== currentUser?.id
+                  );
+                  const user = member?.user;
+
+                  const isOnline = onlines.some(
+                    (online) => online.userId === user?.id
                   );
 
                   return (
-                    <li
-                      key={conversation.id}
-                      data-bs-dismiss="offcanvas"
-                      className="mb-3"
-                    >
+                    <li key={conversation.id} className="mb-3">
                       <Link
                         href={`/messages/${conversation.id}`}
-                        className="nav-link active text-start"
-                        id="chat-1-tab"
-                        data-bs-toggle="pill"
+                        className={clsx(
+                          "nav-link text-start",
+                          pathname === `/messages/${conversation.id}` &&
+                            "active"
+                        )}
                       >
                         <div className="d-flex">
                           <Avatar
-                            wrapperClassName="flex-shrink-0 avatar-story me-2 status-online"
+                            wrapperClassName={clsx(
+                              "flex-shrink-0 me-2",
+                              isOnline ? "status-online" : "status-offline"
+                            )}
                             className="avatar-img rounded-circle"
                             src={user?.profile.avatar || ""}
                             alt={user?.fullName}
@@ -134,7 +145,12 @@ export default function ChatSidebar({
                             </h6>
                             <div className="small text-secondary">
                               {conversation.messages.length > 0 &&
-                                `Frances sent a photo.`}
+                                `${
+                                  conversation.messages[0].user.id ===
+                                  currentUser.id
+                                    ? "You"
+                                    : conversation.messages[0].user.fullName
+                                } sent a message.`}
                             </div>
                           </div>
                         </div>

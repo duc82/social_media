@@ -6,15 +6,21 @@ import {
 } from "react";
 import { ExclamationCircleFill } from "react-bootstrap-icons";
 
-interface InputGroupProps extends InputHTMLAttributes<HTMLInputElement> {
+interface FormControlProps extends InputHTMLAttributes<HTMLInputElement> {
   text?: React.ReactNode;
   error?: string;
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>;
   wrapperClassName?: string;
 }
 
-export default forwardRef(function InputGroup(
-  { text, error, labelProps, wrapperClassName, ...inputProps }: InputGroupProps,
+export default forwardRef(function FormControl(
+  {
+    text,
+    error,
+    labelProps,
+    wrapperClassName,
+    ...inputProps
+  }: FormControlProps,
   ref: Ref<HTMLInputElement>
 ) {
   return (

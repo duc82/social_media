@@ -19,7 +19,7 @@ import { QueryDto } from "src/dto/query.dto";
 export class MessagesController {
   constructor(private readonly messageService: MessagesService) {}
 
-  @Get(":conversationId")
+  @Get("by-conversation/:conversationId")
   async getByConversation(
     @Param("conversationId", new ParseUUIDPipe()) conversationId: string,
     @Query() query: QueryDto,

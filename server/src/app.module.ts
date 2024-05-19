@@ -11,8 +11,9 @@ import { AuthModule } from "./auth/auth.module";
 import { CoreModule } from "./core/core.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConversationsModule } from "./conversations/conversations.module";
-import { MessagesModule } from './messages/messages.module';
-import { GroupsModule } from './groups/groups.module';
+import { MessagesModule } from "./messages/messages.module";
+import { GroupsModule } from "./groups/groups.module";
+import { EventsModule } from "./events/events.module";
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { GroupsModule } from './groups/groups.module';
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging: true,
+        logging: false,
         autoLoadEntities: true,
       }),
     }),
@@ -63,8 +64,9 @@ import { GroupsModule } from './groups/groups.module';
     ConversationsModule,
     MessagesModule,
     GroupsModule,
+    EventsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, EventsGateway],
+  providers: [AppService],
 })
 export class AppModule {}

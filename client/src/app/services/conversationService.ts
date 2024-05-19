@@ -11,6 +11,14 @@ const conversationService = {
   },
 
   getByUser: async (id: string, accessToken: string) => {
+    return apiRequest<Conversation>(`/conversations/by-user/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  getById: async (id: string, accessToken: string) => {
     return apiRequest<Conversation>(`/conversations/${id}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,

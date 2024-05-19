@@ -69,7 +69,7 @@ export default function SuggesstionItem(friend: FullUser) {
           <p className="card-text mb-2">
             {status === "send" && "Request sent"}
             {status === "cancel" && "Request canceled"}
-            {!status && friend.profile.overview}
+            {!status && friend.profile.bio}
           </p>
           <div className="d-flex flex-column">
             {status === "send" ? (

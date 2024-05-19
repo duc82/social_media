@@ -15,3 +15,8 @@ export const getAllConversation = async (accessToken: string) => {
   const data = await conversationService.getAll(accessToken);
   return data;
 };
+
+export const getConversationById = async (id: string, accessToken: string) => {
+  const data = await conversationService.getById(id, accessToken);
+  return data;
+};

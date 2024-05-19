@@ -2,16 +2,18 @@ type FriendshipStatus = "pending" | "accepted" | "declined";
 
 type Role = "user" | "admin";
 
+export type Gender = "male" | "female" | "other";
+
 interface Profile {
   id: string;
-  gender: "male" | "female" | "other" | null;
+  gender: Gender;
   avatar: string;
   wallpaper: string | null;
-  bornAt: string | null;
+  birthday: string;
   maritalStatus: "single" | "married" | "divorced" | "widowed" | null;
   job: string | null;
   address: string | null;
-  overview: string | null;
+  bio: string | null;
   education: string | null;
   workplace: string | null;
 }

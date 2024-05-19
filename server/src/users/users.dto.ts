@@ -11,9 +11,8 @@ import {
 import { Gender, MarialStatus } from "./interfaces/profiles.interface";
 
 export class ProfileDto {
-  @ValidateIf((o) => o.gender)
   @IsEnum(Gender)
-  gender?: Gender;
+  gender: Gender;
 
   @ValidateIf((o) => o.avatar)
   @IsString()
@@ -23,9 +22,8 @@ export class ProfileDto {
   @IsString()
   wallpaper?: string;
 
-  @ValidateIf((o) => o.bornAt)
   @IsDateString()
-  bornAt?: Date;
+  birthday: string;
 
   @ValidateIf((o) => o.status)
   @IsEnum(MarialStatus)

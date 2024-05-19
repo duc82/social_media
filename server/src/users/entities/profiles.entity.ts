@@ -11,7 +11,6 @@ export class Profile extends BaseEntity {
   @Column({
     type: "enum",
     enum: Gender,
-    nullable: true,
   })
   gender: Gender;
 
@@ -25,9 +24,8 @@ export class Profile extends BaseEntity {
 
   @Column({
     type: "date",
-    nullable: true,
   })
-  bornAt: Date;
+  birthday: string;
 
   @Column({
     type: "enum",
@@ -49,7 +47,7 @@ export class Profile extends BaseEntity {
   @Column({
     nullable: true,
   })
-  overview: string;
+  bio: string;
 
   @Column({
     nullable: true,

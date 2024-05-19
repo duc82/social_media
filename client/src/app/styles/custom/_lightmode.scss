@@ -1,3 +1,12 @@
+.os-scrollbar {
+  &,
+  &:hover {
+    .os-scrollbar-handle {
+      background: rgba(var(--#{$prefix}secondary-rgb), 0.15);
+    }
+  }
+}
+
 .fill-dark {
   fill: $gray-800;
 }

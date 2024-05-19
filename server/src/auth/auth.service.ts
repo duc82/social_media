@@ -18,7 +18,7 @@ export class AuthService {
     +this.configService.getOrThrow<string>("ACCESS_TOKEN_EXPIRED");
   private readonly refreshTokenExpired: number =
     +this.configService.getOrThrow<string>("REFRESH_TOKEN_EXPIRED");
-  private readonly accessSecret =
+  public readonly accessSecret =
     this.configService.getOrThrow<string>("ACCESS_SECRET");
   private readonly refreshSecret =
     this.configService.getOrThrow<string>("REFRESH_SECRET");
@@ -54,9 +54,11 @@ export class AuthService {
 
     const profile = this.dataSource.getRepository(Profile).create({
       avatar: signUpDto.avatar,
+      birthday: signUpDto.birthday,
+      gender: signUpDto.gender,
     });
 
-    const newUser = await this.usersService.create({
+    const user = await this.usersService.create({
       email: signUpDto.email,
       fullName: signUpDto.fullName,
       password: signUpDto.password,
@@ -65,8 +67,8 @@ export class AuthService {
 
     // send verify email
     const payload: UserPayload = {
-      userId: newUser.id,
-      role: newUser.role,
+      userId: user.id,
+      role: user.role,
     };
 
     const token = await this.generateToken(payload, {
@@ -86,7 +88,7 @@ export class AuthService {
     });
 
     return {
-      user: newUser,
+      user,
       message: "Sign up successfully, please verify your account",
     };
   }
@@ -106,7 +108,11 @@ export class AuthService {
       throw new BadRequestException("Email or password is incorrect");
     }
 
-    const payload = {
+    if (user.isBan) {
+      throw new BadRequestException("Your account has been banned");
+    }
+
+    const payload: UserPayload = {
       userId: user.id,
       role: user.role,
     };

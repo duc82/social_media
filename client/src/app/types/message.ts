@@ -13,7 +13,22 @@ interface Message {
   seen: boolean;
   files: MessageFile[];
   user: FullUser;
-  createdAt: Date;
+  createdAt: string;
 }
 
-export type { Message };
+interface MessagesResponse {
+  messages: Message[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+type MessageFileDto = Pick<MessageFile, "url" & "type">;
+
+interface CreateMessageDto {
+  content?: string;
+  files?: MessageFileDto[];
+  conversation: string;
+}
+
+export type { Message, MessagesResponse, CreateMessageDto };

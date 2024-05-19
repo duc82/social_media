@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class First1715669658800 implements MigrationInterface {
-    name = 'First1715669658800'
+export class First1715788544491 implements MigrationInterface {
+    name = 'First1715788544491'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."profiles_gender_enum" AS ENUM('male', 'female', 'other')`);
         await queryRunner.query(`CREATE TYPE "public"."profiles_marialstatus_enum" AS ENUM('single', 'married', 'divorced', 'widowed')`);
-        await queryRunner.query(`CREATE TABLE "profiles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "gender" "public"."profiles_gender_enum", "avatar" character varying NOT NULL, "wallpaper" character varying, "bornAt" date, "marialStatus" "public"."profiles_marialstatus_enum", "job" character varying, "address" character varying, "overview" character varying, "education" character varying, "workplace" character varying, CONSTRAINT "PK_8e520eb4da7dc01d0e190447c8e" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "profiles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "gender" "public"."profiles_gender_enum" NOT NULL, "avatar" character varying NOT NULL, "wallpaper" character varying, "birthday" date NOT NULL, "marialStatus" "public"."profiles_marialstatus_enum", "job" character varying, "address" character varying, "bio" character varying, "education" character varying, "workplace" character varying, CONSTRAINT "PK_8e520eb4da7dc01d0e190447c8e" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "comments" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "content" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, "postId" uuid, CONSTRAINT "PK_8bf68bc960f2b69e818bdb90dcb" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."post_files_type_enum" AS ENUM('image', 'video')`);
         await queryRunner.query(`CREATE TABLE "post_files" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "url" character varying NOT NULL, "type" "public"."post_files_type_enum" NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "postId" uuid, CONSTRAINT "PK_3a75ee290763a3bfa3597f05f3e" PRIMARY KEY ("id"))`);
@@ -17,19 +17,23 @@ export class First1715669658800 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "message_files" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "url" character varying NOT NULL, "type" "public"."message_files_type_enum" NOT NULL, "messageId" uuid, CONSTRAINT "PK_0c383dd49eca61f122709fb16d0" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."conversation_members_role_enum" AS ENUM('admin', 'moderator', 'member')`);
         await queryRunner.query(`CREATE TABLE "conversation_members" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "role" "public"."conversation_members_role_enum" NOT NULL DEFAULT 'member', "conversationId" uuid, "userId" uuid, CONSTRAINT "PK_33146a476696a973a14d931e675" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "conversations" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying, "isGroup" boolean NOT NULL, "isDeleted" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_ee34f4f7ced4ec8681f26bf04ef" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE INDEX "IDX_Is_Group" ON "conversations" ("isGroup") `);
-        await queryRunner.query(`CREATE INDEX "IDX_Is_Deleted" ON "conversations" ("isDeleted") `);
+        await queryRunner.query(`CREATE TABLE "conversations" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying, "image" character varying, "isGroup" boolean NOT NULL, "isDeleted" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_ee34f4f7ced4ec8681f26bf04ef" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "is_group_index" ON "conversations" ("isGroup") `);
+        await queryRunner.query(`CREATE INDEX "is_deleted_index" ON "conversations" ("isDeleted") `);
         await queryRunner.query(`CREATE TABLE "messages" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "content" character varying, "seen" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "conversationId" uuid, "userId" uuid, CONSTRAINT "PK_18325f38ae6de43878487eff986" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."groups_access_enum" AS ENUM('PUBLIC', 'PRIVATE')`);
         await queryRunner.query(`CREATE TABLE "groups" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "about" character varying, "access" "public"."groups_access_enum" NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_659d1483316afb28afd3a90646e" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."group_members_role_enum" AS ENUM('admin', 'moderator', 'member')`);
         await queryRunner.query(`CREATE TABLE "group_members" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "role" "public"."group_members_role_enum" NOT NULL DEFAULT 'member', "groupId" uuid, "userId" uuid, CONSTRAINT "PK_86446139b2c96bfd0f3b8638852" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "blocked_users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "blockedUserId" character varying NOT NULL, "userId" uuid, CONSTRAINT "PK_93760d788a31b7546c5424f42cc" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "blocked_user_index" ON "blocked_users" ("blockedUserId") `);
+        await queryRunner.query(`CREATE INDEX "blocker_user_index" ON "blocked_users" ("userId") `);
         await queryRunner.query(`CREATE TYPE "public"."users_role_enum" AS ENUM('user', 'admin')`);
-        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fullName" character varying NOT NULL, "email" character varying NOT NULL, "emailVerified" TIMESTAMP, "password" character varying NOT NULL, "role" "public"."users_role_enum" NOT NULL DEFAULT 'user', "isBan" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "profileId" uuid, "tokenId" uuid, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "REL_b1bda35cdb9a2c1b777f5541d8" UNIQUE ("profileId"), CONSTRAINT "REL_d98a275f8bc6cd986fcbe2eab0" UNIQUE ("tokenId"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE INDEX "IDX_4b2bf18167e94dce386d714c67" ON "users" ("fullName") `);
-        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_97672ac88f789774dd47f7c8be" ON "users" ("email") `);
+        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fullName" character varying NOT NULL, "email" character varying NOT NULL, "emailVerified" TIMESTAMP, "password" character varying NOT NULL, "role" "public"."users_role_enum" NOT NULL DEFAULT 'user', "isBan" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "profileId" uuid, "tokenId" uuid, CONSTRAINT "REL_b1bda35cdb9a2c1b777f5541d8" UNIQUE ("profileId"), CONSTRAINT "REL_d98a275f8bc6cd986fcbe2eab0" UNIQUE ("tokenId"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "full_name_index" ON "users" ("fullName") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "email_index" ON "users" ("email") `);
+        await queryRunner.query(`CREATE INDEX "email_verified_index" ON "users" ("emailVerified") `);
+        await queryRunner.query(`CREATE INDEX "is_ban_index" ON "users" ("isBan") `);
         await queryRunner.query(`CREATE TYPE "public"."friendships_status_enum" AS ENUM('pending', 'accepted', 'declined')`);
         await queryRunner.query(`CREATE TABLE "friendships" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "status" "public"."friendships_status_enum" NOT NULL DEFAULT 'pending', "userId" uuid, "friendId" uuid, CONSTRAINT "PK_08af97d0be72942681757f07bc8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "comments_likes_users" ("commentsId" uuid NOT NULL, "usersId" uuid NOT NULL, CONSTRAINT "PK_88f329d3fff9b74186c0fe7474c" PRIMARY KEY ("commentsId", "usersId"))`);
@@ -89,18 +93,22 @@ export class First1715669658800 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "comments_likes_users"`);
         await queryRunner.query(`DROP TABLE "friendships"`);
         await queryRunner.query(`DROP TYPE "public"."friendships_status_enum"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_97672ac88f789774dd47f7c8be"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_4b2bf18167e94dce386d714c67"`);
+        await queryRunner.query(`DROP INDEX "public"."is_ban_index"`);
+        await queryRunner.query(`DROP INDEX "public"."email_verified_index"`);
+        await queryRunner.query(`DROP INDEX "public"."email_index"`);
+        await queryRunner.query(`DROP INDEX "public"."full_name_index"`);
         await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."blocker_user_index"`);
+        await queryRunner.query(`DROP INDEX "public"."blocked_user_index"`);
         await queryRunner.query(`DROP TABLE "blocked_users"`);
         await queryRunner.query(`DROP TABLE "group_members"`);
         await queryRunner.query(`DROP TYPE "public"."group_members_role_enum"`);
         await queryRunner.query(`DROP TABLE "groups"`);
         await queryRunner.query(`DROP TYPE "public"."groups_access_enum"`);
         await queryRunner.query(`DROP TABLE "messages"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_Is_Deleted"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_Is_Group"`);
+        await queryRunner.query(`DROP INDEX "public"."is_deleted_index"`);
+        await queryRunner.query(`DROP INDEX "public"."is_group_index"`);
         await queryRunner.query(`DROP TABLE "conversations"`);
         await queryRunner.query(`DROP TABLE "conversation_members"`);
         await queryRunner.query(`DROP TYPE "public"."conversation_members_role_enum"`);
