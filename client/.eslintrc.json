@@ -1,3 +1,13 @@
 {
-  "extends": ["next/core-web-vitals", "next/babel"]
+  "extends": ["eslint:recommended", "next/core-web-vitals"],
+  "rules": {
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
+  }
 }

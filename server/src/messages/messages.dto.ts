@@ -10,6 +10,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { FileType } from "src/interfaces/files.interface";
+import { QueryDto } from "src/dto/query.dto";
 
 class MessageFileDto {
   @IsString()

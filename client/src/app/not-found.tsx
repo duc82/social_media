@@ -295,7 +295,7 @@ export default function NotFound() {
               Either something went wrong or this page doesn't exist anymore.
             </p>
             <Link className="btn btn-primary-soft btn-sm" href="/">
-              Got to home page
+              Go to home page
             </Link>
           </div>
         </div>

@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { ConversationsService } from "src/conversations/conversations.service";
 import { DataSource } from "typeorm";
 import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
@@ -35,9 +34,9 @@ export class MessagesService {
         },
       });
 
-    const reversedMessages = [...messages].reverse();
+    messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-    return { messages: reversedMessages, total, page, limit };
+    return { messages, total, page, limit };
   }
 
   async create(body: CreateMessageDto, currentUserId: string) {

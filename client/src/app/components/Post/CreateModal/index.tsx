@@ -10,7 +10,7 @@ import {
   GeoAltFill,
   ImageFill,
   TagFill,
-  XLg
+  XLg,
 } from "react-bootstrap-icons";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -23,10 +23,11 @@ import clsx from "clsx";
 import usePost from "@/app/hooks/usePost";
 import { useSession } from "next-auth/react";
 import { FullUser } from "@/app/types/user";
+import Image from "next/image";
 
 export default function CreatePostModal({
   initialActiveDropzone = false,
-  currentUser
+  currentUser,
 }: {
   initialActiveDropzone?: boolean;
   currentUser: FullUser;
@@ -73,7 +74,7 @@ export default function CreatePostModal({
     }
 
     toast.loading("Creating post...", {
-      id: "createPost"
+      id: "createPost",
     });
 
     try {
@@ -145,7 +146,7 @@ export default function CreatePostModal({
                       className={clsx(index > 1 ? "col-4" : "col-6")}
                     >
                       <div className="card border-0">
-                        <img
+                        <Image
                           src={file.preview}
                           alt={file.name}
                           className="card-img object-fit-cover"

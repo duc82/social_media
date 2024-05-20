@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import conversationService from "../services/conversationService";
 
 export const directMessage = async (
@@ -17,6 +17,10 @@ export const getAllConversation = async (accessToken: string) => {
 };
 
 export const getConversationById = async (id: string, accessToken: string) => {
-  const data = await conversationService.getById(id, accessToken);
-  return data;
+  try {
+    const data = await conversationService.getById(id, accessToken);
+    return data;
+  } catch (error) {
+    notFound();
+  }
 };

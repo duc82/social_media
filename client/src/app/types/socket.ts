@@ -13,14 +13,14 @@ interface Online {
 }
 
 interface ServerToClientEvents {
-  message: (data: Message) => void;
-  friendRequest: (data: FriendRequest) => void;
-  onlines: (data: Online[]) => void;
+  message: (_data: Message) => void;
+  friendRequest: (_data: FriendRequest) => void;
+  onlines: (_data: Online[]) => void;
 }
 
 interface ClientToServerEvents {
-  message: (data: Message) => void;
-  friendRequest: (data: FriendRequest) => void;
+  message: (_data: Message) => void;
+  friendRequest: (_data: FriendRequest) => void;
 }
 
 interface ISocket extends Socket<ServerToClientEvents, ClientToServerEvents> {}

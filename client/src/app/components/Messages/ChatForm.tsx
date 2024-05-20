@@ -1,62 +1,64 @@
 "use client";
 
+import { sendMessage } from "@/app/actions/messageAction";
 import useSocket from "@/app/hooks/useSocket";
-import messageService from "@/app/services/messageService";
 import {
   faFaceSmile,
   faPaperPlane,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { FormEvent, KeyboardEvent, useState } from "react";
+import toast from "react-hot-toast";
 
-export default function SendForm() {
+export default function ChatForm() {
   const [text, setText] = useState("");
   const { socket } = useSocket();
 
-  const { data } = useSession();
-  const accessToken = data?.accessToken;
-
   const { id } = useParams();
 
-  const handleChangeText = (e: ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-  };
-
-  const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSendMessage = async () => {
     const content = text.trim();
 
-    if (!content || !accessToken || !socket) return;
+    if (!content || !socket) return;
 
     try {
-      const message = await messageService.send(
-        {
-          content,
-          conversation: id as string,
-        },
-        accessToken
-      );
+      const message = await sendMessage({
+        content,
+        conversation: id as string,
+      });
 
       socket.emit("message", message);
       setText("");
     } catch (error) {
-      console.log(error);
+      toast.error("Send message failed. Try again!");
+    }
+  };
+
+  const handleSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await handleSendMessage();
+  };
+
+  const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      await handleSendMessage();
     }
   };
 
   return (
-    <form onSubmit={handleSendMessage} className="d-sm-flex align-items-end">
-      <input
-        className="form-control mb-sm-0 mb-3"
+    <form onSubmit={handleSubmitForm} className="d-sm-flex align-items-center">
+      <textarea
+        className="form-control mb-sm-0 mb-3 resize-none"
         placeholder="Type a message"
         value={text}
-        onChange={handleChangeText}
+        rows={1}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
         style={{ height: 41 }}
-      />
+      ></textarea>
       <button type="button" className="btn btn-sm btn-danger-soft ms-sm-2">
         <FontAwesomeIcon className="fs-6" icon={faFaceSmile} />
       </button>

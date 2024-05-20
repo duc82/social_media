@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:debug": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "dev:lint": "next lint && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

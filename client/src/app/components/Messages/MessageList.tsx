@@ -1,10 +1,15 @@
 "use client";
-
-import { useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import MessageItem from "./MessageItem";
 import { Message } from "@/app/types/message";
 import InfiniteScroll from "observer-infinite-scroll";
-import { getMessagesByConversation } from "@/app/actions/messageAction";
 import { useParams } from "next/navigation";
 import useSocket from "@/app/hooks/useSocket";
 import { FullUser } from "@/app/types/user";
@@ -12,8 +17,8 @@ import { useSession } from "next-auth/react";
 import {
   OverlayScrollbarsComponent,
   OverlayScrollbarsComponentRef,
-  useOverlayScrollbars,
 } from "overlayscrollbars-react";
+import messageService from "@/app/services/messageService";
 
 interface MessageListProps {
   currentUser: FullUser;
@@ -21,7 +26,12 @@ interface MessageListProps {
   initialPage: number;
   limit: number;
   total: number;
+  setIsScrollBottom: Dispatch<SetStateAction<boolean>>;
 }
+
+type Params = {
+  id: string;
+};
 
 export default function MessageList({
   currentUser,
@@ -29,41 +39,72 @@ export default function MessageList({
   initialPage,
   limit,
   total,
+  setIsScrollBottom,
 }: MessageListProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [hasMore, setHasMore] = useState(total > limit);
   const [page, setPage] = useState(initialPage);
-  const { id } = useParams();
+  const { id } = useParams<Params>();
   const { socket } = useSocket();
   const { data } = useSession();
   const accessToken = data?.accessToken;
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const osComponentRef = useRef<OverlayScrollbarsComponentRef<"div">>(null);
+  const [isMessageCurrentUser, setIsMessageCurrentUser] = useState(false);
 
   const fetchMore = async () => {
     if (!accessToken) return;
+
     try {
-      const { messages } = await getMessagesByConversation(id as string, {
-        limit,
-        page,
-      });
+      const { messages } = await messageService.getByConversation(
+        id,
+        accessToken,
+        {
+          limit,
+          page,
+        }
+      );
 
       if (messages.length === 0) {
         setHasMore(false);
         return;
       }
 
-      setMessages((prev) => [...messages, ...prev]);
+      setMessages((prevMessages) => {
+        const newMessages = messages.filter(
+          (newMessage) =>
+            !prevMessages.some(
+              (prevMessage) => prevMessage.id === newMessage.id
+            )
+        );
+        return [...newMessages, ...prevMessages];
+      });
+
       setPage((prev) => prev + 1);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const scrollToBottom = useCallback(() => {
+    if (!isMessageCurrentUser) return;
+
+    const osElement = osComponentRef.current?.osInstance()?.elements().viewport;
+
+    if (osElement) {
+      const scrollHeight = osElement.scrollHeight;
+      osElement.scrollTo({ top: scrollHeight });
+    }
+  }, [isMessageCurrentUser]);
+
   useEffect(() => {
     if (!socket) return;
 
     const handleMessage = (message: Message) => {
       setMessages((prev) => [...prev, message]);
+
+      if (message.user.id === currentUser.id) {
+        setIsMessageCurrentUser(true);
+      }
     };
 
     socket.on("message", handleMessage);
@@ -71,41 +112,47 @@ export default function MessageList({
     return () => {
       socket.off("message", handleMessage);
     };
-  }, [socket]);
+  }, [socket, currentUser]);
 
   useEffect(() => {
-    const messageEnd = messageEndRef.current;
-    if (messageEnd) {
-      messageEnd.scrollIntoView({
-        behavior: "instant",
-      });
-    }
-  }, []);
+    scrollToBottom();
+  }, [scrollToBottom]);
 
   return (
     <OverlayScrollbarsComponent
       options={{
-        scrollbars: { autoHide: "leave", autoHideDelay: 200 },
+        scrollbars: {
+          autoHide: "leave",
+          autoHideDelay: 200,
+        },
         overflow: {
           x: "visible-hidden",
           y: "scroll",
         },
       }}
-      defer
+      events={{
+        initialized(instance) {
+          const osElement = instance.elements().viewport;
+          const scrollHeight = osElement.scrollHeight;
+          osElement.scrollTo({ top: scrollHeight });
+          setIsScrollBottom(true);
+        },
+      }}
       style={{
         height: "calc(100vh - 19.5rem)",
       }}
+      ref={osComponentRef}
     >
       <InfiniteScroll
         hasMore={hasMore}
         fetchMore={fetchMore}
         position="top"
+        threshold={0}
         loader={
-          <div className="d-flex flex-column justify-content-center align-items-center">
+          <div className="d-flex flex-column justify-content-center align-items-center mb-1">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
-            <p className="mt-2">Loading messages</p>
           </div>
         }
         endMessage={
@@ -132,7 +179,6 @@ export default function MessageList({
             />
           );
         })}
-        {/* <div ref={messageEndRef}></div> */}
       </InfiniteScroll>
     </OverlayScrollbarsComponent>
   );
