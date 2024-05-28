@@ -1,17 +1,15 @@
-import Header from "../components/Header";
+import { PropsWithChildren } from "react";
 import SocketProvider from "../providers/SocketProvider";
+import StreamVideoProvider from "../providers/StreamVideoProvider";
+import IncomingCallModal from "../components/RingingCall/IncomingCallModal";
 
-export default function PrivateLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function PrivateLayout({ children }: PropsWithChildren) {
   return (
     <SocketProvider>
-      <Header />
-      <main>
-        <div className="container">{children}</div>
-      </main>
+      <StreamVideoProvider>
+        <IncomingCallModal />
+        {children}
+      </StreamVideoProvider>
     </SocketProvider>
   );
 }

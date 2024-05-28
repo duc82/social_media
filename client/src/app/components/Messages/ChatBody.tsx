@@ -5,7 +5,7 @@ import MessageList from "./MessageList";
 import TopAvatarStatus from "./TopAvatarStatus";
 import { Message } from "@/app/types/message";
 import clsx from "clsx";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 interface ChatBodyProps {
   user?: FullUser;
@@ -24,10 +24,20 @@ export default function ChatBody({
   limit,
   total,
 }: ChatBodyProps) {
-  const [isScrollBottom, setIsScrollBottom] = useState(false);
+  const [isScrollToBottom, setIsScrollToBottom] = useState(false);
+
+  useLayoutEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsScrollToBottom(true);
+    });
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   return (
-    <div className={clsx("fade", isScrollBottom && "show")}>
+    <div className={clsx("fade", isScrollToBottom && "show")}>
       {/* Top avatar and status */}
       <TopAvatarStatus user={user} />
       <hr />
@@ -38,7 +48,6 @@ export default function ChatBody({
         currentUser={currentUser}
         limit={limit}
         total={total}
-        setIsScrollBottom={setIsScrollBottom}
       />
     </div>
   );

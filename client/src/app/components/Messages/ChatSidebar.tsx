@@ -145,12 +145,7 @@ export default function ChatSidebar({
                             </h6>
                             <div className="small text-secondary">
                               {conversation.messages.length > 0 &&
-                                `${
-                                  conversation.messages[0].user.id ===
-                                  currentUser.id
-                                    ? "You"
-                                    : conversation.messages[0].user.fullName
-                                } sent a message.`}
+                                conversation.messages[0].content}
                             </div>
                           </div>
                         </div>

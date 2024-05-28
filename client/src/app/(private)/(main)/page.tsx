@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import Stories from "../components/Stories";
-import SharePost from "../components/Post/SharePost";
-import RightSidebar from "../components/Home/Sidebar/RightSidebar";
-import LeftSidebar from "../components/Home/Sidebar/LeftSidebar";
+import Stories from "@/app/components/Stories";
+import SharePost from "@/app/components/Post/SharePost";
+import RightSidebar from "@/app/components/Home/Sidebar/RightSidebar";
+import LeftSidebar from "@/app/components/Home/Sidebar/LeftSidebar";
 
 export default function Home() {
   return (

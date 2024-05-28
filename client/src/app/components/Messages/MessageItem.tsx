@@ -6,35 +6,31 @@ import { Message } from "@/app/types/message";
 
 interface MessageItemProps {
   message: Message;
-  isMessageCurrentUser: boolean;
-  isNext: boolean;
-  lastMessage: Message;
-  stepLimit: number;
-  index: number;
+  isSameUser: boolean;
+  isSameDay: boolean;
+  isShowStatus: boolean;
 }
 
 export default function MessageItem({
   message,
-  isMessageCurrentUser,
-  isNext,
-  lastMessage,
-  stepLimit,
-  index,
+  isSameUser,
+  isSameDay,
+  isShowStatus,
 }: MessageItemProps) {
   return (
     <div id={message.id}>
       {/* Chat time */}
-      {/* {index === stepLimit && (
-          <div className="text-center small my-2">
-            {formatDate(message.createdAt, {
-              timeStyle: "short",
-              dateStyle: "medium",
-            })}
-          </div>
-        )} */}
+      {isSameDay && (
+        <div className="text-center small my-2">
+          {formatDate(message.createdAt, {
+            timeStyle: "short",
+            dateStyle: "medium",
+          })}
+        </div>
+      )}
 
       {/* Chat message left */}
-      {!isMessageCurrentUser && (
+      {!isSameUser && (
         <div className="d-flex mb-1">
           <Avatar
             wrapperClassName="flex-shrink-0 avatar avatar-xs me-2"
@@ -57,14 +53,15 @@ export default function MessageItem({
         </div>
       )}
 
-      {isMessageCurrentUser && (
+      {isSameUser && (
         <div className="d-flex justify-content-end text-end mb-1">
           <div className="w-100">
             <div className="d-flex flex-column align-items-end">
               <div className="bg-primary text-white p-2 px-3 rounded-2">
                 {message.content}
               </div>
-              {!isNext && (
+
+              {isShowStatus && (
                 <div className="d-flex my-2">
                   <div className="small text-secondary">
                     {formatDate(message.createdAt, { timeStyle: "short" })}

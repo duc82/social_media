@@ -23,7 +23,8 @@ export const config = {
      * - forgotPassword (forgot password page)
      * - resetPassword (reset password page)
      * - verify (verify email page)
+     * - ringing-call (ringing call page)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|signin|signup|forgotPassword|resetPassword|verify).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|signin|signup|forgotPassword|resetPassword|verify|ringing-call).*)",
   ],
 };
