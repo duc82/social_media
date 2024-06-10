@@ -12,8 +12,19 @@ export default function IncomingCallModal() {
   );
 
   useEffect(() => {
-    console.log(calls);
-  }, [calls]);
+    const main = () => {
+      if (incomingCall) {
+        const user = incomingCall?.streamClient.user;
+        window.open(
+          `/ringing-call/${incomingCall.id}?hasVideo=true&userId=${user?.id}`,
+          "_blank",
+          "location=yes,scrollbars=yes,status=yes"
+        );
+      }
+    };
+
+    main();
+  }, [incomingCall]);
 
   if (!incomingCall) return null;
 

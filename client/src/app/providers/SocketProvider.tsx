@@ -1,15 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { ISocket, Online } from "../types/socket";
 import { io } from "socket.io-client";
 import SocketContext from "../contexts/SocketContext";
 import { useSession } from "next-auth/react";
 
-export default function SocketProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<ISocket | null>(null);
   const [onlines, setOnlines] = useState<Online[]>([]);
   const { data } = useSession();

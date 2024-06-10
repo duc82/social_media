@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, IsNull } from "typeorm";
 import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
 import { UserService } from "src/users/users.service";
@@ -25,6 +25,7 @@ export class MessagesService {
           conversation: {
             id,
           },
+          deleteAt: IsNull(),
         },
         relations: ["user", "files", "user.profile"],
         take: limit,
@@ -40,7 +41,7 @@ export class MessagesService {
   }
 
   async create(body: CreateMessageDto, currentUserId: string) {
-    const user = await this.userService.getById(currentUserId, {
+    const sender = await this.userService.getById(currentUserId, {
       relations: ["profile"],
     });
 
@@ -54,11 +55,24 @@ export class MessagesService {
       conversation: {
         id: body.conversation,
       },
-      user,
+      sender,
     });
 
     await message.save();
 
     return message;
+  }
+
+  async countUnviewed(currentUserId: string) {
+    const count = await this.dataSource
+      .getRepository(Message)
+      .createQueryBuilder("message")
+      .leftJoin("message.conversation", "conversation")
+      .leftJoin("conversation.members", "member")
+      .where("member.userId = :currentUserId", { currentUserId })
+      .andWhere("message.deleteAt IS NULL")
+      .getCount();
+
+    return count;
   }
 }

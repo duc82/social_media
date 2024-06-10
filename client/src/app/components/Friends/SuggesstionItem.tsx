@@ -115,7 +115,7 @@ export default function SuggesstionItem(friend: FullUser) {
             )}
             <button
               type="button"
-              onClick={() => directMessage(friend.id, accessToken)}
+              onClick={() => directMessage(friend.id)}
               className="btn btn-secondary-soft d-flex justify-content-center align-items-center"
             >
               <ChatLeftTextFill size={16} />

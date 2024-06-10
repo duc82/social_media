@@ -11,9 +11,9 @@ export default async function Messages({
     id: string;
   };
 }) {
-  const { accessToken, currentUser } = await getServerSession();
+  const { currentUser } = await getServerSession();
 
-  const conversation = await getConversationById(id, accessToken);
+  const conversation = await getConversationById(id);
 
   const user = conversation.members.find(
     (m) => m.user.id !== currentUser.id

@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -31,4 +32,9 @@ export class FriendShip extends BaseEntity {
     default: FriendshipStatus.PENDING,
   })
   status: FriendshipStatus;
+
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
+  createdAt: Date;
 }

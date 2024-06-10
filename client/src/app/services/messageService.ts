@@ -1,3 +1,4 @@
+import getServerSession from "../libs/session";
 import { Options } from "../types";
 import { CreateMessageDto, Message, MessagesResponse } from "../types/message";
 import apiRequest from "./api";
@@ -17,6 +18,15 @@ const messageService = {
         },
       }
     );
+  },
+
+  async countUnseen() {
+    const { accessToken } = await getServerSession();
+    return apiRequest<number>(`/messages/count-unseen`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
   },
 
   async send(body: CreateMessageDto, accessToken: string) {

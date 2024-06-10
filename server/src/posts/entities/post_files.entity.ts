@@ -29,6 +29,8 @@ export class PostFile {
   })
   post: Post;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 }

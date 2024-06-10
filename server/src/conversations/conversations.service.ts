@@ -41,7 +41,7 @@ export class ConversationsService {
           .where("member.userId = :currentUserId", { currentUserId })
           .getQuery();
 
-        return `EXISTS ${subQuery}`;
+        return `c.id IN ${subQuery}`;
       })
       .andWhere(search ? "c.name ILIKE :search" : "TRUE", {
         search: `%${search}%`,
@@ -89,8 +89,8 @@ export class ConversationsService {
       return newConversation;
     }
 
-    if (conversation.isDeleted) {
-      conversation.isDeleted = false;
+    if (conversation.deleteAt) {
+      conversation.deleteAt = null;
       await conversation.save();
     }
 
@@ -103,7 +103,7 @@ export class ConversationsService {
       .findOne({
         where: {
           id,
-          isDeleted: false,
+          deleteAt: null,
         },
         relations: ["members", "members.user", "members.user.profile"],
       });

@@ -25,7 +25,7 @@ export class Comment {
   @JoinTable()
   likes: User[];
 
-  @ManyToOne(() => User, (user) => user.comments, {
+  @ManyToOne(() => User, (user) => user.id, {
     onDelete: "CASCADE",
   })
   user: User;
@@ -38,6 +38,14 @@ export class Comment {
   @OneToMany(() => Comment, (comment) => comment.replies)
   replies: Comment[];
 
-  @CreateDateColumn()
+  @Column({
+    nullable: true,
+    type: "timestamptz",
+  })
+  deleteAt: Date;
+
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 }

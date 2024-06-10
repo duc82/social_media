@@ -60,6 +60,11 @@ export class Post extends BaseEntity {
   @JoinTable()
   likes: User[];
 
-  @CreateDateColumn()
+  @Column({ nullable: true, type: "timestamptz" })
+  deleteAt: Date;
+
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 }

@@ -7,7 +7,8 @@ import {
   StreamCall,
   useStreamVideoClient,
 } from "@stream-io/video-react-sdk";
-import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Params = {
@@ -18,11 +19,31 @@ export default function RingingCallPage() {
   const client = useStreamVideoClient();
   const [call, setCall] = useState<Call>();
   const { id } = useParams<Params>();
+  const searchParams = useSearchParams();
+  const hasVideo = searchParams.get("hasVideo");
+  const userId = searchParams.get("userId");
+  const { data } = useSession();
+  const currentUser = data?.user;
 
   useEffect(() => {
-    if (!id || !client) return;
+    if (!id || !client || !userId || !currentUser) return;
 
     const myCall = client.call("default", id);
+
+    myCall.getOrCreate({
+      ring: true,
+      data: {
+        members: [
+          {
+            user_id: currentUser.id,
+          },
+          {
+            user_id: userId,
+          },
+        ],
+      },
+      members_limit: 2,
+    });
 
     myCall.join();
 
@@ -30,9 +51,9 @@ export default function RingingCallPage() {
 
     return () => {
       setCall(undefined);
-      myCall.endCall();
+      myCall.leave();
     };
-  }, [id, client]);
+  }, [id, client, userId, hasVideo, currentUser]);
 
   if (!call) return null;
 

@@ -20,7 +20,7 @@ async function seedUsers(application: INestApplicationContext) {
   const userService = application.get(UserService);
   const genders = ["MALE", "FEMALE", "OTHER"];
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 100; i++) {
     const fullName = generateRandomText(5);
     const gender =
       Gender[

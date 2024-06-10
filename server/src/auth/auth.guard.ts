@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     const accessToken = this.extractTokenFromHeader(request);
 
     if (!accessToken) {
-      throw new UnauthorizedException("You are not authorized");
+      throw new UnauthorizedException("You are not authenticated");
     }
 
     try {

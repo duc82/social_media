@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -32,4 +33,9 @@ export class GroupMember extends BaseEntity {
     default: MemberRole.MEMBER,
   })
   role: MemberRole;
+
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
+  createdAt: Date;
 }

@@ -18,7 +18,6 @@ import { FullUser } from "@/app/types/user";
 import clsx from "clsx";
 import useSocket from "@/app/hooks/useSocket";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
-import { useSession } from "next-auth/react";
 
 interface TopAvatarStatusProps {
   user?: FullUser;
@@ -27,34 +26,15 @@ interface TopAvatarStatusProps {
 export default function TopAvatarStatus({ user }: TopAvatarStatusProps) {
   const { onlines } = useSocket();
   const client = useStreamVideoClient();
-  const { data } = useSession();
-  const currentUser = data?.user;
 
   const isOnline = onlines.some((online) => online.userId === user?.id);
 
   const openRingingCall = (hasVideo: boolean) => {
-    if (!client || !user || !currentUser) return;
+    if (!client || !user) return;
     const callId = "call-test";
 
-    const call = client.call("default", callId);
-
-    call.getOrCreate({
-      ring: true,
-      data: {
-        members: [
-          {
-            user_id: currentUser.id,
-          },
-          {
-            user_id: user.id,
-          },
-        ],
-      },
-      members_limit: 2,
-    });
-
     window.open(
-      `/ringing-call/${callId}?hasVideo=${hasVideo}`,
+      `/ringing-call/${callId}?hasVideo=${hasVideo}&userId=${user.id}`,
       "_blank",
       "location=yes,scrollbars=yes,status=yes"
     );

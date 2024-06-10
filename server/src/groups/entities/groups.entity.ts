@@ -35,6 +35,11 @@ export class Group extends BaseEntity {
   })
   members: GroupMember[];
 
-  @CreateDateColumn()
+  @Column({ nullable: true, type: "timestamptz" })
+  deleteAt: Date;
+
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 }

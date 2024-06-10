@@ -13,6 +13,7 @@ interface Message {
   seen: boolean;
   files: MessageFile[];
   user: FullUser;
+  conversationId: string;
   createdAt: string;
 }
 

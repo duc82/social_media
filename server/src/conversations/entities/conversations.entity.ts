@@ -29,15 +29,11 @@ export class Conversation extends BaseEntity {
   })
   image: string;
 
-  @Index("is_group_index")
   @Column()
   isGroup: boolean;
 
-  @Index("is_deleted_index")
-  @Column({
-    default: false,
-  })
-  isDeleted: boolean;
+  @Column({ nullable: true, type: "timestamptz" })
+  deleteAt: Date;
 
   @OneToMany(() => Message, (message) => message.conversation, {
     cascade: true,
@@ -49,7 +45,9 @@ export class Conversation extends BaseEntity {
   })
   members: ConversationMember[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 
   @BeforeInsert()

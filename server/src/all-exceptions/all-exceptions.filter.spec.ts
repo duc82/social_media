@@ -1,7 +1,11 @@
-import { AllExceptionsFilter } from './all-exceptions.filter';
+import { HttpAdapterHost } from "@nestjs/core";
+import { AllExceptionsFilter } from "./all-exceptions.filter";
 
-describe('AllExceptionsFilter', () => {
-  it('should be defined', () => {
-    expect(new AllExceptionsFilter()).toBeDefined();
+describe("AllExceptionsFilter", () => {
+  it("should be defined", () => {
+    // Arrange
+    const httpAdapterHost = new HttpAdapterHost();
+
+    expect(new AllExceptionsFilter(httpAdapterHost)).toBeDefined();
   });
 });

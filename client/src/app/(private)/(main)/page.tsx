@@ -36,13 +36,6 @@ export default function Home() {
         </div>
         {/* Share Post */}
         <SharePost />
-        <ul>
-          {[...Array(80)].map((_, i) => (
-            <li key={i} className="mb-2">
-              Item {i + 1}
-            </li>
-          ))}
-        </ul>
       </div>
 
       <RightSidebar />

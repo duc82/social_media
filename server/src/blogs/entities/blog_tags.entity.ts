@@ -3,24 +3,18 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
-  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./users.entity";
 
 @Entity({
-  name: "blocked_users",
+  name: "blog_tags",
 })
-export class BlockedUser extends BaseEntity {
+export class BlogTag extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
-  blockedUserId: string;
-
-  @ManyToOne(() => User, (user) => user.blockedUsers)
-  user: User;
+  name: string;
 
   @CreateDateColumn({
     type: "timestamptz",

@@ -15,9 +15,7 @@ import {
 import { Profile } from "./profiles.entity";
 import { Exclude } from "class-transformer";
 import { Post } from "src/posts/entities/posts.entity";
-import { Comment } from "src/posts/entities/comments.entity";
 import { Token } from "./tokens.entity";
-import { Message } from "src/messages/entities/messages.entity";
 import { UserRole } from "src/interfaces/roles.interface";
 import { GroupMember } from "src/groups/entities/group_members.entity";
 import { ConversationMember } from "src/conversations/entities/conversation_members.entity";
@@ -35,17 +33,16 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Index("full_name_index")
   @Column()
   fullName: string;
 
-  @Index("email_index", { unique: true })
+  @Index("idx_email_users", { unique: true })
   @Column()
   email: string;
 
-  @Index("email_verified_index")
   @Column({
     nullable: true,
+    type: "timestamptz",
   })
   emailVerified: Date;
 
@@ -59,12 +56,6 @@ export class User extends BaseEntity {
     default: UserRole.USER,
   })
   role: UserRole;
-
-  @Index("is_ban_index")
-  @Column({
-    default: false,
-  })
-  isBan: boolean;
 
   @OneToMany(() => BlockedUser, (blockerUser) => blockerUser.user)
   blockedUsers: BlockedUser[];
@@ -98,15 +89,15 @@ export class User extends BaseEntity {
   })
   posts: Post[];
 
-  @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[];
-
-  @OneToMany(() => Message, (message) => message.user, {
-    cascade: true,
+  @Column({
+    nullable: true,
+    type: "timestamptz",
   })
-  messages: Message[];
+  banAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 
   @BeforeInsert()

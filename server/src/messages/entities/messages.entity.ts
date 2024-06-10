@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import {
 import { MessageFile } from "./message_files.entity";
 import { User } from "src/users/entities/users.entity";
 import { Conversation } from "src/conversations/entities/conversations.entity";
+import { MessageRead } from "./mesage_reads.entity";
 
 @Entity({
   name: "messages",
@@ -23,11 +25,6 @@ export class Message extends BaseEntity {
   })
   content?: string;
 
-  @Column({
-    default: false,
-  })
-  seen: boolean;
-
   @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
     onDelete: "CASCADE",
   })
@@ -38,11 +35,23 @@ export class Message extends BaseEntity {
   })
   files: MessageFile[];
 
-  @ManyToOne(() => User, (user) => user.messages, {
-    onDelete: "CASCADE",
-  })
-  user: User;
+  @ManyToOne(() => User, (user) => user.id)
+  sender: User;
 
-  @CreateDateColumn()
+  @OneToMany(() => MessageRead, (view) => view.message)
+  reads: MessageRead[];
+
+  @Column({ nullable: true, type: "timestamptz" })
+  offlineAt: Date;
+
+  @Column({
+    nullable: true,
+    type: "timestamptz",
+  })
+  deleteAt: Date;
+
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 }

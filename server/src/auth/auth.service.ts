@@ -108,7 +108,7 @@ export class AuthService {
       throw new BadRequestException("Email or password is incorrect");
     }
 
-    if (user.isBan) {
+    if (user.banAt) {
       throw new BadRequestException("Your account has been banned");
     }
 

@@ -1,13 +1,12 @@
 import { getAllConversation } from "@/app/actions/conversationAction";
 import ChatSidebar from "@/app/components/Messages/ChatSidebar";
 import getServerSession from "@/app/libs/session";
+import { PropsWithChildren } from "react";
 
-export default async function ChatLayout({
-  children,
-}: React.PropsWithChildren) {
-  const { accessToken, currentUser } = await getServerSession();
+export default async function ChatLayout({ children }: PropsWithChildren) {
+  const { currentUser } = await getServerSession();
 
-  const { conversations, total } = await getAllConversation(accessToken);
+  const { conversations, total } = await getAllConversation();
 
   return (
     <div className="row gx-0">

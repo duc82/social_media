@@ -3,13 +3,10 @@ import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { PencilSquare, Search } from "react-bootstrap-icons";
-import Avatar from "../Avatar";
 import { Conversation } from "@/app/types/conversation";
 import { useState } from "react";
 import { FullUser } from "@/app/types/user";
-import { usePathname } from "next/navigation";
-import useSocket from "@/app/hooks/useSocket";
-import clsx from "clsx";
+import ConversationItem from "./ConversationItem";
 
 interface ChatSidebarProps {
   initialConversations: Conversation[];
@@ -24,8 +21,6 @@ export default function ChatSidebar({
 }: ChatSidebarProps) {
   const [conversations, setConversation] = useState(initialConversations);
   const [total, setTotal] = useState(inititalTotal);
-  const pathname = usePathname();
-  const { onlines } = useSocket();
 
   return (
     <div className="col-lg-4 col-xxl-3">
@@ -107,52 +102,13 @@ export default function ChatSidebar({
               </form>
 
               <ul className="nav flex-column flex-nowrap overflow-y-auto nav-pills nav-pills-soft mt-4">
-                {conversations.map((conversation) => {
-                  const member = conversation.members.find(
-                    (member) => member.user.id !== currentUser?.id
-                  );
-                  const user = member?.user;
-
-                  const isOnline = onlines.some(
-                    (online) => online.userId === user?.id
-                  );
-
-                  return (
-                    <li key={conversation.id} className="mb-3">
-                      <Link
-                        href={`/messages/${conversation.id}`}
-                        className={clsx(
-                          "nav-link text-start",
-                          pathname === `/messages/${conversation.id}` &&
-                            "active"
-                        )}
-                      >
-                        <div className="d-flex">
-                          <Avatar
-                            wrapperClassName={clsx(
-                              "flex-shrink-0 me-2",
-                              isOnline ? "status-online" : "status-offline"
-                            )}
-                            className="avatar-img rounded-circle"
-                            src={user?.profile.avatar || ""}
-                            alt={user?.fullName}
-                          />
-                          <div className="flex-grow-1 d-block">
-                            <h6 className="mb-0 mt-1">
-                              {conversation.isGroup
-                                ? conversation.name
-                                : user?.fullName}
-                            </h6>
-                            <div className="small text-secondary">
-                              {conversation.messages.length > 0 &&
-                                conversation.messages[0].content}
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
+                {conversations.map((conversation) => (
+                  <ConversationItem
+                    key={conversation.id}
+                    conversation={conversation}
+                    currentUser={currentUser}
+                  />
+                ))}
               </ul>
             </div>
           </div>

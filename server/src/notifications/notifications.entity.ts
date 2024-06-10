@@ -1,26 +1,31 @@
+import { User } from "src/users/entities/users.entity";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
-  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./users.entity";
 
 @Entity({
-  name: "blocked_users",
+  name: "notifications",
 })
-export class BlockedUser extends BaseEntity {
+export class Notification extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
-  blockedUserId: string;
+  title: string;
 
-  @ManyToOne(() => User, (user) => user.blockedUsers)
+  @Column()
+  description: string;
+
+  @ManyToOne(() => User)
   user: User;
+
+  @Column()
+  isRead: boolean;
 
   @CreateDateColumn({
     type: "timestamptz",

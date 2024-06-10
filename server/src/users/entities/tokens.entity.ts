@@ -20,9 +20,12 @@ export class Token extends BaseEntity {
 
   @Column({
     nullable: true,
+    type: "timestamptz",
   })
   resetTokenExpires: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamptz",
+  })
   createdAt: Date;
 }
