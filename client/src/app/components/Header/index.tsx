@@ -11,14 +11,17 @@ import {
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
-import SearchDropdown from "./SearchDropdown";
-import ButtonSignOut from "./ButtonSignOut";
 import getServerSession from "@/app/libs/session";
+import HeaderSearch from "./HeaderSearch";
+import ButtonSignOut from "./ButtonSignOut";
+import messageService from "@/app/services/messageService";
 
 const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
 export default async function Header() {
   const { currentUser } = await getServerSession();
+
+  const unseen = await messageService.countUnseen();
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">
@@ -48,7 +51,7 @@ export default async function Header() {
         {/* Collapse */}
         <div className="navbar-collapse collapse" id="navbarCollapse">
           <div className="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
-            <SearchDropdown />
+            <HeaderSearch />
           </div>
 
           <HeaderMenu />
@@ -59,9 +62,14 @@ export default async function Header() {
             <Link
               href="/messages"
               title="Messages"
-              className="nav-link bg-light icon-md btn btn-light p-0"
+              className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
             >
               <ChatLeftTextFill className="fs-6" />
+              {unseen > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {unseen > 99 ? "99+" : unseen}
+                </span>
+              )}
             </Link>
           </li>
           <li className="nav-item ms-2">

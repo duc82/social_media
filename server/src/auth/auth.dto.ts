@@ -1,12 +1,25 @@
 import { OmitType } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsNotEmpty, IsString } from "class-validator";
-import { CreateUserDto } from "src/users/dto/user.dto";
+import {
+  IsDate,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+} from "class-validator";
+import { Gender } from "src/users/interfaces/profiles.interface";
+import { CreateUserDto } from "src/users/users.dto";
 
 export class SignUpDto extends CreateUserDto {
   @IsNotEmpty()
   @IsString()
   avatar: string;
+
+  @IsEnum(Gender)
+  gender: Gender;
+
+  @IsDateString()
+  birthday: string;
 }
 
 export class SignInDto extends OmitType(CreateUserDto, [

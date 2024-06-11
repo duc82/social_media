@@ -31,10 +31,13 @@ function formatDateTime(time: string): string {
   });
 }
 
-const formatDate = (date: string | number | Date) => {
-  return new Date(date).toLocaleDateString("en", {
-    dateStyle: "medium",
-  });
+const formatDate = (
+  date: string | number | Date,
+  options?: Intl.DateTimeFormatOptions
+) => {
+  return Intl.DateTimeFormat("en-US", options).format(
+    typeof date === "string" ? new Date(date) : date
+  );
 };
 
 export { formatDateTime, formatDate };

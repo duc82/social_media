@@ -2,13 +2,14 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { UserService } from "src/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
-import { Profile } from "src/users/entities/profile.entity";
+import { Profile } from "src/users/entities/profiles.entity";
 import { MailerService } from "@nestjs-modules/mailer";
-import { Role, UserPayload } from "src/users/interfaces/user.interface";
-import { Token } from "src/users/entities/token.entity";
-import { User } from "src/users/entities/user.entity";
+import { UserPayload } from "src/users/interfaces/users.interface";
+import { Token } from "src/users/entities/tokens.entity";
+import { User } from "src/users/entities/users.entity";
 import { ConfigService } from "@nestjs/config";
 import { DataSource } from "typeorm";
+import { UserRole } from "src/interfaces/roles.interface";
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     +this.configService.getOrThrow<string>("ACCESS_TOKEN_EXPIRED");
   private readonly refreshTokenExpired: number =
     +this.configService.getOrThrow<string>("REFRESH_TOKEN_EXPIRED");
-  private readonly accessSecret =
+  public readonly accessSecret =
     this.configService.getOrThrow<string>("ACCESS_SECRET");
   private readonly refreshSecret =
     this.configService.getOrThrow<string>("REFRESH_SECRET");
@@ -33,7 +34,7 @@ export class AuthService {
   ) {}
 
   async generateToken(
-    payload: { userId: string; role: Role },
+    payload: { userId: string; role: UserRole },
     options?: JwtSignOptions,
   ) {
     return this.jwtService.signAsync(payload, options);
@@ -53,9 +54,11 @@ export class AuthService {
 
     const profile = this.dataSource.getRepository(Profile).create({
       avatar: signUpDto.avatar,
+      birthday: signUpDto.birthday,
+      gender: signUpDto.gender,
     });
 
-    const newUser = await this.usersService.create({
+    const user = await this.usersService.create({
       email: signUpDto.email,
       fullName: signUpDto.fullName,
       password: signUpDto.password,
@@ -64,8 +67,8 @@ export class AuthService {
 
     // send verify email
     const payload: UserPayload = {
-      userId: newUser.id,
-      role: newUser.role,
+      userId: user.id,
+      role: user.role,
     };
 
     const token = await this.generateToken(payload, {
@@ -85,7 +88,7 @@ export class AuthService {
     });
 
     return {
-      user: newUser,
+      user,
       message: "Sign up successfully, please verify your account",
     };
   }
@@ -105,7 +108,11 @@ export class AuthService {
       throw new BadRequestException("Email or password is incorrect");
     }
 
-    const payload = {
+    if (user.banAt) {
+      throw new BadRequestException("Your account has been banned");
+    }
+
+    const payload: UserPayload = {
       userId: user.id,
       role: user.role,
     };
@@ -170,7 +177,7 @@ export class AuthService {
       throw new BadRequestException("Invalid token");
     }
 
-    const user = await this.usersService.findById(payload.userId);
+    const user = await this.usersService.getById(payload.userId);
 
     if (!user) {
       throw new BadRequestException("User not found");
@@ -198,7 +205,7 @@ export class AuthService {
   async verifyEmail(token: string) {
     try {
       const payload = await this.verifyToken<UserPayload>(token);
-      const user = await this.usersService.findById(payload.userId, {
+      const user = await this.usersService.getById(payload.userId, {
         select: ["id", "emailVerified"],
       });
 
@@ -272,7 +279,7 @@ export class AuthService {
   async resetPassword(token: string, password: string) {
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      const user = await this.usersService.findById(payload.userId, {
+      const user = await this.usersService.getById(payload.userId, {
         relations: ["token"],
       });
 

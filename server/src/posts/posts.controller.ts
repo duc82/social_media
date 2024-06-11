@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
-import { CreatePostDto, ListAllPostsDto } from "./dto/posts.dto";
+import { CreatePostDto, ListAllPostsDto } from "./posts.dto";
 import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "src/users/users.decorator";
 

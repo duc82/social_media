@@ -16,7 +16,7 @@ export default function Avatar({
   alt,
   width,
   height,
-  wrapperClassName = "w-100 h-100",
+  wrapperClassName,
   className,
   sizes = "100%"
 }: AvatarProps) {
@@ -27,7 +27,7 @@ export default function Avatar({
         alt={alt ?? "Avatar"}
         fill
         sizes={sizes}
-        className={clsx("rounded", className)}
+        className={clsx("avatar-img rounded", className)}
       />
     </div>
   );

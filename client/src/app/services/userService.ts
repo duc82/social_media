@@ -4,7 +4,7 @@ import type {
   Friendship,
   FriendshipStatus,
   FullUser,
-  UsersReponse,
+  UsersReponse
 } from "../types/user";
 import apiRequest from "./api";
 
@@ -12,10 +12,10 @@ export interface GetFriendsOptions extends Omit<Options, "userId"> {}
 
 const userService = {
   getAll: async (options?: Options) => {
-    const { page = 1, limit = 10, search = "" } = options || {};
-    return apiRequest<UsersReponse>(
-      `/users?search=${search}&page=${page}&limit=${limit}`
-    );
+    const query = options
+      ? `?limit=${options.limit}&page=${options.page}&search=${options.search}`
+      : "";
+    return apiRequest<UsersReponse>(`/users${query}`);
   },
 
   getUserProfile: async (id: string) => {
@@ -25,8 +25,8 @@ const userService = {
   getCurrent: async (accessToken: string) => {
     return apiRequest<FullUser>("/users/current", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -39,8 +39,8 @@ const userService = {
 
     return apiRequest<FriendsResponse>(`/users/friends/${status}${query}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -52,8 +52,8 @@ const userService = {
 
     return apiRequest<FriendsResponse>(`/users/friends/requests${query}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -65,8 +65,8 @@ const userService = {
 
     return apiRequest<FriendsResponse>(`/users/friends/suggested${query}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -75,8 +75,8 @@ const userService = {
       method: "POST",
       body: JSON.stringify({ id: userId }),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -84,16 +84,16 @@ const userService = {
     return apiRequest<Friendship>(`/users/friends/cancel/${userId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
   getFriendship: async (accessToken: string, friendId: string) => {
     return apiRequest<Friendship>(`/users/friends/${friendId}/friendship`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -102,8 +102,8 @@ const userService = {
       method: "POST",
       body: JSON.stringify({ id: userId }),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
   },
 
@@ -111,10 +111,10 @@ const userService = {
     return apiRequest<Friendship>(`/users/friends/decline/${userId}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
-  },
+  }
 };
 
 export default userService;

@@ -1,8 +1,8 @@
-import { Post } from "./entities/post.entity";
+import { Post } from "./entities/posts.entity";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { CreatePostDto, ListAllPostsDto } from "./dto/posts.dto";
-import { User } from "src/users/entities/user.entity";
-import { PostFile } from "./entities/post_file.entity";
+import { CreatePostDto, ListAllPostsDto } from "./posts.dto";
+import { User } from "src/users/entities/users.entity";
+import { PostFile } from "./entities/post_files.entity";
 import { DataSource, ILike } from "typeorm";
 
 @Injectable()
@@ -34,7 +34,7 @@ export class PostsService {
     }
 
     const newPost = this.dataSource.getRepository(Post).create({
-      audience: post.audience,
+      access: post.access,
       content: post.content,
       files: post.files,
       likes: [],

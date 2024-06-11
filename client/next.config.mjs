@@ -1,8 +1,4 @@
-import path from "path";
-
 // @ts-check
-
-const __dirname = path.resolve();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -18,10 +14,7 @@ const nextConfig = {
       },
     ],
   },
-  sassOptions: {
-    includePaths: [path.join(__dirname, "src/app", "styles")],
-  },
-  reactStrictMode: true,
+  reactStrictMode: false,
 };
 
 export default nextConfig;

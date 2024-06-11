@@ -3,8 +3,8 @@ import { Post } from "../types/post";
 
 interface PostState {
   posts: Post[];
-  addPost: (post: Post) => void;
-  removePost: (id: string) => void;
+  addPost: (_post: Post) => void;
+  removePost: (_id: string) => void;
 }
 
 const PostContext = createContext<PostState>({

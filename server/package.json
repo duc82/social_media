@@ -23,7 +23,8 @@
     "migration:generate": "npm run typeorm migration:generate",
     "migration:run": "npm run typeorm migration:run",
     "migration:revert": "npm run typeorm migration:revert",
-    "seed": "ts-node -r tsconfig-paths/register src/seeds"
+    "seed": "ts-node -r tsconfig-paths/register src/seeds",
+    "update": "npx npm-check-updates -u && npm i"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.11.2",
@@ -88,6 +89,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)": "<rootDir>/../src/$1"
+    }
   }
 }

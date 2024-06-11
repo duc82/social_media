@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "zuck.js/css";
 import "zuck.js/skins/snapgram";
+import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./styles/globals.scss";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
@@ -12,11 +13,11 @@ const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Social Media",
-  description: "Social"
+  description: "Social",
 };
 
 export default function RootLayout({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {

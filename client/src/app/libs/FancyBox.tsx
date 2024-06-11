@@ -1,12 +1,12 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, ReactNode, HTMLAttributes } from "react";
 import { Fancybox as NativeFancybox, OptionsType } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
-interface FancyboxProps extends React.HTMLAttributes<HTMLDivElement> {
+interface FancyboxProps extends HTMLAttributes<HTMLDivElement> {
   delegate?: string;
   options?: OptionsType;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function Fancybox(props: FancyboxProps) {

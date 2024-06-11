@@ -1,18 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { User } from "./entities/user.entity";
-import {
-  DataSource,
-  FindOneOptions,
-  FindOptionsWhere,
-  In,
-  IsNull,
-  Not,
-} from "typeorm";
-import { CreateUserDto, ProfileDto } from "./dto/user.dto";
-import { Profile } from "./entities/profile.entity";
-import { FriendShip } from "./entities/friendship.entity";
-import { FriendshipStatus } from "./interfaces/friendship.interface";
+import { User } from "./entities/users.entity";
+import { And, DataSource, FindOneOptions, In, IsNull, Not, Raw } from "typeorm";
+import { CreateUserDto, ProfileDto } from "./users.dto";
+import { Profile } from "./entities/profiles.entity";
+import { FriendShip } from "./entities/friendships.entity";
+import { FriendshipStatus } from "./interfaces/friendships.interface";
 import { QueryDto } from "src/dto/query.dto";
+import { BlockedUser } from "./entities/blocked_users.entity";
 
 @Injectable()
 export class UserService {
@@ -25,7 +19,14 @@ export class UserService {
     });
   }
 
-  async findById(id: string, options?: FindOneOptions<User>) {
+  async getProfile(id: string) {
+    const user = await this.getById(id, {
+      relations: ["profile"],
+    });
+    return user;
+  }
+
+  async getById(id: string, options?: FindOneOptions<User>) {
     return this.dataSource.getRepository(User).findOne({
       where: {
         id,
@@ -34,12 +35,40 @@ export class UserService {
     });
   }
 
+  async getBlockedUsers(userId: string) {
+    const usersBlockedByCurrentUser = await this.dataSource
+      .getRepository(BlockedUser)
+      .find({
+        where: {
+          blockedUserId: userId,
+        },
+        relations: ["user"],
+      });
+
+    const usersBlockingCurrentUser = await this.dataSource
+      .getRepository(BlockedUser)
+      .find({
+        where: {
+          user: {
+            id: userId,
+          },
+        },
+      });
+
+    return [
+      ...usersBlockedByCurrentUser.map((blockedUser) => blockedUser.user.id),
+      ...usersBlockingCurrentUser.map(
+        (blockedUser) => blockedUser.blockedUserId,
+      ),
+    ];
+  }
+
   async getAll(query: QueryDto) {
     const { search, page, limit } = query;
 
     const skip = (page - 1) * limit;
 
-    const users = await this.dataSource
+    const [users, total] = await this.dataSource
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
@@ -48,26 +77,51 @@ export class UserService {
       })
       .skip(skip)
       .take(limit)
-      .getMany();
+      .getManyAndCount();
 
-    const total = await this.dataSource.getRepository(User).count();
+    return { users, total, page, limit };
+  }
+
+  async search(currentUserId: string, query: QueryDto) {
+    const { search, page, limit } = query;
+
+    const skip = (page - 1) * limit;
+
+    const blockedUsers = await this.getBlockedUsers(currentUserId);
+
+    const [users, total] = await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder("u")
+      .leftJoinAndSelect("u.profile", "profile")
+      .where('unaccent(u."fullName") ILIKE unaccent(:search)', {
+        search: `%${search}%`,
+      })
+      .andWhere("u.emailVerified IS NOT NULL")
+      .andWhere("u.isBan = false")
+      .andWhere(
+        blockedUsers.length > 0 ? "u.id NOT IN (:...blockedUsers)" : "TRUE",
+        { blockedUsers },
+      )
+      .skip(skip)
+      .limit(limit)
+      .getManyAndCount();
 
     return { users, total, page, limit };
   }
 
   async create(user: CreateUserDto) {
     const newUser = this.dataSource.getRepository(User).create(user);
-    await this.dataSource.getRepository(User).save(newUser);
+    await newUser.save();
     return newUser;
   }
 
   async update(id: string, attrs: Partial<User>) {
     await this.dataSource.getRepository(User).update({ id }, attrs);
-    return this.findById(id);
+    return this.getById(id);
   }
 
   async delete(id: string) {
-    const user = await this.findById(id);
+    const user = await this.getById(id);
 
     if (!user) {
       throw new NotFoundException("User not found");
@@ -84,28 +138,23 @@ export class UserService {
     return deletedResult;
   }
 
-  async getUserProfile(id: string) {
-    const user = await this.findById(id, {
-      relations: ["profile"],
-    });
-    return user;
-  }
-
-  async getSuggestedFriends(userId: string, query: QueryDto) {
-    const { page, limit } = query;
+  async getSuggestedFriends(currentUserId: string, query: QueryDto) {
+    const { page, limit, search } = query;
 
     const skip = (page - 1) * limit;
+
+    const blockedUsers = await this.getBlockedUsers(currentUserId);
 
     const friendships = await this.dataSource.getRepository(FriendShip).find({
       where: [
         {
           user: {
-            id: userId,
+            id: currentUserId,
           },
         },
         {
           friend: {
-            id: userId,
+            id: currentUserId,
           },
         },
       ],
@@ -113,35 +162,35 @@ export class UserService {
     });
 
     const friendIds = friendships.map((friendship) => {
-      if (friendship.user.id === userId) {
+      if (friendship.user.id === currentUserId) {
         return friendship.friend.id;
       }
       return friendship.user.id;
     });
 
-    friendIds.push(userId);
+    friendIds.push(currentUserId);
 
-    const where: FindOptionsWhere<User> | FindOptionsWhere<User>[] = {
-      id: Not(In(friendIds)),
-      emailVerified: Not(IsNull()),
-    };
-
-    const suggestedFriends = await this.dataSource.getRepository(User).find({
-      where,
-      relations: ["profile"],
-      skip,
-      take: limit,
-    });
-
-    const total = await this.dataSource.getRepository(User).count({
-      where,
-    });
+    const [suggestedFriends, total] = await this.dataSource
+      .getRepository(User)
+      .findAndCount({
+        where: {
+          id: And(Not(In(friendIds)), Not(In(blockedUsers))),
+          emailVerified: Not(IsNull()),
+          fullName: Raw(
+            (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
+            { search },
+          ),
+        },
+        relations: ["profile"],
+        skip,
+        take: limit,
+      });
 
     return { friends: suggestedFriends, page, limit, total };
   }
 
-  async updateUserProfile(id: string, profile: ProfileDto, url: string) {
-    const user = await this.findById(id, {
+  async updateProfile(id: string, profile: ProfileDto, url: string) {
+    const user = await this.getById(id, {
       relations: ["profile"],
     });
 
@@ -182,11 +231,10 @@ export class UserService {
         ],
         relations: ["user", "friend"],
       });
-    // SELECT EXISTS(SELECT 1 FROM friend_ship WHERE userId = ${userId} AND friendId = ${friendId})
 
     if (friendshipExist) {
       friendshipExist.status = FriendshipStatus.PENDING;
-      await this.dataSource.getRepository(FriendShip).save(friendshipExist);
+      await friendshipExist.save();
       return friendshipExist;
     }
 
@@ -194,9 +242,8 @@ export class UserService {
       user: { id: userId },
       friend: { id: friendId },
     });
-    // INSERT INTO friend_ship (userId, friendId) VALUES (${userId}, ${friendId})
 
-    await this.dataSource.getRepository(FriendShip).save(newFriendship);
+    await newFriendship.save();
 
     return newFriendship;
   }
@@ -215,7 +262,6 @@ export class UserService {
     }
 
     await this.dataSource.getRepository(FriendShip).delete(friendship.id);
-    // DELETE FROM friend_ship WHERE id = ${friendship.id}
 
     return { message: "Friendship canceled successfully" };
   }
@@ -235,7 +281,7 @@ export class UserService {
     }
 
     friendship.status = FriendshipStatus.ACCEPTED;
-    await this.dataSource.getRepository(FriendShip).save(friendship);
+    await friendship.save();
 
     return friendship;
   }
@@ -257,7 +303,7 @@ export class UserService {
     friendship.user.id = userId;
     friendship.friend.id = friendId;
 
-    await this.dataSource.getRepository(FriendShip).save(friendship);
+    await friendship.save();
 
     return friendship;
   }
@@ -282,19 +328,17 @@ export class UserService {
     const { page, limit } = query;
     const skip = (page - 1) * limit;
 
-    const where: FindOptionsWhere<FriendShip> | FindOptionsWhere<FriendShip>[] =
-      [
-        { user: { id: userId }, status },
-        { friend: { id: userId }, status },
-      ];
-
-    const friendships = await this.dataSource.getRepository(FriendShip).find({
-      where,
-      skip,
-      take: limit,
-      relations: ["user", "friend", "user.profile", "friend.profile"],
-    });
-    // SELECT * FROM friend_ship WHERE (userId = ${userId} OR friendId = ${userId}) AND status = ${status} LIMIT ${limit} OFFSET ${skip}
+    const [friendships, total] = await this.dataSource
+      .getRepository(FriendShip)
+      .findAndCount({
+        where: [
+          { user: { id: userId }, status },
+          { friend: { id: userId }, status },
+        ],
+        skip,
+        take: limit,
+        relations: ["user", "friend", "user.profile", "friend.profile"],
+      });
 
     const friends = friendships.map((friendship) => {
       if (friendship.user.id === userId) {
@@ -303,36 +347,27 @@ export class UserService {
       return friendship.user;
     });
 
-    const total = await this.dataSource.getRepository(FriendShip).count({
-      where,
-    });
-
     return { friends, total, page, limit };
   }
 
-  async getFriendRequests(userId: string, query: QueryDto) {
+  async getFriendRequests(currentUserId: string, query: QueryDto) {
     const { page, limit } = query;
     const skip = (page - 1) * limit;
 
-    const where: FindOptionsWhere<FriendShip> | FindOptionsWhere<FriendShip>[] =
-      {
-        friend: { id: userId },
-        status: FriendshipStatus.PENDING,
-      };
-
-    const friendships = await this.dataSource.getRepository(FriendShip).find({
-      where,
-      skip,
-      take: limit,
-      relations: ["user", "friend", "user.profile", "friend.profile"],
-    });
+    const [friendships, total] = await this.dataSource
+      .getRepository(FriendShip)
+      .findAndCount({
+        where: {
+          friend: { id: currentUserId },
+          status: FriendshipStatus.PENDING,
+        },
+        skip,
+        take: limit,
+        relations: ["user", "friend", "user.profile", "friend.profile"],
+      });
 
     const friends = friendships.map((friendship) => {
       return friendship.user;
-    });
-
-    const total = await this.dataSource.getRepository(FriendShip).count({
-      where,
     });
 
     return { friends, total, page, limit };

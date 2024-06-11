@@ -4,14 +4,19 @@ import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PostsModule } from "./posts/posts.module";
-import { EventsGateway } from "./events/events.gateway";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
 import { AuthModule } from "./auth/auth.module";
 import { CoreModule } from "./core/core.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConversationsModule } from "./conversations/conversations.module";
-import { MessagesModule } from './messages/messages.module';
+import { MessagesModule } from "./messages/messages.module";
+import { GroupsModule } from "./groups/groups.module";
+import { EventsModule } from "./events/events.module";
+import { BlogsModule } from "./blogs/blogs.module";
+import { NotificationsController } from './notifications/notifications.controller';
+import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -24,7 +29,7 @@ import { MessagesModule } from './messages/messages.module';
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging: true,
+        logging: false,
         autoLoadEntities: true,
       }),
     }),
@@ -61,8 +66,12 @@ import { MessagesModule } from './messages/messages.module';
     PostsModule,
     ConversationsModule,
     MessagesModule,
+    GroupsModule,
+    EventsModule,
+    BlogsModule,
+    NotificationsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, EventsGateway],
+  controllers: [AppController, NotificationsController],
+  providers: [AppService, NotificationsService],
 })
 export class AppModule {}

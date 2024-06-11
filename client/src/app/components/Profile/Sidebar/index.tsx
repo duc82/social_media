@@ -23,7 +23,10 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
               <ul className="list-unstyled mt-3 mb-0">
                 <li className="mb-2">
                   <CalendarDate className="pe-1" size={20} />
-                  Born: <strong>{formatDate(user.createdAt)}</strong>{" "}
+                  Born:{" "}
+                  <strong>
+                    {formatDate(user.createdAt, { dateStyle: "medium" })}
+                  </strong>{" "}
                 </li>
                 {user.profile.maritalStatus && (
                   <li className="mb-2">

@@ -23,10 +23,10 @@ function ResetPassword() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<ResetPasswordDto>({
     mode: "onChange",
-    resolver: zodResolver(resetPasswordSchema)
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const error = urlSearchParams.get("error");
@@ -58,7 +58,7 @@ function ResetPassword() {
     if (!token) {
       router.push("/signin");
     }
-  }, [token]);
+  }, [token, router]);
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">

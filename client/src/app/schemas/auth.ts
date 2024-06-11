@@ -24,6 +24,12 @@ export const signUpSchema = z
     confirmPassword: z.string({
       required_error: "Passwords do not match",
     }),
+    dateOfBirth: z.object({
+      day: z.number(),
+      month: z.number(),
+      year: z.number(),
+    }),
+    gender: z.enum(["male", "female", "other"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

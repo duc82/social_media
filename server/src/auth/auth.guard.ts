@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { UserPayload } from "src/users/interfaces/user.interface";
+import { UserPayload } from "src/users/interfaces/users.interface";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     const accessToken = this.extractTokenFromHeader(request);
 
     if (!accessToken) {
-      throw new UnauthorizedException("You are not authorized");
+      throw new UnauthorizedException("You are not authenticated");
     }
 
     try {

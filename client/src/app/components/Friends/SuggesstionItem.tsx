@@ -1,5 +1,6 @@
 "use client";
 
+import { directMessage } from "@/app/actions/conversationAction";
 import { sendFriendRequest } from "@/app/actions/userAction";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
@@ -68,7 +69,7 @@ export default function SuggesstionItem(friend: FullUser) {
           <p className="card-text mb-2">
             {status === "send" && "Request sent"}
             {status === "cancel" && "Request canceled"}
-            {!status && friend.profile.overview}
+            {!status && friend.profile.bio}
           </p>
           <div className="d-flex flex-column">
             {status === "send" ? (
@@ -112,13 +113,14 @@ export default function SuggesstionItem(friend: FullUser) {
                 <span className="ms-2">Add friend</span>
               </button>
             )}
-            <Link
-              href={`/messages/${friend.id}`}
+            <button
+              type="button"
+              onClick={() => directMessage(friend.id)}
               className="btn btn-secondary-soft d-flex justify-content-center align-items-center"
             >
               <ChatLeftTextFill size={16} />
               <span className="ms-2">Message</span>
-            </Link>
+            </button>
           </div>
         </div>
       </div>

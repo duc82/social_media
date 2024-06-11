@@ -13,53 +13,61 @@ import {
 import { UserService } from "./users.service";
 import { AuthGuard } from "src/auth/auth.guard";
 import { User } from "./users.decorator";
-import { ProfileDto } from "./dto/user.dto";
+import { ProfileDto } from "./users.dto";
 import { QueryDto } from "src/dto/query.dto";
-import { FriendshipStatus } from "./interfaces/friendship.interface";
+import { FriendshipStatus } from "./interfaces/friendships.interface";
 
 @Controller("api/users")
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
   @Get()
-  async getAllUsers(@Query() query: QueryDto) {
+  async getAll(@Query() query: QueryDto) {
     return this.usersService.getAll(query);
   }
 
+  @UseGuards(AuthGuard)
+  @Get("search")
+  async search(
+    @User("userId") currentUserId: string,
+    @Query() query: QueryDto,
+  ) {
+    return this.usersService.search(currentUserId, query);
+  }
+
   @Get(":id/profile")
-  async getUserProfile(@Param("id") userId: string) {
-    return this.usersService.getUserProfile(userId);
+  async getProfile(@Param("id") userId: string) {
+    return this.usersService.getProfile(userId);
   }
 
   @UseGuards(AuthGuard)
   @Get("current")
-  async getCurrentUser(@User("userId") userId: string) {
-    console.log("get current");
-    return this.usersService.getUserProfile(userId);
+  async getCurrent(@User("userId") currentUserId: string) {
+    return this.usersService.getProfile(currentUserId);
   }
 
   @UseGuards(AuthGuard)
   @Post("profile/update")
-  async updateUserProfile(
+  async updateProfile(
     @User("userId") userId: string,
     @Url() url: string,
     @Body() profile: ProfileDto,
   ) {
-    return this.usersService.updateUserProfile(userId, profile, url);
+    return this.usersService.updateProfile(userId, profile, url);
   }
 
   @Delete("delete/:id")
-  async deleteUser(@Param("id") id: string) {
+  async delete(@Param("id") id: string) {
     return this.usersService.delete(id);
   }
 
   @UseGuards(AuthGuard)
   @Get("friends/suggested")
   async getSuggestedFriends(
-    @User("userId") userId: string,
+    @User("userId") currentUserId: string,
     @Query() query: QueryDto,
   ) {
-    return this.usersService.getSuggestedFriends(userId, query);
+    return this.usersService.getSuggestedFriends(currentUserId, query);
   }
 
   @UseGuards(AuthGuard)
