@@ -21,6 +21,9 @@ export class Notification extends BaseEntity {
   @Column()
   description: string;
 
+  @Column()
+  isFriendRequest: boolean;
+
   @ManyToOne(() => User)
   user: User;
 
