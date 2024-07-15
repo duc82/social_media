@@ -5,7 +5,7 @@ import {
   ClassSerializerInterceptor,
   ValidationPipe,
 } from "@nestjs/common";
-import { AllExceptionsFilter } from "./all-exceptions/all-exceptions.filter";
+import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +24,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(
+    // validate the DTO object
     new ValidationPipe({
       exceptionFactory: (errors) => {
         const firstError = Object.values(errors[0].constraints)[0];

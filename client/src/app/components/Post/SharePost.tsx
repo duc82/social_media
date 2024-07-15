@@ -1,6 +1,5 @@
 import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreateModal";
-import EmojiModal from "@/app/components/Post/CreateModal/EmojiModal";
 import getServerSession from "@/app/libs/session";
 import Link from "next/link";
 import {
@@ -11,7 +10,7 @@ import {
   Envelope,
   ImageFill,
   PencilSquare,
-  ThreeDots
+  ThreeDots,
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
@@ -20,7 +19,6 @@ export default async function SharePost() {
   return (
     <>
       <CreatePostModal currentUser={currentUser} />
-      <EmojiModal />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">
           <Avatar

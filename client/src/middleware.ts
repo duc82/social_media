@@ -24,7 +24,8 @@ export const config = {
      * - resetPassword (reset password page)
      * - verify (verify email page)
      * - ringing-call (ringing call page)
+     * - admin (admin page)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|signin|signup|forgotPassword|resetPassword|verify|ringing-call).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|signin|signup|forgotPassword|resetPassword|verify|ringing-call|admin).*)",
   ],
 };

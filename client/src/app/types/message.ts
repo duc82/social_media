@@ -10,10 +10,18 @@ interface MessageFile {
 interface Message {
   id: string;
   content: string | null;
-  seen: boolean;
   files: MessageFile[];
   user: FullUser;
   conversationId: string;
+  reads: MessageRead[];
+  deleteAt: string | null;
+  createdAt: string;
+}
+
+interface MessageRead {
+  id: string;
+  user: FullUser;
+  message: Message;
   createdAt: string;
 }
 

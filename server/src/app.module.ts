@@ -1,22 +1,21 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UsersModule } from "./users/users.module";
+import { UsersModule } from "./modules/users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { PostsModule } from "./posts/posts.module";
+import { PostsModule } from "./modules/posts/posts.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
-import { AuthModule } from "./auth/auth.module";
-import { CoreModule } from "./core/core.module";
+import { AuthModule } from "./modules/auth/auth.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConversationsModule } from "./conversations/conversations.module";
-import { MessagesModule } from "./messages/messages.module";
-import { GroupsModule } from "./groups/groups.module";
-import { EventsModule } from "./events/events.module";
-import { BlogsModule } from "./blogs/blogs.module";
-import { NotificationsController } from './notifications/notifications.controller';
-import { NotificationsService } from './notifications/notifications.service';
-import { NotificationsModule } from './notifications/notifications.module';
+import { ConversationsModule } from "./modules/conversations/conversations.module";
+import { MessagesModule } from "./modules/messages/messages.module";
+import { GroupsModule } from "./modules/groups/groups.module";
+import { EventsModule } from "./modules/events/events.module";
+import { BlogsModule } from "./modules/blogs/blogs.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
+import { FriendsModule } from "./modules/friends/friends.module";
+import { JwtGlobalModule } from "./modules/jwt/jwt.module";
 
 @Module({
   imports: [
@@ -60,7 +59,7 @@ import { NotificationsModule } from './notifications/notifications.module';
         },
       }),
     }),
-    CoreModule,
+    JwtGlobalModule,
     AuthModule,
     UsersModule,
     PostsModule,
@@ -70,8 +69,9 @@ import { NotificationsModule } from './notifications/notifications.module';
     EventsModule,
     BlogsModule,
     NotificationsModule,
+    FriendsModule,
   ],
-  controllers: [AppController, NotificationsController],
-  providers: [AppService, NotificationsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

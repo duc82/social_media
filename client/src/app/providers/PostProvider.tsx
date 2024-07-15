@@ -1,11 +1,22 @@
 "use client";
-import { ReactNode, useState } from "react";
+import { ReactNode, createContext, useState } from "react";
 import { Post } from "../types/post";
-import PostContext from "../contexts/PostContext";
 
-export default function PostProvider({
+interface PostState {
+  posts: Post[];
+  addPost: (_post: Post) => void;
+  removePost: (_id: string) => void;
+}
+
+export const PostContext = createContext<PostState>({
+  posts: [],
+  addPost: () => {},
+  removePost: () => {},
+});
+
+export function PostProvider({
   children,
-  initialPosts
+  initialPosts,
 }: {
   children: ReactNode;
   initialPosts: Post[];

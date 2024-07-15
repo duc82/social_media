@@ -18,6 +18,7 @@ interface Post {
   likes: User[];
   comments: User[];
   audience: "public" | "friends" | "private";
+  deleteAt: string | null;
   createdAt: string;
 }
 

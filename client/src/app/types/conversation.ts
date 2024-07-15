@@ -13,6 +13,7 @@ interface Conversation {
   isGroup: boolean;
   members: ConversationMember[];
   messages: Message[];
+  deleteAt: string | null;
   createdAt: Date;
 }
 

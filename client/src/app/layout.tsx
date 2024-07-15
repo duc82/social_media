@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "zuck.js/css";
@@ -6,8 +7,8 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./styles/globals.scss";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
-import BootstrapProvider from "./providers/BootstrapProvider";
 import Toaster from "./libs/Toaster";
+import { BootstrapProvider } from "./providers/BootstrapProvider";
 
 const font = Inter({ subsets: ["latin"] });
 
@@ -16,11 +17,7 @@ export const metadata: Metadata = {
   description: "Social",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={font.className}>

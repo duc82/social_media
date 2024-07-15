@@ -1,7 +1,7 @@
 "use server";
 
 import userService, { GetFriendsOptions } from "../services/userService";
-import { FriendshipStatus, FullUser } from "../types/user";
+import { FriendStatus, FullUser } from "../types/user";
 import { revalidatePath as revalidatePathCustom } from "next/cache";
 
 export const getUserById = async (
@@ -38,7 +38,7 @@ export const getFriendship = async (accessToken: string, userId: string) => {
 
 export const getFriends = async (
   accessToken: string,
-  status: FriendshipStatus,
+  status: FriendStatus,
   options?: GetFriendsOptions
 ) => {
   return userService.getFriends(accessToken, status, options);

@@ -16,25 +16,19 @@ export default async function apiRequest<T>(
   endpoint: string,
   options?: Options
 ): Promise<T> {
-  try {
-    const res = await fetch(`${API_URL}/api${endpoint}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers
-      }
-    });
+  const res = await fetch(`${API_URL}/api${endpoint}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    if (!res.ok) {
-      throw new Error(
-        data.message || "Something went wrong. Please try again."
-      );
-    }
-
-    return data;
-  } catch (error) {
-    throw error;
+  if (!res.ok) {
+    throw new Error(data.message || "Something went wrong. Please try again.");
   }
+
+  return data;
 }

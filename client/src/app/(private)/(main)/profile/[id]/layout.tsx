@@ -3,6 +3,7 @@ import ProfileMainHeader from "@/app/components/Profile/Main/Header";
 import ProfileSidebar from "@/app/components/Profile/Sidebar";
 import getServerSession from "@/app/libs/session";
 import userService from "@/app/services/userService";
+import React from "react";
 
 export default async function ProfileLayout({
   children,

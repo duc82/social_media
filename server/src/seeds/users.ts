@@ -1,6 +1,6 @@
-import { UserService } from "src/users/users.service";
+import { UserService } from "src/modules/users/users.service";
 import { INestApplicationContext } from "@nestjs/common";
-import { Gender } from "src/users/interfaces/profiles.interface";
+import { Gender } from "src/modules/users/enums/profiles.enum";
 
 function generateRandomText(length: number) {
   let result = "";

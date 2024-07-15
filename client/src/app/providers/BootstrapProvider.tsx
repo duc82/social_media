@@ -1,14 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import BootstrapContext from "../contexts/BootstrapContext";
+import React, { createContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Tooltip, Popover } from "bootstrap";
 
-export default function BootstrapProvider({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export const BootstrapContext = createContext<any>(undefined);
+
+export function BootstrapProvider({ children }: { children: React.ReactNode }) {
   const [bootstrap, setBootstrap] = useState<any>();
   const pathname = usePathname();
 
@@ -35,7 +32,7 @@ export default function BootstrapProvider({
     const popovers: Popover[] = [...popoverTriggerList].map(
       (popoverTriggerEl) =>
         new bootstrap.Popover(popoverTriggerEl, {
-          container: "body"
+          container: "body",
         })
     );
 

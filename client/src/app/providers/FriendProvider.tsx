@@ -1,28 +1,45 @@
 "use client";
 
-import { useState } from "react";
-import FriendContext from "../contexts/FriendContext";
-import { Friendship, FullUser } from "../types/user";
+import React, { createContext, useState } from "react";
+import { Friend, FullUser } from "../types/user";
 import { useSession } from "next-auth/react";
 import userService from "../services/userService";
 import toast from "react-hot-toast";
 import handlingError from "../utils/error";
 
+interface FriendContextState {
+  friends: FullUser[];
+  friend: Friend | null;
+  isLoading: boolean;
+  sendFriendRequest: (_friendId: string) => Promise<void>;
+  cancelFriendRequest: (_friendId: string) => Promise<void>;
+  acceptFriendRequest: (_friendId: string) => Promise<void>;
+  declineFriendRequest: (_friendId: string) => Promise<void>;
+}
+
 interface FriendProviderProps {
   children: React.ReactNode;
   initialFriends: FullUser[];
-  initialFriendship: Friendship | null;
+  initialFriend: Friend | null;
 }
 
-export default function FriendProvider({
+export const FriendContext = createContext<FriendContextState>({
+  friends: [],
+  friend: null,
+  isLoading: false,
+  sendFriendRequest: async () => {},
+  cancelFriendRequest: async () => {},
+  acceptFriendRequest: async () => {},
+  declineFriendRequest: async () => {},
+});
+
+export function FriendProvider({
   children,
   initialFriends,
-  initialFriendship,
+  initialFriend,
 }: FriendProviderProps) {
   const [friends, setFriends] = useState<FullUser[]>(initialFriends);
-  const [friendship, setFriendship] = useState<Friendship | null>(
-    initialFriendship
-  );
+  const [friend, setFriend] = useState<Friend | null>(initialFriend);
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useSession();
   const accessToken = data?.accessToken!;
@@ -30,11 +47,8 @@ export default function FriendProvider({
   const sendFriendRequest = async (friendId: string) => {
     try {
       setIsLoading(true);
-      const friendship = await userService.sendFriendRequest(
-        accessToken,
-        friendId
-      );
-      setFriendship(friendship);
+      const friend = await userService.sendFriendRequest(accessToken, friendId);
+      setFriend(friend);
     } catch (error) {
       toast.error(handlingError(error));
     } finally {
@@ -46,7 +60,7 @@ export default function FriendProvider({
     try {
       setIsLoading(true);
       await userService.cancelFriendRequest(accessToken, friendId);
-      setFriendship(null);
+      setFriend(null);
     } catch (error) {
       toast.error(handlingError(error));
     } finally {
@@ -57,11 +71,11 @@ export default function FriendProvider({
   const acceptFriendRequest = async (friendId: string) => {
     try {
       setIsLoading(true);
-      const friendship = await userService.acceptFriendRequest(
+      const friend = await userService.acceptFriendRequest(
         accessToken,
         friendId
       );
-      setFriendship(friendship);
+      setFriend(friend);
     } catch (error) {
       toast.error(handlingError(error));
     } finally {
@@ -72,11 +86,11 @@ export default function FriendProvider({
   const declineFriendRequest = async (friendId: string) => {
     try {
       setIsLoading(true);
-      const friendship = await userService.declineFriendRequest(
+      const friend = await userService.declineFriendRequest(
         accessToken,
         friendId
       );
-      setFriendship(friendship);
+      setFriend(friend);
     } catch (error) {
       toast.error(handlingError(error));
     } finally {
@@ -88,7 +102,7 @@ export default function FriendProvider({
     <FriendContext.Provider
       value={{
         friends,
-        friendship,
+        friend,
         isLoading,
         sendFriendRequest,
         cancelFriendRequest,

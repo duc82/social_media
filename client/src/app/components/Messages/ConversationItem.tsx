@@ -20,8 +20,8 @@ export default function ConversationItem({
 }: ConversationItemProps) {
   const pathname = usePathname();
   const { onlines, socket } = useSocket();
-  const [lastMessage, setLastMessage] = useState<Message>(
-    conversation.messages[0]
+  const [lastMessage, setLastMessage] = useState<Message | null>(
+    conversation.messages.length > 0 ? conversation.messages[0] : null
   );
 
   const member = conversation.members.find(
@@ -68,7 +68,9 @@ export default function ConversationItem({
             <h6 className="mb-0 mt-1">
               {conversation.isGroup ? conversation.name : user?.fullName}
             </h6>
-            <div className="small text-secondary">{lastMessage.content}</div>
+            <div className="small text-secondary">
+              {lastMessage ? lastMessage.content : "Create a new conversation"}
+            </div>
           </div>
         </div>
       </Link>

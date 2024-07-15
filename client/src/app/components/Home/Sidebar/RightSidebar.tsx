@@ -8,7 +8,7 @@ export default async function RightSidebar() {
   const { accessToken } = await getServerSession();
   const { friends } = await userService.getSuggestedFriends(accessToken, {
     page: 1,
-    limit: 5
+    limit: 5,
   });
 
   return (
@@ -39,7 +39,7 @@ export default async function RightSidebar() {
         <div className="col-sm-6 col-lg-12 flex-fill">
           <div className="card h-100 overflow-y-auto">
             <div className="card-header pb-0 border-0">
-              <h5 className="card-title mb-0">Today's news</h5>
+              <h5 className="card-title mb-0">Today&apos;s news</h5>
             </div>
             <div className="card-body">
               <div className="mb-3">

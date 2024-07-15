@@ -1,8 +1,10 @@
-type FriendshipStatus = "pending" | "accepted" | "declined";
+type FriendStatus = "pending" | "accepted" | "declined";
 
 type Role = "user" | "admin";
 
 export type Gender = "male" | "female" | "other";
+
+type MarialStatus = "single" | "married" | "divorced" | "widowed" | null;
 
 interface Profile {
   id: string;
@@ -10,7 +12,7 @@ interface Profile {
   avatar: string;
   wallpaper: string | null;
   birthday: string;
-  maritalStatus: "single" | "married" | "divorced" | "widowed" | null;
+  maritalStatus: MarialStatus;
   job: string | null;
   address: string | null;
   bio: string | null;
@@ -29,6 +31,8 @@ interface User {
 
 interface FullUser extends User {
   id: string;
+  banAt: string | null;
+  deleteAt: string | null;
   createdAt: string;
 }
 
@@ -46,9 +50,9 @@ interface FriendsResponse {
   limit: number;
 }
 
-interface Friendship {
+interface Friend {
   id: string;
-  status: FriendshipStatus;
+  status: FriendStatus;
   user: FullUser;
   friend: FullUser;
 }
@@ -58,7 +62,7 @@ export type {
   FullUser,
   UsersReponse,
   FriendsResponse,
-  FriendshipStatus,
-  Friendship,
+  FriendStatus,
+  Friend,
   Role,
 };

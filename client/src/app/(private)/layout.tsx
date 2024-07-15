@@ -1,7 +1,8 @@
 import { PropsWithChildren } from "react";
-import SocketProvider from "../providers/SocketProvider";
 import StreamVideoProvider from "../providers/StreamVideoProvider";
 import IncomingCallModal from "../components/RingingCall/IncomingCallModal";
+import { SocketProvider } from "../providers/SocketProvider";
+import ChatToast from "../components/Messages/ChatToast";
 
 export default function PrivateLayout({ children }: PropsWithChildren) {
   return (
@@ -9,6 +10,7 @@ export default function PrivateLayout({ children }: PropsWithChildren) {
       <StreamVideoProvider>
         <IncomingCallModal />
         {children}
+        <ChatToast />
       </StreamVideoProvider>
     </SocketProvider>
   );

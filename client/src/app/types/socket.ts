@@ -1,10 +1,10 @@
 import { Socket } from "socket.io-client";
-import { Friendship } from "./user";
+import { Friend } from "./user";
 import { Message } from "./message";
 
 interface FriendRequest {
   userId: string;
-  friendship: Friendship | null;
+  friend: Friend | null;
 }
 
 interface Online {

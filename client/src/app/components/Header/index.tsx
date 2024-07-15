@@ -21,8 +21,6 @@ const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
 export default async function Header() {
   const { currentUser } = await getServerSession();
 
-  const unseen = await messageService.countUnseen();
-
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">
       <div className="container">
@@ -65,11 +63,11 @@ export default async function Header() {
               className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
             >
               <ChatLeftTextFill className="fs-6" />
-              {unseen > 0 && (
+              {/* {unseen > 0 && (
                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                   {unseen > 99 ? "99+" : unseen}
                 </span>
-              )}
+              )} */}
             </Link>
           </li>
           <li className="nav-item ms-2">
