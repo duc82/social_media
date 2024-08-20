@@ -17,13 +17,14 @@ export class SignUpDto extends CreateUserDto {
 }
 
 export class SignInDto extends OmitType(CreateUserDto, [
-  "fullName",
+  "firstName",
+  "lastName",
   "password",
 ] as const) {
   @IsNotEmpty()
   password: string;
 
-  @Transform(({ value }) => value === "true")
+  @Transform(({ value }) => Boolean(value))
   isRemember: boolean;
 }
 

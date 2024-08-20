@@ -1,3 +1,6 @@
+import { signOut as signOutClient } from "next-auth/react";
+import { signOut } from "../api/auth/[...nextauth]/auth";
+
 type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
 interface Options extends RequestInit {
@@ -27,6 +30,14 @@ export default async function apiRequest<T>(
   const data = await res.json();
 
   if (!res.ok) {
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        await signOutClient({
+          callbackUrl: "/signin",
+        });
+      }
+    }
+
     throw new Error(data.message || "Something went wrong. Please try again.");
   }
 

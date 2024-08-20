@@ -1,32 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import Avatar from "../Avatar";
-import dynamic from "next/dynamic";
-import {
-  BellFill,
-  CardText,
-  ChatLeftTextFill,
-  GearFill,
-  LifePreserver,
-} from "react-bootstrap-icons";
-import NotificationsDropdown from "./NotificationsDropdown";
 import HeaderMenu from "./HeaderMenu";
 import getServerSession from "@/app/libs/session";
 import HeaderSearch from "./HeaderSearch";
-import ButtonSignOut from "./ButtonSignOut";
-import messageService from "@/app/services/messageService";
-
-const SwitchTheme = dynamic(() => import("./SwitchTheme"), { ssr: false });
+import logo from "@/app/assets/images/logo.svg";
+import HeaderMenuRight from "./HeaderMenuRight";
+import conversationService from "@/app/services/conversationService";
 
 export default async function Header() {
-  const { currentUser } = await getServerSession();
+  const { currentUser, token } = await getServerSession();
+
+  const conversationUnread = await conversationService.countUnread(token, [
+    "headerConversationUnread",
+  ]);
 
   return (
     <nav className="navbar fixed-top navbar-expand-lg bg-mode">
       <div className="container">
         {/* Logo */}
         <Link href="/" className="navbar-brand">
-          <Image src="/logo.svg" alt="Logo" width={36} height={36} />
+          <Image src={logo} alt="Logo" width={36} height={36} />
         </Link>
 
         {/* Menu */}
@@ -55,132 +48,10 @@ export default async function Header() {
           <HeaderMenu />
         </div>
 
-        <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
-          <li className="nav-item ms-2">
-            <Link
-              href="/messages"
-              title="Messages"
-              className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
-            >
-              <ChatLeftTextFill className="fs-6" />
-              {/* {unseen > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {unseen > 99 ? "99+" : unseen}
-                </span>
-              )} */}
-            </Link>
-          </li>
-          <li className="nav-item ms-2">
-            <Link
-              href="/settings"
-              title="Settings"
-              className="nav-link bg-light icon-md btn btn-light p-0"
-            >
-              <GearFill className="fs-6" />
-            </Link>
-          </li>
-          {/* Notifications */}
-          <li className="nav-item ms-2 dropdown">
-            <button
-              type="button"
-              title="Notifications"
-              data-bs-toggle="dropdown"
-              data-bs-auto-close="outside"
-              className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
-            >
-              <BellFill className="fs-6" />
-              <span
-                className="position-absolute top-0 p-1 bg-danger rounded-circle"
-                style={{ right: "-3px" }}
-              ></span>
-            </button>
-            <NotificationsDropdown />
-          </li>
-          <li className="nav-item ms-2 dropdown">
-            <button
-              type="button"
-              className="nav-link icon-md btn p-0"
-              data-bs-toggle="dropdown"
-            >
-              <Avatar
-                src={currentUser?.profile.avatar ?? "/01.jpg"}
-                alt={currentUser?.fullName}
-              />
-            </button>
-
-            <ul className="dropdown-menu dropdown-menu-end pt-3 small me-md-n3 shadow-menu">
-              <li className="px-3">
-                <div className="d-flex align-items-center">
-                  <Avatar
-                    src={currentUser?.profile.avatar ?? "/07.jpg"}
-                    alt={currentUser?.fullName}
-                    width={48}
-                    height={48}
-                    className="rounded-circle"
-                    wrapperClassName="me-3"
-                  />
-                  <div>
-                    <h6 className="mb-1">
-                      {currentUser?.fullName ?? "Liu Tiu Diu"}
-                    </h6>
-                    {currentUser?.profile.job && (
-                      <p className="small m-0">{currentUser.profile.job}</p>
-                    )}
-                  </div>
-                </div>
-
-                <Link
-                  href={`/profile/${currentUser?.id}`}
-                  className="dropdown-item btn btn-primary-soft btn-sm my-2 text-center fw-medium"
-                >
-                  View profile
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/settings"
-                  title="Settings"
-                  className="dropdown-item"
-                >
-                  <GearFill className="me-2" />
-                  Settings & Privacy
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" title="Support" className="dropdown-item">
-                  <LifePreserver className="me-2" />
-                  Support
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/documentation"
-                  title="Documentation"
-                  className="dropdown-item"
-                >
-                  <CardText className="me-2" />
-                  Documentation
-                </Link>
-              </li>
-
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-
-              <li>
-                <ButtonSignOut />
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-
-              <li className="d-flex align-items-center justify-content-center gap-3 p-2">
-                <span>Mode:</span>
-                <SwitchTheme />
-              </li>
-            </ul>
-          </li>
-        </ul>
+        <HeaderMenuRight
+          currentUser={currentUser}
+          conversationUnread={conversationUnread}
+        />
       </div>
     </nav>
   );

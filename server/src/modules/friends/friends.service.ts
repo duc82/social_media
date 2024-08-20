@@ -51,7 +51,11 @@ export class FriendsService {
         where: {
           id: And(Not(In(friendIds)), Not(In(blockedUsers))),
           emailVerified: Not(IsNull()),
-          fullName: Raw(
+          firstName: Raw(
+            (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
+            { search },
+          ),
+          lastName: Raw(
             (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
             { search },
           ),
@@ -212,5 +216,22 @@ export class FriendsService {
     await friend.save();
 
     return friend;
+  }
+
+  async removeFriend(userId: string, friendId: string) {
+    const friend = await this.dataSource.getRepository(Friend).findOne({
+      where: [
+        { user: { id: userId }, friend: { id: friendId } },
+        { user: { id: friendId }, friend: { id: userId } },
+      ],
+    });
+
+    if (!friend) {
+      throw new NotFoundException("Friend not found");
+    }
+
+    await this.dataSource.getRepository(Friend).delete(friend.id);
+
+    return { message: "Friend removed successfully" };
   }
 }

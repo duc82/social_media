@@ -1,5 +1,6 @@
 "use client";
 import clsx from "clsx";
+import { ReactNode } from "react";
 import {
   PersonCheckFill,
   PersonPlusFill,
@@ -23,7 +24,7 @@ const FriendButton = ({
     typeof status,
     {
       name: string;
-      icon: JSX.Element;
+      icon: ReactNode;
       className: string;
     }
   > = {

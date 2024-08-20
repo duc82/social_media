@@ -2,6 +2,7 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import logo from "@/app/assets/images/logo.svg";
 
 export default function AdminSidebar() {
   const { data } = useSession();
@@ -15,7 +16,7 @@ export default function AdminSidebar() {
           className="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"
         >
           <Image
-            src="/logo.svg"
+            src={logo}
             alt="Logo"
             width={36}
             height={36}

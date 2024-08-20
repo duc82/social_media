@@ -1,18 +1,29 @@
-type FriendStatus = "pending" | "accepted" | "declined";
+import { z } from "zod";
+import { userProfileSchema } from "../schemas/user";
+export type FriendStatus = "pending" | "accepted" | "declined";
 
-type Role = "user" | "admin";
+export type Role = "user" | "admin";
 
-export type Gender = "male" | "female" | "other";
+export const GENDER = ["male", "female", "other"] as const;
 
-type MarialStatus = "single" | "married" | "divorced" | "widowed" | null;
+export const MARIAL_STATUS = [
+  "single",
+  "married",
+  "divorced",
+  "widowed",
+] as const;
 
-interface Profile {
+export type Gender = (typeof GENDER)[number];
+
+export type MarialStatus = (typeof MARIAL_STATUS)[number];
+
+export interface Profile {
   id: string;
   gender: Gender;
   avatar: string;
   wallpaper: string | null;
   birthday: string;
-  maritalStatus: MarialStatus;
+  maritalStatus: MarialStatus | null;
   job: string | null;
   address: string | null;
   bio: string | null;
@@ -20,49 +31,50 @@ interface Profile {
   workplace: string | null;
 }
 
-interface User {
-  fullName: string;
+export interface User {
+  username: string;
+  lastName: string;
+  firstName: string;
   email: string;
   password: string;
   role: Role;
   profile: Profile;
   emailVerified: Date | null;
+  offlineAt: string | null;
 }
 
-interface FullUser extends User {
+export interface FullUser extends User {
   id: string;
-  banAt: string | null;
-  deleteAt: string | null;
+  bannedAt: string | null;
+  deletedAt: string | null;
   createdAt: string;
 }
 
-interface UsersReponse {
+export interface UserResponse {
+  user: FullUser;
+  message: string;
+}
+
+export interface UsersReponse {
   users: FullUser[];
   total: number;
   page: number;
   limit: number;
 }
 
-interface FriendsResponse {
+export interface FriendsResponse {
   friends: FullUser[];
   total: number;
   page: number;
   limit: number;
 }
 
-interface Friend {
+export interface Friend {
   id: string;
   status: FriendStatus;
   user: FullUser;
   friend: FullUser;
 }
 
-export type {
-  User,
-  FullUser,
-  UsersReponse,
-  FriendsResponse,
-  FriendStatus,
-  Friend,
-  Role,
-};
+export interface UpdateUserProfileDto
+  extends z.infer<typeof userProfileSchema> {}

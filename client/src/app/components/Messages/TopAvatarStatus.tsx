@@ -16,29 +16,72 @@ import {
 } from "react-bootstrap-icons";
 import { FullUser } from "@/app/types/user";
 import clsx from "clsx";
-import useSocket from "@/app/hooks/useSocket";
-import { useStreamVideoClient } from "@stream-io/video-react-sdk";
+import useSocketToken from "@/app/hooks/useSocketContext";
+import { formatDateTime } from "@/app/utils/dateTime";
+import formatName from "@/app/utils/formatName";
+import { markMessagesAsRead } from "@/app/actions/messageAction";
+import { Conversation } from "@/app/types/conversation";
+import conversationService from "@/app/services/conversationService";
+import { useRouter } from "next/navigation";
+import useSocketContext from "@/app/hooks/useSocketContext";
 
 interface TopAvatarStatusProps {
   user?: FullUser;
+  conversation: Conversation;
+  token: string;
+  currentUser: FullUser;
 }
 
-export default function TopAvatarStatus({ user }: TopAvatarStatusProps) {
-  const { onlines } = useSocket();
-  const client = useStreamVideoClient();
+export default function TopAvatarStatus({
+  user,
+  conversation,
+  token,
+  currentUser,
+}: TopAvatarStatusProps) {
+  const { onlines } = useSocketToken();
+  const { socket } = useSocketContext();
+  const router = useRouter();
 
   const isOnline = onlines.some((online) => online.userId === user?.id);
 
   const openRingingCall = (hasVideo: boolean) => {
-    if (!client || !user) return;
-    const callId = "call-test";
+    if (!user || !socket) return;
+
+    const room = `${currentUser.id}-${user.id}`;
+
+    socket.emit("callUser", {
+      callerId: currentUser.id,
+      calleeId: user.id,
+      hasVideo,
+      room,
+    });
+
+    const width = 1280;
+    const height = 720;
+
+    const left = screen.width / 2 - width / 2;
+    const top = screen.height / 2 - height / 2;
 
     window.open(
-      `/ringing-call/${callId}?hasVideo=${hasVideo}&userId=${user.id}`,
+      `/ringing-call?hasVideo=${hasVideo}&calleeId=${user.id}`,
       "_blank",
-      "location=yes,scrollbars=yes,status=yes"
+      `location=yes,scrollbars=yes,status=yes,width=${width},height=${height},top=${top},left=${left}`
     );
   };
+
+  const handleMarkAsRead = async () => {
+    await markMessagesAsRead(conversation.id);
+  };
+
+  const handleRemove = async () => {
+    await conversationService.remove(conversation.id, token);
+    if (socket) {
+      socket.emit("conversation", conversation, "remove");
+    }
+    router.push("/messages");
+  };
+
+  const fullName = formatName(user?.firstName || "", user?.lastName || "");
 
   return (
     <div className="d-sm-flex justify-content-between align-items-center">
@@ -47,10 +90,10 @@ export default function TopAvatarStatus({ user }: TopAvatarStatusProps) {
           wrapperClassName="flex-shrink-0 me-2"
           className="rounded-circle"
           src={user?.profile.avatar ?? ""}
-          alt={user?.fullName}
+          alt={fullName}
         />
         <div>
-          <h6 className="mb-0 mt-1">{user?.fullName}</h6>
+          <h6 className="mb-0 mt-1">{fullName}</h6>
 
           <div className="small">
             <FontAwesomeIcon
@@ -60,7 +103,11 @@ export default function TopAvatarStatus({ user }: TopAvatarStatusProps) {
                 isOnline ? "text-success" : "text-danger"
               )}
             />
-            {isOnline ? "Online" : "Offline"}
+            {isOnline
+              ? "Online"
+              : user?.offlineAt
+              ? `Last active ${formatDateTime(user.offlineAt)}`
+              : "Offline"}
           </div>
         </div>
       </div>
@@ -90,16 +137,20 @@ export default function TopAvatarStatus({ user }: TopAvatarStatusProps) {
             type="button"
             className="icon-md rounded-circle btn btn-primary-soft me-2 px-2"
             data-bs-toggle="dropdown"
-            data-bs-auto-close="outside"
+            data-bs-auto-close="true"
           >
             <ThreeDotsVertical />
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
             <li>
-              <Link className="dropdown-item" href="#">
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={handleMarkAsRead}
+              >
                 <CheckLg className="me-2 fw-icon" />
                 Mark as read
-              </Link>
+              </button>
             </li>
             <li>
               <Link className="dropdown-item" href="#">
@@ -108,16 +159,23 @@ export default function TopAvatarStatus({ user }: TopAvatarStatusProps) {
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" href="#">
+              <Link
+                className="dropdown-item"
+                href={`/profile/${user?.username}`}
+              >
                 <PersonCheck className="me-2 fw-icon" />
                 View profile
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" href="#">
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={handleRemove}
+              >
                 <Trash className="me-2 fw-icon" />
                 Delete chat
-              </Link>
+              </button>
             </li>
             <li className="dropdown-divider"></li>
             <li>

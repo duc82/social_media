@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -29,9 +30,8 @@ export class Blog extends BaseEntity {
   })
   tag: BlogTag;
 
-  @Column({
+  @DeleteDateColumn({
     type: "timestamptz",
-    nullable: true,
   })
   deletedAt: Date;
 

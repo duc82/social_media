@@ -2,7 +2,6 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import {
   ForgotPasswordDto,
-  RefreshDto,
   ResetPasswordDto,
   SignInDto,
   SignUpDto,
@@ -21,12 +20,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() body: SignInDto) {
     return this.authService.signIn(body);
-  }
-
-  @Post("refresh-token")
-  @HttpCode(HttpStatus.OK)
-  async refreshToken(@Body() body: RefreshDto) {
-    return this.authService.refreshToken(body.refreshToken);
   }
 
   @Post("verify-email")

@@ -1,19 +1,18 @@
 import "next-auth/jwt";
-import type { FullUser, Role } from "./user";
-import NextAuth, { type DefaultSession } from "next-auth";
+import type { FullUser } from "./user";
+import { type DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface User extends FullUser {
-    accessToken: string;
-    refreshToken?: string;
-    accessTokenExpired: number;
+    token: string;
+    tokenExpiration: number;
   }
 
   interface Session extends DefaultSession {
-    accessToken: string;
+    token: string;
     user: FullUser;
   }
 }
@@ -21,9 +20,8 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT extends FullUser {
-    accessToken: string;
-    refreshToken?: string;
-    /** Access token expired (miliseconds) */
-    accessTokenExpired: number;
+    token: string;
+    /** Token expired (miliseconds) */
+    tokenExpiration: number;
   }
 }

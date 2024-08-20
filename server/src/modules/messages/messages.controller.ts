@@ -27,6 +27,14 @@ export class MessagesController {
     return this.messageService.getByConversation(conversationId, query);
   }
 
+  @Get("mark-as-read/:conversationId")
+  async markAsRead(
+    @Param("conversationId", new ParseUUIDPipe()) conversationId: string,
+    @User("userId") currentUserId: string,
+  ) {
+    return this.messageService.markAsRead(conversationId, currentUserId);
+  }
+
   @Post("create")
   async create(
     @Body() body: CreateMessageDto,

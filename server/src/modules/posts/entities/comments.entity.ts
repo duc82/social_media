@@ -2,6 +2,7 @@ import { User } from "src/modules/users/entities/users.entity";
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -38,8 +39,7 @@ export class Comment {
   @OneToMany(() => Comment, (comment) => comment.replies)
   replies: Comment[];
 
-  @Column({
-    nullable: true,
+  @DeleteDateColumn({
     type: "timestamptz",
   })
   deletedAt: Date;

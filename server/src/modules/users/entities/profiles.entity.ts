@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Gender, MarialStatus } from "../enums/profiles.enum";
+import { Gender, MaritalStatus } from "../enums/profiles.enum";
 
 @Entity({
   name: "profiles",
@@ -29,10 +29,10 @@ export class Profile extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: MarialStatus,
+    enum: MaritalStatus,
     nullable: true,
   })
-  marialStatus: MarialStatus;
+  maritalStatus: MaritalStatus;
 
   @Column({
     nullable: true,
@@ -46,6 +46,7 @@ export class Profile extends BaseEntity {
 
   @Column({
     nullable: true,
+    length: 300,
   })
   bio: string;
 

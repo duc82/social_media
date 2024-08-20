@@ -1,11 +1,11 @@
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
@@ -20,14 +20,9 @@ class MessageFileDto {
 }
 
 export class CreateMessageDto {
-  @IsOptional()
-  @IsNotEmpty()
+  @ValidateIf((o) => o.content)
   @IsString()
   content: string;
-
-  @IsOptional()
-  @IsBoolean()
-  seen: boolean;
 
   @IsOptional()
   @IsArray()

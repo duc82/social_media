@@ -81,4 +81,12 @@ export class FriendsController {
   ) {
     return this.friendService.declineFriendRequest(userId, friendId);
   }
+
+  @Delete("remove/:id")
+  async deleteFriend(
+    @User("userId") userId: string,
+    @Param("id") friendId: string,
+  ) {
+    return this.friendService.removeFriend(userId, friendId);
+  }
 }

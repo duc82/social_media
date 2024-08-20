@@ -1,12 +1,12 @@
 "use client";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
 import { PencilSquare, Search } from "react-bootstrap-icons";
 import { Conversation } from "@/app/types/conversation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FullUser } from "@/app/types/user";
 import ConversationItem from "./ConversationItem";
+import useSocketContext from "@/app/hooks/useSocketContext";
 
 interface ChatSidebarProps {
   initialConversations: Conversation[];
@@ -19,8 +19,34 @@ export default function ChatSidebar({
   inititalTotal,
   currentUser,
 }: ChatSidebarProps) {
-  const [conversations, setConversation] = useState(initialConversations);
+  const [conversations, setConversations] = useState(initialConversations);
   const [total, setTotal] = useState(inititalTotal);
+  const { socket } = useSocketContext();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleConversation = (
+      conversation: Conversation,
+      type: "add" | "remove"
+    ) => {
+      if (type === "add") {
+        setConversations((prev) => [conversation, ...prev]);
+        setTotal((prev) => prev + 1);
+      } else {
+        setConversations((prev) =>
+          prev.filter((c) => c.id !== conversation.id)
+        );
+        setTotal((prev) => prev - 1);
+      }
+    };
+
+    socket.on("conversation", handleConversation);
+
+    return () => {
+      socket.off("conversation", handleConversation);
+    };
+  }, [socket]);
 
   return (
     <div className="col-lg-4 col-xxl-3">
@@ -48,13 +74,14 @@ export default function ChatSidebar({
           </h1>
           <div className="dropend position-relative">
             <div className="nav">
-              <Link
-                className="icon-md rounded-circle btn btn-sm btn-primary-soft nav-link toast-btn"
-                data-target="chatToast"
-                href="#"
+              <button
+                type="button"
+                className="icon-md rounded-circle btn btn-sm btn-primary-soft nav-link"
+                data-bs-toggle="modal"
+                data-bs-target="#addChatModal"
               >
                 <PencilSquare />
-              </Link>
+              </button>
             </div>
           </div>
         </div>

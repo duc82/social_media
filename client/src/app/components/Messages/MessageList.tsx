@@ -3,12 +3,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import MessageItem from "./MessageItem";
 import { Message } from "@/app/types/message";
 import { useParams } from "next/navigation";
-import useSocket from "@/app/hooks/useSocket";
+import useSocketContext from "@/app/hooks/useSocketContext";
 import { FullUser } from "@/app/types/user";
 import { useSession } from "next-auth/react";
-
 import messageService from "@/app/services/messageService";
 import InfiniteScroll from "observer-infinite-scroll";
+import { markMessagesAsRead } from "@/app/actions/messageAction";
+import { revalidateTag } from "@/app/actions/indexAction";
 
 interface MessageListProps {
   currentUser: FullUser;
@@ -33,24 +34,20 @@ export default function MessageList({
   const [hasMore, setHasMore] = useState(total > limit);
   const [page, setPage] = useState(initialPage);
   const { id } = useParams<Params>();
-  const { socket } = useSocket();
+  const { socket } = useSocketContext();
   const { data } = useSession();
-  const accessToken = data?.accessToken;
+  const token = data?.token;
   const ref = useRef<HTMLDivElement>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
 
   const fetchMore = async () => {
-    if (!accessToken) return;
+    if (!token) return;
 
     try {
-      const { messages } = await messageService.getByConversation(
-        id,
-        accessToken,
-        {
-          limit,
-          page,
-        }
-      );
+      const { messages } = await messageService.getByConversation(id, token, {
+        limit,
+        page,
+      });
 
       if (messages.length === 0) {
         setHasMore(false);
@@ -76,10 +73,12 @@ export default function MessageList({
   useEffect(() => {
     if (!socket) return;
 
-    const handleMessage = (message: Message) => {
+    const handleMessage = async (message: Message) => {
       setMessages((prev) => [...prev, message]);
       if (message.user.id === currentUser.id) {
         setIsScrollBottom(true);
+      } else {
+        await markMessagesAsRead(message.conversation.id);
       }
     };
 
@@ -96,6 +95,10 @@ export default function MessageList({
       setIsScrollBottom(false);
     }
   }, [isScrollBottom]);
+
+  useEffect(() => {
+    revalidateTag("headerConversationUnread");
+  }, []);
 
   return (
     <InfiniteScroll

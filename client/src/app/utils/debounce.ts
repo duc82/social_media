@@ -1,3 +1,5 @@
+"use client";
+
 const debounce = <T extends any[]>(
   func: (..._args: T) => void,
   wait: number

@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
   UseGuards,
 } from "@nestjs/common";
@@ -40,8 +42,28 @@ export class ConversationsController {
     return this.conversationsService.getById(id);
   }
 
+  @Get("count/unread")
+  async countUnread(@User("userId") currentUserId: string) {
+    return this.conversationsService.countUnread(currentUserId);
+  }
+
   @Post("create")
   async create(@Body() body: CreateConversationDto) {
     return this.conversationsService.create(body);
+  }
+
+  @Put("remove/:id")
+  async remove(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.conversationsService.remove(id);
+  }
+
+  @Put("restore/:id")
+  async restore(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.conversationsService.restore(id);
+  }
+
+  @Delete("delete/:id")
+  async delete(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.conversationsService.delete(id);
   }
 }

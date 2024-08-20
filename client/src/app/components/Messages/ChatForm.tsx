@@ -1,7 +1,10 @@
 "use client";
 
 import { sendMessage } from "@/app/actions/messageAction";
-import useSocket from "@/app/hooks/useSocket";
+import useSocketContext from "@/app/hooks/useSocketContext";
+import { uploadFile } from "@/app/libs/firebase";
+import { CreateMessageDto } from "@/app/types/message";
+import handlingError from "@/app/utils/error";
 import {
   faFaceSmile,
   faPaperPlane,
@@ -9,32 +12,51 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "next/navigation";
-import { FormEvent, KeyboardEvent, useState } from "react";
+import {
+  FormEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
 
 export default function ChatForm() {
   const [text, setText] = useState("");
-  const { socket } = useSocket();
+  const [files, setFiles] = useState<File[]>([]);
+  const { socket } = useSocketContext();
 
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     const content = text.trim();
 
-    if (!content || !socket) return;
+    if (!socket || (files.length === 0 && !content)) return;
 
     try {
-      const message = await sendMessage({
+      const data: CreateMessageDto = {
         content,
-        conversation: id as string,
-      });
+        conversation: id,
+        files: [],
+      };
+
+      for (const file of files) {
+        const url = await uploadFile(`messages/${file.name}`, file);
+        data.files?.push({
+          url,
+          type: file.type.includes("image") ? "image" : "video",
+        });
+      }
+
+      const message = await sendMessage(data);
 
       socket.emit("message", message);
       setText("");
+      setFiles([]);
     } catch (error) {
-      toast.error("Send message failed. Try again!");
+      toast.error(handlingError(error));
     }
-  };
+  }, [files, id, socket, text]);
 
   const handleSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,6 +69,12 @@ export default function ChatForm() {
       await handleSendMessage();
     }
   };
+
+  useEffect(() => {
+    if (files.length > 0) {
+      handleSendMessage();
+    }
+  }, [files, handleSendMessage]);
 
   return (
     <form onSubmit={handleSubmitForm} className="d-sm-flex align-items-center">
@@ -62,9 +90,21 @@ export default function ChatForm() {
       <button type="button" className="btn btn-sm btn-danger-soft ms-sm-2">
         <FontAwesomeIcon className="fs-6" icon={faFaceSmile} />
       </button>
-      <button type="button" className="btn btn-sm btn-secondary-soft ms-2">
+      <label htmlFor="file" className="btn btn-sm btn-secondary-soft ms-2">
         <FontAwesomeIcon className="fs-6" icon={faPaperclip} />
-      </button>
+        <input
+          type="file"
+          className="d-none"
+          id="file"
+          multiple
+          accept="image/*, video/*"
+          onChange={(e) => {
+            if (e.target.files) {
+              setFiles([...e.target.files]);
+            }
+          }}
+        />
+      </label>
       <button type="submit" className="btn btn-sm btn-primary ms-2">
         <FontAwesomeIcon className="fs-6" icon={faPaperPlane} />
       </button>

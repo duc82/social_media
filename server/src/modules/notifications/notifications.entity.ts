@@ -4,6 +4,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -43,8 +44,7 @@ export class Notification extends BaseEntity {
   })
   readAt: Date;
 
-  @Column({
-    nullable: true,
+  @DeleteDateColumn({
     type: "timestamptz",
   })
   deletedAt: Date;

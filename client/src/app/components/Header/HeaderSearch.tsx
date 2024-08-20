@@ -2,10 +2,11 @@
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import debounce from "@/app/utils/debounce";
-import { useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Avatar from "../Avatar";
+import formatName from "@/app/utils/formatName";
 
 export default function HeaderSearch() {
   const [search, setSearch] = useState("");
@@ -18,7 +19,7 @@ export default function HeaderSearch() {
       const data = await userService.getAll({
         search: value,
         page: 1,
-        limit: 10
+        limit: 10,
       });
       setUsers(data.users);
     } catch (error) {
@@ -28,10 +29,10 @@ export default function HeaderSearch() {
 
   const getSearchResults = useCallback(
     (value: string) => debounceSearch(value),
-    []
+    [debounceSearch]
   );
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
     getSearchResults(value);
@@ -54,20 +55,23 @@ export default function HeaderSearch() {
       </div>
 
       <ul className="dropdown-menu w-100">
-        {users.map((user) => (
-          <li key={user.id} className="dropdown-item">
-            <Link
-              href={`/profile/${user.id}`}
-              className="d-flex align-items-center"
-            >
-              <Avatar src={user.profile.avatar} alt={user.fullName} />
-              <div className="ms-2">
-                <p className="mb-0">{user.fullName}</p>
-                {/* <small className="text-muted">{user.email}</small> */}
-              </div>
-            </Link>
-          </li>
-        ))}
+        {users.map((user) => {
+          const fullName = formatName(user.firstName, user.lastName);
+          return (
+            <li key={user.id} className="dropdown-item">
+              <Link
+                href={`/profile/${user.id}`}
+                className="d-flex align-items-center"
+              >
+                <Avatar src={user.profile.avatar} alt={fullName} />
+                <div className="ms-2">
+                  <p className="mb-0">{fullName}</p>
+                  {/* <small className="text-muted">{user.email}</small> */}
+                </div>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

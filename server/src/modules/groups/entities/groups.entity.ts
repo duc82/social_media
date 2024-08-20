@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -35,7 +36,7 @@ export class Group extends BaseEntity {
   })
   members: GroupMember[];
 
-  @Column({ nullable: true, type: "timestamptz" })
+  @DeleteDateColumn({ type: "timestamptz" })
   deletedAt: Date;
 
   @CreateDateColumn({

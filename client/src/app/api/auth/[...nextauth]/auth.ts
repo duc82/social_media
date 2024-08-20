@@ -10,7 +10,7 @@ class SignInError extends CredentialsSignin {
   }
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   providers: [
     CredentialsProvider({
       credentials: {
@@ -52,36 +52,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token = { ...token, ...user };
       }
 
-      if (token.accessTokenExpired <= Date.now()) {
-        if (!token.refreshToken) {
-          await signOut();
-          throw new Error("Refresh token is missing");
-        }
+      if (Date.now() >= token.tokenExpiration) {
+        token = { ...token, token: "" };
+      }
 
-        try {
-          const data = await authService.refreshToken(token.refreshToken);
-          token.accessToken = data.accessToken;
-          token.accessTokenExpired = data.accessTokenExpired;
-        } catch (error) {
-          await signOut();
-          throw error;
-        }
+      if (trigger === "update") {
+        token = { ...token, ...session.user };
       }
 
       return token;
     },
     session({ session, token }) {
-      session.accessToken = token.accessToken;
+      session.token = token.token;
       session.user = {
         ...session.user,
         id: token.id,
         email: token.email!,
-        fullName: token.fullName,
+        lastName: token.lastName,
+        firstName: token.firstName,
+        username: token.username,
         role: token.role,
         profile: token.profile,
         emailVerified: token.emailVerified,

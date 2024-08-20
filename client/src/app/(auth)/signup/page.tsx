@@ -19,6 +19,8 @@ import AvatarInitials from "@/app/utils/avatarInitials";
 import { uploadFile } from "@/app/libs/firebase";
 import FormControl from "@/app/components/Form/FormControl";
 import Radio from "@/app/components/Form/Radio";
+import isLeapYear from "@/app/utils/isLeapYear";
+import Spinner from "@/app/components/Spinner";
 
 interface FormValue extends SignUpDto {
   confirmPassword: string;
@@ -51,7 +53,7 @@ export default function Signup() {
   );
 
   const onSubmit = async (data: FormValue) => {
-    const { confirmPassword, ...signUpDto } = data;
+    const { confirmPassword: _, ...signUpDto } = data;
 
     try {
       const birthday = new Date(
@@ -62,7 +64,7 @@ export default function Signup() {
       signUpDto.birthday = birthday;
 
       const avatarBlob = await AvatarInitials.generateAvatar(
-        signUpDto.fullName
+        signUpDto.firstName
       );
       signUpDto.avatar = await uploadFile(
         `avatars/${signUpDto.email}`,
@@ -82,9 +84,6 @@ export default function Signup() {
   };
 
   const { pwdScore, pwdScoreClassName } = usePasswordScore(watch("password"));
-
-  const isLeapYear = (year: number) =>
-    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 
   const getDays = () => {
     const month = watch("dateOfBirth.month");
@@ -147,12 +146,20 @@ export default function Signup() {
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <FormControl
-          {...register("fullName")}
-          id="fullName"
-          placeholder="Full name"
-          error={errors.fullName?.message}
-        />
+        <div className="d-flex gap-3">
+          <FormControl
+            {...register("firstName")}
+            id="firstName"
+            placeholder="First name"
+            error={errors.firstName?.message}
+          />
+          <FormControl
+            {...register("lastName")}
+            id="lastName"
+            placeholder="Last name"
+            error={errors.lastName?.message}
+          />
+        </div>
 
         <FormControl
           {...register("email")}
@@ -295,9 +302,9 @@ export default function Signup() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary w-100 d-flex justify-content-center"
         >
-          Sign me up
+          {isSubmitting ? <Spinner /> : "Sign me up"}
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">

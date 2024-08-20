@@ -17,7 +17,7 @@ import {
   ThreeDots,
 } from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
-import { Friendship, FullUser } from "@/app/types/user";
+import { Friend, FullUser } from "@/app/types/user";
 import { formatDate } from "@/app/utils/dateTime";
 import { useMemo, useState } from "react";
 import FriendButton from "./FriendButton";
@@ -31,23 +31,26 @@ import {
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
+import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
+import formatName from "@/app/utils/formatName";
+import { directMessage } from "@/app/actions/conversationAction";
 
 export default function ProfileMainHeader({
   user,
   currentUser,
   initialTotalFriends,
-  initialFriendship,
+  initialFriend,
 }: {
   user: FullUser;
-  initialFriendship: Friendship | null;
+  initialFriend: Friend | null;
   currentUser: FullUser;
   initialTotalFriends: number;
 }) {
-  const [friendship, setFriendship] = useState(initialFriendship);
+  const [friendship, setFriendship] = useState(initialFriend);
   const [totalFriends, setTotalFriends] = useState(initialTotalFriends);
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useSession();
-  const accessToken = data?.accessToken!;
+  const token = data?.token!;
 
   const isSentFriendRequest = useMemo(
     () =>
@@ -75,7 +78,7 @@ export default function ProfileMainHeader({
   const handleSendFriendRequest = async () => {
     try {
       setIsLoading(true);
-      const friendship = await sendFriendRequest(accessToken, user.id);
+      const friendship = await sendFriendRequest(token, user.id);
       setFriendship(friendship);
     } catch (error) {
       toast.error(handlingError(error));
@@ -87,7 +90,7 @@ export default function ProfileMainHeader({
   const handleCancelFriendRequest = async () => {
     try {
       setIsLoading(true);
-      const friendship = await cancelFriendRequest(accessToken, user.id);
+      const friendship = await cancelFriendRequest(token, user.id);
       setFriendship(friendship);
     } catch (error) {
       toast.error(handlingError(error));
@@ -99,7 +102,7 @@ export default function ProfileMainHeader({
   const handleAcceptFriendRequest = async () => {
     try {
       setIsLoading(true);
-      const friendship = await acceptFriendRequest(accessToken, user.id);
+      const friendship = await acceptFriendRequest(token, user.id);
       setFriendship(friendship);
       setTotalFriends((prev) => prev + 1);
     } catch (error) {
@@ -112,7 +115,7 @@ export default function ProfileMainHeader({
   const handleDeclineFriendRequest = async () => {
     try {
       setIsLoading(true);
-      const friendship = await declineFriendRequest(accessToken, user.id);
+      const friendship = await declineFriendRequest(token, user.id);
       setFriendship(friendship);
     } catch (error) {
       toast.error(handlingError(error));
@@ -121,19 +124,23 @@ export default function ProfileMainHeader({
     }
   };
 
+  const fullName = formatName(user.firstName, user.lastName);
+
   return (
     <div className="card">
       <Fancybox style={{ height: "200px" }}>
         <Link
-          href="/wallpaper.jpg"
+          href={user.profile.wallpaper || wallpaper_initial.src}
           data-fancybox="wallpaper"
           className="d-block h-100 position-relative"
         >
           <Image
-            src="/wallpaper.jpg"
-            fill
+            src={user.profile.wallpaper || wallpaper_initial}
             alt="Wallpaper"
             className="rounded-top object-fit-cover"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </Link>
       </Fancybox>
@@ -152,7 +159,7 @@ export default function ProfileMainHeader({
 
           <div className="ms-md-4 mt-md-3">
             <h1 className="mb-0 h5">
-              {user.fullName} <PatchCheckFill className="text-success small" />
+              {fullName} <PatchCheckFill className="text-success small" />
             </h1>
             <p>{totalFriends} friends</p>
           </div>
@@ -204,7 +211,7 @@ export default function ProfileMainHeader({
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <Link className="dropdown-item" href="#">
+                    <Link className="dropdown-item" href="/settings">
                       <Gear width={23} height={19} className="pe-2" />
                       Profile settings
                     </Link>
@@ -254,13 +261,14 @@ export default function ProfileMainHeader({
                 </>
               )}
 
-              <Link
-                href="/chats"
+              <button
+                type="button"
                 className="btn btn-light d-flex align-items-center"
+                onClick={() => directMessage(user.id)}
               >
                 <ChatLeftTextFill width={16} height={16} className="me-2" />
                 <span>Message</span>
-              </Link>
+              </button>
 
               <div className="dropdown">
                 <button
@@ -305,21 +313,25 @@ export default function ProfileMainHeader({
         </div>
 
         <ul className="list-inline mb-0 text-center text-md-start mt-3 mt-md-0">
-          <li className="list-inline-item d-inline-flex align-items-center">
-            <Briefcase className="me-1" /> {"Web Developer"}
-          </li>
-          <li className="list-inline-item d-inline-flex align-items-center">
-            <GeoAlt className="me-1" /> {"New Hampshire"}
-          </li>
+          {user.profile.job && (
+            <li className="list-inline-item d-inline-flex align-items-center">
+              <Briefcase className="me-1" /> {user.profile.job}
+            </li>
+          )}
+          {user.profile.address && (
+            <li className="list-inline-item d-inline-flex align-items-center">
+              <GeoAlt className="me-1" /> {user.profile.address}
+            </li>
+          )}
           <li className="list-inline-item d-inline-flex align-items-center">
             <Calendar2Plus className="me-1" /> Joined on{" "}
-            {formatDate(Date.now(), { dateStyle: "medium" })}
+            {formatDate(user.createdAt, { dateStyle: "medium" })}
           </li>
         </ul>
       </div>
 
       <div className="card-footer mt-3 pt-2 pb-0">
-        <ProfileMainHeaderMenu />
+        <ProfileMainHeaderMenu totalFriends={totalFriends} />
       </div>
     </div>
   );

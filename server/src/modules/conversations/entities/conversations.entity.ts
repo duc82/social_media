@@ -4,6 +4,7 @@ import {
   BeforeUpdate,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -31,7 +32,7 @@ export class Conversation extends BaseEntity {
   @Column()
   isGroup: boolean;
 
-  @Column({ nullable: true, type: "timestamptz" })
+  @DeleteDateColumn({ type: "timestamptz", name: "deletedAt" })
   deletedAt: Date;
 
   @OneToMany(() => Message, (message) => message.conversation, {

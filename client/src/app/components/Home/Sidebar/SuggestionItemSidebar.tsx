@@ -11,17 +11,18 @@ import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
 import {
   cancelFriendRequest,
-  sendFriendRequest
+  sendFriendRequest,
 } from "@/app/actions/userAction";
+import formatName from "@/app/utils/formatName";
 
 export default function SuggestionItemSidebar(friend: FullUser) {
   const [isSendRequest, setIsSendRequest] = useState(false);
   const { data } = useSession();
-  const accessToken = data?.accessToken!;
+  const token = data?.token!;
 
   const handleSendFriendRequest = async () => {
     try {
-      await sendFriendRequest(accessToken, friend.id);
+      await sendFriendRequest(token, friend.id);
       setIsSendRequest(true);
     } catch (error) {
       toast.error(handlingError(error));
@@ -30,12 +31,14 @@ export default function SuggestionItemSidebar(friend: FullUser) {
 
   const handleCancelFriendRequest = async () => {
     try {
-      await cancelFriendRequest(accessToken, friend.id);
+      await cancelFriendRequest(token, friend.id);
       setIsSendRequest(false);
     } catch (error) {
       toast.error(handlingError(error));
     }
   };
+
+  const fullName = formatName(friend.firstName, friend.lastName);
 
   return (
     <div className="hstack gap-2 mb-3">
@@ -44,15 +47,15 @@ export default function SuggestionItemSidebar(friend: FullUser) {
           <Avatar
             className="avatar-img rounded-circle"
             src={friend.profile.avatar}
-            alt={friend.fullName}
+            alt={fullName}
           />
         </Link>
       </div>
       <div className="overflow-hidden">
         <Link className="h6 mb-0 text-truncate" href={`/profile/${friend.id}`}>
-          {friend.fullName}
+          {fullName}
         </Link>
-        <p className="mb-0 small text-truncate">{friend.profile.overview}</p>
+        <p className="mb-0 small text-truncate">{friend.profile.bio}</p>
       </div>
       <button
         type="button"

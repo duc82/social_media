@@ -31,13 +31,21 @@ function formatDateTime(time: string): string {
   });
 }
 
-const formatDate = (
+function formatDate(
   date: string | number | Date,
   options?: Intl.DateTimeFormatOptions
-) => {
+) {
   return Intl.DateTimeFormat("en-US", options).format(
     typeof date === "string" ? new Date(date) : date
   );
-};
+}
 
-export { formatDateTime, formatDate };
+function formatBirthday(date: string) {
+  return Intl.DateTimeFormat("en-CA", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(date));
+}
+
+export { formatDateTime, formatDate, formatBirthday };

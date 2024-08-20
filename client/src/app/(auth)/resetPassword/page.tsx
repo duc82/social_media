@@ -1,4 +1,5 @@
 "use client";
+import Spinner from "@/app/components/Spinner";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import { resetPasswordSchema } from "@/app/schemas/auth";
 import authService from "@/app/services/authService";
@@ -136,9 +137,9 @@ function ResetPassword() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary w-100 d-flex justify-content-center"
         >
-          Reset password
+          {isSubmitting ? <Spinner /> : "Reset password"}
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">

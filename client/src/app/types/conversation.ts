@@ -1,27 +1,26 @@
 import { Message } from "./message";
 import { FullUser } from "./user";
 
-interface ConversationMember {
+export interface ConversationMember {
   id: string;
   user: FullUser;
   role: "admin" | "moderator" | "member";
+  isRead: boolean;
 }
 
-interface Conversation {
+export interface Conversation {
   id: string;
   name: string;
   isGroup: boolean;
   members: ConversationMember[];
   messages: Message[];
-  deleteAt: string | null;
+  deletedAt: string | null;
   createdAt: Date;
 }
 
-interface ConversationsReponse {
+export interface ConversationsReponse {
   conversations: Conversation[];
   page: number;
   limit: number;
   total: number;
 }
-
-export type { Conversation, ConversationsReponse };

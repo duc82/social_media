@@ -3,10 +3,10 @@ import userService from "@/app/services/userService";
 import FriendRequests from "@/app/components/Friends/Requests";
 
 export default async function Request() {
-  const { accessToken } = await getServerSession();
+  const { token } = await getServerSession();
 
   const { friends, limit, page, total } = await userService.getFriendRequests(
-    accessToken,
+    token,
     {
       page: 1,
       limit: 20,

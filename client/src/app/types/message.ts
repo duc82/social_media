@@ -4,28 +4,30 @@ interface MessageFile {
   id: string;
   url: string;
   type: "image" | "video";
-  conversation: string;
 }
 
-interface Message {
+export interface Message {
   id: string;
   content: string | null;
   files: MessageFile[];
   user: FullUser;
-  conversationId: string;
+  conversation: { id: string };
   reads: MessageRead[];
-  deleteAt: string | null;
+  isVideoCall: boolean | null;
+  isAudioCall: boolean | null;
+  callDuration: number | null;
+  callStatus: "success" | "failed" | null;
+  deletedAt: string | null;
   createdAt: string;
 }
 
 interface MessageRead {
   id: string;
   user: FullUser;
-  message: Message;
   createdAt: string;
 }
 
-interface MessagesResponse {
+export interface MessagesResponse {
   messages: Message[];
   total: number;
   page: number;
@@ -34,10 +36,8 @@ interface MessagesResponse {
 
 type MessageFileDto = Pick<MessageFile, "url" & "type">;
 
-interface CreateMessageDto {
+export interface CreateMessageDto {
   content?: string;
   files?: MessageFileDto[];
   conversation: string;
 }
-
-export type { Message, MessagesResponse, CreateMessageDto };

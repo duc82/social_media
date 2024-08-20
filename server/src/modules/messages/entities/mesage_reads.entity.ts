@@ -3,6 +3,7 @@ import {
   BaseEntity,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -15,12 +16,16 @@ export class MessageRead extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Index("idx_message_reads_user_id")
   @ManyToOne(() => User, (user) => user.id, {
     onDelete: "CASCADE",
   })
   user: User;
 
-  @ManyToOne(() => Message, (message) => message.reads)
+  @Index("idx_message_reads_message_id")
+  @ManyToOne(() => Message, (message) => message.reads, {
+    onDelete: "CASCADE",
+  })
   message: Message;
 
   @CreateDateColumn({ type: "timestamptz" })

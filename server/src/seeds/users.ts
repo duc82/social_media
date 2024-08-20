@@ -20,19 +20,21 @@ async function seedUsers(application: INestApplicationContext) {
   const userService = application.get(UserService);
   const genders = ["MALE", "FEMALE", "OTHER"];
 
-  for (let i = 0; i < 100; i++) {
-    const fullName = generateRandomText(5);
+  for (let i = 0; i < 5; i++) {
+    const firstName = generateRandomText(5);
+    const lastName = generateRandomText(5);
     const gender =
       Gender[
         genders[
           generateRandomNumber(0, genders.length - 1)
         ] as keyof typeof Gender
       ];
-    const email = `${fullName.toLowerCase()}@gmail.com`;
+    const email = `${firstName.toLowerCase()}@gmail.com`;
 
     await userService.create({
       email,
-      fullName,
+      firstName,
+      lastName,
       password: "Liutiudiu@0802",
       emailVerified: new Date(),
       profile: {

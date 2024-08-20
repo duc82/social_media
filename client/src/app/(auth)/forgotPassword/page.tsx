@@ -1,4 +1,5 @@
 "use client";
+import Spinner from "@/app/components/Spinner";
 import { forgotPasswordSchema } from "@/app/schemas/auth";
 import authService from "@/app/services/authService";
 import { ForgotPasswordDto } from "@/app/types/auth";
@@ -14,10 +15,10 @@ export default function ForgotPassword() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    resetField
+    resetField,
   } = useForm<ForgotPasswordDto>({
     mode: "onChange",
-    resolver: zodResolver(forgotPasswordSchema)
+    resolver: zodResolver(forgotPasswordSchema),
   });
   const urlSearchParams = useSearchParams();
   const error = urlSearchParams.get("error");
@@ -69,9 +70,9 @@ export default function ForgotPassword() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary w-100 d-flex justify-content-center"
         >
-          Send reset link
+          {isSubmitting ? <Spinner /> : "Send reset link"}
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">

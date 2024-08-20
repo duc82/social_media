@@ -1,7 +1,16 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { User } from "./entities/users.entity";
-import { And, DataSource, FindOneOptions } from "typeorm";
-import { CreateUserDto, ProfileDto, UpdateUserDto } from "./users.dto";
+import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
+import {
+  CreateUserDto,
+  ProfileDto,
+  UpdateUserDto,
+  UpdateUserProfileDto,
+} from "./users.dto";
 import { Profile } from "./entities/profiles.entity";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { BlockedUser } from "./entities/blocked_users.entity";
@@ -10,27 +19,34 @@ import { BlockedUser } from "./entities/blocked_users.entity";
 export class UserService {
   constructor(private dataSource: DataSource) {}
 
-  async findByEmail(email: string, options?: FindOneOptions<User>) {
-    return this.dataSource.getRepository(User).findOne({
-      where: { email },
-      ...options,
-    });
+  async findOne(options?: FindOneOptions<User>) {
+    return this.dataSource.getRepository(User).findOne(options);
   }
 
-  async getProfile(id: string) {
-    const user = await this.getById(id, {
+  async getProfile(username: string) {
+    const user = await this.findOne({
+      where: { username },
       relations: ["profile"],
     });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
     return user;
   }
 
-  async getById(id: string, options?: FindOneOptions<User>) {
-    return this.dataSource.getRepository(User).findOne({
-      where: {
-        id,
-      },
-      ...options,
+  async getCurrent(id: string) {
+    const user = await this.findOne({
+      where: { id },
+      relations: ["profile"],
     });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    return user;
   }
 
   async getBlockedUsers(userId: string) {
@@ -70,7 +86,10 @@ export class UserService {
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
-      .where('unaccent(u."fullName") ILIKE unaccent(:search)', {
+      .where('unaccent(u."firstName") ILIKE unaccent(:search)', {
+        search: `%${search}%`,
+      })
+      .andWhere('unaccent(u."lastName") ILIKE unaccent(:search)', {
         search: `%${search}%`,
       })
       .skip(skip)
@@ -78,6 +97,19 @@ export class UserService {
       .getManyAndCount();
 
     return { users, total, page, limit };
+  }
+
+  async getById(id: string) {
+    const user = await this.findOne({
+      where: { id, deletedAt: IsNull(), bannedAt: IsNull() },
+      relations: ["profile"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    return user;
   }
 
   async search(currentUserId: string, query: QueryDto) {
@@ -115,46 +147,76 @@ export class UserService {
 
   async update(id: string, attrs: UpdateUserDto) {
     await this.dataSource.getRepository(User).update({ id }, attrs);
-    const user = await this.getById(id);
+    const user = await this.dataSource.getRepository(User).findOne({
+      where: {
+        id,
+      },
+      relations: ["profile"],
+    });
     return { user, message: "User updated successfully" };
   }
 
-  async updateProfile(id: string, profile: ProfileDto, url: string) {
-    const user = await this.getById(id, {
+  async updateUserProfile(
+    currentUserId: string,
+    userProfileDto: UpdateUserProfileDto,
+  ) {
+    const { firstName, lastName, username, ...profile } = userProfileDto;
+
+    const user = await this.findOne({
+      where: {
+        id: currentUserId,
+        deletedAt: IsNull(),
+        bannedAt: IsNull(),
+      },
       relations: ["profile"],
     });
-
-    delete user.password;
 
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
-    if (!profile.wallpaper) {
-      profile.wallpaper = url + "/wallpaper.jpg";
+    if (username) {
+      const isUsernameExist = await this.dataSource
+        .getRepository(User)
+        .existsBy({
+          id: Not(currentUserId),
+          username,
+          deletedAt: IsNull(),
+          bannedAt: IsNull(),
+        });
+
+      if (isUsernameExist) {
+        throw new BadRequestException("Username already exists");
+      }
+      user.username = username;
     }
 
-    // Upsert profile
-    if (!user.profile) {
-      const newProfile = this.dataSource.getRepository(Profile).create(profile);
-      user.profile = newProfile;
-    } else {
-      await this.dataSource
-        .getRepository(Profile)
-        .update({ id: user.profile.id }, profile);
-      user.profile = await this.dataSource.getRepository(Profile).findOne({
-        where: { id: user.profile.id },
-      });
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+
+    if (Object.keys(profile).length > 0) {
+      for (const key in profile) {
+        user.profile[key] = profile[key];
+      }
     }
 
     await this.dataSource.getRepository(User).save(user);
+
     return { user, message: "Profile updated successfully" };
   }
 
-  async deleteOne(id: string) {
-    const user = await this.getById(id);
-    user.softDelete();
-    await user.save();
-    return { message: "User deleted successfully" };
+  async remove(id: string) {
+    const result = await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .softDelete()
+      .where("id = :id AND deletedAt IS NULL", { id })
+      .execute();
+
+    if (result.affected === 0) {
+      throw new NotFoundException("User not found");
+    }
+
+    return { message: "Deleted user successfully" };
   }
 }

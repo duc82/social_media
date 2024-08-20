@@ -1,17 +1,20 @@
 import { Url } from "../../common/decorators/url.decorator";
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { UserService } from "./users.service";
-import { ProfileDto, UpdateUserDto } from "./users.dto";
+import { UpdateUserDto, UpdateUserProfileDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { AuthGuard } from "src/common/guards/auth.guard";
 import { AdminGuard } from "src/common/guards/admin.guard";
@@ -23,7 +26,6 @@ import { User } from "src/common/decorators/user.decorator";
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
-  // @UseGuards(AdminGuard)
   @SkipAuth()
   @Get()
   async getAll(@Query() query: QueryDto) {
@@ -38,23 +40,27 @@ export class UsersController {
     return this.usersService.search(currentUserId, query);
   }
 
-  @Get(":id/profile")
-  async getProfile(@Param("id") userId: string) {
-    return this.usersService.getProfile(userId);
+  @Get(":id")
+  async getById(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.usersService.getById(id);
+  }
+
+  @Get(":username/profile")
+  async getProfile(@Param("username") username: string) {
+    return this.usersService.getProfile(username);
   }
 
   @Get("current")
   async getCurrent(@User("userId") currentUserId: string) {
-    return this.usersService.getProfile(currentUserId);
+    return this.usersService.getCurrent(currentUserId);
   }
 
-  @Post("profile/update")
-  async updateCurrentProfile(
+  @Put("profile/update")
+  async updateUserProfile(
     @User("userId") userId: string,
-    @Url() url: string,
-    @Body() profile: ProfileDto,
+    @Body() userProfileDto: UpdateUserProfileDto,
   ) {
-    return this.usersService.updateProfile(userId, profile, url);
+    return this.usersService.updateUserProfile(userId, userProfileDto);
   }
 
   @UseGuards(AdminGuard)
@@ -63,8 +69,8 @@ export class UsersController {
     return this.usersService.update(id, user);
   }
 
-  @Delete("delete/:id")
-  async delete(@Param("id") id: string) {
-    return this.usersService.deleteOne(id);
+  @Put("remove/:id")
+  async remove(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.usersService.remove(id);
   }
 }

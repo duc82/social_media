@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, IsNull } from "typeorm";
+import { DataSource, FindManyOptions, FindOneOptions, IsNull } from "typeorm";
 import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
 import { UserService } from "src/modules/users/users.service";
@@ -12,6 +12,14 @@ export class MessagesService {
     private readonly dataSource: DataSource,
     private readonly userService: UserService,
   ) {}
+
+  async findOne(options?: FindOneOptions<Message>) {
+    return this.dataSource.getRepository(Message).findOne(options);
+  }
+
+  async find(options?: FindManyOptions<Message>) {
+    return this.dataSource.getRepository(Message).find(options);
+  }
 
   async getByConversation(id: string, query: QueryDto) {
     const { page, limit } = query;
@@ -27,11 +35,21 @@ export class MessagesService {
           },
           deletedAt: IsNull(),
         },
-        relations: ["user", "files", "user.profile"],
+        relations: [
+          "user",
+          "files",
+          "user.profile",
+          "reads",
+          "reads.user",
+          "conversation",
+        ],
         take: limit,
         skip,
         order: {
           createdAt: "DESC",
+        },
+        select: {
+          conversation: { id: true },
         },
       });
 
@@ -40,8 +58,18 @@ export class MessagesService {
     return { messages, total, page, limit };
   }
 
+  async markAsRead(conversationId: string, currentUserId: string) {
+    await this.dataSource.query("SELECT mark_messages_as_read($1, $2)", [
+      conversationId,
+      currentUserId,
+    ]);
+
+    return { message: "Mark as read successfully" };
+  }
+
   async create(body: CreateMessageDto, currentUserId: string) {
-    const user = await this.userService.getById(currentUserId, {
+    const user = await this.userService.findOne({
+      where: { id: currentUserId },
       relations: ["profile"],
     });
 
@@ -56,6 +84,11 @@ export class MessagesService {
         id: body.conversation,
       },
       user,
+      reads: [
+        {
+          user: { id: currentUserId },
+        },
+      ],
     });
 
     await message.save();

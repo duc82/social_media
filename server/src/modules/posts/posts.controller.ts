@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from "@nestjs/common";
@@ -26,6 +27,12 @@ export class PostsController {
   @Get()
   async getAll(@Query() query: ListAllPostsDto) {
     return this.postsService.getAll(query);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put("like/:id")
+  async like(@Param("id") id: string, @User("userId") userId: string) {
+    return this.postsService.like(id, userId);
   }
 
   @UseGuards(AuthGuard)

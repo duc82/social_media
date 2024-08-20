@@ -1,17 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import {
-  BellFill,
-  CardText,
-  GearFill,
-  LifePreserver,
-} from "react-bootstrap-icons";
-import NotificationsDropdown from "../Header/NotificationsDropdown";
+import { CardText, GearFill, LifePreserver } from "react-bootstrap-icons";
 import Avatar from "../Avatar";
 import ButtonSignOut from "../Header/ButtonSignOut";
 import { FullUser } from "@/app/types/user";
 import dynamic from "next/dynamic";
+import logo from "@/app/assets/images/logo.svg";
+import formatName from "@/app/utils/formatName";
 
 const SwitchTheme = dynamic(() => import("../Header/SwitchTheme"), {
   ssr: false,
@@ -22,6 +18,8 @@ interface AdminHeaderProps {
 }
 
 export default function AdminHeader({ currentUser }: AdminHeaderProps) {
+  const fullName = formatName(currentUser.firstName, currentUser.lastName);
+
   return (
     <header className="navbar fixed-top navbar-expand-lg bg-mode">
       <div className="container">
@@ -41,7 +39,7 @@ export default function AdminHeader({ currentUser }: AdminHeaderProps) {
           </span>
         </button>
         <Link href="/" className="navbar-brand me-0">
-          <Image src="/logo.svg" alt="Logo" width={36} height={36} />
+          <Image src={logo} alt="Logo" width={36} height={36} />
         </Link>
 
         <ul className="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
@@ -51,28 +49,23 @@ export default function AdminHeader({ currentUser }: AdminHeaderProps) {
               className="nav-link icon-md btn p-0"
               data-bs-toggle="dropdown"
             >
-              <Avatar
-                src={currentUser?.profile.avatar ?? "/01.jpg"}
-                alt={currentUser?.fullName}
-              />
+              <Avatar src={currentUser.profile.avatar} alt={fullName} />
             </button>
 
             <ul className="dropdown-menu dropdown-menu-end pt-3 small me-md-n3 shadow-menu">
               <li className="px-3">
                 <div className="d-flex align-items-center">
                   <Avatar
-                    src={currentUser?.profile.avatar ?? "/07.jpg"}
-                    alt={currentUser?.fullName}
+                    src={currentUser.profile.avatar}
+                    alt={fullName}
                     width={48}
                     height={48}
                     className="rounded-circle"
                     wrapperClassName="me-3"
                   />
                   <div>
-                    <h6 className="mb-1">
-                      {currentUser?.fullName ?? "Liu Tiu Diu"}
-                    </h6>
-                    {currentUser?.profile.job && (
+                    <h6 className="mb-1">{fullName}</h6>
+                    {currentUser.profile.job && (
                       <p className="small m-0">{currentUser.profile.job}</p>
                     )}
                   </div>

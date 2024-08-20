@@ -1,10 +1,7 @@
 import FriendSidebar from "@/app/components/Friends/Sidebar";
+import { ReactNode } from "react";
 
-export default function FriendsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function FriendsLayout({ children }: { children: ReactNode }) {
   return (
     <div className="row">
       <FriendSidebar />

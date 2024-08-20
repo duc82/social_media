@@ -3,10 +3,10 @@ import userService from "@/app/services/userService";
 import SuggestionFriends from "@/app/components/Friends/Suggestions";
 
 export default async function Suggestions() {
-  const { accessToken } = await getServerSession();
+  const { token } = await getServerSession();
 
   const { friends, limit, page } = await userService.getSuggestedFriends(
-    accessToken,
+    token,
     {
       page: 1,
       limit: 20,
@@ -18,7 +18,7 @@ export default async function Suggestions() {
       initialFriends={friends}
       limit={limit}
       initialPage={page}
-      accessToken={accessToken}
+      token={token}
     />
   );
 }

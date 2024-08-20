@@ -3,6 +3,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -55,7 +56,7 @@ export class Post extends BaseEntity {
   @JoinTable()
   likes: User[];
 
-  @Column({ nullable: true, type: "timestamptz" })
+  @DeleteDateColumn({ type: "timestamptz", name: "deletedAt" })
   deletedAt: Date;
 
   @CreateDateColumn({

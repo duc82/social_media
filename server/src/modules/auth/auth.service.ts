@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { UserService } from "src/modules/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
@@ -14,14 +18,12 @@ import { UserRole } from "../users/enums/users.enum";
 @Injectable()
 export class AuthService {
   // miliseconds
-  private readonly accessTokenExpired: number =
-    +this.configService.getOrThrow<string>("ACCESS_TOKEN_EXPIRED");
-  private readonly refreshTokenExpired: number =
-    +this.configService.getOrThrow<string>("REFRESH_TOKEN_EXPIRED");
-  public readonly accessSecret =
-    this.configService.getOrThrow<string>("ACCESS_SECRET");
-  private readonly refreshSecret =
-    this.configService.getOrThrow<string>("REFRESH_SECRET");
+  private readonly jwtShortExpiration = +this.configService.getOrThrow<string>(
+    "JWT_SHORT_EXPIRATION",
+  );
+  private readonly jwtLongExpiration = +this.configService.getOrThrow<string>(
+    "JWT_LONG_EXPIRATION",
+  );
   private readonly clientUrl =
     this.configService.getOrThrow<string>("CLIENT_URL");
 
@@ -46,7 +48,9 @@ export class AuthService {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const userExists = await this.usersService.findByEmail(signUpDto.email);
+    const userExists = await this.usersService.findOne({
+      where: { email: signUpDto.email },
+    });
 
     if (userExists) {
       throw new BadRequestException("User already exists");
@@ -60,7 +64,8 @@ export class AuthService {
 
     const user = await this.usersService.create({
       email: signUpDto.email,
-      fullName: signUpDto.fullName,
+      firstName: signUpDto.firstName,
+      lastName: signUpDto.lastName,
       password: signUpDto.password,
       profile,
     });
@@ -82,7 +87,7 @@ export class AuthService {
       subject: "Verify your account",
       template: "verify-account",
       context: {
-        fullName: signUpDto.fullName,
+        username: user.username,
         link,
       },
     });
@@ -94,7 +99,10 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findByEmail(signInDto.email, {
+    const user = await this.usersService.findOne({
+      where: {
+        email: signInDto.email,
+      },
       relations: ["profile"],
     });
 
@@ -117,95 +125,54 @@ export class AuthService {
       role: user.role,
     };
 
-    const token = await this.generateToken(payload, {
+    const emailToken = await this.generateToken(payload, {
       expiresIn: "1h",
     });
 
-    const link = `${this.clientUrl}/verify?token=${token}`;
+    const link = `${this.clientUrl}/verify?token=${emailToken}`;
 
     if (!user.emailVerified) {
-      await this.mailService.sendMail({
-        to: user.email,
-        subject: "Verify your account",
-        template: "verify-account",
-        context: {
-          fullName: user.fullName,
-          link,
-        },
-      });
+      try {
+        await this.mailService.sendMail({
+          to: user.email,
+          subject: "Verify your account",
+          template: "verify-account",
+          context: {
+            username: user.username,
+            link,
+          },
+        });
+      } catch (error) {
+        throw new InternalServerErrorException("Failed to send email");
+      }
+
       throw new BadRequestException(
         "Verify your account, we have sent an email to your email address",
       );
     }
 
-    const accessTokenExpired = Date.now() + this.accessTokenExpired;
+    const expiration = signInDto.isRemember
+      ? this.jwtLongExpiration
+      : this.jwtShortExpiration;
 
-    const accessToken = await this.generateToken(payload, {
-      expiresIn: this.accessTokenExpired / 1000, // seconds
-      secret: this.accessSecret,
-    });
-
-    if (!signInDto.isRemember) {
-      return {
-        user,
-        accessToken,
-        message: "User logged in successfully",
-        accessTokenExpired,
-      };
-    }
-
-    const refreshToken = await this.generateToken(payload, {
-      expiresIn: this.refreshTokenExpired / 1000,
-      secret: this.refreshSecret,
+    const token = await this.generateToken(payload, {
+      expiresIn: expiration / 1000, // seconds
     });
 
     return {
       user,
-      accessToken,
-      refreshToken,
+      token,
       message: "User logged in successfully",
-      accessTokenExpired,
-    };
-  }
-
-  async refreshToken(refreshToken: string) {
-    const payload = await this.verifyToken<UserPayload>(refreshToken, {
-      secret: this.refreshSecret,
-    });
-
-    if (!payload) {
-      throw new BadRequestException("Invalid token");
-    }
-
-    const user = await this.usersService.getById(payload.userId);
-
-    if (!user) {
-      throw new BadRequestException("User not found");
-    }
-
-    const newPayload = {
-      userId: user.id,
-      role: user.role,
-    };
-
-    const accessTokenExpired = Date.now() + this.accessTokenExpired;
-
-    const accessToken = await this.generateToken(newPayload, {
-      expiresIn: this.accessTokenExpired / 1000,
-      secret: this.accessSecret,
-    });
-
-    return {
-      accessToken,
-      message: "Token refreshed successfully",
-      accessTokenExpired,
     };
   }
 
   async verifyEmail(token: string) {
     try {
       const payload = await this.verifyToken<UserPayload>(token);
-      const user = await this.usersService.getById(payload.userId, {
+      const user = await this.usersService.findOne({
+        where: {
+          id: payload.userId,
+        },
         select: ["id", "emailVerified"],
       });
 
@@ -220,14 +187,16 @@ export class AuthService {
         message: "Account verified successfully",
       };
     } catch (error) {
+      console.log(error);
       throw new BadRequestException("Invalid token or token expired");
     }
   }
 
   async forgotPassword(email: string) {
-    const user = await this.usersService.findByEmail(email, {
+    const user = await this.usersService.findOne({
+      where: { email },
       relations: ["token"],
-      select: ["id", "fullName"],
+      select: ["id", "username"],
     });
 
     if (!user) {
@@ -266,7 +235,7 @@ export class AuthService {
       subject: "Reset password",
       template: "forgot-password",
       context: {
-        fullName: user.fullName,
+        username: user.username,
         link,
       },
     });
@@ -278,8 +247,9 @@ export class AuthService {
 
   async resetPassword(token: string, password: string) {
     try {
-      const payload = await this.jwtService.verifyAsync(token);
-      const user = await this.usersService.getById(payload.userId, {
+      const payload = await this.verifyToken<UserPayload>(token);
+      const user = await this.usersService.findOne({
+        where: { id: payload.userId },
         relations: ["token"],
       });
 

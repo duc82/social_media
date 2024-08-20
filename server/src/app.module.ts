@@ -56,6 +56,9 @@ import { JwtGlobalModule } from "./modules/jwt/jwt.module";
               baseUrl: "file://" + "templates/mail/",
             },
           }),
+          // options: {
+          //   strict: true,
+          // },
         },
       }),
     }),

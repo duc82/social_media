@@ -1,14 +1,14 @@
 import { Options } from "../types";
-import { PostResponse, PostsReponse } from "../types/post";
+import { PostDto, PostResponse, PostsReponse } from "../types/post";
 import apiRequest from "./api";
 
 const postService = {
-  create: async (formData: FormData, accessToken: string) => {
+  create: async (body: PostDto, token: string) => {
     return apiRequest<PostResponse>("/posts/create", {
       method: "POST",
-      body: formData,
+      body: JSON.stringify(body),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
@@ -22,14 +22,23 @@ const postService = {
       url += `&userId=${userId}`;
     }
 
-    return apiRequest<PostsReponse>(url);
+    return apiRequest<PostsReponse>(url, { next: { tags: options.tags } });
   },
 
-  delete: async (id: string, accessToken: string) => {
+  like: async (id: string, token: string) => {
+    return apiRequest<PostResponse>(`/posts/like/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  delete: async (id: string, token: string) => {
     return apiRequest<{ message: string }>(`/posts/delete/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },

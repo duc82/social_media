@@ -5,6 +5,8 @@ import type {
   FriendStatus,
   FullUser,
   UsersReponse,
+  UserResponse,
+  UpdateUserProfileDto,
 } from "../types/user";
 import apiRequest from "./api";
 
@@ -18,100 +20,125 @@ const userService = {
     return apiRequest<UsersReponse>(`/users${query}`);
   },
 
-  getUserProfile: async (id: string) => {
-    return apiRequest<FullUser>(`/users/${id}/profile`);
+  getUserProfile: async (username: string, token: string) => {
+    return apiRequest<FullUser>(`/users/${username}/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 
-  getCurrent: async (accessToken: string) => {
+  getCurrent: async (token: string) => {
     return apiRequest<FullUser>("/users/current", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  getById: async (id: string, token: string) => {
+    return apiRequest<FullUser>(`/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  updateUserProfile: async (data: UpdateUserProfileDto, token: string) => {
+    return apiRequest<UserResponse>("/users/profile/update", {
+      method: "PUT",
+      body: JSON.stringify(data),
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
   getFriends: async (
-    accessToken: string,
     status: FriendStatus,
+    token: string,
     options?: GetFriendsOptions
   ) => {
     const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
 
     return apiRequest<FriendsResponse>(`/friends/${status}${query}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  getFriendRequests: async (
-    accessToken: string,
-    options: GetFriendsOptions
-  ) => {
+  getFriendRequests: async (token: string, options: GetFriendsOptions) => {
     const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
 
     return apiRequest<FriendsResponse>(`/friends/requests${query}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  getSuggestedFriends: async (
-    accessToken: string,
-    options?: GetFriendsOptions
-  ) => {
+  getSuggestedFriends: async (token: string, options?: GetFriendsOptions) => {
     const query = options ? `?limit=${options.limit}&page=${options.page}` : "";
 
     return apiRequest<FriendsResponse>(`/friends/suggested${query}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  sendFriendRequest: async (accessToken: string, userId: string) => {
+  sendFriendRequest: async (token: string, userId: string) => {
     return apiRequest<Friend>("/friends/send", {
       method: "POST",
       body: JSON.stringify({ id: userId }),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  cancelFriendRequest: async (accessToken: string, userId: string) => {
+  cancelFriendRequest: async (token: string, userId: string) => {
     return apiRequest<Friend>(`/friends/cancel/${userId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  getFriendship: async (accessToken: string, friendId: string) => {
+  getFriend: async (friendId: string, token: string) => {
     return apiRequest<Friend>(`/friends/${friendId}/friend`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  acceptFriendRequest: async (accessToken: string, userId: string) => {
+  acceptFriendRequest: async (token: string, userId: string) => {
     return apiRequest<Friend>("/friends/accept", {
       method: "POST",
       body: JSON.stringify({ id: userId }),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   },
 
-  declineFriendRequest: async (accessToken: string, userId: string) => {
+  declineFriendRequest: async (token: string, userId: string) => {
     return apiRequest<Friend>(`/friends/decline/${userId}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  removeFriend: async (friendId: string, token: string) => {
+    return apiRequest<{ message: string }>(`/friends/remove/${friendId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
     });
   },

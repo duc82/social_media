@@ -11,40 +11,54 @@ import {
   ReplyFill,
   SlashCircle,
   ThreeDots,
-  XCircle
+  XCircle,
 } from "react-bootstrap-icons";
 import { formatDateTime } from "@/app/utils/dateTime";
 import { Post as IPost } from "@/app/types/post";
+import formatName from "@/app/utils/formatName";
+import clsx from "clsx";
+import { useRef } from "react";
 
 export default function Post({
   post,
-  handleDeletePost
+  handleRemove,
+  handleLike,
+  isLiked,
 }: {
   post: IPost;
-  handleDeletePost: (id: string) => Promise<void>;
+  handleRemove: (_id: string) => Promise<void>;
+  handleLike: (_id: string) => Promise<void>;
+  isLiked: boolean;
 }) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fullName = formatName(post.user.firstName, post.user.lastName);
+
   return (
     <div className="card">
       <div className="card-header border-0 pb-0">
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
-            <Link href="#!" className="avatar avatar-story me-2">
+            <Link href={`/profile/${post.user.username}`} className="me-2">
               <Avatar
-                className="avatar-img rounded-circle"
                 src={post.user.profile.avatar}
-                alt={post.user.fullName}
+                alt={fullName}
+                wrapperClassName="avatar-story"
+                className="rounded-circle"
               />
             </Link>
             <div>
               <div className="nav nav-divider">
-                <Link href="#!" className="nav-item card- mb-0 h6">
-                  {post.user.fullName}
+                <Link
+                  href={`/profile/${post.user.username}`}
+                  className="nav-item card- mb-0 h6"
+                >
+                  {fullName}
                 </Link>
                 <span
                   className="nav-item small"
                   title={new Date(post.createdAt).toLocaleString("en-US", {
                     dateStyle: "full",
-                    timeStyle: "short"
+                    timeStyle: "short",
                   })}
                 >
                   {formatDateTime(post.createdAt)}
@@ -56,17 +70,13 @@ export default function Post({
           <div className="dropdown">
             <button
               type="button"
-              className="text-secondary btn btn-secondary-soft-hover py-1 px-2"
-              id="cardFeedAction1"
+              className="text-secondary btn btn-secondary-soft-hover py-1 px-2 border-0"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
               <ThreeDots />
             </button>
-            <ul
-              className="dropdown-menu dropdown-menu-end"
-              aria-labelledby="cardFeedAction1"
-            >
+            <ul className="dropdown-menu dropdown-menu-end">
               <li>
                 <Link className="dropdown-item" href="#">
                   <Bookmark className="fa-fw pe-2" />
@@ -82,26 +92,26 @@ export default function Post({
               <li>
                 <button
                   className="dropdown-item"
-                  onClick={() => handleDeletePost(post.id)}
+                  onClick={() => handleRemove(post.id)}
                 >
                   <XCircle className="fa-fw pe-2" />
                   Remove post
                 </button>
               </li>
               <li>
-                <Link className="dropdown-item" href="#">
+                <button type="button" className="dropdown-item">
                   <SlashCircle className="fa-fw pe-2" />
                   Block
-                </Link>
+                </button>
               </li>
               <li>
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <Link className="dropdown-item" href="#">
+                <button type="button" className="dropdown-item">
                   <Flag className="fa-fw pe-2" />
                   Report post
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -130,22 +140,27 @@ export default function Post({
 
         <ul className="nav nav-stack py-3 small">
           <li className="nav-item">
-            <Link
-              className="nav-link fw-normal d-flex align-items-start active"
-              href="#!"
+            <button
+              type="button"
+              onClick={() => handleLike(post.id)}
+              className={clsx(
+                "nav-link fw-normal d-flex align-items-start",
+                isLiked && "active"
+              )}
             >
               <HandThumbsUpFill className="pe-1" size={18} />
-              Liked ({post.likes.length})
-            </Link>
+              {isLiked ? "Liked" : "Like"} ({post.likes.length})
+            </button>
           </li>
           <li className="nav-item">
-            <Link
+            <button
+              type="button"
               className="nav-link fw-normal d-flex align-items-start"
-              href="#!"
+              onClick={() => textareaRef.current?.focus()}
             >
               <ChatFill className="pe-1" size={18} />
-              Comments ({})
-            </Link>
+              Comments (0)
+            </button>
           </li>
           <li className="nav-item dropdown ms-sm-auto">
             <button
@@ -197,20 +212,20 @@ export default function Post({
         </ul>
 
         <div className="d-flex align-items-center mb-3">
-          <div className="avatar avatar-xs me-2">
-            <Link href="#!">
-              <Avatar
-                className="avatar-img rounded-circle"
-                src={post.user.profile.avatar}
-                alt={post.user.fullName}
-              />
-            </Link>
-          </div>
+          <Link href="#" className="me-2">
+            <Avatar
+              wrapperClassName="avatar-xs"
+              className="rounded-circle"
+              src={post.user.profile.avatar}
+              alt={fullName}
+            />
+          </Link>
           <form className="position-relative w-100">
             <textarea
               className="form-control pe-4 bg-light"
               rows={1}
               placeholder="Add a comment..."
+              ref={textareaRef}
             />
           </form>
         </div>

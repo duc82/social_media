@@ -1,7 +1,11 @@
 import { getConversationById } from "@/app/actions/conversationAction";
-import { getMessagesByConversation } from "@/app/actions/messageAction";
-import ChatBody from "@/app/components/Messages/ChatBody";
+import {
+  getMessagesByConversation,
+  markMessagesAsRead,
+} from "@/app/actions/messageAction";
 import ChatForm from "@/app/components/Messages/ChatForm";
+import MessageList from "@/app/components/Messages/MessageList";
+import TopAvatarStatus from "@/app/components/Messages/TopAvatarStatus";
 import getServerSession from "@/app/libs/session";
 
 export default async function Messages({
@@ -11,7 +15,7 @@ export default async function Messages({
     id: string;
   };
 }) {
-  const { currentUser } = await getServerSession();
+  const { currentUser, token } = await getServerSession();
 
   const conversation = await getConversationById(id);
 
@@ -20,20 +24,31 @@ export default async function Messages({
   )?.user;
 
   const { messages, page, limit, total } = await getMessagesByConversation(
-    conversation.id
+    conversation.id,
+    { limit: 20, page: 1, tags: ["messages"] }
   );
+
+  await markMessagesAsRead(conversation.id);
 
   return (
     <div className="col-lg-8 col-xxl-9">
       <div className="card card-chat rounded-start-lg-0 border-start-lg-0 h-100">
         <div className="card-body">
-          <ChatBody
+          {/* Top avatar and status */}
+          <TopAvatarStatus
+            user={user}
+            conversation={conversation}
+            token={token}
+            currentUser={currentUser}
+          />
+          <hr />
+          {/* Messages */}
+          <MessageList
             initialMessages={messages}
             initialPage={page + 1}
             currentUser={currentUser}
             limit={limit}
             total={total}
-            user={user}
           />
         </div>
         <div className="card-footer">

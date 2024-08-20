@@ -1,13 +1,14 @@
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
+  ReactNode,
   Ref,
   forwardRef,
 } from "react";
 import { ExclamationCircleFill } from "react-bootstrap-icons";
 
 interface FormControlProps extends InputHTMLAttributes<HTMLInputElement> {
-  text?: React.ReactNode;
+  text?: ReactNode;
   error?: string;
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>;
   wrapperClassName?: string;

@@ -1,6 +1,7 @@
 import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreateModal";
 import getServerSession from "@/app/libs/session";
+import formatName from "@/app/utils/formatName";
 import Link from "next/link";
 import {
   BookmarkCheck,
@@ -16,6 +17,8 @@ import {
 export default async function SharePost() {
   const { currentUser } = await getServerSession();
 
+  const fullName = formatName(currentUser.firstName, currentUser.lastName);
+
   return (
     <>
       <CreatePostModal currentUser={currentUser} />
@@ -24,8 +27,8 @@ export default async function SharePost() {
           <Avatar
             wrapperClassName="avatar avatar-xs me-2"
             className="avatar-img rounded-circle"
-            src={currentUser?.profile.avatar ?? "/07.jpg"}
-            alt={currentUser?.fullName}
+            src={currentUser.profile.avatar ?? "/07.jpg"}
+            alt={fullName}
           />
           <form className="w-100">
             <input

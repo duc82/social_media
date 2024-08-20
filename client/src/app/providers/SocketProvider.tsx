@@ -18,16 +18,16 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<ISocket | null>(null);
   const [onlines, setOnlines] = useState<Online[]>([]);
   const { data } = useSession();
-  const accessToken = data?.accessToken;
+  const token = data?.token;
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (!token) return;
 
     const newSocket: ISocket = io(process.env.NEXT_PUBLIC_API_URL as string, {
-      transports: ["websocket"],
       auth: {
-        token: accessToken,
+        token,
       },
+      transports: ["websocket"],
     });
 
     setSocket(newSocket);
@@ -40,9 +40,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     return () => {
       newSocket.off("onlines", handleOnlines);
-      newSocket.disconnect();
     };
-  }, [accessToken]);
+  }, [token]);
 
   return (
     <SocketContext.Provider

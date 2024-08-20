@@ -4,13 +4,26 @@ import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
 import getServerSession from "@/app/libs/session";
+import calendar_outline_filled from "@/app/assets/images/calendar-outline-filled.svg";
+import chat_outline_filled from "@/app/assets/images/chat-outline-filled.svg";
+import cog_outline_filled from "@/app/assets/images/cog-outline-filled.svg";
+import earth_outline_filled from "@/app/assets/images/earth-outline-filled.svg";
+import home_outline_filled from "@/app/assets/images/home-outline-filled.svg";
+import notification_outlined_filled from "@/app/assets/images/notification-outlined-filled.svg";
+import person_outline_filled from "@/app/assets/images/person-outline-filled.svg";
+import formatName from "@/app/utils/formatName";
+import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
 
 export default async function LeftSidebar() {
   const { currentUser } = await getServerSession();
 
+  const fullName = formatName(currentUser.firstName, currentUser.lastName);
+
+  const wallpaper = currentUser.profile.wallpaper || wallpaper_initial.src;
+
   return (
     <div className="col-lg-3">
-      <div className="position-sticky" style={{ top: "calc(1.5rem + 56px)" }}>
+      <div className="sticky" style={{ top: "calc(1.5rem + 56px)" }}>
         <button
           type="button"
           className="d-flex align-items-center d-lg-none bg-transparent border-0"
@@ -45,32 +58,32 @@ export default async function LeftSidebar() {
                 <div
                   style={{
                     height: "50px",
-                    backgroundImage: "url('/01.jpg')",
+                    backgroundImage: `url('${wallpaper}')`,
                     backgroundPosition: "center",
                     backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat"
+                    backgroundRepeat: "no-repeat",
                   }}
                 ></div>
 
                 <div className="card-body pt-0">
                   <div className="text-center">
                     <Avatar
-                      src={currentUser?.profile.avatar ?? "/01.jpg"}
-                      alt={currentUser?.fullName}
+                      src={currentUser.profile.avatar ?? "/01.jpg"}
+                      alt={fullName}
                       height="4rem"
                       width="4rem"
                       wrapperClassName="d-inline-block mt-n4 mb-2"
                       className="border border-3 border-white"
                     />
 
-                    <h5 className="mb-0">{currentUser?.fullName}</h5>
+                    <h5 className="mb-0">{fullName}</h5>
                     {currentUser?.profile.job && (
                       <small>{currentUser.profile.job}</small>
                     )}
 
                     <p className="mt-3">
-                      I'd love to change the world, but they won't give me the
-                      source code.
+                      I&apos;d love to change the world, but they won&apos;t
+                      give me the source code.
                     </p>
                     <div className="hstack gap-2 gap-xl-3 justify-content-center">
                       <div>
@@ -100,7 +113,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="home-outline-filled.svg"
+                          src={home_outline_filled}
                           alt="Feed"
                           width={20}
                           height={20}
@@ -115,7 +128,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="/person-outline-filled.svg"
+                          src={person_outline_filled}
                           alt="Friends"
                           width={20}
                           height={20}
@@ -130,7 +143,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="/earth-outline-filled.svg"
+                          src={earth_outline_filled}
                           alt="Latest News"
                           width={20}
                           height={20}
@@ -145,7 +158,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="/calendar-outline-filled.svg"
+                          src={calendar_outline_filled}
                           alt="Events"
                           width={20}
                           height={20}
@@ -160,7 +173,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="/chat-outline-filled.svg"
+                          src={chat_outline_filled}
                           alt="Groups"
                           width={20}
                           height={20}
@@ -175,7 +188,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="/notification-outlined-filled.svg"
+                          src={notification_outlined_filled}
                           alt="Notifications"
                           width={20}
                           height={20}
@@ -190,7 +203,7 @@ export default async function LeftSidebar() {
                       >
                         <Image
                           className="me-2"
-                          src="/cog-outline-filled.svg"
+                          src={cog_outline_filled}
                           alt="Settings"
                           width={20}
                           height={20}

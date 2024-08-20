@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -34,10 +35,8 @@ export class ConversationMember extends BaseEntity {
   })
   role: MemberRole;
 
-  @Column({
-    default: false,
-  })
-  isRead: boolean;
+  @DeleteDateColumn({ type: "timestamptz", name: "deletedAt" })
+  deletedAt: Date;
 
   @CreateDateColumn({
     type: "timestamptz",

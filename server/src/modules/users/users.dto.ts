@@ -7,29 +7,32 @@ import {
   ValidateIf,
   IsString,
   IsOptional,
+  Matches,
 } from "class-validator";
-import { Gender, MarialStatus } from "./enums/profiles.enum";
-import { PartialType } from "@nestjs/swagger";
+import { Gender, MaritalStatus } from "./enums/profiles.enum";
+import { OmitType, PartialType } from "@nestjs/swagger";
 import { User } from "./entities/users.entity";
 
 export class ProfileDto {
+  @ValidateIf((o) => o.gender)
   @IsEnum(Gender)
-  gender: Gender;
+  gender?: Gender;
 
   @ValidateIf((o) => o.avatar)
   @IsString()
-  avatar: string;
+  avatar?: string;
 
   @ValidateIf((o) => o.wallpaper)
   @IsString()
   wallpaper?: string;
 
+  @ValidateIf((o) => o.birthday)
   @IsDateString()
-  birthday: string;
+  birthday?: string;
 
   @ValidateIf((o) => o.status)
-  @IsEnum(MarialStatus)
-  marialStatus?: MarialStatus;
+  @IsEnum(MaritalStatus)
+  maritalStatus?: MaritalStatus;
 
   @ValidateIf((o) => o.job)
   @IsString()
@@ -41,7 +44,7 @@ export class ProfileDto {
 
   @ValidateIf((o) => o.overview)
   @IsString()
-  overview?: string;
+  bio?: string;
 
   @ValidateIf((o) => o.education)
   @IsString()
@@ -55,7 +58,11 @@ export class ProfileDto {
 export class CreateUserDto {
   @MinLength(2)
   @IsNotEmpty()
-  fullName: string;
+  firstName: string;
+
+  @MinLength(2)
+  @IsNotEmpty()
+  lastName: string;
 
   @IsEmail()
   email: string;
@@ -70,4 +77,23 @@ export class CreateUserDto {
   profile: ProfileDto;
 }
 
-export class UpdateUserDto extends PartialType(User) {}
+export class UpdateUserDto extends PartialType(
+  OmitType(User, ["id", "emailVerified", "password", "createdAt"]),
+) {}
+
+export class UpdateUserProfileDto extends ProfileDto {
+  @ValidateIf((o) => o.firstName)
+  @MinLength(2)
+  firstName?: string;
+
+  @ValidateIf((o) => o.lastName)
+  @MinLength(2)
+  lastName?: string;
+
+  @ValidateIf((o) => o.username)
+  @MinLength(2)
+  @Matches(/^[a-zA-Z0-9]*$/, {
+    message: "Username must contain only letters, numbers",
+  })
+  username?: string;
+}

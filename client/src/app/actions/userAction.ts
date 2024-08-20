@@ -1,90 +1,69 @@
 "use server";
 
+import { notFound } from "next/navigation";
 import userService, { GetFriendsOptions } from "../services/userService";
 import { FriendStatus, FullUser } from "../types/user";
-import { revalidatePath as revalidatePathCustom } from "next/cache";
 
-export const getUserById = async (
-  id: string | undefined,
-  currentUser: FullUser
+export const getUserProfile = async (
+  username: string | undefined,
+  currentUser: FullUser,
+  token: string
 ) => {
-  if (!id) {
+  if (!username) {
     return currentUser;
   }
 
-  if (currentUser.id === id) {
+  if (currentUser.username === username) {
     return currentUser;
   }
-
-  const user = await userService.getUserProfile(id);
-  return user;
-};
-
-export const revalidatePath = (
-  originalPath: string,
-  type?: "page" | "layout" | undefined
-) => {
-  revalidatePathCustom(originalPath, type);
-};
-
-export const getFriendship = async (accessToken: string, userId: string) => {
   try {
-    const friendShip = await userService.getFriendship(accessToken, userId);
-    return friendShip;
+    const user = await userService.getUserProfile(username, token);
+    return user;
+  } catch (error) {
+    notFound();
+  }
+};
+
+export const getFriend = async (userId: string, token: string) => {
+  try {
+    const friend = await userService.getFriend(userId, token);
+    return friend;
   } catch (error) {
     return null;
   }
 };
 
 export const getFriends = async (
-  accessToken: string,
   status: FriendStatus,
+  token: string,
   options?: GetFriendsOptions
 ) => {
-  return userService.getFriends(accessToken, status, options);
+  return userService.getFriends(status, token, options);
 };
 
 export const getFriendRequests = async (
-  accessToken: string,
+  token: string,
   options: GetFriendsOptions
 ) => {
-  return userService.getFriendRequests(accessToken, options);
+  return userService.getFriendRequests(token, options);
 };
 
-export const sendFriendRequest = async (
-  accessToken: string,
-  friendId: string
-) => {
-  const friendship = await userService.sendFriendRequest(accessToken, friendId);
+export const sendFriendRequest = async (token: string, friendId: string) => {
+  const friendship = await userService.sendFriendRequest(token, friendId);
   return friendship;
 };
 
-export const cancelFriendRequest = async (
-  accessToken: string,
-  friendId: string
-) => {
-  await userService.cancelFriendRequest(accessToken, friendId);
+export const cancelFriendRequest = async (token: string, friendId: string) => {
+  await userService.cancelFriendRequest(token, friendId);
   return null;
 };
 
-export const acceptFriendRequest = async (
-  accessToken: string,
-  friendId: string
-) => {
-  const friendship = await userService.acceptFriendRequest(
-    accessToken,
-    friendId
-  );
+export const acceptFriendRequest = async (token: string, friendId: string) => {
+  const friendship = await userService.acceptFriendRequest(token, friendId);
   return friendship;
 };
 
-export const declineFriendRequest = async (
-  accessToken: string,
-  friendId: string
-) => {
-  const friendship = await userService.declineFriendRequest(
-    accessToken,
-    friendId
-  );
+export const declineFriendRequest = async (token: string, friendId: string) => {
+  const friendship = await userService.declineFriendRequest(token, friendId);
   return friendship;
 };

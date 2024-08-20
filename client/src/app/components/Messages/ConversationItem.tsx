@@ -1,13 +1,14 @@
 "use client";
-import useSocket from "@/app/hooks/useSocket";
+import useSocketContext from "@/app/hooks/useSocketContext";
 import { Conversation } from "@/app/types/conversation";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import Avatar from "../Avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Message } from "@/app/types/message";
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
+import formatName from "@/app/utils/formatName";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -19,9 +20,15 @@ export default function ConversationItem({
   currentUser,
 }: ConversationItemProps) {
   const pathname = usePathname();
-  const { onlines, socket } = useSocket();
+  const { onlines, socket } = useSocketContext();
+
   const [lastMessage, setLastMessage] = useState<Message | null>(
     conversation.messages.length > 0 ? conversation.messages[0] : null
+  );
+  const lastMessageFile = useMemo(
+    () =>
+      lastMessage && lastMessage.files.length > 0 ? lastMessage.files[0] : null,
+    [lastMessage]
   );
 
   const member = conversation.members.find(
@@ -33,6 +40,7 @@ export default function ConversationItem({
 
   useEffect(() => {
     if (!socket) return;
+
     const handleLastMessage = (message: Message) => {
       setLastMessage(message);
     };
@@ -41,9 +49,10 @@ export default function ConversationItem({
 
     return () => {
       socket.off("message", handleLastMessage);
-      socket.disconnect();
     };
   }, [socket]);
+
+  const fullName = formatName(user?.firstName ?? "", user?.lastName ?? "");
 
   return (
     <li className="mb-3">
@@ -62,14 +71,18 @@ export default function ConversationItem({
             )}
             className="avatar-img rounded-circle"
             src={user?.profile.avatar || ""}
-            alt={user?.fullName}
+            alt={fullName}
           />
           <div className="flex-grow-1 d-block">
             <h6 className="mb-0 mt-1">
-              {conversation.isGroup ? conversation.name : user?.fullName}
+              {conversation.isGroup ? conversation.name : fullName}
             </h6>
             <div className="small text-secondary">
-              {lastMessage ? lastMessage.content : "Create a new conversation"}
+              {!lastMessage && "Created a new conversation"}
+              {lastMessage && !lastMessageFile && lastMessage.content}
+              {lastMessage &&
+                lastMessageFile &&
+                (lastMessageFile.type === "image" ? "Image" : "Video")}
             </div>
           </div>
         </div>

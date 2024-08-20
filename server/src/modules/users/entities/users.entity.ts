@@ -5,6 +5,7 @@ import {
   BeforeUpdate,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -34,9 +35,16 @@ export class User extends BaseEntity {
   id: string;
 
   @Column()
-  fullName: string;
+  firstName: string;
 
-  @Index("idx_email_users", { unique: true })
+  @Column()
+  lastName: string;
+
+  @Index("idx_users_username", { unique: true })
+  @Column()
+  username: string;
+
+  @Index("idx_users_email", { unique: true })
   @Column()
   email: string;
 
@@ -93,11 +101,17 @@ export class User extends BaseEntity {
     nullable: true,
     type: "timestamptz",
   })
-  bannedAt: Date;
+  offlineAt: Date;
 
   @Column({
     nullable: true,
     type: "timestamptz",
+  })
+  bannedAt: Date;
+
+  @DeleteDateColumn({
+    type: "timestamptz",
+    name: "deletedAt",
   })
   deletedAt: Date;
 
@@ -106,25 +120,15 @@ export class User extends BaseEntity {
   })
   createdAt: Date;
 
-  softDelete() {
-    this.deletedAt = new Date();
-    this.email = `${this.email}-deleted-${this.id}`;
-  }
-
-  restore() {
-    this.deletedAt = null;
-    this.email = this.email.replace(/-deleted-[0-9a-f-]+$/, "");
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
   }
 
   @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword(): Promise<void> {
-    if (!this.password) {
-      return;
-    }
-
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
+  async generateUsername(): Promise<void> {
+    this.username = this.email.split("@")[0];
   }
 
   async comparePassword(attempt: string): Promise<boolean> {
