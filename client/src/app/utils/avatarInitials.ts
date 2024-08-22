@@ -65,7 +65,7 @@ class AvatarInitials {
     const blob = new Promise<Blob>((resolve) => {
       canvas.toBlob((blob) => {
         resolve(blob!);
-      });
+      }, "image/webp");
     });
 
     return blob;

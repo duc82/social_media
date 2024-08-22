@@ -10,14 +10,14 @@ interface SuggestionsProps {
   initialFriends: FullUser[];
   initialPage: number;
   limit: number;
-  accessToken: string;
+  token: string;
 }
 
 export default function Suggestions({
   initialFriends,
   initialPage,
   limit,
-  accessToken
+  token,
 }: SuggestionsProps) {
   const [friends, setFriends] = useState<FullUser[]>(initialFriends);
   const [hasMore, setHasMore] = useState(true);
@@ -25,9 +25,9 @@ export default function Suggestions({
 
   const fetchMoreFriend = async () => {
     try {
-      const { friends } = await userService.getSuggestedFriends(accessToken, {
+      const { friends } = await userService.getSuggestedFriends(token, {
         limit,
-        page
+        page,
       });
 
       if (friends.length === 0) {

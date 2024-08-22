@@ -1,23 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
-import BootstrapContext from "../contexts/BootstrapContext";
+import {
+  createContext,
+  PropsWithChildren,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { usePathname } from "next/navigation";
 import { Tooltip, Popover } from "bootstrap";
 
-export default function BootstrapProvider({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export const BootstrapContext = createContext<any>(undefined);
+
+export function BootstrapProvider({ children }: PropsWithChildren) {
   const [bootstrap, setBootstrap] = useState<any>();
   const pathname = usePathname();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
     setBootstrap(bootstrap);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!bootstrap) return;
 
     const tooltipTriggerList = document.querySelectorAll(
@@ -35,7 +37,7 @@ export default function BootstrapProvider({
     const popovers: Popover[] = [...popoverTriggerList].map(
       (popoverTriggerEl) =>
         new bootstrap.Popover(popoverTriggerEl, {
-          container: "body"
+          container: "body",
         })
     );
 

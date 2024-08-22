@@ -1,5 +1,6 @@
 "use client";
-import InputGroup from "@/app/components/Form/InputGroup";
+import FormControl from "@/app/components/Form/FormControl";
+import Spinner from "@/app/components/Spinner";
 import { signInSchema } from "@/app/schemas/auth";
 import { SignInDto } from "@/app/types/auth";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -79,7 +80,7 @@ export default function SignIn() {
       )}
 
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <InputGroup
+        <FormControl
           {...register("email")}
           type="email"
           id="email"
@@ -115,7 +116,7 @@ export default function SignIn() {
         </div>
 
         <div className="mb-3 d-sm-flex justify-content-between">
-          <InputGroup
+          <FormControl
             {...register("isRemember")}
             type="checkbox"
             wrapperClassName="d-flex align-items-center"
@@ -135,9 +136,9 @@ export default function SignIn() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary w-100 d-flex justify-content-center"
         >
-          Login
+          {isSubmitting ? <Spinner /> : "Login"}
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">

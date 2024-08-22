@@ -1,17 +1,21 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UsersModule } from "./users/users.module";
+import { UsersModule } from "./modules/users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { PostsModule } from "./posts/posts.module";
-import { EventsGateway } from "./events/events.gateway";
+import { PostsModule } from "./modules/posts/posts.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
-import { AuthModule } from "./auth/auth.module";
-import { CoreModule } from "./core/core.module";
+import { AuthModule } from "./modules/auth/auth.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConversationsModule } from "./conversations/conversations.module";
-import { MessagesModule } from './messages/messages.module';
+import { ConversationsModule } from "./modules/conversations/conversations.module";
+import { MessagesModule } from "./modules/messages/messages.module";
+import { GroupsModule } from "./modules/groups/groups.module";
+import { EventsModule } from "./modules/events/events.module";
+import { BlogsModule } from "./modules/blogs/blogs.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
+import { FriendsModule } from "./modules/friends/friends.module";
+import { JwtGlobalModule } from "./modules/jwt/jwt.module";
 
 @Module({
   imports: [
@@ -24,7 +28,7 @@ import { MessagesModule } from './messages/messages.module';
         type: "postgres",
         url: configService.getOrThrow<string>("DATABASE_URL"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        logging: true,
+        logging: false,
         autoLoadEntities: true,
       }),
     }),
@@ -52,17 +56,25 @@ import { MessagesModule } from './messages/messages.module';
               baseUrl: "file://" + "templates/mail/",
             },
           }),
+          // options: {
+          //   strict: true,
+          // },
         },
       }),
     }),
-    CoreModule,
+    JwtGlobalModule,
     AuthModule,
     UsersModule,
     PostsModule,
     ConversationsModule,
     MessagesModule,
+    GroupsModule,
+    EventsModule,
+    BlogsModule,
+    NotificationsModule,
+    FriendsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, EventsGateway],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { postSchema } from "../schemas/post";
-import { User } from "./user";
+import { FullUser, User } from "./user";
 
-interface File {
+export interface File {
   id: string;
   url: string;
   type: "image" | "video";
@@ -10,31 +10,32 @@ interface File {
   createdAt: string;
 }
 
-interface Post {
+export interface Post {
   id: string;
   content?: string;
   files: File[];
   user: User;
-  likes: User[];
+  likes: FullUser[];
   comments: User[];
-  audience: "public" | "friends" | "private";
+  access: "public" | "friends" | "private";
+  deletedAt: string | null;
   createdAt: string;
 }
 
-interface PostResponse {
+export interface PostResponse {
   message: string;
   post: Post;
 }
 
-interface PostDto extends z.infer<typeof postSchema> {
-  preview: string;
+export interface FileUpload extends Pick<File, "url" | "type"> {}
+
+export interface PostDto extends z.infer<typeof postSchema> {
+  files: FileUpload[];
 }
 
-interface PostsReponse {
+export interface PostsReponse {
   posts: Post[];
   total: number;
   limit: number;
   page: number;
 }
-
-export type { Post, File, PostDto, PostResponse, PostsReponse };

@@ -2,46 +2,33 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
-  signUpSchema
+  signUpSchema,
 } from "../schemas/auth";
-import { FullUser } from "./user";
+import { FullUser, Gender } from "./user";
 import { z } from "zod";
 
-interface SignUpResponse {
+export interface SignUpResponse {
   user: FullUser;
   message: string;
 }
 
-interface SignInResponse {
-  accessToken: string;
-  refreshToken?: string;
+export interface SignInResponse {
+  token: string;
   user: FullUser;
-  accessTokenExpired: number;
+  tokenExpiration: number;
+  message: string;
 }
 
-interface SignUpDto
+export interface SignUpDto
   extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {
   avatar: string;
+  gender: Gender;
+  birthday: string;
 }
 
-interface SignInDto extends z.infer<typeof signInSchema> {}
+export interface SignInDto extends z.infer<typeof signInSchema> {}
 
-interface ForgotPasswordDto extends z.infer<typeof forgotPasswordSchema> {}
+export interface ForgotPasswordDto
+  extends z.infer<typeof forgotPasswordSchema> {}
 
-interface ResetPasswordDto extends z.infer<typeof resetPasswordSchema> {}
-
-interface RefreshResponse {
-  message: string;
-  accessToken: string;
-  accessTokenExpired: number;
-}
-
-export type {
-  SignUpResponse,
-  SignInResponse,
-  RefreshResponse,
-  SignInDto,
-  SignUpDto,
-  ForgotPasswordDto,
-  ResetPasswordDto
-};
+export interface ResetPasswordDto extends z.infer<typeof resetPasswordSchema> {}

@@ -1,5 +1,7 @@
+"use client";
+
 const debounce = <T extends any[]>(
-  func: (...args: T) => void,
+  func: (..._args: T) => void,
   wait: number
 ) => {
   let timeout: NodeJS.Timeout;

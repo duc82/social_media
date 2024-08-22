@@ -1,9 +1,11 @@
 "use client";
 
+import { directMessage } from "@/app/actions/conversationAction";
 import { sendFriendRequest } from "@/app/actions/userAction";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import handlingError from "@/app/utils/error";
+import formatName from "@/app/utils/formatName";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,12 +21,12 @@ export default function SuggesstionItem(friend: FullUser) {
   const [status, setStatus] = useState<"" | "send" | "cancel">("");
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useSession();
-  const accessToken = data?.accessToken!;
+  const token = data?.token!;
 
   const handleSendFriendRequest = async () => {
     try {
       setIsLoading(true);
-      await sendFriendRequest(accessToken, friend.id);
+      await sendFriendRequest(token, friend.id);
       setStatus("send");
     } catch (error) {
       toast.error(handlingError(error));
@@ -36,7 +38,7 @@ export default function SuggesstionItem(friend: FullUser) {
   const handleCancelFriendRequest = async () => {
     try {
       setIsLoading(true);
-      await userService.cancelFriendRequest(accessToken, friend.id);
+      await userService.cancelFriendRequest(token, friend.id);
       setStatus("cancel");
     } catch (error) {
       toast.error(handlingError(error));
@@ -45,13 +47,15 @@ export default function SuggesstionItem(friend: FullUser) {
     }
   };
 
+  const fullName = formatName(friend.firstName, friend.lastName);
+
   return (
     <div className="col-12 col-md-6 col-lg-4 col-xl-3">
       <div className="card h-100">
         <Link href={`/profile/${friend.id}`} className="d-block">
           <Image
             src={friend.profile.avatar}
-            alt={friend.fullName}
+            alt={fullName}
             width={0}
             height={0}
             sizes="100vw"
@@ -63,12 +67,12 @@ export default function SuggesstionItem(friend: FullUser) {
             href={`/profile/${friend.id}`}
             className="card-title d-block mb-2"
           >
-            <h5 className="mb-0">{friend.fullName}</h5>
+            <h5 className="mb-0">{fullName}</h5>
           </Link>
           <p className="card-text mb-2">
             {status === "send" && "Request sent"}
             {status === "cancel" && "Request canceled"}
-            {!status && friend.profile.overview}
+            {!status && friend.profile.bio}
           </p>
           <div className="d-flex flex-column">
             {status === "send" ? (
@@ -112,13 +116,14 @@ export default function SuggesstionItem(friend: FullUser) {
                 <span className="ms-2">Add friend</span>
               </button>
             )}
-            <Link
-              href={`/messages/${friend.id}`}
+            <button
+              type="button"
+              onClick={() => directMessage(friend.id)}
               className="btn btn-secondary-soft d-flex justify-content-center align-items-center"
             >
               <ChatLeftTextFill size={16} />
               <span className="ms-2">Message</span>
-            </Link>
+            </button>
           </div>
         </div>
       </div>

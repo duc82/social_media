@@ -1,17 +1,21 @@
-interface FilePreview extends File {
+import { ButtonHTMLAttributes } from "react";
+
+export interface FilePreview extends File {
   preview: string;
 }
 
-interface PaginationLimit {
+export interface PaginationLimit {
   page: number;
   limit: number;
 }
 
-interface Filter {
+export interface Filter {
   search?: string;
   userId?: string;
 }
 
-type Options = PaginationLimit & Filter;
+export interface Options extends PaginationLimit, Filter {
+  tags?: string[];
+}
 
-export type { FilePreview, PaginationLimit, Filter, Options };
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}

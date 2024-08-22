@@ -17,14 +17,20 @@ import clsx from "clsx";
 import { ExclamationCircleFill, InfoCircle } from "react-bootstrap-icons";
 import AvatarInitials from "@/app/utils/avatarInitials";
 import { uploadFile } from "@/app/libs/firebase";
-import InputGroup from "@/app/components/Form/InputGroup";
+import FormControl from "@/app/components/Form/FormControl";
+import Radio from "@/app/components/Form/Radio";
+import isLeapYear from "@/app/utils/isLeapYear";
+import Spinner from "@/app/components/Spinner";
 
 interface FormValue extends SignUpDto {
   confirmPassword: string;
 }
 
+const date = new Date();
+
 export default function Signup() {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -33,6 +39,13 @@ export default function Signup() {
   } = useForm<FormValue>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
+    defaultValues: {
+      dateOfBirth: {
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+      },
+    },
   });
 
   const [passwordType, setPasswordType] = useState<"password" | "text">(
@@ -40,16 +53,24 @@ export default function Signup() {
   );
 
   const onSubmit = async (data: FormValue) => {
-    const { confirmPassword, ...signUpDto } = data;
+    const { confirmPassword: _, ...signUpDto } = data;
 
     try {
+      const birthday = new Date(
+        data.dateOfBirth.year,
+        data.dateOfBirth.month - 1,
+        data.dateOfBirth.day
+      ).toISOString();
+      signUpDto.birthday = birthday;
+
       const avatarBlob = await AvatarInitials.generateAvatar(
-        signUpDto.fullName
+        signUpDto.firstName
       );
       signUpDto.avatar = await uploadFile(
         `avatars/${signUpDto.email}`,
         avatarBlob
       );
+
       const value = await authService.signUp(signUpDto);
       toast.success(value.message);
       router.push("/signin");
@@ -64,6 +85,55 @@ export default function Signup() {
 
   const { pwdScore, pwdScoreClassName } = usePasswordScore(watch("password"));
 
+  const getDays = () => {
+    const month = watch("dateOfBirth.month");
+    const year = watch("dateOfBirth.year");
+
+    const isLeap = isLeapYear(year);
+
+    let length = 31;
+
+    if (month === 2) {
+      length = isLeap ? 29 : 28;
+    }
+
+    if ([4, 6, 9, 11].includes(month)) {
+      length = 30;
+    }
+
+    return Array.from({ length }, (_, i) => (
+      <option key={i + 1} value={i + 1}>
+        {i + 1}
+      </option>
+    ));
+  };
+
+  const getMonths = () => {
+    return Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+      <option key={month} value={month}>
+        {new Date(0, month - 1).toLocaleString("default", {
+          month: "short",
+        })}
+      </option>
+    ));
+  };
+
+  const getYears = () => {
+    const years = [];
+    const start = date.getFullYear();
+    const end = 1900;
+
+    for (let i = start; i >= end; i--) {
+      years.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
+    }
+
+    return years;
+  };
+
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
       <div className="text-center">
@@ -76,18 +146,26 @@ export default function Signup() {
         </span>
       </div>
       <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-        <InputGroup
-          {...register("fullName")}
-          id="fullName"
-          placeholder="Enter full name"
-          error={errors.fullName?.message}
-        />
+        <div className="d-flex gap-3">
+          <FormControl
+            {...register("firstName")}
+            id="firstName"
+            placeholder="First name"
+            error={errors.firstName?.message}
+          />
+          <FormControl
+            {...register("lastName")}
+            id="lastName"
+            placeholder="Last name"
+            error={errors.lastName?.message}
+          />
+        </div>
 
-        <InputGroup
+        <FormControl
           {...register("email")}
           type="email"
           id="email"
-          placeholder="Enter email"
+          placeholder="Email address"
           error={errors.email?.message}
           text={
             <small>We&apos;ll never share your email with anyone else.</small>
@@ -98,7 +176,7 @@ export default function Signup() {
           <div className="mb-0 input-group input-group-lg">
             <input
               type={passwordType}
-              placeholder="Enter new password"
+              placeholder="New password"
               className="form-control"
               {...register("password")}
               aria-describedby="passwordHelpBlock"
@@ -131,10 +209,10 @@ export default function Signup() {
                 </div>
               )}
               {!errors.password && pwdScore === 0 && (
-                <p>Write your password...</p>
+                <span>Write your password...</span>
               )}
               {!errors.password && pwdScore === 5 && (
-                <p>Yeah! that password rocks :))</p>
+                <span>Yeah! that password rocks :))</span>
               )}
             </div>
             <div className="ms-auto">
@@ -148,7 +226,7 @@ export default function Signup() {
           </div>
         </div>
 
-        <InputGroup
+        <FormControl
           {...register("confirmPassword")}
           type="password"
           id="confirmPassword"
@@ -156,16 +234,81 @@ export default function Signup() {
           error={errors.confirmPassword?.message}
         />
 
+        <div className="mb-3">
+          <p className="mb-1">Date of birth</p>
+
+          <div className="d-flex">
+            <select
+              {...register("dateOfBirth.day", { valueAsNumber: true })}
+              className="form-select me-3"
+              defaultValue={date.getDate()}
+            >
+              {getDays()}
+            </select>
+
+            <select
+              {...register("dateOfBirth.month", { valueAsNumber: true })}
+              className="form-select me-3"
+              defaultValue={date.getMonth() + 1}
+            >
+              {getMonths()}
+            </select>
+
+            <select
+              {...register("dateOfBirth.year", { valueAsNumber: true })}
+              className="form-select"
+              defaultValue={date.getFullYear()}
+            >
+              {getYears()}
+            </select>
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <p className="mb-1">Gender</p>
+          <div className="d-flex align-items-center">
+            <Radio
+              {...register("gender")}
+              id="male"
+              value="male"
+              wrapperClassName="me-3"
+              text="Male"
+            />
+
+            <Radio
+              {...register("gender")}
+              id="female"
+              value="female"
+              wrapperClassName="me-3"
+              text="Female"
+            />
+
+            <Radio
+              {...register("gender")}
+              id="other"
+              value="other"
+              text="Other"
+            />
+          </div>
+
+          {errors.gender && (
+            <div className="form-text text-danger mt-1">
+              <ExclamationCircleFill size={16} className="me-2" />
+              <span>{errors.gender.message}</span>
+            </div>
+          )}
+        </div>
+
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary w-100 d-flex justify-content-center"
         >
-          Sign me up
+          {isSubmitting ? <Spinner /> : "Sign me up"}
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">
-          ©{new Date().getFullYear()}{" "}
+          ©{date.getFullYear()}{" "}
           <Link href="/" className="link-primary">
             Social.
           </Link>{" "}

@@ -1,17 +1,12 @@
-import Header from "../components/Header";
-import SocketProvider from "../providers/SocketProvider";
+import { PropsWithChildren } from "react";
+import { SocketProvider } from "../providers/SocketProvider";
+import ChatToast from "../components/Messages/ChatToast";
 
-export default function PrivateLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function PrivateLayout({ children }: PropsWithChildren) {
   return (
     <SocketProvider>
-      <Header />
-      <main>
-        <div className="container">{children}</div>
-      </main>
+      {children}
+      <ChatToast />
     </SocketProvider>
   );
 }

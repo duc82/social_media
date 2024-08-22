@@ -1,5 +1,6 @@
 "use client";
 import { FilePreview } from "@/app/types";
+import React from "react";
 import { Images } from "react-bootstrap-icons";
 import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";

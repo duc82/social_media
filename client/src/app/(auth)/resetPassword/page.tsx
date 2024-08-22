@@ -1,4 +1,5 @@
 "use client";
+import Spinner from "@/app/components/Spinner";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import { resetPasswordSchema } from "@/app/schemas/auth";
 import authService from "@/app/services/authService";
@@ -23,10 +24,10 @@ function ResetPassword() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<ResetPasswordDto>({
     mode: "onChange",
-    resolver: zodResolver(resetPasswordSchema)
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const error = urlSearchParams.get("error");
@@ -58,7 +59,7 @@ function ResetPassword() {
     if (!token) {
       router.push("/signin");
     }
-  }, [token]);
+  }, [token, router]);
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
@@ -136,9 +137,9 @@ function ResetPassword() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-lg btn-primary w-100"
+          className="btn btn-lg btn-primary w-100 d-flex justify-content-center"
         >
-          Reset password
+          {isSubmitting ? <Spinner /> : "Reset password"}
         </button>
 
         <p className="mb-0 mt-3 text-center text-sm">

@@ -19,16 +19,23 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
               <h5 className="card-title">About</h5>
             </div>
             <div className="card-body position-relative pt-0">
-              {user.profile.overview && <p>{user.profile.overview}</p>}
+              {user.profile.bio && <p>{user.profile.bio}</p>}
               <ul className="list-unstyled mt-3 mb-0">
                 <li className="mb-2">
                   <CalendarDate className="pe-1" size={20} />
-                  Born: <strong>{formatDate(user.createdAt)}</strong>{" "}
+                  Born:{" "}
+                  <strong>
+                    {formatDate(user.profile.birthday, { dateStyle: "medium" })}
+                  </strong>{" "}
                 </li>
                 {user.profile.maritalStatus && (
                   <li className="mb-2">
                     <Heart className="pe-1" size={20} />
-                    Status: <strong> {user.profile.maritalStatus} </strong>{" "}
+                    Status:{" "}
+                    <strong className="text-capitalize">
+                      {" "}
+                      {user.profile.maritalStatus}{" "}
+                    </strong>{" "}
                   </li>
                 )}
                 <li>

@@ -1,11 +1,22 @@
-import path from "path";
-
 // @ts-check
-
-const __dirname = path.resolve();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.(mp3|wav|m4a)$/,
+      use: {
+        loader: "file-loader",
+        options: {
+          name: "[name].[ext]",
+          publicPath: "/_next/static/sounds/",
+          outputPath: "static/sounds/",
+        },
+      },
+    });
+    return config;
+  },
+
   images: {
     remotePatterns: [
       {
@@ -18,10 +29,7 @@ const nextConfig = {
       },
     ],
   },
-  sassOptions: {
-    includePaths: [path.join(__dirname, "src/app", "styles")],
-  },
-  reactStrictMode: true,
+  reactStrictMode: false,
 };
 
 export default nextConfig;

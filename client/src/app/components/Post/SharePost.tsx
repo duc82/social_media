@@ -1,7 +1,7 @@
 import Avatar from "@/app/components/Avatar";
 import CreatePostModal from "@/app/components/Post/CreateModal";
-import EmojiModal from "@/app/components/Post/CreateModal/EmojiModal";
 import getServerSession from "@/app/libs/session";
+import formatName from "@/app/utils/formatName";
 import Link from "next/link";
 import {
   BookmarkCheck,
@@ -11,23 +11,24 @@ import {
   Envelope,
   ImageFill,
   PencilSquare,
-  ThreeDots
+  ThreeDots,
 } from "react-bootstrap-icons";
 
 export default async function SharePost() {
   const { currentUser } = await getServerSession();
 
+  const fullName = formatName(currentUser.firstName, currentUser.lastName);
+
   return (
     <>
       <CreatePostModal currentUser={currentUser} />
-      <EmojiModal />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">
           <Avatar
             wrapperClassName="avatar avatar-xs me-2"
             className="avatar-img rounded-circle"
-            src={currentUser?.profile.avatar ?? "/07.jpg"}
-            alt={currentUser?.fullName}
+            src={currentUser.profile.avatar ?? "/07.jpg"}
+            alt={fullName}
           />
           <form className="w-100">
             <input

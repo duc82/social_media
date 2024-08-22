@@ -14,16 +14,25 @@ const password = z
 
 export const signUpSchema = z
   .object({
-    fullName: z
+    firstName: z
       .string({
-        required_error: "Full name is required",
+        required_error: "First name is required",
       })
-      .min(2, "Full name must be at least 2 characters long"),
+      .min(2, "First name must be at least 2 characters long"),
+    lastName: z
+      .string({ required_error: "Last name is required" })
+      .min(2, "Last name must be at least 2 characters long"),
     email,
     password,
     confirmPassword: z.string({
       required_error: "Passwords do not match",
     }),
+    dateOfBirth: z.object({
+      day: z.number(),
+      month: z.number(),
+      year: z.number(),
+    }),
+    gender: z.enum(["male", "female", "other"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

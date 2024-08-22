@@ -21,7 +21,7 @@ export default function FriendRequests({
   limit,
 }: RequestsProps) {
   const { data } = useSession();
-  const accessToken = data?.accessToken!;
+  const token = data?.token!;
 
   const [friends, setFriends] = useState<FullUser[]>(initialFriends);
   const [hasMore, setHasMore] = useState(
@@ -31,7 +31,7 @@ export default function FriendRequests({
 
   const fetchMoreRequest = async () => {
     try {
-      const { friends } = await getFriendRequests(accessToken, {
+      const { friends } = await getFriendRequests(token, {
         page,
         limit,
       });

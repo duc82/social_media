@@ -1,9 +1,10 @@
 "use client";
 
-import { revalidatePath } from "@/app/actions/userAction";
+import { revalidatePath } from "@/app/actions/indexAction";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ReactNode } from "react";
 import {
   PeopleFill,
   PersonFillExclamation,
@@ -13,7 +14,7 @@ import {
 
 interface FriendMenu {
   title: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   link: string;
 }
 
