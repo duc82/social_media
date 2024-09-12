@@ -1,0 +1,19 @@
+.sidebar {
+  min-width: 260px;
+  max-width: 260px;
+  transition: margin-left 0.35s ease-in-out, margin-right 0.35s ease-in-out;
+  // background-color: $body-bg-dark;
+
+  .sidebar-content {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+  }
+
+  // @include media-breakpoint-down(lg) {
+  //   & {
+  //     margin-left: -260px;
+  //   }
+  // }
+}

@@ -3,41 +3,36 @@ import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PencilSquare, Search } from "react-bootstrap-icons";
 import { Conversation } from "@/app/types/conversation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FullUser } from "@/app/types/user";
 import ConversationItem from "./ConversationItem";
 import useSocketContext from "@/app/hooks/useSocketContext";
+import { ConversationPayload } from "@/app/types/socket";
+import { useParams, useRouter } from "next/navigation";
+import { revalidateTag } from "@/app/actions/indexAction";
 
 interface ChatSidebarProps {
-  initialConversations: Conversation[];
-  inititalTotal: number;
+  conversations: Conversation[];
+  total: number;
   currentUser: FullUser;
 }
 
 export default function ChatSidebar({
-  initialConversations,
-  inititalTotal,
+  conversations,
+  total,
   currentUser,
 }: ChatSidebarProps) {
-  const [conversations, setConversations] = useState(initialConversations);
-  const [total, setTotal] = useState(inititalTotal);
   const { socket } = useSocketContext();
+  const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     if (!socket) return;
 
-    const handleConversation = (
-      conversation: Conversation,
-      type: "add" | "remove"
-    ) => {
-      if (type === "add") {
-        setConversations((prev) => [conversation, ...prev]);
-        setTotal((prev) => prev + 1);
-      } else {
-        setConversations((prev) =>
-          prev.filter((c) => c.id !== conversation.id)
-        );
-        setTotal((prev) => prev - 1);
+    const handleConversation = ({ id, type }: ConversationPayload) => {
+      revalidateTag("conversations");
+      if (type === "remove" && id === params.id) {
+        router.push("/messages");
       }
     };
 
@@ -46,7 +41,7 @@ export default function ChatSidebar({
     return () => {
       socket.off("conversation", handleConversation);
     };
-  }, [socket]);
+  }, [socket, params, router]);
 
   return (
     <div className="col-lg-4 col-xxl-3">

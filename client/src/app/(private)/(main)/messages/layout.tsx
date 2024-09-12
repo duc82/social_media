@@ -7,15 +7,17 @@ import { PropsWithChildren } from "react";
 export default async function ChatLayout({ children }: PropsWithChildren) {
   const { currentUser } = await getServerSession();
 
-  const { conversations, total } = await getAllConversation();
+  const { conversations, total } = await getAllConversation({
+    tags: ["conversations"],
+  });
 
   return (
     <>
       <AddChatModal />
       <div className="row gx-0">
         <ChatSidebar
-          initialConversations={conversations}
-          inititalTotal={total}
+          conversations={conversations}
+          total={total}
           currentUser={currentUser}
         />
         {children}

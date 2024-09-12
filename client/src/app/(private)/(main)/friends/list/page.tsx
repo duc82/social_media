@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const ListFriends = async () => {
   const { token } = await getServerSession();
-  const { friends } = await userService.getFriends(token, "accepted");
+  const { friends } = await userService.getFriends("accepted", token);
 
   return (
     <div className="row">

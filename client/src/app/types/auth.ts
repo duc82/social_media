@@ -21,7 +21,6 @@ export interface SignInResponse {
 
 export interface SignUpDto
   extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {
-  avatar: string;
   gender: Gender;
   birthday: string;
 }

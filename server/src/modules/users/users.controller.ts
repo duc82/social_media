@@ -1,17 +1,12 @@
-import { Url } from "../../common/decorators/url.decorator";
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
-  Delete,
   Get,
   Param,
   ParseUUIDPipe,
-  Post,
   Put,
   Query,
   UseGuards,
-  UseInterceptors,
 } from "@nestjs/common";
 import { UserService } from "./users.service";
 import { UpdateUserDto, UpdateUserProfileDto } from "./users.dto";

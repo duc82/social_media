@@ -18,6 +18,9 @@ export class PostFile {
   @Column()
   url: string;
 
+  @Column()
+  path: string;
+
   @Column({
     type: "enum",
     enum: FileType,

@@ -22,7 +22,7 @@ export default function AccountForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     setValue,
   } = useForm<UpdateUserProfileDto>({
     resolver: zodResolver(userProfileSchema),

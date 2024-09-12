@@ -4,31 +4,31 @@ import clsx from "clsx";
 interface AvatarProps {
   src: string;
   alt?: string;
-  width?: string | number;
-  height?: string | number;
-  wrapperClassName?: string;
   className?: string;
+  fill?: boolean;
+  width?: number;
+  height?: number;
   sizes?: string;
 }
 
 export default function Avatar({
   src,
   alt,
+  className,
+  fill = true,
   width,
   height,
-  wrapperClassName,
-  className,
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
 }: AvatarProps) {
   return (
-    <div className={clsx("avatar", wrapperClassName)} style={{ width, height }}>
-      <Image
-        src={src}
-        alt={alt ?? "Avatar"}
-        fill
-        sizes={sizes}
-        className={clsx("avatar-img rounded", className)}
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt ?? "Avatar"}
+      fill={fill}
+      sizes={sizes}
+      width={width}
+      height={height}
+      className={clsx("avatar-img rounded", className)}
+    />
   );
 }

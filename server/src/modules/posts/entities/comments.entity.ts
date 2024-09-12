@@ -36,11 +36,13 @@ export class Comment {
   })
   post: Post;
 
-  @OneToMany(() => Comment, (comment) => comment.replies)
+  @ManyToMany(() => Comment, (comment) => comment.replies)
+  @JoinTable()
   replies: Comment[];
 
   @DeleteDateColumn({
     type: "timestamptz",
+    name: "deletedAt",
   })
   deletedAt: Date;
 

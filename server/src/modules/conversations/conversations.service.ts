@@ -72,7 +72,7 @@ export class ConversationsService {
         search: `%${search}%`,
       })
       .andWhere("c.deletedAt IS NULL")
-      .orderBy("c.createdAt", "DESC")
+      .orderBy("m.createdAt", "DESC", "NULLS LAST")
       .take(limit)
       .skip(skip)
       .getManyAndCount();
@@ -81,9 +81,10 @@ export class ConversationsService {
   }
 
   async getByUsersOrCreate(userIds: string[]) {
-    const conversation = await this.dataSource
+    const query = this.dataSource
       .getRepository(Conversation)
       .createQueryBuilder("c")
+      .withDeleted()
       .where((qb) => {
         const subQuery = qb
           .subQuery()
@@ -96,10 +97,10 @@ export class ConversationsService {
           })
           .getQuery();
 
-        return `EXISTS ${subQuery}`;
-      })
-      .andWhere("c.deletedAt IS NULL")
-      .getOne();
+        return `c.id IN ${subQuery}`;
+      });
+
+    const conversation = await query.getOne();
 
     if (!conversation) {
       const newConversation = this.dataSource
@@ -113,6 +114,10 @@ export class ConversationsService {
 
       await newConversation.save();
       return newConversation;
+    }
+
+    if (conversation.deletedAt) {
+      await this.restore(conversation.id);
     }
 
     return conversation;
@@ -169,7 +174,16 @@ export class ConversationsService {
       .leftJoin("m.reads", "mr", "mr.userId = :currentUserId", {
         currentUserId,
       })
-      .where("mr.messageId IS NULL")
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("cm.conversationId")
+          .from(ConversationMember, "cm")
+          .where("cm.userId = :currentUserId", { currentUserId })
+          .getQuery();
+        return `c.id IN ${subQuery}`;
+      })
+      .andWhere("mr.messageId IS NULL")
       .getCount();
   }
 

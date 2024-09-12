@@ -45,6 +45,11 @@ interface Conversation {
   createdAt: Date;
 }
 
+interface ConversationPayload {
+  id: string;
+  type: "add" | "remove";
+}
+
 interface CallUser {
   callerId: string;
   calleeId: string;
@@ -116,28 +121,20 @@ export class EventsGateway
         await this.authService.verifyToken<UserPayload>(token);
 
       this.addOnline(client.id, userPayload.userId);
+      this.logger.log(`Client Connected: ${client.id}`);
     } catch (error) {
-      throw new WsException(error.message);
+      this.logger.error(error);
     }
-
-    this.logger.log(`Client Connected: ${client.id}`);
   }
 
   @SubscribeMessage("message")
-  handleMessage(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: Message,
-  ) {
+  handleMessage(@MessageBody() payload: Message) {
     this.server.emit("message", payload);
   }
 
   @SubscribeMessage("conversation")
-  handleConversation(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() conversation: Conversation,
-    @MessageBody() type: "add" | "remove",
-  ) {
-    client.broadcast.emit("conversation", conversation, type);
+  handleConversation(@MessageBody() payload: ConversationPayload) {
+    this.server.emit("conversation", payload);
   }
 
   @SubscribeMessage("joinCall")
@@ -162,6 +159,14 @@ export class EventsGateway
   @SubscribeMessage("endCall")
   handleEndCall(@ConnectedSocket() client: Socket) {
     client.broadcast.emit("endCall");
+  }
+
+  @SubscribeMessage("remoteCamOn")
+  handleRemoteCamOn(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() isOn: boolean,
+  ) {
+    client.broadcast.emit("remoteCamOn", isOn);
   }
 
   @SubscribeMessage("typing")

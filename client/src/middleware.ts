@@ -1,11 +1,32 @@
 import { NextResponse } from "next/server";
 import { auth } from "./app/api/auth/[...nextauth]/auth";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+const validateAuthToken = (token: string) => {
+  const payload = jwt.decode(token) as JwtPayload | null;
+
+  const exp = (payload?.exp ?? 0) * 1000;
+
+  if (Date.now() >= exp) {
+    return false;
+  }
+
+  return true;
+};
 
 // Redirect to the sign in page if the user is not authenticated
-export default auth((req) => {
+export default auth(async (req) => {
+  const url = req.nextUrl;
+
   if (!req.auth) {
-    const url = req.nextUrl.clone();
     url.pathname = "/signin";
+    return NextResponse.redirect(url);
+  }
+
+  const valid = validateAuthToken(req.auth.token);
+
+  if (!valid) {
+    url.pathname = "/signout";
     return NextResponse.redirect(url);
   }
 });
@@ -26,6 +47,6 @@ export const config = {
      * - ringing-call (ringing call page)
      * - admin (admin page)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|signin|signup|forgotPassword|resetPassword|verify|ringing-call|admin).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|signin|signout|signup|forgotPassword|resetPassword|verify|ringing-call|admin).*)",
   ],
 };

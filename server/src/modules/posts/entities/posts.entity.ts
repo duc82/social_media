@@ -37,6 +37,12 @@ export class Post extends BaseEntity {
   })
   isStory: boolean;
 
+  @Column("text", { array: true, nullable: true })
+  feeling: string[];
+
+  @Column("text", { array: true, nullable: true })
+  activity: string[];
+
   @OneToMany(() => PostFile, (file) => file.post, {
     cascade: true,
   })

@@ -11,68 +11,72 @@ $all-colors: map-merge-multiple(
   $yellows,
   $greens,
   $teals,
-  $cyans
+  $cyans,
+  $grays
 );
 
-$utilities: (
-  "opacity": (
-    property: opacity,
-    values: (
-      0: 0,
-      10: 0.1,
-      25: 0.25,
-      50: 0.5,
-      75: 0.75,
-      100: 1,
+$utilities: map-merge(
+  $utilities,
+  (
+    "opacity": (
+      property: opacity,
+      values: (
+        0: 0,
+        10: 0.1,
+        25: 0.25,
+        50: 0.5,
+        75: 0.75,
+        100: 1,
+      ),
     ),
-  ),
 
-  "width":
-    map-merge(
-      map-get($utilities, "width"),
-      (
-        values:
-          map-merge(
-            map-get(map-get($utilities, "width"), "values"),
-            (
-              "40px": 40px,
-            )
-          ),
-      )
+    "width":
+      map-merge(
+        map-get($utilities, "width"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "width"), "values"),
+              (
+                "40px": 40px,
+              )
+            ),
+        )
+      ),
+    "height":
+      map-merge(
+        map-get($utilities, "height"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "height"), "values"),
+              (
+                "40px": 40px,
+              )
+            ),
+        )
+      ),
+    "shadow": (
+      property: box-shadow,
+      class: shadow,
+      values: (
+        null: var(--#{$prefix}box-shadow),
+        sm: var(--#{$prefix}box-shadow-sm),
+        lg: var(--#{$prefix}box-shadow-lg),
+        menu: $box-shadow-menu,
+        none: none,
+      ),
     ),
-  "height":
-    map-merge(
-      map-get($utilities, "height"),
-      (
-        values:
-          map-merge(
-            map-get(map-get($utilities, "height"), "values"),
-            (
-              "40px": 40px,
-            )
-          ),
-      )
-    ),
-  "shadow": (
-    property: box-shadow,
-    class: shadow,
-    values: (
-      null: var(--#{$prefix}box-shadow),
-      sm: var(--#{$prefix}box-shadow-sm),
-      lg: var(--#{$prefix}box-shadow-lg),
-      menu: $box-shadow-menu,
-      none: none,
-    ),
-  ),
-  "color":
-    map-merge(
-      map-get($utilities, "color"),
-      (
-        values:
-          map-merge(
-            map-get(map-get($utilities, "color"), "values"),
-            ($all-colors)
-          ),
-      )
-    ),
+    "color":
+      map-merge(
+        map-get($utilities, "color"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "color"), "values"),
+              ($all-colors)
+            ),
+        )
+      ),
+  )
 );

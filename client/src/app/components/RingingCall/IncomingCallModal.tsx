@@ -20,7 +20,6 @@ export default function IncomingCallModal() {
   const { data } = useSession();
   const token = data?.token;
   const currentUser = data?.user;
-  const [audio] = useState(new Audio(ringtone));
 
   const handleAcceptCall = () => {
     if (!callUser) return;
@@ -70,16 +69,6 @@ export default function IncomingCallModal() {
     });
   }, [callUser, token]);
 
-  useEffect(() => {
-    if (callUser) {
-      audio.play();
-    }
-
-    return () => {
-      audio.pause();
-    };
-  }, [callUser, audio]);
-
   const fullName = formatName(user?.firstName || "", user?.lastName || "");
 
   return (
@@ -102,10 +91,12 @@ export default function IncomingCallModal() {
           </div>
           <div className="modal-body">
             <div className="d-flex justify-content-center align-items-center">
-              <Avatar
-                src={user?.profile.avatar || ""}
-                alt={user?.username || "avatar"}
-              />
+              {user && (
+                <Avatar
+                  src={user.profile.avatar || ""}
+                  alt={user.username || "avatar"}
+                />
+              )}
               <div className="ms-3">
                 <h5 className="mb-0">{fullName}</h5>
                 <p className="mb-0">Incoming call...</p>

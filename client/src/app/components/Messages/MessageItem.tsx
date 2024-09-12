@@ -38,12 +38,21 @@ export default function MessageItem({
       {/* Chat message left */}
       {!isSameUser && (
         <div className="d-flex mb-1">
-          <Avatar
-            wrapperClassName="flex-shrink-0 avatar avatar-xs me-2"
-            className="rounded-circle"
-            src={message.user.profile.avatar}
-            alt={fullName}
-          />
+          <button
+            type="button"
+            className="btn btn-link p-0 border-0 me-2 d-flex"
+            data-bs-toggle="modal"
+            data-bs-target="#profileModal"
+          >
+            <div className="flex-shrink-0 avatar avatar-xs">
+              <Avatar
+                className="rounded-circle"
+                src={message.user.profile.avatar}
+                alt={fullName}
+              />
+            </div>
+          </button>
+
           <div className="flex-grow-1">
             <div className="w-100">
               <div className="d-flex flex-column align-items-start">
@@ -64,6 +73,7 @@ export default function MessageItem({
                             width={200}
                             height={200}
                             className="rounded object-fit-cover"
+                            priority
                           />
                         </Link>
                       </div>
@@ -110,6 +120,7 @@ export default function MessageItem({
                       width={200}
                       height={200}
                       className="rounded object-fit-cover"
+                      priority
                     />
                   </Link>
                 ))}

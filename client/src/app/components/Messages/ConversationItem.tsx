@@ -64,15 +64,19 @@ export default function ConversationItem({
         )}
       >
         <div className="d-flex">
-          <Avatar
-            wrapperClassName={clsx(
-              "flex-shrink-0 me-2",
+          <div
+            className={clsx(
+              "avatar flex-shrink-0 me-2",
               isOnline ? "status-online" : "status-offline"
             )}
-            className="avatar-img rounded-circle"
-            src={user?.profile.avatar || ""}
-            alt={fullName}
-          />
+          >
+            <Avatar
+              className="avatar-img rounded-circle"
+              src={user?.profile.avatar || ""}
+              alt={fullName}
+            />
+          </div>
+
           <div className="flex-grow-1 d-block">
             <h6 className="mb-0 mt-1">
               {conversation.isGroup ? conversation.name : fullName}

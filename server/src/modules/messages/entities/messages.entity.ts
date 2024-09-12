@@ -65,6 +65,7 @@ export class Message extends BaseEntity {
 
   @DeleteDateColumn({
     type: "timestamptz",
+    name: "deletedAt",
   })
   deletedAt: Date;
 

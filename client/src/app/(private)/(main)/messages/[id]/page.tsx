@@ -5,6 +5,7 @@ import {
 } from "@/app/actions/messageAction";
 import ChatForm from "@/app/components/Messages/ChatForm";
 import MessageList from "@/app/components/Messages/MessageList";
+import ProfileModal from "@/app/components/Messages/ProfileModal";
 import TopAvatarStatus from "@/app/components/Messages/TopAvatarStatus";
 import getServerSession from "@/app/libs/session";
 
@@ -32,6 +33,8 @@ export default async function Messages({
 
   return (
     <div className="col-lg-8 col-xxl-9">
+      <ProfileModal user={user} />
+
       <div className="card card-chat rounded-start-lg-0 border-start-lg-0 h-100">
         <div className="card-body">
           {/* Top avatar and status */}

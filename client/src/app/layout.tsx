@@ -12,8 +12,9 @@ import { PropsWithChildren } from "react";
 const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social Media",
-  description: "Social",
+  title: "Social - Network, Community and Event Theme",
+  description:
+    "NextJS Bootstrap 5 based Social Media Network and Community Theme",
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

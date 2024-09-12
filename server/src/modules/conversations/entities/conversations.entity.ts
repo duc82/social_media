@@ -32,9 +32,6 @@ export class Conversation extends BaseEntity {
   @Column()
   isGroup: boolean;
 
-  @DeleteDateColumn({ type: "timestamptz", name: "deletedAt" })
-  deletedAt: Date;
-
   @OneToMany(() => Message, (message) => message.conversation, {
     cascade: true,
   })
@@ -45,13 +42,15 @@ export class Conversation extends BaseEntity {
   })
   members: ConversationMember[];
 
+  @DeleteDateColumn({ type: "timestamptz", name: "deletedAt" })
+  deletedAt: Date;
+
   @CreateDateColumn({
     type: "timestamptz",
   })
   createdAt: Date;
 
   @BeforeInsert()
-  @BeforeUpdate()
   setIsGroup() {
     this.isGroup = this.members.length > 2 ? true : false;
   }

@@ -48,7 +48,7 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
         </div>
 
         {/* Experience */}
-        <div className="col-md-6 col-lg-12">
+        {/* <div className="col-md-6 col-lg-12">
           <div className="card">
             <div className="card-header d-flex justify-content-between border-0">
               <h5 className="card-title">Experience</h5>
@@ -122,7 +122,7 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Photos */}
         <div className="col-md-6 col-lg-12">
