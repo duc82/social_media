@@ -57,10 +57,6 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
         token = { ...token, ...user };
       }
 
-      if (Date.now() >= token.tokenExpiration) {
-        token = { ...token, token: "" };
-      }
-
       if (trigger === "update") {
         token = { ...token, ...session.user };
       }
@@ -81,7 +77,6 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
         emailVerified: token.emailVerified,
         createdAt: token.createdAt,
       };
-
       return session;
     },
   },

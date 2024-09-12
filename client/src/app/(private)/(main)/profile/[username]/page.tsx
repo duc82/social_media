@@ -1,7 +1,9 @@
 import { getUserProfile } from "@/app/actions/userAction";
+import EditModal from "@/app/components/Post/EditModal";
+import PostList from "@/app/components/Post/PostList";
 import SharePost from "@/app/components/Post/SharePost";
-import Posts from "@/app/components/Posts";
 import getServerSession from "@/app/libs/session";
+import { PostProvider } from "@/app/providers/PostProvider";
 import postService from "@/app/services/postService";
 
 export default async function Profile({
@@ -13,19 +15,23 @@ export default async function Profile({
 
   const username = params.username?.replace("%40", "");
 
-  const user = await getUserProfile(username, currentUser, token);
-
-  const { posts } = await postService.getAll({
-    userId: user.id,
-    tags: ["postProfile"],
-  });
+  const [user, { posts, limit, total }] = await Promise.all([
+    getUserProfile(username, currentUser, token),
+    postService.getCurrent(token),
+  ]);
 
   const isMyProfile = currentUser.id === user.id;
 
   return (
-    <>
-      {isMyProfile && <SharePost />}
-      <Posts posts={posts} />
-    </>
+    <PostProvider initialPosts={posts}>
+      {isMyProfile && <SharePost currentUser={currentUser} />}
+      {isMyProfile && <EditModal />}
+      <PostList
+        limit={limit}
+        total={total}
+        token={token}
+        currentUser={currentUser}
+      />
+    </PostProvider>
   );
 }

@@ -67,14 +67,16 @@ export default async function LeftSidebar() {
 
                 <div className="card-body pt-0">
                   <div className="text-center">
-                    <Avatar
-                      src={currentUser.profile.avatar ?? "/01.jpg"}
-                      alt={fullName}
-                      height="4rem"
-                      width="4rem"
-                      wrapperClassName="d-inline-block mt-n4 mb-2"
-                      className="border border-3 border-white"
-                    />
+                    <div
+                      className="avatar d-inline-block mt-n4 mb-2"
+                      style={{ width: "4rem", height: "4rem" }}
+                    >
+                      <Avatar
+                        src={currentUser.profile.avatar ?? "/01.jpg"}
+                        alt={fullName}
+                        className="border border-3 border-white"
+                      />
+                    </div>
 
                     <h5 className="mb-0">{fullName}</h5>
                     {currentUser?.profile.job && (

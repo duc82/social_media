@@ -2,7 +2,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -18,6 +17,9 @@ export class MessageFile extends BaseEntity {
 
   @Column()
   url: string;
+
+  @Column()
+  path: string;
 
   @Column({
     type: "enum",

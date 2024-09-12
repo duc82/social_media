@@ -14,6 +14,8 @@ import { User } from "src/modules/users/entities/users.entity";
 import { ConfigService } from "@nestjs/config";
 import { DataSource } from "typeorm";
 import { UserRole } from "../users/enums/users.enum";
+import { AvatarService } from "../avatar/avatar.service";
+import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class AuthService {
@@ -29,6 +31,8 @@ export class AuthService {
 
   constructor(
     private usersService: UserService,
+    private avatarService: AvatarService,
+    private firebaseService: FirebaseService,
     private jwtService: JwtService,
     private mailService: MailerService,
     private configService: ConfigService,
@@ -56,8 +60,15 @@ export class AuthService {
       throw new BadRequestException("User already exists");
     }
 
+    const buffer = await this.avatarService.generateAvatar(signUpDto.firstName);
+
+    const avatar = await this.firebaseService.uploadFile(
+      buffer,
+      `avatars/${signUpDto.email}`,
+    );
+
     const profile = this.dataSource.getRepository(Profile).create({
-      avatar: signUpDto.avatar,
+      avatar,
       birthday: signUpDto.birthday,
       gender: signUpDto.gender,
     });

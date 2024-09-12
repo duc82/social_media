@@ -5,7 +5,6 @@ import Avatar from "../Avatar";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import {
-  Archive,
   CameraVideoFill,
   CheckLg,
   MicMute,
@@ -22,7 +21,6 @@ import formatName from "@/app/utils/formatName";
 import { markMessagesAsRead } from "@/app/actions/messageAction";
 import { Conversation } from "@/app/types/conversation";
 import conversationService from "@/app/services/conversationService";
-import { useRouter } from "next/navigation";
 import useSocketContext from "@/app/hooks/useSocketContext";
 
 interface TopAvatarStatusProps {
@@ -40,7 +38,6 @@ export default function TopAvatarStatus({
 }: TopAvatarStatusProps) {
   const { onlines } = useSocketToken();
   const { socket } = useSocketContext();
-  const router = useRouter();
 
   const isOnline = onlines.some((online) => online.userId === user?.id);
 
@@ -76,9 +73,8 @@ export default function TopAvatarStatus({
   const handleRemove = async () => {
     await conversationService.remove(conversation.id, token);
     if (socket) {
-      socket.emit("conversation", conversation, "remove");
+      socket.emit("conversation", { id: conversation.id, type: "remove" });
     }
-    router.push("/messages");
   };
 
   const fullName = formatName(user?.firstName || "", user?.lastName || "");
@@ -86,12 +82,19 @@ export default function TopAvatarStatus({
   return (
     <div className="d-sm-flex justify-content-between align-items-center">
       <div className="d-flex align-items-center mb-2 mb-sm-0">
-        <Avatar
-          wrapperClassName="flex-shrink-0 me-2"
-          className="rounded-circle"
-          src={user?.profile.avatar ?? ""}
-          alt={fullName}
-        />
+        <button
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#profileModal"
+          className="btn btn-link p-0 border-0 me-2 d-flex flex-shrink-0"
+        >
+          <Avatar
+            className="rounded-circle"
+            src={user?.profile.avatar || ""}
+            alt={fullName}
+          />
+        </button>
+
         <div>
           <h6 className="mb-0 mt-1">{fullName}</h6>
 
@@ -161,7 +164,7 @@ export default function TopAvatarStatus({
             <li>
               <Link
                 className="dropdown-item"
-                href={`/profile/${user?.username}`}
+                href={`/profile/@${user?.username}`}
               >
                 <PersonCheck className="me-2 fw-icon" />
                 View profile
@@ -176,13 +179,6 @@ export default function TopAvatarStatus({
                 <Trash className="me-2 fw-icon" />
                 Delete chat
               </button>
-            </li>
-            <li className="dropdown-divider"></li>
-            <li>
-              <Link className="dropdown-item" href="#">
-                <Archive className="me-2 fw-icon" />
-                Archive chat
-              </Link>
             </li>
           </ul>
         </div>

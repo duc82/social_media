@@ -5,8 +5,8 @@ export interface FilePreview extends File {
 }
 
 export interface PaginationLimit {
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
 }
 
 export interface Filter {

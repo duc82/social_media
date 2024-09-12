@@ -131,8 +131,8 @@ export default function ProfileMainHeader({
       <Fancybox style={{ height: "200px" }}>
         <Link
           href={user.profile.wallpaper || wallpaper_initial.src}
-          data-fancybox="wallpaper"
           className="d-block h-100 position-relative"
+          data-fancybox
         >
           <Image
             src={user.profile.wallpaper || wallpaper_initial}
@@ -148,10 +148,13 @@ export default function ProfileMainHeader({
       <div className="card-body py-0">
         <div className="d-md-flex align-items-start text-center text-md-start">
           <Fancybox>
-            <Link href={user.profile.avatar} data-fancybox="avatar">
+            <Link
+              href={user.profile.avatar}
+              className="avatar avatar-xxl mt-n5 mb-3"
+              data-fancybox
+            >
               <Avatar
                 src={user.profile.avatar}
-                wrapperClassName="avatar-xxl mt-n5 mb-3"
                 className="rounded-circle border border-3 border-white"
               />
             </Link>

@@ -38,8 +38,6 @@ async function seedUsers(application: INestApplicationContext) {
       password: "Liutiudiu@0802",
       emailVerified: new Date(),
       profile: {
-        avatar:
-          "https://firebasestorage.googleapis.com/v0/b/social-media-duc82.appspot.com/o/avatars%2Fpepe.png?alt=media&token=50d3d84d-c797-45a3-b68c-4cbd766bd316",
         birthday: new Date().toISOString(),
         gender,
       },

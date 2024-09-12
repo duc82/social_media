@@ -1,6 +1,5 @@
+"use client";
 import Avatar from "@/app/components/Avatar";
-import CreatePostModal from "@/app/components/Post/CreateModal";
-import getServerSession from "@/app/libs/session";
 import formatName from "@/app/utils/formatName";
 import Link from "next/link";
 import {
@@ -13,29 +12,37 @@ import {
   PencilSquare,
   ThreeDots,
 } from "react-bootstrap-icons";
+import CreatePostModal from "./CreateModal";
+import { FullUser } from "@/app/types/user";
+import { useState } from "react";
 
-export default async function SharePost() {
-  const { currentUser } = await getServerSession();
+export default function SharePost({ currentUser }: { currentUser: FullUser }) {
+  const [isActiveDropzone, setActiveDropzone] = useState(false);
 
   const fullName = formatName(currentUser.firstName, currentUser.lastName);
 
   return (
     <>
-      <CreatePostModal currentUser={currentUser} />
+      <CreatePostModal
+        currentUser={currentUser}
+        initialActiveDropzone={isActiveDropzone}
+      />
       <div className="card card-body flex-grow-0">
         <div className="d-flex mb-3">
-          <Avatar
-            wrapperClassName="avatar avatar-xs me-2"
-            className="avatar-img rounded-circle"
-            src={currentUser.profile.avatar ?? "/07.jpg"}
-            alt={fullName}
-          />
+          <div className="avatar avatar-xs me-2">
+            <Avatar
+              className="avatar-img rounded-circle"
+              src={currentUser.profile.avatar || ""}
+              alt={fullName}
+            />
+          </div>
           <form className="w-100">
             <input
               className="form-control pe-4 border-0"
               placeholder="Share your thoughts..."
               data-bs-toggle="modal"
               data-bs-target="#createPostModal"
+              onClick={() => setActiveDropzone(false)}
             />
           </form>
         </div>
@@ -45,6 +52,9 @@ export default async function SharePost() {
             <button
               type="button"
               className="nav-link rounded-2 bg-light py-1 px-2 d-flex align-items-center fw-normal"
+              data-bs-toggle="modal"
+              data-bs-target="#createPostModal"
+              onClick={() => setActiveDropzone(true)}
             >
               <ImageFill className="text-success pe-2" size={20} />
               Photo
@@ -54,6 +64,9 @@ export default async function SharePost() {
             <button
               type="button"
               className="nav-link rounded-2 bg-light py-1 px-2 d-flex align-items-center fw-normal"
+              data-bs-toggle="modal"
+              data-bs-target="#createPostModal"
+              onClick={() => setActiveDropzone(true)}
             >
               <CameraReelsFill className="text-info pe-2" size={20} />
               Video
@@ -72,6 +85,9 @@ export default async function SharePost() {
             <button
               type="button"
               className="nav-link rounded-2 bg-light py-1 px-2 d-flex align-items-center fw-normal"
+              data-bs-toggle="modal"
+              data-bs-target="#createFeelingActivityModal"
+              onClick={() => setActiveDropzone(false)}
             >
               <EmojiSmileFill className="text-warning pe-2" size={20} />
               Feeling / Activity

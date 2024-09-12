@@ -1,17 +1,7 @@
-import {
-  IsArray,
-  IsEnum,
-  IsOptional,
-  IsString,
-  ValidateIf,
-} from "class-validator";
-import { QueryDto } from "src/shared/dto/query.dto";
-import { PickType } from "@nestjs/swagger";
-import { PostFile } from "./entities/post_files.entity";
-import { Type } from "class-transformer";
+import { IsArray, IsEnum, IsString, ValidateIf } from "class-validator";
+import { PartialType } from "@nestjs/swagger";
+import { Transform, Type } from "class-transformer";
 import { PostAccess } from "./enums/posts.enum";
-
-class PostFileUpload extends PickType(PostFile, ["url", "type"]) {}
 
 export class CreatePostDto {
   @ValidateIf((o) => o.content)
@@ -21,13 +11,21 @@ export class CreatePostDto {
   @IsEnum(PostAccess)
   access: PostAccess;
 
+  @ValidateIf((o) => o.feeling)
+  @Transform(({ value }) =>
+    typeof value === "string" ? JSON.parse(value) : value,
+  )
   @IsArray()
-  @Type(() => PostFileUpload)
-  files: PostFileUpload[];
+  @Type(() => String)
+  feeling: string[];
+
+  @ValidateIf((o) => o.activity)
+  @Transform(({ value }) =>
+    typeof value === "string" ? JSON.parse(value) : value,
+  )
+  @IsArray()
+  @Type(() => String)
+  activity: string[];
 }
 
-export class ListAllPostsDto extends QueryDto {
-  @IsOptional()
-  @IsString()
-  userId?: string;
-}
+export class UpdatePostDto extends PartialType(CreatePostDto) {}

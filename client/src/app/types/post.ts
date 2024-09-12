@@ -1,12 +1,23 @@
 import { z } from "zod";
-import { postSchema } from "../schemas/post";
-import { FullUser, User } from "./user";
+import { POST_ACCESS, postSchema } from "../schemas/post";
+import { User } from "./user";
+
+type PostAccess = (typeof POST_ACCESS)[number];
 
 export interface File {
   id: string;
   url: string;
   type: "image" | "video";
-  postId: string;
+  createdAt: string;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  user: User;
+  post: Post;
+  likeCount: number;
+  replyCount: number;
   createdAt: string;
 }
 
@@ -15,11 +26,22 @@ export interface Post {
   content?: string;
   files: File[];
   user: User;
-  likes: FullUser[];
-  comments: User[];
-  access: "public" | "friends" | "private";
+  likeCount: number;
+  commentCount: number;
+  access: PostAccess;
+  feeling: string[] | null;
+  activity: string[] | null;
   deletedAt: string | null;
   createdAt: string;
+}
+
+export interface Feeling {
+  name: string;
+  emoji: string;
+}
+
+export interface Activity extends Feeling {
+  action: string;
 }
 
 export interface PostResponse {
@@ -27,14 +49,24 @@ export interface PostResponse {
   post: Post;
 }
 
+export interface CommentResponse {
+  message: string;
+  comment: Comment;
+}
+
 export interface FileUpload extends Pick<File, "url" | "type"> {}
 
-export interface PostDto extends z.infer<typeof postSchema> {
-  files: FileUpload[];
-}
+export interface PostDto extends z.infer<typeof postSchema> {}
 
 export interface PostsReponse {
   posts: Post[];
+  total: number;
+  limit: number;
+  page: number;
+}
+
+export interface CommentsResponse {
+  comments: Comment[];
   total: number;
   limit: number;
   page: number;

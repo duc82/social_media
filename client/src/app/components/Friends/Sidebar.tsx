@@ -59,7 +59,7 @@ const FriendSidebar = () => {
                   <Link
                     href={menu.link}
                     onClick={() => {
-                      revalidatePath(pathname);
+                      revalidatePath(pathname || "");
                     }}
                     className={clsx(
                       "nav-link d-flex align-items-center px-2 rounded-2",

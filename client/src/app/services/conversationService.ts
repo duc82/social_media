@@ -3,11 +3,26 @@ import { Conversation, ConversationsReponse } from "../types/conversation";
 import apiRequest from "./api";
 
 const conversationService = {
-  getAll: async (token: string) => {
-    return apiRequest<ConversationsReponse>(`/conversations`, {
+  getAll: async (token: string, options?: Options) => {
+    let query = "";
+
+    if (options?.page) {
+      query += query ? `&page=${options.page}` : `page=${options.page}`;
+    }
+
+    if (options?.limit) {
+      query += query ? `&limit=${options.limit}` : `limit=${options.limit}`;
+    }
+
+    if (options?.search) {
+      query += query ? `&search=${options.search}` : `search=${options.search}`;
+    }
+
+    return apiRequest<ConversationsReponse>(`/conversations?${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      next: { tags: options?.tags },
     });
   },
 

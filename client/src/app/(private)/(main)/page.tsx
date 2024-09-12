@@ -4,8 +4,10 @@ import Stories from "@/app/components/Stories";
 import SharePost from "@/app/components/Post/SharePost";
 import RightSidebar from "@/app/components/Home/Sidebar/RightSidebar";
 import LeftSidebar from "@/app/components/Home/Sidebar/LeftSidebar";
+import getServerSession from "@/app/libs/session";
 
-export default function Home() {
+export default async function Home() {
+  const { currentUser } = await getServerSession();
   return (
     <div className="row g-4">
       <LeftSidebar />
@@ -35,7 +37,7 @@ export default function Home() {
           <Stories />
         </div>
         {/* Share Post */}
-        <SharePost />
+        <SharePost currentUser={currentUser} />
 
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi

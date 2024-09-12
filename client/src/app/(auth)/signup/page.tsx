@@ -15,8 +15,6 @@ import { SignUpDto } from "@/app/types/auth";
 import { signUpSchema } from "@/app/schemas/auth";
 import clsx from "clsx";
 import { ExclamationCircleFill, InfoCircle } from "react-bootstrap-icons";
-import AvatarInitials from "@/app/utils/avatarInitials";
-import { uploadFile } from "@/app/libs/firebase";
 import FormControl from "@/app/components/Form/FormControl";
 import Radio from "@/app/components/Form/Radio";
 import isLeapYear from "@/app/utils/isLeapYear";
@@ -62,14 +60,6 @@ export default function Signup() {
         data.dateOfBirth.day
       ).toISOString();
       signUpDto.birthday = birthday;
-
-      const avatarBlob = await AvatarInitials.generateAvatar(
-        signUpDto.firstName
-      );
-      signUpDto.avatar = await uploadFile(
-        `avatars/${signUpDto.email}`,
-        avatarBlob
-      );
 
       const value = await authService.signUp(signUpDto);
       toast.success(value.message);

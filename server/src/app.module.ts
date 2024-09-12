@@ -16,6 +16,9 @@ import { BlogsModule } from "./modules/blogs/blogs.module";
 import { NotificationsModule } from "./modules/notifications/notifications.module";
 import { FriendsModule } from "./modules/friends/friends.module";
 import { JwtGlobalModule } from "./modules/jwt/jwt.module";
+import { FilesModule } from "./modules/files/files.module";
+import { FirebaseModule } from "./modules/firebase/firebase.module";
+import { AvatarModule } from "./modules/avatar/avatar.module";
 
 @Module({
   imports: [
@@ -56,9 +59,6 @@ import { JwtGlobalModule } from "./modules/jwt/jwt.module";
               baseUrl: "file://" + "templates/mail/",
             },
           }),
-          // options: {
-          //   strict: true,
-          // },
         },
       }),
     }),
@@ -73,6 +73,9 @@ import { JwtGlobalModule } from "./modules/jwt/jwt.module";
     BlogsModule,
     NotificationsModule,
     FriendsModule,
+    FirebaseModule,
+    FilesModule,
+    AvatarModule,
   ],
   controllers: [AppController],
   providers: [AppService],

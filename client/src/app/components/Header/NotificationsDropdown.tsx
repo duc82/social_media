@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Avatar from "../Avatar";
 
 export default function NotificationsDropdown() {
   return (
@@ -25,12 +25,10 @@ export default function NotificationsDropdown() {
             <li>
               <div className="list-group-item list-group-item-action rounded badge-unread d-flex border-0 mb-1 p-3">
                 <div className="avatar text-center d-none d-sm-inline-block">
-                  <Image
-                    width={200}
-                    height={200}
-                    className="avatar-img rounded-circle"
+                  <Avatar
+                    className="rounded-circle"
                     src="/01.jpg"
-                    alt=""
+                    alt="Avatar"
                   />
                 </div>
                 <div className="ms-sm-3">

@@ -1,5 +1,5 @@
 export enum PostAccess {
-  PUBLIC = "public",
-  FRIENDS = "friends",
-  PRIVATE = "private",
+  PUBLIC = "Public",
+  FRIENDS = "Friends",
+  ONLY_ME = "Only me",
 }

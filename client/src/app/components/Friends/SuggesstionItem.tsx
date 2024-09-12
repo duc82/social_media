@@ -2,6 +2,7 @@
 
 import { directMessage } from "@/app/actions/conversationAction";
 import { sendFriendRequest } from "@/app/actions/userAction";
+import useSocketContext from "@/app/hooks/useSocketContext";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import handlingError from "@/app/utils/error";
@@ -9,6 +10,7 @@ import formatName from "@/app/utils/formatName";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   ChatLeftTextFill,
@@ -22,6 +24,8 @@ export default function SuggesstionItem(friend: FullUser) {
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useSession();
   const token = data?.token!;
+  const { socket } = useSocketContext();
+  const router = useRouter();
 
   const handleSendFriendRequest = async () => {
     try {
@@ -47,12 +51,24 @@ export default function SuggesstionItem(friend: FullUser) {
     }
   };
 
+  const handleMessage = async () => {
+    try {
+      const conversation = await directMessage(friend.id);
+      if (socket) {
+        socket.emit("conversation", { id: conversation.id, type: "add" });
+      }
+      router.push(`/messages/${conversation.id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fullName = formatName(friend.firstName, friend.lastName);
 
   return (
     <div className="col-12 col-md-6 col-lg-4 col-xl-3">
       <div className="card h-100">
-        <Link href={`/profile/${friend.id}`} className="d-block">
+        <Link href={`/profile/${friend.username}`} className="d-block">
           <Image
             src={friend.profile.avatar}
             alt={fullName}
@@ -64,7 +80,7 @@ export default function SuggesstionItem(friend: FullUser) {
         </Link>
         <div className="card-body p-3 d-flex flex-column justify-content-between">
           <Link
-            href={`/profile/${friend.id}`}
+            href={`/profile/${friend.username}`}
             className="card-title d-block mb-2"
           >
             <h5 className="mb-0">{fullName}</h5>
@@ -118,7 +134,7 @@ export default function SuggesstionItem(friend: FullUser) {
             )}
             <button
               type="button"
-              onClick={() => directMessage(friend.id)}
+              onClick={handleMessage}
               className="btn btn-secondary-soft d-flex justify-content-center align-items-center"
             >
               <ChatLeftTextFill size={16} />

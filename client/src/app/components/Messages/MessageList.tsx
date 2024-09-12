@@ -19,10 +19,6 @@ interface MessageListProps {
   total: number;
 }
 
-type Params = {
-  id: string;
-};
-
 export default function MessageList({
   currentUser,
   initialMessages,
@@ -33,7 +29,8 @@ export default function MessageList({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [hasMore, setHasMore] = useState(total > limit);
   const [page, setPage] = useState(initialPage);
-  const { id } = useParams<Params>();
+  const params = useParams();
+  const id = params.id as string;
   const { socket } = useSocketContext();
   const { data } = useSession();
   const token = data?.token;
@@ -74,6 +71,8 @@ export default function MessageList({
     if (!socket) return;
 
     const handleMessage = async (message: Message) => {
+      if (message.conversation.id !== id) return;
+
       setMessages((prev) => [...prev, message]);
       if (message.user.id === currentUser.id) {
         setIsScrollBottom(true);
@@ -87,7 +86,7 @@ export default function MessageList({
     return () => {
       socket.off("message", handleMessage);
     };
-  }, [socket, currentUser]);
+  }, [socket, currentUser, id]);
 
   useLayoutEffect(() => {
     if (isScrollBottom && ref.current) {

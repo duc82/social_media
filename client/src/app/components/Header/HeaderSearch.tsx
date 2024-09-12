@@ -63,7 +63,9 @@ export default function HeaderSearch() {
                 href={`/profile/${user.id}`}
                 className="d-flex align-items-center"
               >
-                <Avatar src={user.profile.avatar} alt={fullName} />
+                <div className="avatar">
+                  <Avatar src={user.profile.avatar} alt={fullName} />
+                </div>
                 <div className="ms-2">
                   <p className="mb-0">{fullName}</p>
                   {/* <small className="text-muted">{user.email}</small> */}

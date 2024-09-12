@@ -1,7 +1,6 @@
 import { Socket } from "socket.io-client";
 import { Friend } from "./user";
 import { Message } from "./message";
-import { Conversation } from "./conversation";
 
 interface FriendRequest {
   userId: string;
@@ -20,26 +19,33 @@ export interface CallUser {
   room: string;
 }
 
+export interface ConversationPayload {
+  id: string;
+  type: "add" | "remove";
+}
+
 interface ServerToClientEvents {
   message: (_data: Message) => void;
-  conversation: (_data: Conversation, _type: "add" | "remove") => void;
+  conversation: (_data: ConversationPayload) => void;
   friendRequest: (_data: FriendRequest) => void;
   onlines: (_data: Online[]) => void;
   conversationUnread: (_data: string) => void;
   callUser: (_data: CallUser) => void;
   endCall: () => void;
   callRejected: (_data: CallUser) => void;
+  remoteCamOn: (_isOn: boolean) => void;
 }
 
 interface ClientToServerEvents {
   message: (_data: Message) => void;
-  conversation: (_data: Conversation, _type: "add" | "remove") => void;
+  conversation: (_data: ConversationPayload) => void;
   friendRequest: (_data: FriendRequest) => void;
   conversationUnread: () => void;
   joinCall: (_room: string) => void;
   callUser: (_data: CallUser) => void;
   endCall: () => void;
   rejectCall: (_data: CallUser) => void;
+  remoteCamOn: (_isOn: boolean) => void;
 }
 
 export interface ISocket

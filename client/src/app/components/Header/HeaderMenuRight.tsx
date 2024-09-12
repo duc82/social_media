@@ -99,25 +99,22 @@ export default function HeaderMenuRight({
           className="nav-link btn icon-md p-0"
           data-bs-toggle="dropdown"
         >
-          <Avatar
-            src={currentUser.profile.avatar}
-            alt={fullName}
-            width={"2.5rem"}
-            height={"2.5rem"}
-          />
+          <div className="avatar" style={{ width: "2.5rem", height: "2.5rem" }}>
+            <Avatar src={currentUser.profile.avatar} alt={fullName} />
+          </div>
         </button>
 
         <ul className="dropdown-menu dropdown-menu-end pt-3 small me-md-n3 shadow-menu">
           <li className="px-3">
             <div className="d-flex align-items-center">
-              <Avatar
-                src={currentUser.profile.avatar}
-                alt={fullName}
-                width={48}
-                height={48}
-                className="rounded-circle"
-                wrapperClassName="me-3"
-              />
+              <div className="avatar me-3" style={{ width: 48, height: 48 }}>
+                <Avatar
+                  src={currentUser.profile.avatar}
+                  alt={fullName}
+                  className="rounded-circle"
+                />
+              </div>
+
               <div>
                 <h6 className="mb-1">{fullName}</h6>
                 {currentUser.profile.job && (

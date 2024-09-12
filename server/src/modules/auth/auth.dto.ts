@@ -5,10 +5,6 @@ import { Gender } from "src/modules/users/enums/profiles.enum";
 import { CreateUserDto } from "src/modules/users/users.dto";
 
 export class SignUpDto extends CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  avatar: string;
-
   @IsEnum(Gender)
   gender: Gender;
 
@@ -24,8 +20,8 @@ export class SignInDto extends OmitType(CreateUserDto, [
   @IsNotEmpty()
   password: string;
 
-  @Transform(({ value }) => Boolean(value))
-  isRemember: boolean;
+  @Transform(({ value }) => value === "true" || value === true)
+  isRemember: boolean = true;
 }
 
 export class RefreshDto {
