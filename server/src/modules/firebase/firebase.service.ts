@@ -3,16 +3,20 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { cert, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
-import serviceAccount from "../../../social-media-duc82-firebase-adminsdk.json";
 import { FileType } from "src/enums/file.enum";
 
 @Injectable()
 export class FirebaseService {
   private readonly bucket: Bucket;
+  private readonly serviceAccount: ServiceAccount = {
+    clientEmail: this.configService.getOrThrow<string>("FIREBASE_CLIENT_EMAIL"),
+    privateKey: this.configService.getOrThrow<string>("FIREBASE_PRIVATE_KEY"),
+    projectId: this.configService.getOrThrow<string>("FIREBASE_PROJECT_ID"),
+  };
 
   constructor(private configService: ConfigService) {
     const app = initializeApp({
-      credential: cert(serviceAccount as string | ServiceAccount),
+      credential: cert(this.serviceAccount),
       storageBucket: configService.getOrThrow<string>(
         "FIREBASE_STORAGE_BUCKET",
       ),
