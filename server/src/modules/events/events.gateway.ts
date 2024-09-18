@@ -59,7 +59,11 @@ interface CallUser {
 
 @WebSocketGateway({
   cors: {
-    origin: [process.env.CLIENT_URL, "http://192.168.1.4:3000"],
+    origin: [
+      process.env.CLIENT_URL,
+      process.env.ADMIN_URL,
+      "http://192.168.1.4:3000",
+    ],
   },
   transports: ["websocket"],
 })

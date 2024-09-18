@@ -62,6 +62,7 @@ export default function PostItem({
       }
       return [...prev];
     });
+    setIsLiked((prev) => !prev);
   };
 
   const sendComment = async (content: string) => {
