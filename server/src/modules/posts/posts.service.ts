@@ -200,7 +200,10 @@ export class PostsService {
 
     await this.dataSource.getRepository(Post).save(post);
 
-    return { message: "Post liked successfully", post };
+    return {
+      message: "Post liked successfully",
+      post: { ...post, likeCount: post.likes.length },
+    };
   }
 
   async comment(id: string, userId: string, content: string) {
