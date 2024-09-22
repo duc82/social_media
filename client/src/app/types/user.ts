@@ -76,5 +76,4 @@ export interface Friend {
   friend: FullUser;
 }
 
-export interface UpdateUserProfileDto
-  extends z.infer<typeof userProfileSchema> {}
+export interface UpdateUserDto extends z.infer<typeof userProfileSchema> {}

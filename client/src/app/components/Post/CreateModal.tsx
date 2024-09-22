@@ -29,6 +29,7 @@ import Spinner from "../Spinner";
 import TagPeopleModal from "./TagPeopleModal";
 import FeelingActivityModal from "./FeelingActivityModal";
 import usePostContext from "@/app/hooks/usePostContext";
+import VideoPlayer from "@/app/libs/VideoPlayer";
 
 export default function CreatePostModal({
   initialActiveDropzone = false,
@@ -214,15 +215,24 @@ export default function CreatePostModal({
                         )}
                       >
                         <div className="card border-0">
-                          <Image
-                            src={file.preview}
-                            alt={file.name}
-                            width={0}
-                            height={0}
-                            sizes="100vw"
-                            className="card-img object-fit-cover h-auto"
-                            onLoad={() => URL.revokeObjectURL(file.preview)}
-                          />
+                          {file.type.includes("image") && (
+                            <Image
+                              src={file.preview}
+                              alt={file.name}
+                              width={0}
+                              height={0}
+                              sizes="100vw"
+                              className="card-img object-fit-cover h-auto"
+                              onLoad={() => URL.revokeObjectURL(file.preview)}
+                            />
+                          )}
+
+                          {file.type.includes("video") && (
+                            <VideoPlayer
+                              src={file.preview}
+                              onLoad={() => URL.revokeObjectURL(file.preview)}
+                            />
+                          )}
                           {index === filePreviews.length - 1 &&
                             files.length > 5 && (
                               <div className="w-100 h-100 position-absolute d-flex align-items-center justify-content-center bg-black bg-opacity-25">
@@ -253,7 +263,11 @@ export default function CreatePostModal({
                     data-bs-placement="top"
                     data-bs-title="Photo/Video"
                     data-bs-trigger="hover"
-                    onClick={() => setActiveDropzone(!isActiveDropzone)}
+                    onClick={() => {
+                      if (files.length === 0) {
+                        setActiveDropzone(!isActiveDropzone);
+                      }
+                    }}
                   >
                     <ImageFill />
                   </button>

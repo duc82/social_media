@@ -1,7 +1,7 @@
 "use client";
 import { userProfileSchema } from "@/app/schemas/user";
 import userService from "@/app/services/userService";
-import { FullUser, UpdateUserProfileDto } from "@/app/types/user";
+import { FullUser, UpdateUserDto } from "@/app/types/user";
 import { formatBirthday } from "@/app/utils/dateTime";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
@@ -24,7 +24,7 @@ export default function AccountForm({
     handleSubmit,
     formState: { isSubmitting },
     setValue,
-  } = useForm<UpdateUserProfileDto>({
+  } = useForm<UpdateUserDto>({
     resolver: zodResolver(userProfileSchema),
     mode: "onChange",
     defaultValues: {
@@ -36,16 +36,32 @@ export default function AccountForm({
     },
   });
 
-  const onSubmit = async (data: UpdateUserProfileDto) => {
+  const onSubmit = async (data: UpdateUserDto) => {
     if (!session?.token) return;
 
-    data.username = data.username?.replace("@", "");
+    const formData = new FormData();
+    formData.append("username", data.username.replace("@", ""));
+    if (data.bio) {
+      formData.append("bio", data.bio);
+    }
+    if (data.firstName !== currentUser.firstName) {
+      formData.append("firstName", data.firstName);
+    }
+    if (data.lastName !== currentUser.lastName) {
+      formData.append("lastName", data.lastName);
+    }
+
+    if (data.birthday !== currentUser.profile.birthday) {
+      formData.append("birthday", data.birthday);
+    }
 
     try {
-      const { user, message } = await userService.updateUserProfile(
-        data,
+      const { user, message } = await userService.update(
+        currentUser.id,
+        formData,
         session?.token
       );
+
       await update({ ...session, user });
       setMessage(message);
       router.refresh();

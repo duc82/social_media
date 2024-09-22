@@ -4,22 +4,30 @@ import Link from "next/link";
 import Avatar from "../Avatar";
 import formatName from "@/app/utils/formatName";
 import { formatDate, formatDateTime } from "@/app/utils/dateTime";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 import { FullUser } from "@/app/types/user";
 import { SendFill } from "react-bootstrap-icons";
 import postService from "@/app/services/postService";
 import { useSession } from "next-auth/react";
+import SpinnerDots from "../SpinnerDots";
 
 export default function PostComment({
   comment,
   currentUser,
   setComments,
+  paddingLeft = "0",
 }: {
   comment: Comment;
   currentUser: FullUser;
   setComments: Dispatch<SetStateAction<Comment[]>>;
+  paddingLeft?: string;
 }) {
   const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [isHaveSeenReplies, setIsHaveSeenReplies] = useState<boolean>(false);
+  const replyTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [replies, setReplies] = useState<Comment[]>([]);
+  const [totalReplies, setTotalReplies] = useState<number>(0);
+  const [pageReplies, setPageReplies] = useState<number>(0);
   const { data } = useSession();
   const token = data?.token;
 
@@ -38,16 +46,52 @@ export default function PostComment({
     });
   };
 
+  const handleReplyComment = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const content = replyTextAreaRef.current?.value;
+
+    if (!token || !content) return;
+
+    const { comment: newComment } = await postService.replyComment(
+      comment.id,
+      content,
+      token
+    );
+    setReplies((prev) => [newComment, ...prev]);
+    replyTextAreaRef.current!.value = "";
+  };
+
+  const getReplies = async () => {
+    if (!token) return;
+
+    const page = pageReplies + 1;
+
+    const { comments, total } = await postService.getReplies(
+      comment.id,
+      token,
+      { page }
+    );
+    setReplies((prev) => [...prev, ...comments]);
+    setTotalReplies(total);
+    setPageReplies(page);
+    setIsHaveSeenReplies(true);
+  };
+
   const fullName = formatName(comment.user.firstName, comment.user.lastName);
+
   return (
-    <li className="comment-item" key={comment.id}>
+    <div className="comment-item" key={comment.id} style={{ paddingLeft }}>
       <div className="d-flex">
         <Link
           href={`/profile/@${comment.user.username}`}
           className="avatar avatar-xs"
         >
           <Avatar
-            src={comment.user.profile.avatar}
+            src={
+              comment.user.id === currentUser.id
+                ? currentUser.profile.avatar
+                : comment.user.profile.avatar
+            }
             alt={comment.user.username}
             className="rounded-circle"
           />
@@ -57,7 +101,6 @@ export default function PostComment({
             <div className="d-flex justify-content-between">
               <h6 className="mb-1">
                 <Link href={`/profile/@${comment.user.username}`}>
-                  {" "}
                   {fullName}
                 </Link>
               </h6>
@@ -93,9 +136,9 @@ export default function PostComment({
                 Reply
               </button>
             </li>
-            {comment.replyCount > 0 && (
+            {comment.replyCount > 0 && !isHaveSeenReplies && (
               <li className="nav-item">
-                <button type="button" className="nav-link">
+                <button type="button" className="nav-link" onClick={getReplies}>
                   View {comment.replyCount} replies
                 </button>
               </li>
@@ -103,6 +146,28 @@ export default function PostComment({
           </ul>
         </div>
       </div>
+      {replies.map((reply) => (
+        <PostComment
+          key={reply.id}
+          comment={reply}
+          currentUser={currentUser}
+          setComments={setReplies}
+          paddingLeft="calc(2.1875rem + .5rem)"
+        />
+      ))}
+
+      {totalReplies > replies.length && (
+        <button
+          type="button"
+          className="btn btn-link btn-sm text-secondary d-flex align-items-center"
+          style={{ paddingLeft: "calc(2.1875rem + .5rem)" }}
+          onClick={getReplies}
+        >
+          <SpinnerDots className="me-2" />
+          Load more replies
+        </button>
+      )}
+
       {isReplying && (
         <div
           className="d-flex mb-3"
@@ -118,11 +183,13 @@ export default function PostComment({
               alt={fullName}
             />
           </Link>
-          <form className="w-100">
+          <form className="w-100" onSubmit={handleReplyComment}>
             <textarea
               className="form-control bg-light rounded-bottom-0 border-bottom-0"
               placeholder="Write a reply..."
               spellCheck="false"
+              name="content"
+              ref={replyTextAreaRef}
               rows={1}
               onInput={(e) => {
                 e.currentTarget.style.height = "0px";
@@ -146,6 +213,6 @@ export default function PostComment({
           </form>
         </div>
       )}
-    </li>
+    </div>
   );
 }

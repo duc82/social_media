@@ -6,6 +6,7 @@ import {
   Bookmark,
   Briefcase,
   Calendar2Plus,
+  CameraFill,
   ChatLeftTextFill,
   FileEarmarkPdf,
   Gear,
@@ -19,7 +20,7 @@ import {
 import ProfileMainHeaderMenu from "./Menu";
 import { Friend, FullUser } from "@/app/types/user";
 import { formatDate } from "@/app/utils/dateTime";
-import { useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
 import {
@@ -34,6 +35,8 @@ import handlingError from "@/app/utils/error";
 import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
 import formatName from "@/app/utils/formatName";
 import { directMessage } from "@/app/actions/conversationAction";
+import userService from "@/app/services/userService";
+import { useRouter } from "next/navigation";
 
 export default function ProfileMainHeader({
   user,
@@ -49,8 +52,9 @@ export default function ProfileMainHeader({
   const [friendship, setFriendship] = useState(initialFriend);
   const [totalFriends, setTotalFriends] = useState(initialTotalFriends);
   const [isLoading, setIsLoading] = useState(false);
-  const { data } = useSession();
-  const token = data?.token!;
+  const { data: session, update } = useSession();
+  const router = useRouter();
+  const token = session?.token!;
 
   const isSentFriendRequest = useMemo(
     () =>
@@ -74,6 +78,42 @@ export default function ProfileMainHeader({
     () => user.id === currentUser.id,
     [user, currentUser]
   );
+
+  const handleChangeAvatar = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("isAvatar", "true");
+
+    const { user: newUser } = await userService.update(
+      user.id,
+      formData,
+      token
+    );
+    await update({ ...session, user: newUser });
+    router.refresh();
+  };
+
+  const handleChangeWallpaper = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("isAvatar", "false");
+
+    const { user: newUser } = await userService.update(
+      user.id,
+      formData,
+      token
+    );
+
+    await update({ ...session, user: newUser });
+    router.refresh();
+  };
 
   const handleSendFriendRequest = async () => {
     try {
@@ -128,7 +168,7 @@ export default function ProfileMainHeader({
 
   return (
     <div className="card">
-      <Fancybox style={{ height: "200px" }}>
+      <Fancybox style={{ height: "200px" }} className="position-relative">
         <Link
           href={user.profile.wallpaper || wallpaper_initial.src}
           className="d-block h-100 position-relative"
@@ -143,11 +183,28 @@ export default function ProfileMainHeader({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </Link>
+        <label
+          htmlFor="wallpaperPicture"
+          className="position-absolute btn btn-light py-1 px-2 d-flex align-items-center gap-2"
+          style={{
+            bottom: "10px",
+            right: "20px",
+          }}
+        >
+          <input
+            type="file"
+            id="wallpaperPicture"
+            onChange={handleChangeWallpaper}
+            hidden
+          />
+          <CameraFill size={16} />
+          <span>Edit wallpaper</span>
+        </label>
       </Fancybox>
 
       <div className="card-body py-0">
         <div className="d-md-flex align-items-start text-center text-md-start">
-          <Fancybox>
+          <Fancybox className="d-inline-block position-relative">
             <Link
               href={user.profile.avatar}
               className="avatar avatar-xxl mt-n5 mb-3"
@@ -158,6 +215,22 @@ export default function ProfileMainHeader({
                 className="rounded-circle border border-3 border-white"
               />
             </Link>
+
+            {isMyProfile && (
+              <label
+                htmlFor="profilePicture1"
+                className="btn btn-light avatar-camera"
+              >
+                <CameraFill size={16} />
+                <input
+                  type="file"
+                  id="profilePicture1"
+                  accept="image/*"
+                  onChange={handleChangeAvatar}
+                  hidden
+                />
+              </label>
+            )}
           </Fancybox>
 
           <div className="ms-md-4 mt-md-3">
@@ -168,7 +241,7 @@ export default function ProfileMainHeader({
           </div>
 
           {isMyProfile && (
-            <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
+            <div className="d-flex flex-wrap justify-content-center gap-2 mt-3 ms-md-auto">
               <button
                 type="button"
                 className="btn btn-primary-soft d-flex align-items-center"
@@ -225,7 +298,7 @@ export default function ProfileMainHeader({
           )}
 
           {!isMyProfile && (
-            <div className="d-flex flex-wrap gap-2 mt-3 justify-content-center ms-md-auto">
+            <div className="d-flex flex-wrap justify-content-center gap-2 mt-3 ms-md-auto">
               {!isFriend &&
                 !isReceivedFriendRequest &&
                 (friendship?.user.id === currentUser.id ||

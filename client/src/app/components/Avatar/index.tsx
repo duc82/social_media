@@ -23,7 +23,7 @@ export default function Avatar({
   return (
     <Image
       src={src}
-      alt={alt ?? "Avatar"}
+      alt={alt || "Avatar"}
       fill={fill}
       sizes={sizes}
       width={width}

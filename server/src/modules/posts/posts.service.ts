@@ -153,8 +153,30 @@ export class PostsService {
       .leftJoinAndSelect("comment.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
       .loadRelationCountAndMap("comment.likeCount", "comment.likes")
-      .loadRelationCountAndMap("comment.replyCount", "comment.replies")
+      .loadRelationCountAndMap("comment.replyCount", "comment.childComments")
       .where("comment.postId = :postId", { postId })
+      .andWhere("comment.parentCommentId IS NULL")
+      .orderBy("comment.createdAt", "DESC")
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return { comments, total, page, limit };
+  }
+
+  async getCommentReplies(commentId: string, query: QueryDto) {
+    const { page = 1, limit = 3 } = query;
+
+    const skip = (page - 1) * limit;
+
+    const [comments, total] = await this.dataSource
+      .getRepository(Comment)
+      .createQueryBuilder("comment")
+      .leftJoinAndSelect("comment.user", "user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .loadRelationCountAndMap("comment.likeCount", "comment.likes")
+      .loadRelationCountAndMap("comment.replyCount", "comment.childComments")
+      .where("comment.parentCommentId = :commentId", { commentId })
       .orderBy("comment.createdAt", "DESC")
       .skip(skip)
       .take(limit)
@@ -270,28 +292,18 @@ export class PostsService {
     return { message: "Comment liked successfully", comment };
   }
 
-  async replyComment(
-    id: string,
-    commentId: string,
-    userId: string,
-    content: string,
-  ) {
-    const post = await this.findOne({
+  async replyComment(id: string, currentUserId: string, content: string) {
+    const parentComment = await this.dataSource.getRepository(Comment).findOne({
       where: { id },
+      relations: ["post"],
     });
 
-    if (!post) {
-      throw new NotFoundException("Post not found");
-    }
-
-    const comment = post.comments.find((comment) => comment.id === commentId);
-
-    if (!comment) {
+    if (!parentComment) {
       throw new NotFoundException("Comment not found");
     }
 
     const user = await this.userService.findOne({
-      where: { id: userId },
+      where: { id: currentUserId },
       relations: ["profile"],
     });
 
@@ -302,14 +314,16 @@ export class PostsService {
     const newComment = this.dataSource.getRepository(Comment).create({
       content,
       user,
-      post,
+      post: parentComment.post,
+      parentComment,
     });
 
-    comment.replies.push(newComment);
+    await this.dataSource.getRepository(Comment).save(newComment);
 
-    await this.dataSource.getRepository(Post).save(post);
-
-    return { message: "Reply created successfully", post };
+    return {
+      message: "Comment replied successfully",
+      comment: { ...newComment, likeCount: 0, replyCount: 0 },
+    };
   }
 
   async remove(id: string) {

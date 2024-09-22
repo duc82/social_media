@@ -36,9 +36,11 @@ export class Comment {
   })
   post: Post;
 
-  @ManyToMany(() => Comment, (comment) => comment.replies)
-  @JoinTable()
-  replies: Comment[];
+  @ManyToOne(() => Comment, (comment) => comment.childComments)
+  parentComment: Comment;
+
+  @OneToMany(() => Comment, (comment) => comment.parentComment)
+  childComments: Comment[];
 
   @DeleteDateColumn({
     type: "timestamptz",

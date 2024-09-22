@@ -58,10 +58,9 @@ export class FirebaseService {
       });
 
       await fileRef.makePublic();
-      const url = fileRef.publicUrl();
-      return url;
+      const url = decodeURIComponent(fileRef.publicUrl());
+      return `${url}?time=${Date.now()}`;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }

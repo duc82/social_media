@@ -95,6 +95,18 @@ const postService = {
     );
   },
 
+  getReplies: async (commentId: string, token: string, options?: Options) => {
+    const { page = 1, limit = 3 } = options || {};
+
+    return apiRequest<CommentsResponse>(
+      `/posts/comments/replies/${commentId}?page=${page}&limit=${limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        next: { tags: options?.tags },
+      }
+    );
+  },
+
   countComments: async (postId: string) => {
     return apiRequest<number>(`/posts/comments/count/${postId}`);
   },
@@ -121,6 +133,16 @@ const postService = {
   likeComment: async (id: string, token: string) => {
     return apiRequest<CommentResponse>(`/posts/comment/like/${id}`, {
       method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  replyComment: async (id: string, content: string, token: string) => {
+    return apiRequest<CommentResponse>(`/posts/comment/reply/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ content }),
       headers: {
         Authorization: `Bearer ${token}`,
       },

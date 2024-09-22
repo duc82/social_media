@@ -56,12 +56,18 @@ export default async function AuthLayout({
                 {/* Nav */}
                 <ul className="nav">
                   <li className="nav-item">
-                    <Link href="/terms" className="nav-link fw-bold ps-0 pe-2">
+                    <Link
+                      href="/privacy-terms"
+                      className="nav-link fw-bold ps-0 pe-2"
+                    >
                       Terms
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link href="/privacy" className="nav-link fw-bold pe-2">
+                    <Link
+                      href="/privacy-terms"
+                      className="nav-link fw-bold pe-2"
+                    >
                       Privacy
                     </Link>
                   </li>
