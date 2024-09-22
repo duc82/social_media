@@ -10,8 +10,8 @@ import {
   Matches,
 } from "class-validator";
 import { Gender, MaritalStatus } from "./enums/profiles.enum";
-import { OmitType, PartialType } from "@nestjs/swagger";
-import { User } from "./entities/users.entity";
+import { OmitType } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
 
 export class ProfileDto {
   @ValidateIf((o) => o.gender)
@@ -77,11 +77,10 @@ export class CreateUserDto {
   profile: ProfileDto;
 }
 
-export class UpdateUserDto extends PartialType(
-  OmitType(User, ["id", "emailVerified", "password", "createdAt"]),
-) {}
-
-export class UpdateUserProfileDto extends ProfileDto {
+export class UpdateUserDto extends OmitType(ProfileDto, [
+  "avatar",
+  "wallpaper",
+]) {
   @ValidateIf((o) => o.firstName)
   @MinLength(2)
   firstName?: string;
@@ -96,4 +95,12 @@ export class UpdateUserProfileDto extends ProfileDto {
     message: "Username must contain only letters, numbers",
   })
   username?: string;
+
+  @ValidateIf((o) => o.offlineAt)
+  @IsDateString()
+  offlineAt?: Date;
+
+  @ValidateIf((o) => o.isAvatar)
+  @Transform(({ value }) => value === "true" || value === true)
+  isAvatar?: boolean;
 }

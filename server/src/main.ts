@@ -8,7 +8,6 @@ import {
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { FirebaseService } from "./modules/firebase/firebase.service";
 import { cert, ServiceAccount } from "firebase-admin/app";
-import serviceAccount from "src/configs/firebase_service_account.json";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

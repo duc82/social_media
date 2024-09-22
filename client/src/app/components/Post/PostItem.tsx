@@ -35,6 +35,7 @@ import SpinnerDots from "../SpinnerDots";
 import usePostContext from "@/app/hooks/usePostContext";
 import Fancybox from "@/app/libs/FancyBox";
 import PostComment from "./PostComment";
+import VideoPlayer from "@/app/libs/VideoPlayer";
 
 export default function PostItem({
   post,
@@ -109,9 +110,16 @@ export default function PostItem({
   useEffect(() => {
     const fetchComments = async () => {
       if (!token) return;
-      const { comments, total } = await postService.getComments(post.id, token);
-      setComments(comments);
-      setTotalComments(total);
+      try {
+        const { comments, total } = await postService.getComments(
+          post.id,
+          token
+        );
+        setComments(comments);
+        setTotalComments(total);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     fetchComments();
@@ -122,7 +130,6 @@ export default function PostItem({
     const fetchHasLiked = async () => {
       const { liked } = await postService.hasLiked(post.id, token);
       setIsLiked(liked);
-      console.log("render liked");
     };
 
     fetchHasLiked();
@@ -137,18 +144,23 @@ export default function PostItem({
           <div className="d-flex align-items-center">
             <Link
               href={`/profile/@${post.user.username}`}
-              className="me-2 avatar avatar-story"
+              className="avatar avatar-story me-2"
             >
               <Avatar
-                src={post.user.profile.avatar}
+                src={
+                  post.user.id === currentUser.id
+                    ? currentUser.profile.avatar
+                    : post.user.profile.avatar
+                }
                 alt={fullName}
                 fill={false}
                 width={0}
                 height={0}
                 sizes="100vw"
-                className="rounded-circle w-100 h-auto"
+                className="avatar-img rounded-circle"
               />
             </Link>
+
             <div className="d-flex flex-column">
               <div>
                 <Link
@@ -209,7 +221,7 @@ export default function PostItem({
                   data-bs-target="#editPostModal"
                   onClick={() => updatePost(post)}
                 >
-                  <Pencil className="fa-fw pe-2" />
+                  <Pencil className="pe-2" size={22} />
                   Edit post
                 </button>
               </li>
@@ -218,7 +230,7 @@ export default function PostItem({
                   className="dropdown-item"
                   onClick={() => handleRemove(post.id)}
                 >
-                  <XCircle className="fa-fw pe-2" />
+                  <XCircle className="pe-2" size={22} />
                   Remove post
                 </button>
               </li>
@@ -227,7 +239,7 @@ export default function PostItem({
               </li> */}
               <li>
                 <button type="button" className="dropdown-item">
-                  <Flag className="fa-fw pe-2" />
+                  <Flag className="pe-2" size={22} />
                   Report post
                 </button>
               </li>
@@ -241,22 +253,20 @@ export default function PostItem({
             {post.content}
           </p>
         )}
-        {post.files.length > 0 && post.files[0].type === "image" && (
-          <div className="d-flex">
-            <Fancybox className="row g-3">
-              {post.files.map((file, index) => (
-                <div
-                  className={clsx(
-                    post.files.length % 2 === 0 &&
-                      post.files.length < 5 &&
-                      "col-6",
-                    post.files.length === 1 && "col-12",
-                    post.files.length === 3 &&
-                      (index === 0 ? "col-12" : "col-6"),
-                    post.files.length >= 5 && (index > 1 ? "col-4" : "col-6")
-                  )}
-                  key={file.id}
-                >
+        {post.files.length > 0 && (
+          <Fancybox className="row g-3">
+            {post.files.map((file, index, files) => (
+              <div
+                className={clsx(
+                  "position-relative",
+                  files.length % 2 === 0 && files.length < 5 && "col-6",
+                  files.length === 1 && "col-12",
+                  files.length === 3 && (index === 0 ? "col-12" : "col-6"),
+                  files.length >= 5 && (index > 1 ? "col-4" : "col-6")
+                )}
+                key={file.id}
+              >
+                {file.type === "image" && (
                   <Link href={file.url} data-fancybox>
                     <Image
                       src={file.url}
@@ -268,10 +278,12 @@ export default function PostItem({
                       style={{ height: 300 }}
                     />
                   </Link>
-                </div>
-              ))}
-            </Fancybox>
-          </div>
+                )}
+
+                {file.type === "video" && <VideoPlayer src={file.url} />}
+              </div>
+            ))}
+          </Fancybox>
         )}
 
         <ul className="nav nav-stack py-3 small">
@@ -350,14 +362,14 @@ export default function PostItem({
           </li>
         </ul>
 
-        <div className="d-flex mb-3">
+        <div className="d-flex">
           <Link
-            href={`/profile/@${post.user.username}`}
+            href={`/profile/@${currentUser.username}`}
             className="me-2 avatar avatar-xs"
           >
             <Avatar
               className="rounded-circle"
-              src={post.user.profile.avatar}
+              src={currentUser.profile.avatar}
               alt={fullName}
             />
           </Link>
@@ -394,17 +406,18 @@ export default function PostItem({
           </form>
         </div>
 
-        {/* Comments */}
-        <ul className="list-unstyled mb-0">
-          {comments.map((comment) => (
-            <PostComment
-              comment={comment}
-              key={comment.id}
-              currentUser={currentUser}
-              setComments={setComments}
-            />
-          ))}
-        </ul>
+        {comments.length > 0 && (
+          <div className="mt-3">
+            {comments.map((comment) => (
+              <PostComment
+                comment={comment}
+                key={comment.id}
+                currentUser={currentUser}
+                setComments={setComments}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {comments.length < totalComments && (

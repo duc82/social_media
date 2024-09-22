@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { POST_ACCESS, postSchema } from "../schemas/post";
-import { User } from "./user";
+import { FullUser } from "./user";
 
 type PostAccess = (typeof POST_ACCESS)[number];
 
@@ -14,7 +14,7 @@ export interface File {
 export interface Comment {
   id: string;
   content: string;
-  user: User;
+  user: FullUser;
   post: Post;
   likeCount: number;
   replyCount: number;
@@ -25,7 +25,7 @@ export interface Post {
   id: string;
   content?: string;
   files: File[];
-  user: User;
+  user: FullUser;
   likeCount: number;
   commentCount: number;
   access: PostAccess;

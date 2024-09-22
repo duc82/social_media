@@ -20,7 +20,7 @@ SET row_security = off;
 -- Data for Name: profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.profiles (id, gender, avatar, wallpaper, birthday, "maritalStatus", job, address, bio, education, workplace) VALUES ('94f4f381-7b82-4334-b57d-363a0c698539', 'female', 'https://storage.googleapis.com/social-media-duc82.appspot.com/avatars%2Fbidv840242%40gmail.com', NULL, '1974-09-18', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.profiles (id, gender, avatar, wallpaper, birthday, "maritalStatus", job, address, bio, education, workplace) VALUES ('163d5182-2706-4399-be52-a41c9d592343', 'male', 'https://storage.googleapis.com/social-media-duc82.appspot.com/avatars/duccdht123@gmail.com?time=1726827101067', 'https://storage.googleapis.com/social-media-duc82.appspot.com/wallpapers/duccdht123@gmail.com?time=1726653857573', '2003-02-07', NULL, NULL, NULL, NULL, NULL, NULL);
 
 
 --
@@ -33,7 +33,7 @@ INSERT INTO public.profiles (id, gender, avatar, wallpaper, birthday, "maritalSt
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.users (id, "firstName", "lastName", username, email, "emailVerified", password, role, "offlineAt", "bannedAt", "deletedAt", "createdAt", "profileId", "tokenId") VALUES ('5da0127b-f4b0-44b0-aed9-fc95d03a7a7c', 'Duc', 'Dang', 'bidv840242', 'bidv840242@gmail.com', '2024-09-04 02:25:27.99+07', '$2b$10$vSiLKQK1qBMsWk4oN.d1EO5KYKQnuLbJ9F3tdaPeTY9YAf20AOWvK', 'user', '2024-09-12 22:10:32.068+07', NULL, NULL, '2024-09-04 02:24:55.397911+07', '94f4f381-7b82-4334-b57d-363a0c698539', NULL);
+INSERT INTO public.users (id, "firstName", "lastName", username, email, "emailVerified", password, role, "offlineAt", "bannedAt", "deletedAt", "createdAt", "profileId", "tokenId") VALUES ('3dd4bb63-1c75-4733-8f08-5d6d2d459280', 'Duc', 'Dang', 'duccdht123', 'duccdht123@gmail.com', '2024-09-18 15:34:54.77+07', '$2b$10$w7aYnBz.gjnjtS1sK4X5i.sp86Jlap6fVS0ckKHvdnMizHfnfdAdW', 'user', NULL, NULL, NULL, '2024-09-18 15:34:42.343706+07', '163d5182-2706-4399-be52-a41c9d592343', NULL);
 
 
 --
@@ -64,28 +64,30 @@ INSERT INTO public.users (id, "firstName", "lastName", username, email, "emailVe
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('ba8e8364-4c0f-421c-9930-dfaa733c87f9', 'hi brothers', 'Public', false, NULL, NULL, NULL, '2024-09-09 11:28:25.952825+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c');
-INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('d4174c47-8818-4b90-9c25-fbb7f2b7ef73', 'Im tired 0803', 'Public', false, NULL, NULL, '2024-09-10 21:35:39.460902+07', '2024-09-09 19:42:43.776021+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c');
-INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('1c2cc7c6-e7ad-4ce9-b377-fc80efc119d3', 'Oho', 'Public', false, NULL, NULL, '2024-09-10 21:35:41.523907+07', '2024-09-09 19:41:28.211731+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c');
-INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('bfe63d6a-f77b-426f-92b9-6eb1c32f2a70', 'Liu Till Real', 'Public', false, '{😢,sad}', NULL, '2024-09-10 21:35:44.082279+07', '2024-09-09 11:44:16.275914+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c');
+INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('7dc57ddf-e468-417c-af84-17b1cba88b73', 'hi', 'Public', false, NULL, NULL, NULL, '2024-09-18 17:04:41.426179+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
+INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('c3474e11-e381-4a1a-b86a-8e1457339966', '', 'Public', false, NULL, NULL, '2024-09-20 17:10:53.614898+07', '2024-09-20 17:10:47.927094+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
+INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('61904b8f-5c19-4e6d-a8ef-def4dcdcc28e', 'Test bro', 'Public', false, NULL, NULL, '2024-09-22 11:22:48.416154+07', '2024-09-22 11:22:07.829605+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
+INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('44ba6c01-6086-4180-9ff8-6889d609b22e', 'Đây là video test', 'Public', false, NULL, NULL, '2024-09-22 11:26:18.380387+07', '2024-09-20 22:15:15.259894+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
+INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('7eb75c92-d321-4a78-b9b7-bc9e0e6308ca', 'Test', 'Public', false, NULL, NULL, NULL, '2024-09-22 11:37:57.154773+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
+INSERT INTO public.posts (id, content, access, "isStory", feeling, activity, "deletedAt", "createdAt", "userId") VALUES ('9d7218ad-6932-466c-b261-6f7a9cdae5be', '', 'Public', false, NULL, NULL, '2024-09-22 11:45:55.970061+07', '2024-09-22 11:44:02.060689+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
 
 
 --
 -- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId") VALUES ('f46c2965-86b2-47b8-87d1-471937da777e', 'hi', NULL, '2024-09-09 11:37:54.66539+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c', 'ba8e8364-4c0f-421c-9930-dfaa733c87f9');
-INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId") VALUES ('e6d462f7-92f6-4c4e-821d-0053841dc4f6', 'what the fuck', NULL, '2024-09-09 11:38:04.9369+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c', 'ba8e8364-4c0f-421c-9930-dfaa733c87f9');
-INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId") VALUES ('7e9a6b96-0c0f-4e89-8fac-f478b8383bb8', '123', NULL, '2024-09-09 11:39:11.926459+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c', 'ba8e8364-4c0f-421c-9930-dfaa733c87f9');
-INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId") VALUES ('478b3818-fa96-4cba-93d7-4c786e673879', 'brother', NULL, '2024-09-09 11:41:00.333343+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c', 'ba8e8364-4c0f-421c-9930-dfaa733c87f9');
-INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId") VALUES ('0ad3e846-a2d5-4ea5-a6d6-42fdf526a06b', 'haha', NULL, '2024-09-09 11:41:08.813566+07', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c', 'ba8e8364-4c0f-421c-9930-dfaa733c87f9');
+INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId", "parentCommentId") VALUES ('83ed9b33-2751-4e27-b032-b180132721fa', 'Đây là cấp 1', NULL, '2024-09-18 18:39:29.983171+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280', '7dc57ddf-e468-417c-af84-17b1cba88b73', NULL);
+INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId", "parentCommentId") VALUES ('0508ffa3-5d91-45ab-b8de-4ac2d7fcb727', 'Đây là cấp 2', NULL, '2024-09-18 18:39:37.467406+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280', '7dc57ddf-e468-417c-af84-17b1cba88b73', '83ed9b33-2751-4e27-b032-b180132721fa');
+INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId", "parentCommentId") VALUES ('3b40b87d-e3e5-425b-8d6f-46e8a9c43b93', 'Đây là cấp 3', NULL, '2024-09-18 18:39:44.507662+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280', '7dc57ddf-e468-417c-af84-17b1cba88b73', '0508ffa3-5d91-45ab-b8de-4ac2d7fcb727');
+INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId", "parentCommentId") VALUES ('a097816d-348e-4fa1-b911-cdc73f33032c', 'Đây là cấp 4', NULL, '2024-09-18 18:39:50.171123+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280', '7dc57ddf-e468-417c-af84-17b1cba88b73', '3b40b87d-e3e5-425b-8d6f-46e8a9c43b93');
+INSERT INTO public.comments (id, content, "deletedAt", "createdAt", "userId", "postId", "parentCommentId") VALUES ('ff6f2686-5bce-4d38-9e25-4b5c2d0eece6', 'hoho', NULL, '2024-09-18 18:40:26.310291+07', '3dd4bb63-1c75-4733-8f08-5d6d2d459280', '7dc57ddf-e468-417c-af84-17b1cba88b73', 'a097816d-348e-4fa1-b911-cdc73f33032c');
 
 
 --
 -- Data for Name: comments_likes_users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.comments_likes_users ("commentsId", "usersId") VALUES ('0ad3e846-a2d5-4ea5-a6d6-42fdf526a06b', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c');
+INSERT INTO public.comments_likes_users ("commentsId", "usersId") VALUES ('83ed9b33-2751-4e27-b032-b180132721fa', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
 
 
 --
@@ -152,23 +154,34 @@ INSERT INTO public.comments_likes_users ("commentsId", "usersId") VALUES ('0ad3e
 -- Data for Name: post_files; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('a36f26d1-ba9d-425d-9758-d3e1fca6a2ef', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts%2F4k-office-background-silapjkl0bkxakj4.jpg', 'posts/4k-office-background-silapjkl0bkxakj4.jpg', 'image', '2024-09-09 11:44:16.275914+07', 'bfe63d6a-f77b-426f-92b9-6eb1c32f2a70');
-INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('c8b65fb2-69d8-4784-a44d-50d334247fa2', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts%2FGV7BoC3V4.jpeg', 'posts/GV7BoC3V4.jpeg', 'image', '2024-09-09 11:44:16.275914+07', 'bfe63d6a-f77b-426f-92b9-6eb1c32f2a70');
-INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('a3497bbf-a9b5-452b-bdc3-f65f9396e171', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts%2FOIP.jfif', 'posts/OIP.jfif', 'image', '2024-09-09 11:44:16.275914+07', 'bfe63d6a-f77b-426f-92b9-6eb1c32f2a70');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('17fdde0d-8316-4510-b30f-ad47bdcfad31', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/hq720.webp?time=1726827047916', 'posts/hq720.webp', 'image', '2024-09-20 17:10:47.927094+07', 'c3474e11-e381-4a1a-b86a-8e1457339966');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('d0d901d6-9c2e-44ec-9335-352fb05b7e12', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/video-feed.mp4?time=1726845315252', 'posts/video-feed.mp4', 'video', '2024-09-20 22:15:15.259894+07', '44ba6c01-6086-4180-9ff8-6889d609b22e');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('ebf9addd-2cfa-4b70-a6ea-3de3d89202e9', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/gemini-description.jpg?time=1726978927440', 'posts/gemini-description.jpg', 'image', '2024-09-22 11:22:07.829605+07', '61904b8f-5c19-4e6d-a8ef-def4dcdcc28e');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('f74681a2-6265-4844-8191-a461f0830804', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/google-gemini-ai-logo-on-color-swirl-background.jpg?time=1726978927352', 'posts/google-gemini-ai-logo-on-color-swirl-background.jpg', 'image', '2024-09-22 11:22:07.829605+07', '61904b8f-5c19-4e6d-a8ef-def4dcdcc28e');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('75613058-f526-4ab4-8203-71c1aac56dd5', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/OIP.jfif?time=1726978927283', 'posts/OIP.jfif', 'image', '2024-09-22 11:22:07.829605+07', '61904b8f-5c19-4e6d-a8ef-def4dcdcc28e');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('cdfbe2ea-aef0-47c8-b4a2-c06740b2b37a', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/th.png?time=1726978927255', 'posts/th.png', 'image', '2024-09-22 11:22:07.829605+07', '61904b8f-5c19-4e6d-a8ef-def4dcdcc28e');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('2c7d0b18-0b73-484a-9cf8-d3350b5275d6', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/chitieucanhan.drawio.png?time=1726978927824', 'posts/chitieucanhan.drawio.png', 'image', '2024-09-22 11:22:07.829605+07', '61904b8f-5c19-4e6d-a8ef-def4dcdcc28e');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('3d1960fc-0eb1-4410-9689-9c0c72e97d0f', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/video-feed.mp4?time=1726979877152', 'posts/video-feed.mp4', 'video', '2024-09-22 11:37:57.154773+07', '7eb75c92-d321-4a78-b9b7-bc9e0e6308ca');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('895909db-664c-4b59-9ef8-ef8c71f6f9de', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/video-feed.mp4?time=1726980242057', 'posts/video-feed.mp4', 'video', '2024-09-22 11:44:02.060689+07', '9d7218ad-6932-466c-b261-6f7a9cdae5be');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('21f638f3-56b7-4b87-9e81-4803ded3fdd6', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/hq720.webp?time=1726980237540', 'posts/hq720.webp', 'image', '2024-09-22 11:44:02.060689+07', '9d7218ad-6932-466c-b261-6f7a9cdae5be');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('7dfd57cb-40fb-4077-a0ae-088a79da2c7a', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/gemini-description.jpg?time=1726980237631', 'posts/gemini-description.jpg', 'image', '2024-09-22 11:44:02.060689+07', '9d7218ad-6932-466c-b261-6f7a9cdae5be');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('7ce6a72a-9392-44ed-981d-6f42a992662a', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/google-gemini-ai-logo-on-color-swirl-background.jpg?time=1726980238058', 'posts/google-gemini-ai-logo-on-color-swirl-background.jpg', 'image', '2024-09-22 11:44:02.060689+07', '9d7218ad-6932-466c-b261-6f7a9cdae5be');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('683916ee-c6d5-4983-9c12-c59be597366c', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/OIP.jfif?time=1726980237515', 'posts/OIP.jfif', 'image', '2024-09-22 11:44:02.060689+07', '9d7218ad-6932-466c-b261-6f7a9cdae5be');
+INSERT INTO public.post_files (id, url, path, type, "createdAt", "postId") VALUES ('d60d92e6-4a61-43a7-b4bf-729b41db7557', 'https://storage.googleapis.com/social-media-duc82.appspot.com/posts/chitieucanhan.drawio.png?time=1726980237645', 'posts/chitieucanhan.drawio.png', 'image', '2024-09-22 11:44:02.060689+07', '9d7218ad-6932-466c-b261-6f7a9cdae5be');
 
 
 --
 -- Data for Name: posts_likes_users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.posts_likes_users ("postsId", "usersId") VALUES ('ba8e8364-4c0f-421c-9930-dfaa733c87f9', '5da0127b-f4b0-44b0-aed9-fc95d03a7a7c');
+INSERT INTO public.posts_likes_users ("postsId", "usersId") VALUES ('44ba6c01-6086-4180-9ff8-6889d609b22e', '3dd4bb63-1c75-4733-8f08-5d6d2d459280');
 
 
 --
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 1, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 2, true);
 
 
 --

@@ -58,18 +58,18 @@ export default function ProfileInfo({
 
     const value = values[key] ?? "";
 
-    const updatedProfile = {
-      [key]: type === "edit" ? value : null,
-    };
+    const formData = new FormData();
+    formData.append(key, value);
 
     try {
-      const { user } = await userService.updateUserProfile(
-        updatedProfile,
+      const { user: newUser } = await userService.update(
+        user.id,
+        formData,
         session.token
       );
-      await update({ ...session, user });
+      await update({ ...session, newUser });
       setEdits((prev) => ({ ...prev, [key]: false }));
-      setValues(user.profile);
+      setValues(newUser.profile);
       router.refresh();
     } catch (error) {
       toast.error(handlingError(error));

@@ -6,7 +6,6 @@ import type {
   FullUser,
   UsersReponse,
   UserResponse,
-  UpdateUserProfileDto,
 } from "../types/user";
 import apiRequest from "./api";
 
@@ -44,14 +43,29 @@ const userService = {
     });
   },
 
-  updateUserProfile: async (data: UpdateUserProfileDto, token: string) => {
-    return apiRequest<UserResponse>("/users/profile/update", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  update: async (
+    id: string,
+    formData: FormData,
+    token: string
+  ): Promise<UserResponse> => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/update/${id}`,
+      {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    return data;
   },
 
   getFriends: async (

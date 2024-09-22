@@ -5,17 +5,38 @@ import { cert, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import { Auth, getAuth } from "firebase-admin/auth";
 import { FileType } from "src/enums/file.enum";
-import serviceAccount from "src/configs/firebase_service_account.json";
 
 @Injectable()
 export class FirebaseService {
   public readonly bucket: Bucket;
-
+  private readonly serviceAccount = {
+    type: this.configService.getOrThrow<string>("FIREBASE_TYPE"),
+    project_id: this.configService.getOrThrow<string>("FIREBASE_PROJECT_ID"),
+    private_key_id: this.configService.getOrThrow<string>(
+      "FIREBASE_PRIVATE_KEY_ID",
+    ),
+    private_key: this.configService.getOrThrow<string>("FIREBASE_PRIVATE_KEY"),
+    client_email: this.configService.getOrThrow<string>(
+      "FIREBASE_CLIENT_EMAIL",
+    ),
+    client_id: this.configService.getOrThrow<string>("FIREBASE_CLIENT_ID"),
+    auth_uri: this.configService.getOrThrow<string>("FIREBASE_AUTH_URI"),
+    token_uri: this.configService.getOrThrow<string>("FIREBASE_TOKEN_URI"),
+    auth_provider_x509_cert_url: this.configService.getOrThrow<string>(
+      "FIREBASE_AUTH_PROVIDER_X509_CERT_URL",
+    ),
+    client_x509_cert_url: this.configService.getOrThrow<string>(
+      "FIREBASE_CLIENT_X509_CERT_URL",
+    ),
+    universe_domain: this.configService.getOrThrow<string>(
+      "FIREBASE_UNIVERSE_DOMAIN",
+    ),
+  } as ServiceAccount;
   public readonly auth: Auth;
 
   constructor(private configService: ConfigService) {
     const app = initializeApp({
-      credential: cert(serviceAccount as ServiceAccount),
+      credential: cert(this.serviceAccount),
       storageBucket: configService.getOrThrow<string>(
         "FIREBASE_STORAGE_BUCKET",
       ),
@@ -37,10 +58,9 @@ export class FirebaseService {
       });
 
       await fileRef.makePublic();
-      const url = fileRef.publicUrl();
-      return url;
+      const url = decodeURIComponent(fileRef.publicUrl());
+      return `${url}?time=${Date.now()}`;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }

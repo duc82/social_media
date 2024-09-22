@@ -45,7 +45,8 @@ export const config = {
      * - resetPassword (reset password page)
      * - verify (verify email page)
      * - ringing-call (ringing call page)
+     * - privacy-terms (privacy terms page)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|signin|signout|signup|forgotPassword|resetPassword|verify|ringing-call).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|signin|signout|signup|forgotPassword|resetPassword|verify|ringing-call|privacy-terms).*)",
   ],
 };

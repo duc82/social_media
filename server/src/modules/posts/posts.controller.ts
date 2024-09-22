@@ -77,6 +77,14 @@ export class PostsController {
     return this.postsService.getComments(postId, query);
   }
 
+  @Get("comments/replies/:commentId")
+  async getReplies(
+    @Param("commentId") commentId: string,
+    @Query() query: QueryDto,
+  ) {
+    return this.postsService.getCommentReplies(commentId, query);
+  }
+
   @Get("comments/count/:postId")
   async countComments(@Param("postId") postId: string) {
     return this.postsService.countComments(postId);
@@ -102,6 +110,15 @@ export class PostsController {
     @User("userId") userId: string,
   ) {
     return this.postsService.likeComment(id, userId);
+  }
+
+  @Put("comment/reply/:id")
+  async replyComment(
+    @Param("id", new ParseUUIDPipe()) id: string,
+    @User("userId") userId: string,
+    @Body() { content }: { content: string },
+  ) {
+    return this.postsService.replyComment(id, userId, content);
   }
 
   @Put("update/:id")

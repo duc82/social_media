@@ -5,19 +5,17 @@ import {
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
 import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
-import {
-  CreateUserDto,
-  ProfileDto,
-  UpdateUserDto,
-  UpdateUserProfileDto,
-} from "./users.dto";
-import { Profile } from "./entities/profiles.entity";
+import { CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { BlockedUser } from "./entities/blocked_users.entity";
+import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class UserService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private firebaseService: FirebaseService,
+  ) {}
 
   async findOne(options?: FindOneOptions<User>) {
     return this.dataSource.getRepository(User).findOne(options);
@@ -145,26 +143,12 @@ export class UserService {
     return newUser;
   }
 
-  async update(id: string, attrs: UpdateUserDto) {
-    await this.dataSource.getRepository(User).update({ id }, attrs);
-    const user = await this.dataSource.getRepository(User).findOne({
-      where: {
-        id,
-      },
-      relations: ["profile"],
-    });
-    return { user, message: "User updated successfully" };
-  }
-
-  async updateUserProfile(
-    currentUserId: string,
-    userProfileDto: UpdateUserProfileDto,
-  ) {
-    const { firstName, lastName, username, ...profile } = userProfileDto;
+  async update(id: string, body: UpdateUserDto, file?: Express.Multer.File) {
+    const { firstName, lastName, username, isAvatar, ...profile } = body;
 
     const user = await this.findOne({
       where: {
-        id: currentUserId,
+        id,
         deletedAt: IsNull(),
         bannedAt: IsNull(),
       },
@@ -175,11 +159,23 @@ export class UserService {
       throw new NotFoundException("User not found");
     }
 
+    if (file) {
+      if (isAvatar) {
+        const path = `avatars/${user.email}`;
+        const newAvatar = await this.firebaseService.uploadFile(file, path);
+        user.profile.avatar = newAvatar;
+      } else {
+        const path = `wallpapers/${user.email}`;
+        const newWallpaper = await this.firebaseService.uploadFile(file, path);
+        user.profile.wallpaper = newWallpaper;
+      }
+    }
+
     if (username) {
       const isUsernameExist = await this.dataSource
         .getRepository(User)
         .existsBy({
-          id: Not(currentUserId),
+          id: Not(id),
           username,
           deletedAt: IsNull(),
           bannedAt: IsNull(),

@@ -12,7 +12,7 @@ import { PropsWithChildren } from "react";
 const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social - Network, Community and Event Theme",
+  title: "Social Media",
   description:
     "NextJS Bootstrap 5 based Social Media Network and Community Theme",
 };
