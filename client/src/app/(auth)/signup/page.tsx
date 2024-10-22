@@ -20,10 +20,6 @@ import Radio from "@/app/components/Form/Radio";
 import isLeapYear from "@/app/utils/isLeapYear";
 import Spinner from "@/app/components/Spinner";
 
-interface FormValue extends SignUpDto {
-  confirmPassword: string;
-}
-
 const date = new Date();
 
 export default function Signup() {
@@ -34,7 +30,7 @@ export default function Signup() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<FormValue>({
+  } = useForm<SignUpDto>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
     defaultValues: {
@@ -50,7 +46,7 @@ export default function Signup() {
     "password"
   );
 
-  const onSubmit = async (data: FormValue) => {
+  const onSubmit = async (data: SignUpDto) => {
     const { confirmPassword: _, ...signUpDto } = data;
 
     try {
@@ -217,10 +213,10 @@ export default function Signup() {
         </div>
 
         <FormControl
-          {...register("confirmPassword")}
           type="password"
           id="confirmPassword"
           placeholder="Confirm Password"
+          {...register("confirmPassword")}
           error={errors.confirmPassword?.message}
         />
 

@@ -43,7 +43,7 @@ export default function SuggestionItemSidebar(friend: FullUser) {
   return (
     <div className="hstack gap-2 mb-3">
       <div className="avatar">
-        <Link href={`/profile/${friend.id}`}>
+        <Link href={`/profile/@${friend.username}`}>
           <Avatar
             className="avatar-img rounded-circle"
             src={friend.profile.avatar}

@@ -1,4 +1,5 @@
 import {
+  changePasswordDto,
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
@@ -19,8 +20,7 @@ export interface SignInResponse {
   message: string;
 }
 
-export interface SignUpDto
-  extends Omit<z.infer<typeof signUpSchema>, "confirmPassword"> {
+export interface SignUpDto extends z.infer<typeof signUpSchema> {
   gender: Gender;
   birthday: string;
 }
@@ -31,3 +31,5 @@ export interface ForgotPasswordDto
   extends z.infer<typeof forgotPasswordSchema> {}
 
 export interface ResetPasswordDto extends z.infer<typeof resetPasswordSchema> {}
+
+export interface ChangePasswordDto extends z.infer<typeof changePasswordDto> {}

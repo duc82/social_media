@@ -4,11 +4,11 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
-import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
-import { CreateUserDto, UpdateUserDto } from "./users.dto";
+import { DataSource, FindOneOptions, ILike, IsNull, Not } from "typeorm";
+import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
-import { BlockedUser } from "./entities/blocked_users.entity";
 import { FirebaseService } from "../firebase/firebase.service";
+import { Blocked } from "./entities/blocked.entity";
 
 @Injectable()
 export class UserService {
@@ -47,35 +47,7 @@ export class UserService {
     return user;
   }
 
-  async getBlockedUsers(userId: string) {
-    const usersBlockedByCurrentUser = await this.dataSource
-      .getRepository(BlockedUser)
-      .find({
-        where: {
-          blockedUserId: userId,
-        },
-        relations: ["user"],
-      });
-
-    const usersBlockingCurrentUser = await this.dataSource
-      .getRepository(BlockedUser)
-      .find({
-        where: {
-          user: {
-            id: userId,
-          },
-        },
-      });
-
-    return [
-      ...usersBlockedByCurrentUser.map((blockedUser) => blockedUser.user.id),
-      ...usersBlockingCurrentUser.map(
-        (blockedUser) => blockedUser.blockedUserId,
-      ),
-    ];
-  }
-
-  async getAll(query: QueryDto) {
+  async getAll(currentUserId: string, query: QueryDto) {
     const { search, page, limit } = query;
 
     const skip = (page - 1) * limit;
@@ -84,12 +56,13 @@ export class UserService {
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
-      .where('unaccent(u."firstName") ILIKE unaccent(:search)', {
-        search: `%${search}%`,
-      })
-      .andWhere('unaccent(u."lastName") ILIKE unaccent(:search)', {
-        search: `%${search}%`,
-      })
+      .where(
+        'unaccent(u."firstName") ILIKE unaccent(:search) OR unaccent(u."lastName") ILIKE unaccent(:search)',
+        {
+          search: `%${search}%`,
+        },
+      )
+
       .skip(skip)
       .take(limit)
       .getManyAndCount();
@@ -110,31 +83,85 @@ export class UserService {
     return user;
   }
 
-  async search(currentUserId: string, query: QueryDto) {
+  async block(id: string, blockedId: string) {
+    const blockedBy = await this.findOne({
+      where: { id },
+      relations: ["profile"],
+    });
+
+    if (!blockedBy) {
+      throw new NotFoundException("User not found");
+    }
+
+    const blocked = await this.dataSource.getRepository(Blocked).findOne({
+      where: {
+        user: { id: blockedId },
+        blockedBy: { id },
+      },
+    });
+
+    if (blocked) {
+      throw new BadRequestException("User already blocked");
+    }
+
+    const user = await this.findOne({
+      where: { id: blockedId, emailVerified: Not(IsNull()) },
+      relations: ["profile"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const newBlocked = this.dataSource.getRepository(Blocked).create({
+      blockedBy,
+      user,
+    });
+
+    await newBlocked.save();
+
+    return { message: "User blocked successfully", blocked: newBlocked };
+  }
+
+  async unblock(id: string, blockedId: string) {
+    const blocked = await this.dataSource.getRepository(Blocked).findOne({
+      where: {
+        user: { id: blockedId },
+        blockedBy: { id },
+      },
+    });
+
+    if (!blocked) {
+      throw new BadRequestException("User not blocked");
+    }
+
+    await this.dataSource.getRepository(Blocked).remove(blocked);
+
+    return { message: "User unblocked successfully" };
+  }
+
+  async getBlocked(id: string, query: QueryDto) {
     const { search, page, limit } = query;
 
     const skip = (page - 1) * limit;
 
-    const blockedUsers = await this.getBlockedUsers(currentUserId);
-
-    const [users, total] = await this.dataSource
-      .getRepository(User)
-      .createQueryBuilder("u")
-      .leftJoinAndSelect("u.profile", "profile")
-      .where('unaccent(u."fullName") ILIKE unaccent(:search)', {
-        search: `%${search}%`,
-      })
-      .andWhere("u.emailVerified IS NOT NULL")
-      .andWhere("u.isBan = false")
+    const [blocked, total] = await this.dataSource
+      .getRepository(Blocked)
+      .createQueryBuilder("blocked")
+      .leftJoinAndSelect("blocked.user", "user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .where("blocked.blockedBy = :id", { id })
       .andWhere(
-        blockedUsers.length > 0 ? "u.id NOT IN (:...blockedUsers)" : "TRUE",
-        { blockedUsers },
+        `unaccent("user"."firstName") ILIKE unaccent(:search) OR unaccent("user"."lastName") ILIKE unaccent(:search)`,
+        {
+          search: `${search}%`,
+        },
       )
       .skip(skip)
-      .limit(limit)
+      .take(limit)
       .getManyAndCount();
 
-    return { users, total, page, limit };
+    return { blocked, total, page, limit };
   }
 
   async create(user: CreateUserDto) {
@@ -149,10 +176,10 @@ export class UserService {
     const user = await this.findOne({
       where: {
         id,
-        deletedAt: IsNull(),
         bannedAt: IsNull(),
       },
       relations: ["profile"],
+      withDeleted: true,
     });
 
     if (!user) {
@@ -214,5 +241,27 @@ export class UserService {
     }
 
     return { message: "Deleted user successfully" };
+  }
+
+  async changePassword(id: string, body: ChangePasswordDto) {
+    const user = await this.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const isPasswordMatch = await user.comparePassword(body.currentPassword);
+
+    if (!isPasswordMatch) {
+      throw new BadRequestException("Current password is incorrect");
+    }
+
+    user.password = body.newPassword;
+
+    await this.dataSource.getRepository(User).save(user);
+
+    return { message: "Password updated successfully" };
   }
 }

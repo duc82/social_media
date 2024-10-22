@@ -1,7 +1,7 @@
 $display-font-weight: 700;
 $display-line-height: 1.25;
 $headings-font-weight: 700;
-$headings-color: $gray-900;
+$headings-color: $gray-800;
 $headings-color-dark: $white;
 
 $h1-font-size: calc(1.359375rem + 1.3125vw);
@@ -14,7 +14,7 @@ $font-sizes: (
   3: $h3-font-size,
   4: $h4-font-size,
   5: $h5-font-size,
-  6: $h6-font-size
+  6: $h6-font-size,
 );
 
 $font-size-base: $h6-font-size;

@@ -1,7 +1,11 @@
 import { Post } from "./entities/posts.entity";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
 import { CreatePostDto, UpdatePostDto } from "./posts.dto";
-import { DataSource, FindOneOptions } from "typeorm";
+import { DataSource, FindOneOptions, SelectQueryBuilder } from "typeorm";
 import { UserService } from "../users/users.service";
 import { Comment } from "./entities/comments.entity";
 import { QueryDto } from "src/shared/dto/query.dto";
@@ -9,13 +13,6 @@ import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class PostsService {
-  private readonly postRelations: string[] = [
-    "user",
-    "user.profile",
-    "files",
-    "likes",
-  ];
-
   constructor(
     private dataSource: DataSource,
     private userService: UserService,
@@ -46,13 +43,15 @@ export class PostsService {
       ...body,
       user,
       files: newFiles,
+      likes: [],
+      comments: [],
     });
 
     await this.dataSource.getRepository(Post).save(post);
 
     return {
       message: "Post created successfully",
-      post: { ...post, likeCount: 0, commentCount: 0 },
+      post: { ...post, commentCount: 0 },
     };
   }
 
@@ -67,7 +66,6 @@ export class PostsService {
       .leftJoinAndSelect("post.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
       .leftJoinAndSelect("post.files", "files")
-      .loadRelationCountAndMap("post.likeCount", "post.likes")
       .loadRelationCountAndMap("post.commentCount", "post.comments")
       .where("post.id = :id", { id })
       .getOne();
@@ -89,9 +87,20 @@ export class PostsService {
   }
 
   async getAll(query: QueryDto) {
-    const { page, limit, search = "" } = query;
+    const { page, limit, search } = query;
 
     const skip = (page - 1) * limit;
+
+    const commentQuery = this.dataSource
+      .createQueryBuilder()
+      .subQuery()
+      .select("comment.id")
+      .from(Comment, "comment")
+      .where("comment.postId = post.id")
+      .andWhere("comment.parentCommentId IS NULL")
+      .orderBy("comment.createdAt", "DESC")
+      .limit(3)
+      .getQuery();
 
     const [posts, total] = await this.dataSource
       .getRepository(Post)
@@ -99,9 +108,28 @@ export class PostsService {
       .leftJoinAndSelect("post.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
       .leftJoinAndSelect("post.files", "files")
-      .loadRelationCountAndMap("post.likeCount", "post.likes")
-      .loadRelationCountAndMap("post.commentCount", "post.comments")
-      .where("post.content ILIKE :search", { search: `%${search}%` })
+      .leftJoinAndSelect(
+        "post.comments",
+        "comments",
+        `comments.id IN ${commentQuery}`,
+      )
+      .leftJoinAndSelect("comments.user", "commentUser")
+      .leftJoinAndSelect("commentUser.profile", "commentProfile")
+      .leftJoinAndSelect("comments.likes", "commentLikes")
+      .loadAllRelationIds({
+        relations: ["likes"],
+      })
+      .loadRelationCountAndMap("comments.replyCount", "comments.childComments")
+      .loadRelationCountAndMap("post.totalComment", "post.comments")
+      .loadRelationCountAndMap(
+        "post.commentCount",
+        "post.comments",
+        "commentCount",
+        (qb) => qb.where("commentCount.parentCommentId IS NULL"),
+      )
+      .where("unaccent(post.content) ILIKE unaccent(:search)", {
+        search: `%${search}%`,
+      })
       .orderBy("post.createdAt", "DESC")
       .skip(skip)
       .take(limit)
@@ -111,9 +139,20 @@ export class PostsService {
   }
 
   async getCurrent(currentUserId: string, query: QueryDto) {
-    const { page, limit, search = "" } = query;
+    const { page, limit, search } = query;
 
     const skip = (page - 1) * limit;
+
+    const commentQuery = this.dataSource
+      .createQueryBuilder()
+      .subQuery()
+      .select("comment.id")
+      .from(Comment, "comment")
+      .where("comment.postId = post.id")
+      .andWhere("comment.parentCommentId IS NULL")
+      .orderBy("comment.createdAt", "DESC")
+      .limit(3)
+      .getQuery();
 
     const [posts, total] = await this.dataSource
       .getRepository(Post)
@@ -121,25 +160,35 @@ export class PostsService {
       .leftJoinAndSelect("post.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
       .leftJoinAndSelect("post.files", "files")
-      .loadRelationCountAndMap("post.likeCount", "post.likes")
-      .loadRelationCountAndMap("post.commentCount", "post.comments")
+      .leftJoinAndSelect(
+        "post.comments",
+        "comments",
+        `comments.id IN (${commentQuery})`,
+      )
+      .leftJoinAndSelect("comments.user", "commentUser")
+      .leftJoinAndSelect("commentUser.profile", "commentProfile")
+      .leftJoinAndSelect("comments.likes", "commentLikes")
+      .loadAllRelationIds({
+        relations: ["likes"],
+      })
+      .loadRelationCountAndMap("comments.replyCount", "comments.childComments")
+      .loadRelationCountAndMap("post.totalComment", "post.comments")
+      .loadRelationCountAndMap(
+        "post.commentCount",
+        "post.comments",
+        "commentCount",
+        (qb) => qb.where("commentCount.parentCommentId IS NULL"),
+      )
       .where("post.userId = :userId", { userId: currentUserId })
-      .andWhere("post.content ILIKE :search", { search: `%${search}%` })
+      .andWhere("unaccent(post.content) ILIKE unaccent(:search)", {
+        search: `%${search}%`,
+      })
       .orderBy("post.createdAt", "DESC")
       .skip(skip)
       .take(limit)
       .getManyAndCount();
 
     return { posts, total, page, limit };
-  }
-
-  async hasUserLiked(postId: string, userId: string) {
-    const post = await this.findOne({
-      where: { id: postId, likes: { id: userId } },
-      relations: ["likes"],
-    });
-
-    return { liked: !!post };
   }
 
   async getComments(postId: string, query: QueryDto) {
@@ -152,7 +201,7 @@ export class PostsService {
       .createQueryBuilder("comment")
       .leftJoinAndSelect("comment.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
-      .loadRelationCountAndMap("comment.likeCount", "comment.likes")
+      .leftJoinAndSelect("comment.likes", "likes")
       .loadRelationCountAndMap("comment.replyCount", "comment.childComments")
       .where("comment.postId = :postId", { postId })
       .andWhere("comment.parentCommentId IS NULL")
@@ -174,7 +223,7 @@ export class PostsService {
       .createQueryBuilder("comment")
       .leftJoinAndSelect("comment.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
-      .loadRelationCountAndMap("comment.likeCount", "comment.likes")
+      .leftJoinAndSelect("comment.likes", "likes")
       .loadRelationCountAndMap("comment.replyCount", "comment.childComments")
       .where("comment.parentCommentId = :commentId", { commentId })
       .orderBy("comment.createdAt", "DESC")
@@ -196,7 +245,8 @@ export class PostsService {
   async like(id: string, userId: string) {
     const post = await this.findOne({
       where: { id },
-      relations: ["likes", "user", "user.profile", "files"],
+      relations: ["likes"],
+      select: ["likes"],
     });
 
     if (!post) {
@@ -205,7 +255,42 @@ export class PostsService {
 
     const user = await this.userService.findOne({
       where: { id: userId },
-      relations: ["profile"],
+      select: ["id"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const index = post.likes.findIndex((like) => like.id === userId);
+
+    if (index !== -1) {
+      throw new BadRequestException("Post already liked");
+    }
+
+    post.likes.push(user);
+
+    await this.dataSource.getRepository(Post).save(post);
+
+    return {
+      message: "Post liked successfully",
+    };
+  }
+
+  async unlike(id: string, userId: string) {
+    const post = await this.findOne({
+      where: { id },
+      relations: ["likes"],
+      select: ["likes"],
+    });
+
+    if (!post) {
+      throw new NotFoundException("Post not found");
+    }
+
+    const user = await this.userService.findOne({
+      where: { id: userId },
+      select: ["id"],
     });
 
     if (!user) {
@@ -215,16 +300,15 @@ export class PostsService {
     const index = post.likes.findIndex((like) => like.id === userId);
 
     if (index === -1) {
-      post.likes.push(user);
-    } else {
-      post.likes.splice(index, 1);
+      throw new BadRequestException("Post not liked");
     }
+
+    post.likes.splice(index, 1);
 
     await this.dataSource.getRepository(Post).save(post);
 
     return {
-      message: "Post liked successfully",
-      post: { ...post, likeCount: post.likes.length },
+      message: "Post unliked successfully",
     };
   }
 
@@ -250,20 +334,22 @@ export class PostsService {
       content,
       user,
       post,
+      likes: [],
     });
 
     await this.dataSource.getRepository(Comment).save(newComment);
 
     return {
       message: "Comment created successfully",
-      comment: { ...newComment, likeCount: 0, replyCount: 0 },
+      comment: { ...newComment, replyCount: 0 },
     };
   }
 
   async likeComment(id: string, userId: string) {
     const comment = await this.dataSource.getRepository(Comment).findOne({
       where: { id },
-      relations: ["likes", "user", "user.profile"],
+      relations: ["likes"],
+      select: ["likes"],
     });
 
     if (!comment) {
@@ -272,7 +358,42 @@ export class PostsService {
 
     const user = await this.userService.findOne({
       where: { id: userId },
-      relations: ["profile"],
+      select: ["id"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const index = comment.likes.findIndex((like) => like.id === userId);
+
+    if (index !== -1) {
+      throw new BadRequestException("Comment already liked");
+    }
+
+    comment.likes.push(user);
+
+    await this.dataSource.getRepository(Comment).save(comment);
+
+    return {
+      message: "Comment liked successfully",
+    };
+  }
+
+  async unlikeComment(id: string, userId: string) {
+    const comment = await this.dataSource.getRepository(Comment).findOne({
+      where: { id },
+      relations: ["likes"],
+      select: ["likes"],
+    });
+
+    if (!comment) {
+      throw new NotFoundException("Comment not found");
+    }
+
+    const user = await this.userService.findOne({
+      where: { id: userId },
+      select: ["id"],
     });
 
     if (!user) {
@@ -282,14 +403,16 @@ export class PostsService {
     const index = comment.likes.findIndex((like) => like.id === userId);
 
     if (index === -1) {
-      comment.likes.push(user);
-    } else {
-      comment.likes.splice(index, 1);
+      throw new BadRequestException("Comment not liked");
     }
+
+    comment.likes.splice(index, 1);
 
     await this.dataSource.getRepository(Comment).save(comment);
 
-    return { message: "Comment liked successfully", comment };
+    return {
+      message: "Comment unliked successfully",
+    };
   }
 
   async replyComment(id: string, currentUserId: string, content: string) {
@@ -316,13 +439,14 @@ export class PostsService {
       user,
       post: parentComment.post,
       parentComment,
+      likes: [],
     });
 
     await this.dataSource.getRepository(Comment).save(newComment);
 
     return {
       message: "Comment replied successfully",
-      comment: { ...newComment, likeCount: 0, replyCount: 0 },
+      comment: { ...newComment, replyCount: 0 },
     };
   }
 

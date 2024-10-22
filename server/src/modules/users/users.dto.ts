@@ -104,3 +104,12 @@ export class UpdateUserDto extends OmitType(ProfileDto, [
   @Transform(({ value }) => value === "true" || value === true)
   isAvatar?: boolean;
 }
+
+export class ChangePasswordDto {
+  @IsNotEmpty()
+  currentPassword: string;
+
+  @MinLength(8)
+  @IsNotEmpty()
+  newPassword: string;
+}

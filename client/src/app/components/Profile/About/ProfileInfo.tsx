@@ -60,6 +60,7 @@ export default function ProfileInfo({
 
     const formData = new FormData();
     formData.append(key, value);
+    formData.append("type", type);
 
     try {
       const { user: newUser } = await userService.update(

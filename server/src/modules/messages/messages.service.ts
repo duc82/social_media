@@ -33,7 +33,6 @@ export class MessagesService {
           conversation: {
             id,
           },
-          deletedAt: IsNull(),
         },
         relations: [
           "user",

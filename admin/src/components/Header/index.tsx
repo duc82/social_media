@@ -8,7 +8,12 @@ import clsx from "clsx";
 
 export default function Header({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
   return (
-    <div className="navbar navbar-expand-lg navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
+    <header
+      className={clsx(
+        "navbar navbar-expand-lg navbar-fixed navbar-height navbar-container navbar-bordered bg-white",
+        !isNavbarOpen && "navbar-vertical-collapsed"
+      )}
+    >
       <div className="navbar-nav-wrap">
         <Link to="/" className="navbar-brand">
           <img src={logo} alt="logo" />
@@ -44,7 +49,14 @@ export default function Header({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
             <li className="nav-item d-none d-sm-inline-block"></li>
             <li className="nav-item">
               <div className="dropdown">
-                <button type="button" className="btn p-1">
+                <button
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  className="btn btn-link p-1"
+                  aria-expanded="false"
+                  data-bs-auto-close="outside"
+                  data-bs-dropdown-animation
+                >
                   <div className="avatar avatar-sm">
                     <img
                       className="avatar-img avatar-circle"
@@ -54,11 +66,50 @@ export default function Header({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
                 </button>
+                <div
+                  className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-account"
+                  style={{
+                    width: "14rem",
+                    opacity: 1,
+                    transform: "translateY(10px) translateY(-10px)",
+                    transition: "transform 300ms, opacity 300ms",
+                  }}
+                >
+                  <div className="dropdown-item-text">
+                    <div className="d-flex align-items-center">
+                      <div className="avatar avatar-sm">
+                        <img
+                          className="avatar-img avatar-circle"
+                          src={img6}
+                          alt="Image Description"
+                        />
+                      </div>
+                      <div className="flex-grow-1 ms-3">
+                        <h5 className="mb-0">Mark Williams</h5>
+                        <p className="card-text text-body">mark@site.com</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="dropdown-divider"></div>
+                  <a className="dropdown-item" href="#">
+                    Profile &amp; account
+                  </a>
+                  <a className="dropdown-item" href="#">
+                    Settings
+                  </a>
+
+                  <div className="dropdown-divider"></div>
+
+                  <a className="dropdown-item" href="#">
+                    Sign out
+                  </a>
+                </div>
               </div>
             </li>
           </ul>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

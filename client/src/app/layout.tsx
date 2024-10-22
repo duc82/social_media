@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "zuck.js/css";
 import "zuck.js/skins/snapgram";
-import "@/app/assets/styles/globals.scss";
+import "@/app/assets/scss/globals.scss";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
 import Toaster from "./libs/Toaster";
@@ -14,7 +14,17 @@ const font = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Social Media",
   description:
-    "NextJS Bootstrap 5 based Social Media Network and Community Theme",
+    "Social Media is a social media platform that allows users to share their thoughts, photos, and videos with their friends and family.",
+  keywords:
+    "social media, social network, social platform, social sharing, social media platform",
+  openGraph: {
+    type: "website",
+    siteName: "Social Media",
+    url: "https://socialmedia-next.vercel.app",
+    title: "Social Media",
+    description:
+      "Social Media is a social media platform that allows users to share their thoughts, photos, and videos with their friends and family.",
+  },
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

@@ -1,0 +1,15 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+.main {
+  padding-top: 3.875rem;
+
+  @include media-breakpoint-up(xl) {
+    padding-left: 16.25rem;
+
+    &.navbar-vertical-collapsed {
+      padding-left: 4.25rem;
+    }
+  }
+}

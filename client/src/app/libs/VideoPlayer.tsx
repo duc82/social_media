@@ -1,6 +1,6 @@
 "use client";
 import "plyr-react/plyr.css";
-import Plyr, { PlyrProps, PlyrSource } from "plyr-react";
+import Plyr, { PlyrProps, PlyrSource, PlyrOptions } from "plyr-react";
 import { useMemo } from "react";
 
 interface VideoPlayerProps extends Omit<PlyrProps, "source"> {
@@ -14,11 +14,31 @@ export default function VideoPlayer({ src, ...props }: VideoPlayerProps) {
       sources: [
         {
           src,
+          provider: "html5",
         },
       ],
     }),
     [src]
   );
 
-  return <Plyr {...props} source={source} />;
+  const options: PlyrOptions = useMemo(
+    () => ({
+      controls: [
+        "play-large",
+        "play",
+        "progress",
+        "current-time",
+        "mute",
+        "volume",
+        "captions",
+        "settings",
+        "pip",
+        "airplay",
+        "fullscreen",
+      ],
+    }),
+    []
+  );
+
+  return <Plyr {...props} source={source} options={options} />;
 }

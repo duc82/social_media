@@ -7,6 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  CheckCircleFill,
+  ExclamationTriangleFill,
+} from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 
 export default function AccountForm({
@@ -64,24 +68,37 @@ export default function AccountForm({
 
       await update({ ...session, user });
       setMessage(message);
+      setError("");
       router.refresh();
     } catch (error) {
-      const err = error as Error;
-      setError(err.message);
+      setError(error instanceof Error ? error.message : "Update failed");
+      setMessage("");
     }
   };
 
   return (
     <div>
       {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
+        <div
+          className="alert mb-3 alert-danger d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div className="d-flex align-items-center">
+            <ExclamationTriangleFill size={16} className="me-2 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
         </div>
       )}
 
       {message && (
-        <div className="alert alert-success" role="alert">
-          {message}
+        <div
+          className="alert mb-3 alert-success d-flex align-items-center justify-content-between"
+          role="alert"
+        >
+          <div className="d-flex align-items-center">
+            <CheckCircleFill size={16} className="me-2 flex-shrink-0" />
+            <span>{message}</span>
+          </div>
         </div>
       )}
       <form className="row g-3" onSubmit={handleSubmit(onSubmit)}>

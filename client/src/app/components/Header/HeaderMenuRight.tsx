@@ -4,11 +4,9 @@ import { FullUser } from "@/app/types/user";
 import Link from "next/link";
 import {
   BellFill,
-  CardText,
   ChatLeftTextFill,
-  Gear,
   GearFill,
-  LifePreserver,
+  LockFill,
 } from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import formatName from "@/app/utils/formatName";
@@ -75,7 +73,6 @@ export default function HeaderMenuRight({
           <GearFill className="fs-6" />
         </Link>
       </li>
-      {/* Notifications */}
       <li className="nav-item ms-2 dropdown">
         <button
           type="button"
@@ -131,25 +128,23 @@ export default function HeaderMenuRight({
             </Link>
           </li>
           <li>
-            <Link href="/settings" title="Settings" className="dropdown-item">
-              <Gear className="me-2" />
-              Settings & Privacy
-            </Link>
-          </li>
-          <li>
-            <Link href="/support" title="Support" className="dropdown-item">
-              <LifePreserver className="me-2" />
-              Support
+            <Link
+              href="/settings"
+              title="Settings"
+              className="dropdown-item d-flex align-items-center"
+            >
+              <GearFill height={19} className="me-2" />
+              Settings
             </Link>
           </li>
           <li>
             <Link
-              href="/documentation"
-              title="Documentation"
-              className="dropdown-item"
+              href="/privacy-terms"
+              title="Privacy & Terms"
+              className="dropdown-item d-flex align-items-center"
             >
-              <CardText className="me-2" />
-              Documentation
+              <LockFill height={19} className="me-2" />
+              Privacy & Terms
             </Link>
           </li>
 

@@ -1,3 +1,7 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
 .navbar-vertical-fixed {
   position: fixed !important;
   top: 0;
@@ -7,6 +11,10 @@
   width: 16.25rem;
   transform: translateX(-16.25rem);
   transition: transform 0.2s ease;
+
+  @include media-breakpoint-up(xl) {
+    transform: translateX(0);
+  }
 
   &.show {
     transform: translateX(0);

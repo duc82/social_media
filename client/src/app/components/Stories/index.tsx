@@ -12,7 +12,7 @@ const timestamp = function () {
     60 * 60 * 2,
     60 * 60 * 25,
     60 * 60 * 24 * 4,
-    60 * 60 * 24 * 10
+    60 * 60 * 24 * 10,
   ];
 
   const shift = shifts[timeIndex++] || 0;
@@ -26,6 +26,8 @@ export default function Stories() {
 
   useEffect(() => {
     const el = storiesRef.current;
+
+    console.log(el);
 
     if (el) {
       Zuck(el, {
@@ -52,11 +54,11 @@ export default function Stories() {
                 length: 5,
                 src: "/02.jpg",
                 preview: "/02.jpg",
-                time: timestamp()
-              }
-            ]
-          }
-        ]
+                time: timestamp(),
+              },
+            ],
+          },
+        ],
       });
     }
   }, []);

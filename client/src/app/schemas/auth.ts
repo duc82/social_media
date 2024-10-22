@@ -24,9 +24,7 @@ export const signUpSchema = z
       .min(2, "Last name must be at least 2 characters long"),
     email,
     password,
-    confirmPassword: z.string({
-      required_error: "Passwords do not match",
-    }),
+    confirmPassword: z.string(),
     dateOfBirth: z.object({
       day: z.number(),
       month: z.number(),
@@ -52,3 +50,14 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
   password,
 });
+
+export const changePasswordDto = z
+  .object({
+    currentPassword: password,
+    newPassword: password,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import clsx from "clsx";
+import { CSSProperties } from "react";
 
 interface AvatarProps {
   src: string;
@@ -9,6 +10,7 @@ interface AvatarProps {
   width?: number;
   height?: number;
   sizes?: string;
+  style?: CSSProperties;
 }
 
 export default function Avatar({
@@ -18,6 +20,7 @@ export default function Avatar({
   fill = true,
   width,
   height,
+  style,
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
 }: AvatarProps) {
   return (
@@ -28,6 +31,7 @@ export default function Avatar({
       sizes={sizes}
       width={width}
       height={height}
+      style={style}
       className={clsx("avatar-img rounded", className)}
     />
   );

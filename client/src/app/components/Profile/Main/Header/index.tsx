@@ -37,6 +37,7 @@ import formatName from "@/app/utils/formatName";
 import { directMessage } from "@/app/actions/conversationAction";
 import userService from "@/app/services/userService";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 export default function ProfileMainHeader({
   user,
@@ -168,21 +169,31 @@ export default function ProfileMainHeader({
 
   return (
     <div className="card">
-      <Fancybox style={{ height: "200px" }} className="position-relative">
-        <Link
-          href={user.profile.wallpaper || wallpaper_initial.src}
-          className="d-block h-100 position-relative"
-          data-fancybox
-        >
-          <Image
-            src={user.profile.wallpaper || wallpaper_initial}
-            alt="Wallpaper"
-            className="rounded-top object-fit-cover"
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </Link>
+      <Fancybox
+        style={{
+          height: "200px",
+        }}
+        className={clsx(
+          "position-relative",
+          !user.profile.wallpaper && "bg-light"
+        )}
+      >
+        {user.profile.wallpaper && (
+          <Link
+            href={user.profile.wallpaper || wallpaper_initial.src}
+            className="d-block h-100 position-relative"
+            data-fancybox
+          >
+            <Image
+              src={user.profile.wallpaper || wallpaper_initial}
+              alt="Wallpaper"
+              className="rounded-top object-fit-cover"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </Link>
+        )}
         <label
           htmlFor="wallpaperPicture"
           className="position-absolute btn btn-light py-1 px-2 d-flex align-items-center gap-2"

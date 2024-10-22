@@ -43,6 +43,12 @@ export interface User {
   offlineAt: string | null;
 }
 
+export interface Blocked {
+  id: string;
+  user: FullUser;
+  blockedBy: FullUser;
+}
+
 export interface FullUser extends User {
   id: string;
   bannedAt: string | null;
@@ -60,6 +66,18 @@ export interface UsersReponse {
   total: number;
   page: number;
   limit: number;
+}
+
+export interface BlockedsResponse {
+  blocked: Blocked[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface BlockedResponse {
+  blocked: Blocked;
+  message: string;
 }
 
 export interface FriendsResponse {

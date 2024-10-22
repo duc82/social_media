@@ -7,7 +7,9 @@ import {
 import apiRequest from "./api";
 
 const authService = {
-  signUp: async (signUpDto: SignUpDto): Promise<SignUpResponse> => {
+  signUp: async (
+    signUpDto: Omit<SignUpDto, "confirmPassword">
+  ): Promise<SignUpResponse> => {
     return apiRequest<SignUpResponse>("/auth/signup", {
       method: "POST",
       body: JSON.stringify(signUpDto),

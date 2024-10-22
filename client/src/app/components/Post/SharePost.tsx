@@ -4,7 +4,6 @@ import formatName from "@/app/utils/formatName";
 import Link from "next/link";
 import {
   BookmarkCheck,
-  Calendar2EventFill,
   CameraReelsFill,
   EmojiSmileFill,
   Envelope,
@@ -70,15 +69,6 @@ export default function SharePost({ currentUser }: { currentUser: FullUser }) {
             >
               <CameraReelsFill className="text-info pe-2" size={20} />
               Video
-            </button>
-          </li>
-          <li className="nav-item">
-            <button
-              type="button"
-              className="nav-link rounded-2 bg-light py-1 px-2 d-flex align-items-center fw-normal"
-            >
-              <Calendar2EventFill className="text-danger pe-2" size={20} />
-              Event
             </button>
           </li>
           <li className="nav-item">

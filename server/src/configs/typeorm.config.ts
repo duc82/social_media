@@ -8,7 +8,7 @@ const dataSource = new DataSource({
   type: "postgres",
   url: configService.getOrThrow<string>("DATABASE_URL"),
   entities: ["src/**/*.entity{.ts,.js}"],
-  migrations: ["./migrations/1726657386133-two.ts"], // Path to the migration files
+  migrations: ["./migrations/1727157281340-four.ts"], // Path to the migration files
   logging: true,
 });
 

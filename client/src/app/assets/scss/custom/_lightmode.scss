@@ -199,7 +199,7 @@ $dropdown-font-size: $h6-font-size;
 // Navbar
 $navbar-padding-y: 0;
 $navbar-toggler-focus-width: 0;
-$navbar-light-color: $gray-600;
+$navbar-light-color: $gray-700;
 $navbar-light-active-color: $primary;
 $navbar-light-hover-color: $primary;
 $nav-link-color: $navbar-light-color;
@@ -252,6 +252,10 @@ $navbar-nav-link-padding-x: 1rem;
     }
     .nav-link {
       padding: 0;
+
+      &.active {
+        color: $primary;
+      }
     }
   }
 
@@ -267,6 +271,20 @@ $navbar-nav-link-padding-x: 1rem;
       &.active {
         color: $primary;
       }
+    }
+  }
+
+  &.nav-tabs {
+    .nav-link {
+      padding: 0.5rem 1rem;
+    }
+  }
+}
+
+.nav-link-secondary {
+  .nav-item {
+    .nav-link {
+      color: $gray-800;
     }
   }
 }

@@ -28,13 +28,15 @@ export default async function Verify({ searchParams }: VerifyProps) {
       <div className="text-center">
         <h2
           className={clsx(
-            "d-block",
+            "d-block mb-3",
             isSuccess ? "text-success" : "text-danger"
           )}
         >
           {message}
         </h2>
-        <Link href="/signin">Go to sign in</Link>
+        <Link href="/signin" className="btn btn-success">
+          Go to sign in
+        </Link>
       </div>
     </div>
   );

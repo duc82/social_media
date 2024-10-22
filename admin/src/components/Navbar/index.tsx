@@ -10,7 +10,7 @@ export default function Navbar({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
   return (
     <nav
       className={clsx(
-        "navbar navbar-vertical navbar-vertical-fixed navbar-expand-xl navbar-bordered bg-white",
+        "navbar navbar-vertical navbar-vertical-fixed navbar-bordered bg-white",
         isNavbarOpen && "show"
       )}
     >

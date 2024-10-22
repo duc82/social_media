@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -19,6 +18,7 @@ import { AuthGuard } from "src/common/guards/auth.guard";
 import { User } from "src/common/decorators/user.decorator";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FilesInterceptor } from "@nestjs/platform-express";
+import { FilesArrayMimeTypeValidationPipe } from "src/common/pipes/file.pipe";
 
 @UseGuards(AuthGuard)
 @Controller("api/posts")
@@ -26,28 +26,14 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post("create")
-  @UseInterceptors(
-    FilesInterceptor("files", undefined, {
-      fileFilter: (req, file, cb) => {
-        // allow only image and video files
-        if (
-          !file.originalname.match(/\.(jpg|jpeg|png|webp|jfif|mp4|mov|avi)$/)
-        ) {
-          return cb(
-            new BadRequestException("Only image and video files are allowed!"),
-            false,
-          );
-        }
-        cb(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FilesInterceptor("files", undefined))
   async create(
     @Body() post: CreatePostDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles(FilesArrayMimeTypeValidationPipe)
+    files: Array<Express.Multer.File>,
     @User("userId") currentUserId: string,
   ) {
-    console.log(post);
+    console.log(files);
     return this.postsService.create(post, files, currentUserId);
   }
 
@@ -62,14 +48,6 @@ export class PostsController {
     @Query() query: QueryDto,
   ) {
     return this.postsService.getCurrent(currentUserId, query);
-  }
-
-  @Get("likes/liked/:postId")
-  async hasUserLiked(
-    @Param("postId") postId: string,
-    @User("userId") userId: string,
-  ) {
-    return this.postsService.hasUserLiked(postId, userId);
   }
 
   @Get("comments/:postId")
@@ -95,6 +73,11 @@ export class PostsController {
     return this.postsService.like(id, userId);
   }
 
+  @Put("unlike/:id")
+  async unlike(@Param("id") id: string, @User("userId") userId: string) {
+    return this.postsService.unlike(id, userId);
+  }
+
   @Put("comment/:id")
   async comment(
     @Param("id", new ParseUUIDPipe()) id: string,
@@ -112,6 +95,14 @@ export class PostsController {
     return this.postsService.likeComment(id, userId);
   }
 
+  @Put("comment/unlike/:id")
+  async unlikeComment(
+    @Param("id", new ParseUUIDPipe()) id: string,
+    @User("userId") userId: string,
+  ) {
+    return this.postsService.unlikeComment(id, userId);
+  }
+
   @Put("comment/reply/:id")
   async replyComment(
     @Param("id", new ParseUUIDPipe()) id: string,
@@ -122,24 +113,12 @@ export class PostsController {
   }
 
   @Put("update/:id")
-  @UseInterceptors(
-    FilesInterceptor("files", undefined, {
-      fileFilter: (req, file, cb) => {
-        // allow only image and video files
-        if (!file.originalname.match(/\.(jpg|jpeg|png|webp|mp4|mov|avi)$/)) {
-          return cb(
-            new BadRequestException("Only image and video files are allowed!"),
-            false,
-          );
-        }
-        cb(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FilesInterceptor("files", undefined))
   async update(
     @Param("id") id: string,
     @Body() body: UpdatePostDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles(FilesArrayMimeTypeValidationPipe)
+    files: Array<Express.Multer.File>,
   ) {
     return this.postsService.update(id, body, files);
   }

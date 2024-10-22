@@ -1,5 +1,3 @@
-// @ts-check
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, options) => {
@@ -33,7 +31,7 @@ const nextConfig = {
       },
     ],
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
 };
 
 export default nextConfig;

@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Avatar from "../Avatar";
@@ -45,32 +45,42 @@ export default function PostItem({
   currentUser: FullUser;
 }) {
   const { data: session } = useSession();
-  const { updatePost, setPosts } = usePostContext();
   const token = session?.token;
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [totalComments, setTotalComments] = useState(0);
-  const [pageComments, setPageComments] = useState(1);
-  const [isLiked, setIsLiked] = useState(false);
+  const { updatePost, setPosts } = usePostContext();
+  const [comments, setComments] = useState<Comment[]>(post.comments);
+  const [pageComments, setPageComments] = useState<number>(1);
+  const [limitComments, setLimitComments] = useState<number>(3);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleLike = async () => {
     if (!token) return;
-    const { post: newPost } = await postService.like(post.id, token);
+    await postService.like(post.id, token);
     setPosts((prev) => {
       const idx = prev.findIndex((p) => p.id === post.id);
       if (idx !== -1) {
-        prev[idx] = newPost;
+        prev[idx].likes.push(currentUser.id);
       }
       return [...prev];
     });
-    setIsLiked((prev) => !prev);
+  };
+
+  const handleUnlike = async () => {
+    if (!token) return;
+    await postService.unlike(post.id, token);
+    setPosts((prev) => {
+      const idx = prev.findIndex((p) => p.id === post.id);
+      if (idx !== -1) {
+        prev[idx].likes = prev[idx].likes.filter((id) => id !== currentUser.id);
+      }
+      return [...prev];
+    });
   };
 
   const sendComment = async (content: string) => {
     if (!token) return;
     const { comment } = await postService.comment(post.id, content, token);
     setComments((prev) => [comment, ...prev]);
-    setTotalComments((prev) => prev + 1);
+    setLimitComments((prev) => prev + 1);
     textareaRef.current!.value = "";
   };
 
@@ -96,7 +106,9 @@ export default function PostItem({
     const nextPage = pageComments + 1;
     const { comments } = await postService.getComments(post.id, token, {
       page: nextPage,
+      limit: limitComments,
     });
+
     setComments((prev) => [...prev, ...comments]);
     setPageComments(nextPage);
   };
@@ -107,35 +119,16 @@ export default function PostItem({
     setPosts((prev) => prev.filter((post) => post.id !== id));
   };
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      if (!token) return;
-      try {
-        const { comments, total } = await postService.getComments(
-          post.id,
-          token
-        );
-        setComments(comments);
-        setTotalComments(total);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchComments();
-  }, [post.id, token]);
-
-  useEffect(() => {
-    if (!token) return;
-    const fetchHasLiked = async () => {
-      const { liked } = await postService.hasLiked(post.id, token);
-      setIsLiked(liked);
-    };
-
-    fetchHasLiked();
-  }, [token, post.id]);
-
   const fullName = formatName(post.user.firstName, post.user.lastName);
+
+  const isLiked = useMemo(
+    () => post.likes.includes(currentUser.id),
+    [post, currentUser]
+  );
+
+  const postFiles = useMemo(() => post.files.slice(0, 5), [post]);
+
+  const total = post.commentCount;
 
   return (
     <div className="card">
@@ -152,12 +145,11 @@ export default function PostItem({
                     ? currentUser.profile.avatar
                     : post.user.profile.avatar
                 }
-                alt={fullName}
                 fill={false}
                 width={0}
                 height={0}
-                sizes="100vw"
-                className="avatar-img rounded-circle"
+                alt={fullName}
+                className="rounded-circle"
               />
             </Link>
 
@@ -213,74 +205,90 @@ export default function PostItem({
               <ThreeDots />
             </button>
             <ul className="dropdown-menu dropdown-menu-end">
-              <li>
-                <button
-                  type="button"
-                  className="dropdown-item"
-                  data-bs-toggle="modal"
-                  data-bs-target="#editPostModal"
-                  onClick={() => updatePost(post)}
-                >
-                  <Pencil className="pe-2" size={22} />
-                  Edit post
-                </button>
-              </li>
-              <li>
-                <button
-                  className="dropdown-item"
-                  onClick={() => handleRemove(post.id)}
-                >
-                  <XCircle className="pe-2" size={22} />
-                  Remove post
-                </button>
-              </li>
+              {post.user.id === currentUser.id && (
+                <li>
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editPostModal"
+                    onClick={() => updatePost(post)}
+                  >
+                    <Pencil className="pe-2" size={22} />
+                    Edit post
+                  </button>
+                </li>
+              )}
+              {post.user.id === currentUser.id && (
+                <li>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleRemove(post.id)}
+                  >
+                    <XCircle className="pe-2" size={22} />
+                    Remove post
+                  </button>
+                </li>
+              )}
               {/* <li>
                 <hr className="dropdown-divider" />
               </li> */}
-              <li>
-                <button type="button" className="dropdown-item">
-                  <Flag className="pe-2" size={22} />
-                  Report post
-                </button>
-              </li>
+              {post.user.id !== currentUser.id && (
+                <li>
+                  <button type="button" className="dropdown-item">
+                    <Flag className="pe-2" size={22} />
+                    Report post
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>
       </div>
       <div className="card-body">
         {post.content && (
-          <p className={clsx("text-black", post.files.length === 0 && "mb-0")}>
+          <p className={clsx(post.files.length === 0 && "mb-0")}>
             {post.content}
           </p>
         )}
         {post.files.length > 0 && (
           <Fancybox className="row g-3">
-            {post.files.map((file, index, files) => (
+            {postFiles.map((file, index) => (
               <div
                 className={clsx(
-                  "position-relative",
-                  files.length % 2 === 0 && files.length < 5 && "col-6",
-                  files.length === 1 && "col-12",
-                  files.length === 3 && (index === 0 ? "col-12" : "col-6"),
-                  files.length >= 5 && (index > 1 ? "col-4" : "col-6")
+                  post.files.length % 2 === 0 &&
+                    post.files.length < 5 &&
+                    "col-6",
+                  post.files.length === 1 && "col-12",
+                  post.files.length === 3 && (index === 0 ? "col-12" : "col-6"),
+                  post.files.length >= 5 && (index > 1 ? "col-4" : "col-6")
                 )}
                 key={file.id}
               >
-                {file.type === "image" && (
-                  <Link href={file.url} data-fancybox>
-                    <Image
-                      src={file.url}
-                      alt={post.id}
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      className="card-img object-fit-cover"
-                      style={{ height: 300 }}
-                    />
-                  </Link>
-                )}
+                <div className="position-relative">
+                  {file.type === "image" && (
+                    <Link href={file.url} data-fancybox>
+                      <Image
+                        src={file.url}
+                        alt={post.id}
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        className="card-img object-fit-cover"
+                        style={{ height: 300 }}
+                      />
+                    </Link>
+                  )}
+                  {file.type === "video" && <VideoPlayer src={file.url} />}
 
-                {file.type === "video" && <VideoPlayer src={file.url} />}
+                  {index === postFiles.length - 1 && post.files.length > 5 && (
+                    <div className="w-100 h-100 position-absolute top-0 start-0 d-flex align-items-center justify-content-center bg-black bg-opacity-25">
+                      <span className="text-white fs-2 font-semibold">
+                        +{post.files.length - postFiles.length}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </Fancybox>
@@ -290,14 +298,14 @@ export default function PostItem({
           <li className="nav-item">
             <button
               type="button"
-              onClick={handleLike}
+              onClick={isLiked ? handleUnlike : handleLike}
               className={clsx(
                 "nav-link fw-normal d-flex align-items-start",
                 isLiked && "active"
               )}
             >
               <HandThumbsUpFill className="pe-1" size={18} />
-              {isLiked ? "Liked" : "Like"} ({post.likeCount})
+              {isLiked ? "Liked" : "Like"} ({post.likes.length})
             </button>
           </li>
           <li className="nav-item">
@@ -307,7 +315,7 @@ export default function PostItem({
               onClick={() => textareaRef.current?.focus()}
             >
               <ChatFill className="pe-1" size={18} />
-              Comments ({totalComments})
+              Comments ({post.totalComment})
             </button>
           </li>
           <li className="nav-item dropdown ms-sm-auto">
@@ -420,7 +428,7 @@ export default function PostItem({
         )}
       </div>
 
-      {comments.length < totalComments && (
+      {comments.length < total && (
         <div className="card-footer border-0 pt-0">
           <button
             type="button"

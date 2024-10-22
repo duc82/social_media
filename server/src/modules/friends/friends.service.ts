@@ -18,8 +18,6 @@ export class FriendsService {
 
     const skip = (page - 1) * limit;
 
-    const blockedUsers = await this.userService.getBlockedUsers(currentUserId);
-
     const friends = await this.dataSource.getRepository(Friend).find({
       where: [
         {
@@ -34,6 +32,7 @@ export class FriendsService {
         },
       ],
       relations: ["user", "friend"],
+      select: ["user", "friend"],
     });
 
     const friendIds = friends.map((friend) => {
@@ -49,7 +48,7 @@ export class FriendsService {
       .getRepository(User)
       .findAndCount({
         where: {
-          id: And(Not(In(friendIds)), Not(In(blockedUsers))),
+          id: Not(In(friendIds)),
           emailVerified: Not(IsNull()),
           firstName: Raw(
             (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
@@ -115,6 +114,17 @@ export class FriendsService {
     });
 
     return { friends, total, page, limit };
+  }
+
+  async countFriends(userId: string, status: FriendStatus) {
+    const total = await this.dataSource.getRepository(Friend).count({
+      where: [
+        { user: { id: userId }, status },
+        { friend: { id: userId }, status },
+      ],
+    });
+
+    return total;
   }
 
   async getFriend(userId: string, friendId: string) {

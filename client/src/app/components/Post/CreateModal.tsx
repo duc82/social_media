@@ -4,7 +4,6 @@ import { Feeling, PostDto } from "@/app/types/post";
 import { useForm } from "react-hook-form";
 import Avatar from "../Avatar";
 import {
-  Calendar2EventFill,
   EmojiSmileFill,
   GeoAltFill,
   ImageFill,
@@ -157,7 +156,7 @@ export default function CreatePostModal({
                     />
                   </div>
 
-                  <span className="fw-semibold text-700">
+                  <span className="fw-semibold">
                     {fullName}{" "}
                     {feeling && (
                       <span>
@@ -235,7 +234,7 @@ export default function CreatePostModal({
                           )}
                           {index === filePreviews.length - 1 &&
                             files.length > 5 && (
-                              <div className="w-100 h-100 position-absolute d-flex align-items-center justify-content-center bg-black bg-opacity-25">
+                              <div className="w-100 h-100 position-absolute top-0 start-0 d-flex align-items-center justify-content-center bg-black bg-opacity-25">
                                 <span className="text-white fs-2 font-semibold">
                                   +{files.length - filePreviews.length}
                                 </span>
@@ -272,16 +271,6 @@ export default function CreatePostModal({
                     <ImageFill />
                   </button>
                   <button
-                    className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle border-0"
-                    type="button"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    data-bs-trigger="hover"
-                    data-bs-title="Events"
-                  >
-                    <Calendar2EventFill />
-                  </button>
-                  <button
                     type="button"
                     className="icon-md bg-warning bg-opacity-10 text-warning rounded-circle border-0"
                     data-bs-tooltip="true"
@@ -301,7 +290,7 @@ export default function CreatePostModal({
                     data-bs-trigger="hover"
                     data-bs-title="Check in"
                     data-bs-toggle="modal"
-                    data-bs-target="#tagPeopleModal"
+                    data-bs-target="#checkInModal"
                   >
                     <GeoAltFill />
                   </button>

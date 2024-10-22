@@ -7,16 +7,20 @@ import { Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Avatar from "../Avatar";
 import formatName from "@/app/utils/formatName";
+import { useSession } from "next-auth/react";
 
 export default function HeaderSearch() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<FullUser[]>([]);
+  const { data } = useSession();
+  const token = data?.token;
 
-  const debounceSearch = debounce(async (value: string) => {
+  const debounceSearch = debounce(async (value: string, token?: string) => {
+    if (!token) return;
     if (!value) return setUsers([]);
 
     try {
-      const data = await userService.getAll({
+      const data = await userService.getAll(token, {
         search: value,
         page: 1,
         limit: 10,
@@ -27,15 +31,12 @@ export default function HeaderSearch() {
     }
   }, 500);
 
-  const getSearchResults = useCallback(
-    (value: string) => debounceSearch(value),
-    [debounceSearch]
-  );
+  const getSearchResults = useCallback(debounceSearch, []);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
-    getSearchResults(value);
+    getSearchResults(value, token);
   };
 
   return (

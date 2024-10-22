@@ -9,6 +9,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -19,8 +20,8 @@ import { Post } from "src/modules/posts/entities/posts.entity";
 import { Token } from "./tokens.entity";
 import { GroupMember } from "src/modules/groups/entities/group_members.entity";
 import { ConversationMember } from "src/modules/conversations/entities/conversation_members.entity";
-import { BlockedUser } from "./blocked_users.entity";
 import { UserRole } from "../enums/users.enum";
+import { Blocked } from "./blocked.entity";
 
 @Entity({
   name: "users",
@@ -65,8 +66,15 @@ export class User extends BaseEntity {
   })
   role: UserRole;
 
-  @OneToMany(() => BlockedUser, (blockerUser) => blockerUser.user)
-  blockedUsers: BlockedUser[];
+  @OneToMany(() => Blocked, (blocked) => blocked.user, {
+    cascade: true,
+  })
+  blocked: Blocked[];
+
+  @OneToMany(() => Blocked, (blocked) => blocked.blockedBy, {
+    cascade: true,
+  })
+  blockedBy: Blocked[];
 
   @OneToOne(() => Profile, {
     cascade: true,
@@ -121,7 +129,11 @@ export class User extends BaseEntity {
   createdAt: Date;
 
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword(): Promise<void> {
+    if (!this.password) {
+      return;
+    }
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
   }

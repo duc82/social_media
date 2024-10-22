@@ -1,5 +1,6 @@
 import { User } from "src/modules/users/entities/users.entity";
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -15,7 +16,7 @@ import { Post } from "./posts.entity";
 @Entity({
   name: "comments",
 })
-export class Comment {
+export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
