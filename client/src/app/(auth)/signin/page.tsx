@@ -10,10 +10,6 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import {
-  ExclamationCircleFill,
-  ExclamationTriangleFill,
-} from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 
 export default function SignIn() {
@@ -68,7 +64,7 @@ export default function SignIn() {
           role="alert"
         >
           <div className="d-flex align-items-center">
-            <ExclamationTriangleFill size={16} className="me-2 flex-shrink-0" />
+            <i className="bi bi-exclamation-triangle-fill me-2 flex-shrink-0"></i>
             <span>{code}</span>
           </div>
           <button
@@ -109,7 +105,7 @@ export default function SignIn() {
           </div>
           {errors.password && (
             <div className="form-text text-danger mt-1">
-              <ExclamationCircleFill size={16} className="me-2" />
+              <i className="bi bi-exclamation-circle-fill me-2"></i>
               <span>{errors.password.message}</span>
             </div>
           )}

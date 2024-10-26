@@ -12,14 +12,6 @@ import Avatar from "../Avatar";
 import clsx from "clsx";
 import Dropzone from "./Dropzone";
 import Image from "next/image";
-import {
-  Calendar2EventFill,
-  EmojiSmileFill,
-  GeoAltFill,
-  ImageFill,
-  TagFill,
-  XLg,
-} from "react-bootstrap-icons";
 import Spinner from "../Spinner";
 import FeelingActivityModal from "./FeelingActivityModal";
 import toast from "react-hot-toast";
@@ -237,7 +229,7 @@ export default function EditModal() {
                       className="position-absolute d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm z-index-1"
                       style={{ height: 30, width: 30, top: 10, right: 12 }}
                     >
-                      <XLg />
+                      <i className="bi bi-xlg"></i>
                     </button>
                   </div>
                 )}
@@ -282,7 +274,7 @@ export default function EditModal() {
                       className="position-absolute d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm z-index-1"
                       style={{ height: 30, width: 30, top: 10, right: 12 }}
                     >
-                      <XLg />
+                      <i className="bi bi-xlg"></i>
                     </button>
                   </div>
                 )}
@@ -297,7 +289,7 @@ export default function EditModal() {
                     data-bs-trigger="hover"
                     onClick={() => setActiveDropzone(!isActiveDropzone)}
                   >
-                    <ImageFill />
+                    <i className="bi bi-image-fill"></i>
                   </button>
                   <button
                     className="icon-md bg-danger bg-opacity-10 text-danger rounded-circle border-0"
@@ -307,7 +299,7 @@ export default function EditModal() {
                     data-bs-trigger="hover"
                     data-bs-title="Events"
                   >
-                    <Calendar2EventFill />
+                    <i className="bi bi-calendar2-event-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -319,7 +311,7 @@ export default function EditModal() {
                     data-bs-toggle="modal"
                     data-bs-target="#editFeelingActivityModal"
                   >
-                    <EmojiSmileFill />
+                    <i className="bi bi-emoji-smile-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -329,7 +321,7 @@ export default function EditModal() {
                     data-bs-trigger="hover"
                     data-bs-title="Check in"
                   >
-                    <GeoAltFill />
+                    <i className="bi bi-geo-alt-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -341,7 +333,7 @@ export default function EditModal() {
                     data-bs-toggle="modal"
                     data-bs-target="#tagPeopleModal"
                   >
-                    <TagFill />
+                    <i className="bi bi-tag-fill"></i>
                   </button>
                 </div>
               </div>

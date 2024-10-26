@@ -1,11 +1,11 @@
 "use client";
 import { Blocked } from "@/app/types/user";
 import { ChangeEvent, Fragment, useCallback, useState } from "react";
-import { Plus, Search } from "react-bootstrap-icons";
 import Avatar from "../Avatar";
 import formatName from "@/app/utils/formatName";
 import userService from "@/app/services/userService";
 import debounce from "@/app/utils/debounce";
+import Link from "next/link";
 
 interface BlockedListProps {
   initialBlocked: Blocked[];
@@ -79,14 +79,14 @@ export default function BlockedList({
               onChange={handleSearch}
             />
             <div className="d-flex align-items-center px-2 py-0 position-absolute top-50 start-0 translate-middle-y">
-              <Search className="fs-5" />
+              <i className="bi bi-search fs-5"></i>
             </div>
           </div>
           <button
             type="button"
             className="btn btn-primary-soft d-flex align-items-center"
           >
-            <Plus size={20} />
+            <i className="bi bi-plus"></i>
             Add to blocked list
           </button>
         </div>
@@ -97,18 +97,24 @@ export default function BlockedList({
               key={item.id}
               className="list-group-item py-3 px-0 d-flex justify-content-between align-items-center"
             >
-              <div className="d-flex align-items-center">
-                <Avatar
-                  src={item.user.profile.avatar}
-                  fill={false}
-                  width={36}
-                  height={36}
-                  className="rounded-circle me-2"
-                />
+              <Link
+                href={`/profile/@${item.user.username}`}
+                className="d-flex align-items-center"
+              >
+                <div className="avatar me-2">
+                  <Avatar
+                    src={item.user.profile.avatar}
+                    fill={false}
+                    width={36}
+                    height={36}
+                    className="rounded-circle"
+                  />
+                </div>
+
                 <span className="text-dark m-0 fw-medium">
                   {formatName(item.user.firstName, item.user.lastName)}
                 </span>
-              </div>
+              </Link>
               <button
                 type="button"
                 className="btn btn-sm btn-light"

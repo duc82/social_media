@@ -3,13 +3,6 @@
 import { Feeling, PostDto } from "@/app/types/post";
 import { useForm } from "react-hook-form";
 import Avatar from "../Avatar";
-import {
-  EmojiSmileFill,
-  GeoAltFill,
-  ImageFill,
-  TagFill,
-  XLg,
-} from "react-bootstrap-icons";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import postService from "@/app/services/postService";
@@ -250,7 +243,7 @@ export default function CreatePostModal({
                       className="position-absolute d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm z-index-1"
                       style={{ height: 30, width: 30, top: 10, right: 12 }}
                     >
-                      <XLg />
+                      <i className="bi bi-xlg"></i>
                     </button>
                   </div>
                 )}
@@ -268,7 +261,7 @@ export default function CreatePostModal({
                       }
                     }}
                   >
-                    <ImageFill />
+                    <i className="bi bi-image-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -280,7 +273,7 @@ export default function CreatePostModal({
                     data-bs-toggle="modal"
                     data-bs-target="#createFeelingActivityModal"
                   >
-                    <EmojiSmileFill />
+                    <i className="bi bi-emoji-smile-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -292,7 +285,7 @@ export default function CreatePostModal({
                     data-bs-toggle="modal"
                     data-bs-target="#checkInModal"
                   >
-                    <GeoAltFill />
+                    <i className="bi bi-geo-alt-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -304,7 +297,7 @@ export default function CreatePostModal({
                     data-bs-toggle="modal"
                     data-bs-target="#tagPeopleModal"
                   >
-                    <TagFill />
+                    <i className="bi bi-tag-fill"></i>
                   </button>
                 </div>
               </div>

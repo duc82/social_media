@@ -3,21 +3,6 @@ import { FormEvent, KeyboardEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Avatar from "../Avatar";
-import {
-  Bookmark,
-  ChatFill,
-  Envelope,
-  Flag,
-  Pencil,
-  ReplyFill,
-  SendFill,
-  ThreeDots,
-  XCircle,
-  Link as LinkIcon,
-  Share,
-  PencilSquare,
-  HandThumbsUpFill,
-} from "react-bootstrap-icons";
 import { formatDate, formatDateTime } from "@/app/utils/dateTime";
 import { Comment, Post } from "@/app/types/post";
 import formatName from "@/app/utils/formatName";
@@ -202,7 +187,7 @@ export default function PostItem({
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <ThreeDots />
+              <i className="bi bi-three-dots"></i>
             </button>
             <ul className="dropdown-menu dropdown-menu-end">
               {post.user.id === currentUser.id && (
@@ -214,7 +199,7 @@ export default function PostItem({
                     data-bs-target="#editPostModal"
                     onClick={() => updatePost(post)}
                   >
-                    <Pencil className="pe-2" size={22} />
+                    <i className="bi bi-pencil pe-2"></i>
                     Edit post
                   </button>
                 </li>
@@ -225,7 +210,7 @@ export default function PostItem({
                     className="dropdown-item"
                     onClick={() => handleRemove(post.id)}
                   >
-                    <XCircle className="pe-2" size={22} />
+                    <i className="bi bi-x-circle pe-2"></i>
                     Remove post
                   </button>
                 </li>
@@ -236,7 +221,7 @@ export default function PostItem({
               {post.user.id !== currentUser.id && (
                 <li>
                   <button type="button" className="dropdown-item">
-                    <Flag className="pe-2" size={22} />
+                    <i className="bi bi-flag pe-2"></i>
                     Report post
                   </button>
                 </li>
@@ -304,7 +289,7 @@ export default function PostItem({
                 isLiked && "active"
               )}
             >
-              <HandThumbsUpFill className="pe-1" size={18} />
+              <i className="bi bi-hand-thumbs-up-fill pe-1"></i>
               {isLiked ? "Liked" : "Like"} ({post.likes.length})
             </button>
           </li>
@@ -314,7 +299,7 @@ export default function PostItem({
               className="nav-link fw-normal d-flex align-items-start"
               onClick={() => textareaRef.current?.focus()}
             >
-              <ChatFill className="pe-1" size={18} />
+              <i className="bi bi-chat-fill pe-1"></i>
               Comments ({post.totalComment})
             </button>
           </li>
@@ -326,7 +311,7 @@ export default function PostItem({
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <ReplyFill className="flip-horizontal ps-1" size={18} />
+              <i className="bi bi-reply-fill flip-horizontal ps-1"></i>
               Share (3)
             </button>
             <ul
@@ -335,25 +320,25 @@ export default function PostItem({
             >
               <li>
                 <Link href="#" className="dropdown-item">
-                  <Envelope className="pe-2 fs-4" />
+                  <i className="bi bi-envelope pe-2 fs-4"></i>
                   Send via Direct Message
                 </Link>
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <Bookmark className="fs-4 pe-2" />
+                  <i className="bi bi-bookmark fs-4 pe-2"></i>
                   Bookmark{" "}
                 </Link>
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <LinkIcon className="fs-4 pe-2" />
+                  <i className="bi bi-link-icon fs-4 pe-2"></i>
                   Copy link href post
                 </Link>
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <Share className="fs-4 pe-2" />
+                  <i className="bi bi-share fs-4 pe-2"></i>
                   Share post via …
                 </Link>
               </li>
@@ -362,7 +347,7 @@ export default function PostItem({
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <PencilSquare className="fs-4 pe-2" />
+                  <i className="bi bi-pencil-square fs-4 pe-2"></i>
                   Share href News Feed
                 </Link>
               </li>
@@ -409,7 +394,7 @@ export default function PostItem({
               title="Send"
               className="nav-link bg-transparent px-3 position-absolute top-50 end-0 translate-middle-y border-0"
             >
-              <SendFill />
+              <i className="bi bi-send-fill"></i>
             </button>
           </form>
         </div>

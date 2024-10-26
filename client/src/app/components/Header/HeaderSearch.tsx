@@ -3,7 +3,6 @@ import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import debounce from "@/app/utils/debounce";
 import { ChangeEvent, useCallback, useState } from "react";
-import { Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Avatar from "../Avatar";
 import formatName from "@/app/utils/formatName";
@@ -52,7 +51,7 @@ export default function HeaderSearch() {
         data-bs-toggle="dropdown"
       />
       <div className="bg-transparent d-flex align-items-center px-2 py-0 position-absolute top-50 start-0 translate-middle-y">
-        <Search className="fs-5" />
+        <i className="bi bi-search fs-5"></i>
       </div>
 
       <ul className="dropdown-menu w-100">

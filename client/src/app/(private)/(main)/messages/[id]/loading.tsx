@@ -1,9 +1,4 @@
 import ChatForm from "@/app/components/Messages/ChatForm";
-import {
-  CameraVideoFill,
-  TelephoneFill,
-  ThreeDotsVertical,
-} from "react-bootstrap-icons";
 
 export default function MessagesLoading() {
   return (
@@ -36,7 +31,7 @@ export default function MessagesLoading() {
                 data-bs-placement="top"
                 data-bs-title="Audio call"
               >
-                <TelephoneFill />
+                <i className="bi bi-telephone-fill"></i>
               </button>
               <button
                 type="button"
@@ -45,14 +40,14 @@ export default function MessagesLoading() {
                 data-bs-placement="top"
                 data-bs-title="Video call"
               >
-                <CameraVideoFill />
+                <i className="bi bi-camera-video-fill"></i>
               </button>
               <div className="dropdown">
                 <button
                   type="button"
                   className="icon-md rounded-circle btn btn-primary-soft me-2 px-2"
                 >
-                  <ThreeDotsVertical />
+                  <i className="bi bi-three-dots-vertical"></i>
                 </button>
               </div>
             </div>

@@ -6,7 +6,6 @@ import Link from "next/link";
 import wallpaper_initial from "@/app/assets/images/wallpaper.jpg";
 import formatName from "@/app/utils/formatName";
 import Avatar from "../Avatar";
-import { PatchCheckFill } from "react-bootstrap-icons";
 import { directMessage } from "@/app/actions/conversationAction";
 import { useRouter } from "next/navigation";
 
@@ -74,7 +73,8 @@ export default function ProfileModal({ user }: ProfileModalProps) {
                 </Link>
                 <div className="ms-2">
                   <h1 className="mb-0 h5">
-                    {fullName} <PatchCheckFill className="text-success small" />
+                    {fullName}{" "}
+                    <i className="bi bi-patch-check-fill text-success small"></i>
                   </h1>
                 </div>
               </Fancybox>

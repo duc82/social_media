@@ -1,7 +1,10 @@
 "use client";
 import "plyr-react/plyr.css";
-import Plyr, { PlyrProps, PlyrSource, PlyrOptions } from "plyr-react";
+import { PlyrProps, PlyrSource, PlyrOptions } from "plyr-react";
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
+
+const Plyr = dynamic(async () => await import("plyr-react"), { ssr: false });
 
 interface VideoPlayerProps extends Omit<PlyrProps, "source"> {
   src: string;
@@ -25,9 +28,12 @@ export default function VideoPlayer({ src, ...props }: VideoPlayerProps) {
     () => ({
       controls: [
         "play-large",
+        "rewind",
         "play",
+        "fast-forward",
         "progress",
         "current-time",
+        "duration",
         "mute",
         "volume",
         "captions",

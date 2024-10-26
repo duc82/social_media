@@ -79,11 +79,11 @@ const postService = {
     });
   },
 
-  getCurrent: async (token: string, options?: Options) => {
+  getByUserId: async (userId: string, token: string, options?: Options) => {
     const { page = 1, limit = 20, search = "" } = options || {};
 
     return apiRequest<PostsReponse>(
-      `/posts/current?page=${page}&limit=${limit}&search=${search}`,
+      `/posts/${userId}?page=${page}&limit=${limit}&search=${search}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { tags: options?.tags },

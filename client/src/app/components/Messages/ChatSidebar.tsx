@@ -1,7 +1,6 @@
 "use client";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { PencilSquare, Search } from "react-bootstrap-icons";
 import { Conversation } from "@/app/types/conversation";
 import { useEffect } from "react";
 import { FullUser } from "@/app/types/user";
@@ -75,7 +74,7 @@ export default function ChatSidebar({
                 data-bs-toggle="modal"
                 data-bs-target="#addChatModal"
               >
-                <PencilSquare />
+                <i className="bi bi-pencil-square"></i>
               </button>
             </div>
           </div>
@@ -119,7 +118,7 @@ export default function ChatSidebar({
                   type="submit"
                   className="btn bg-transparent text-secondary px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
                 >
-                  <Search size={18} />
+                  <i className="bi bi-search"></i>
                 </button>
               </form>
 

@@ -13,7 +13,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { InfoCircle } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -115,12 +114,12 @@ function ResetPassword() {
               )}
             </div>
             <div className="ms-auto">
-              <InfoCircle
-                size={16}
+              <i
+                className="bi bi-info-circle"
                 data-bs-toggle="popover"
                 data-bs-placement="top"
                 data-bs-content="Include at least one uppercase, one lowercase, one special character, one number and 8 characters long."
-              />
+              ></i>
             </div>
           </div>
         </div>

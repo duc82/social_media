@@ -1,6 +1,5 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { CalendarDate, Envelope, Heart } from "react-bootstrap-icons";
 import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,7 +21,7 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
               {user.profile.bio && <p>{user.profile.bio}</p>}
               <ul className="list-unstyled mt-3 mb-0">
                 <li className="mb-2">
-                  <CalendarDate className="pe-1" size={20} />
+                  <i className="bi bi-calendar-date pe-1"></i>
                   Born:{" "}
                   <strong>
                     {formatDate(user.profile.birthday, { dateStyle: "medium" })}
@@ -30,7 +29,7 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
                 </li>
                 {user.profile.maritalStatus && (
                   <li className="mb-2">
-                    <Heart className="pe-1" size={20} />
+                    <i className="bi bi-heart pe-1"></i>
                     Status:{" "}
                     <strong className="text-capitalize">
                       {" "}
@@ -39,7 +38,7 @@ export default function ProfileSidebar({ user }: { user: FullUser }) {
                   </li>
                 )}
                 <li>
-                  <Envelope className="pe-1" size={20} />
+                  <i className="bi bi-envelope pe-1"></i>
                   Email: <strong> {user.email} </strong>{" "}
                 </li>
               </ul>

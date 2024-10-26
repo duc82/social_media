@@ -27,8 +27,6 @@ export default function Stories() {
   useEffect(() => {
     const el = storiesRef.current;
 
-    console.log(el);
-
     if (el) {
       Zuck(el, {
         backNative: false, // uses window history to enable back button on browsers/android

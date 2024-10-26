@@ -4,15 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Avatar from "../Avatar";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import {
-  CameraVideoFill,
-  CheckLg,
-  MicMute,
-  PersonCheck,
-  TelephoneFill,
-  ThreeDotsVertical,
-  Trash,
-} from "react-bootstrap-icons";
 import { FullUser } from "@/app/types/user";
 import clsx from "clsx";
 import useSocketToken from "@/app/hooks/useSocketContext";
@@ -123,7 +114,7 @@ export default function TopAvatarStatus({
           data-bs-placement="top"
           data-bs-title="Audio call"
         >
-          <TelephoneFill />
+          <i className="bi bi-telephone-fill"></i>
         </button>
         <button
           type="button"
@@ -133,7 +124,7 @@ export default function TopAvatarStatus({
           data-bs-title="Video call"
           onClick={() => openRingingCall(true)}
         >
-          <CameraVideoFill />
+          <i className="bi bi-camera-video-fill"></i>
         </button>
         <div className="dropdown">
           <button
@@ -142,7 +133,7 @@ export default function TopAvatarStatus({
             data-bs-toggle="dropdown"
             data-bs-auto-close="true"
           >
-            <ThreeDotsVertical />
+            <i className="bi bi-three-dots-vertical"></i>
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
             <li>
@@ -151,13 +142,13 @@ export default function TopAvatarStatus({
                 className="dropdown-item"
                 onClick={handleMarkAsRead}
               >
-                <CheckLg className="me-2 fw-icon" />
+                <i className="bi bi-check-lg me-2 fw-icon"></i>
                 Mark as read
               </button>
             </li>
             <li>
               <Link className="dropdown-item" href="#">
-                <MicMute className="me-2 fw-icon" />
+                <i className="bi bi-mic-mute me-2 fw-icon"></i>
                 Mute conversation
               </Link>
             </li>
@@ -166,7 +157,7 @@ export default function TopAvatarStatus({
                 className="dropdown-item"
                 href={`/profile/@${user?.username}`}
               >
-                <PersonCheck className="me-2 fw-icon" />
+                <i className="bi bi-person-check me-2 fw-icon"></i>
                 View profile
               </Link>
             </li>
@@ -176,7 +167,7 @@ export default function TopAvatarStatus({
                 className="dropdown-item"
                 onClick={handleRemove}
               >
-                <Trash className="me-2 fw-icon" />
+                <i className="bi bi-trash me-2 fw-icon"></i>
                 Delete chat
               </button>
             </li>

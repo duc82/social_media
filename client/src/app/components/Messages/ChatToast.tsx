@@ -9,14 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  CameraVideo,
-  ChatSquareText,
-  DashLg,
-  Telephone,
-  ThreeDotsVertical,
-  Trash,
-} from "react-bootstrap-icons";
 
 export default function ChatToast() {
   const pathname = usePathname();
@@ -69,7 +61,7 @@ export default function ChatToast() {
                   data-bs-auto-close="outside"
                   aria-expanded="false"
                 >
-                  <ThreeDotsVertical />
+                  <i className="bi bi-three-dots-vertical"></i>
                 </Link>
                 <ul
                   className="dropdown-menu dropdown-menu-end"
@@ -77,25 +69,25 @@ export default function ChatToast() {
                 >
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <CameraVideo className="me-2 fw-icon"></CameraVideo>Video
+                      <i className="bi bi-camera-video me-2 fw-icon"></i>Video
                       call
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Telephone className="me-2 fw-icon" />
+                      <i className="bi bi-telephone me-2 fw-icon"></i>
                       Audio call
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Trash className="me-2 fw-icon" />
+                      <i className="bi bi-trash me-2 fw-icon"></i>
                       Delete{" "}
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <ChatSquareText className="me-2 fw-icon" />
+                      <i className="bi bi-chat-square-text me-2 fw-icon"></i>
                       Mark as unread
                     </Link>
                   </li>
@@ -124,7 +116,7 @@ export default function ChatToast() {
                 aria-expanded="false"
                 aria-controls="collapseChat"
               >
-                <DashLg />
+                <i className="bi bi-dash-lg"></i>
               </Link>
               <button
                 className="btn btn-secondary-soft-hover py-1 px-2"

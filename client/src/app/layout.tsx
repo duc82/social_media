@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import "bootstrap-icons/font/bootstrap-icons.min.css";
 import "zuck.js/css";
 import "zuck.js/skins/snapgram";
 import "@/app/assets/scss/globals.scss";

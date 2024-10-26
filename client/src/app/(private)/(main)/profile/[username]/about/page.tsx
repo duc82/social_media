@@ -5,11 +5,12 @@ import getServerSession from "@/app/libs/session";
 export default async function About({
   params,
 }: {
-  params: { username?: string };
+  params: Promise<{ username: string }>;
 }) {
   const { currentUser, token } = await getServerSession();
+  let { username } = await params;
 
-  const username = params.username?.replace("%40", "");
+  username = username.replace("%40", "");
 
   const user = await getUserProfile(username, currentUser, token);
 

@@ -3,7 +3,6 @@ import { FullUser } from "@/app/types/user";
 import Link from "next/link";
 import Avatar from "../../Avatar";
 import formatName from "@/app/utils/formatName";
-import { ChatLeftText, PersonX } from "react-bootstrap-icons";
 import { useSession } from "next-auth/react";
 import userService from "@/app/services/userService";
 import { useRouter } from "next/navigation";
@@ -48,7 +47,7 @@ export default function Friend({ friend }: { friend: FullUser }) {
             aria-label="Send message"
             data-bs-original-title="Send message"
           >
-            <ChatLeftText />
+            <i className="bi bi-chat-text-left"></i>
           </button>
           <button
             type="button"
@@ -59,7 +58,7 @@ export default function Friend({ friend }: { friend: FullUser }) {
             data-bs-original-title="Remove friend"
             onClick={() => handleRemove(friend.id)}
           >
-            <PersonX size={16} />
+            <i className="bi bi-person-x"></i>
           </button>
         </div>
       </div>

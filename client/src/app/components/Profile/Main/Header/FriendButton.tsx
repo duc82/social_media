@@ -1,11 +1,6 @@
 "use client";
 import clsx from "clsx";
 import { ReactNode } from "react";
-import {
-  PersonCheckFill,
-  PersonPlusFill,
-  PersonXFill,
-} from "react-bootstrap-icons";
 
 interface FriendButtonProps {
   isLoading?: boolean;
@@ -30,27 +25,27 @@ const FriendButton = ({
   > = {
     none: {
       name: "Add friend",
-      icon: <PersonPlusFill size={16} />,
+      icon: <i className="bi bi-person-plus-fill"></i>,
       className: "btn-primary",
     },
     friends: {
       name: "Friends",
-      icon: <PersonCheckFill size={16} />,
+      icon: <i className="bi bi-person-check-fill"></i>,
       className: "btn-primary",
     },
     accept: {
       name: "Accept",
-      icon: <PersonCheckFill size={16} />,
+      icon: <i className="bi bi-person-check-fill"></i>,
       className: "btn-success",
     },
     cancel: {
       name: "Cancel",
-      icon: <PersonXFill size={16} />,
+      icon: <i className="bi bi-person-x-fill"></i>,
       className: "btn-danger",
     },
     decline: {
       name: "Decline",
-      icon: <PersonXFill size={16} />,
+      icon: <i className="bi bi-person-x-fill"></i>,
       className: "btn-danger",
     },
   };

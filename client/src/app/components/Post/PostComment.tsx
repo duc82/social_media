@@ -14,7 +14,6 @@ import {
   useState,
 } from "react";
 import { FullUser } from "@/app/types/user";
-import { SendFill } from "react-bootstrap-icons";
 import postService from "@/app/services/postService";
 import { useSession } from "next-auth/react";
 import SpinnerDots from "../SpinnerDots";
@@ -260,7 +259,7 @@ export default function PostComment({
                 type="submit"
                 className="nav-link bg-transparent px-3 border-0"
               >
-                <SendFill />
+                <i className="bi bi-send-fill"></i>
               </button>
             </div>
           </form>

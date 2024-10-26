@@ -7,16 +7,18 @@ import PostItem from "./PostItem";
 import usePostContext from "@/app/hooks/usePostContext";
 
 interface PostsProps {
-  currentUser: FullUser;
+  user?: FullUser;
   token: string;
   total: number;
   limit: number;
+  currentUser: FullUser;
 }
 
 export default function PostList({
   limit,
   total,
   token,
+  user,
   currentUser,
 }: PostsProps) {
   const { posts, setPosts } = usePostContext();
@@ -26,10 +28,14 @@ export default function PostList({
   const fetchMorePosts = async (): Promise<void> => {
     try {
       const newPage = page + 1;
-      const data = await postService.getCurrent(token, {
-        page: newPage,
-        limit,
-      });
+      const data = await postService.getByUserId(
+        user?.id ?? currentUser.id,
+        token,
+        {
+          page: newPage,
+          limit,
+        }
+      );
 
       if (data.posts.length === 0) {
         setHasMore(false);

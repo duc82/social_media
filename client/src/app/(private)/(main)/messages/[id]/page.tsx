@@ -10,13 +10,14 @@ import TopAvatarStatus from "@/app/components/Messages/TopAvatarStatus";
 import getServerSession from "@/app/libs/session";
 
 export default async function Messages({
-  params: { id },
+  params,
 }: {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }) {
   const { currentUser, token } = await getServerSession();
+  const { id } = await params;
 
   const conversation = await getConversationById(id);
 

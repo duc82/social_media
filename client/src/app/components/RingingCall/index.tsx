@@ -10,12 +10,6 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Peer from "peerjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  CameraVideoFill,
-  CameraVideoOffFill,
-  MicFill,
-  MicMuteFill,
-} from "react-bootstrap-icons";
 import RingingCallSpinner from "./RingingCallSpinner";
 
 export default function RingingCall() {
@@ -231,10 +225,18 @@ export default function RingingCall() {
           }}
         >
           <button type="button" className="btn btn-dark" onClick={toggleCam}>
-            {isCamOn ? <CameraVideoFill /> : <CameraVideoOffFill />}
+            {isCamOn ? (
+              <i className="bi bi-camera-video-fill"></i>
+            ) : (
+              <i className="bi bi-camera-video-fill"></i>
+            )}
           </button>
           <button type="button" className="btn btn-dark" onClick={toggleMic}>
-            {isMicMuted ? <MicMuteFill /> : <MicFill />}
+            {isMicMuted ? (
+              <i className="bi bi-mic-mute-fill"></i>
+            ) : (
+              <i className="bi bi-mic-fill"></i>
+            )}
           </button>
           <button type="button" onClick={handleEnd} className="btn btn-danger">
             Leave

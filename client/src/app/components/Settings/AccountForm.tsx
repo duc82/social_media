@@ -7,10 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  CheckCircleFill,
-  ExclamationTriangleFill,
-} from "react-bootstrap-icons";
+
 import { useForm } from "react-hook-form";
 
 export default function AccountForm({
@@ -84,7 +81,7 @@ export default function AccountForm({
           role="alert"
         >
           <div className="d-flex align-items-center">
-            <ExclamationTriangleFill size={16} className="me-2 flex-shrink-0" />
+            <i className="bi bi-exclamation-triangle-fill me-2 flex-shrink-0"></i>
             <span>{error}</span>
           </div>
         </div>
@@ -96,7 +93,7 @@ export default function AccountForm({
           role="alert"
         >
           <div className="d-flex align-items-center">
-            <CheckCircleFill size={16} className="me-2 flex-shrink-0" />
+            <i className="bi bi-check-circle-fill me-2 flex-shrink-0"> </i>
             <span>{message}</span>
           </div>
         </div>

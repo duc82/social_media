@@ -9,12 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import { Fragment, useState } from "react";
-import {
-  CheckCircleFill,
-  ExclamationCircleFill,
-  ExclamationTriangleFill,
-  InfoCircle,
-} from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 import Spinner from "../Spinner";
 
@@ -71,7 +65,7 @@ export default function PasswordForm() {
           role="alert"
         >
           <div className="d-flex align-items-center">
-            <ExclamationTriangleFill size={16} className="me-2 flex-shrink-0" />
+            <i className="bi bi-exclamation-triangle-fill me-2 flex-shrink-0"></i>
             <span>{error}</span>
           </div>
         </div>
@@ -83,7 +77,7 @@ export default function PasswordForm() {
           role="alert"
         >
           <div className="d-flex align-items-center">
-            <CheckCircleFill size={16} className="me-2 flex-shrink-0" />
+            <i className="bi bi-check-circle-fill me-2 flex-shrink-0"></i>
             <span>{message}</span>
           </div>
         </div>
@@ -102,7 +96,7 @@ export default function PasswordForm() {
           />
           {errors.currentPassword && (
             <div className="form-text text-danger mt-1">
-              <ExclamationCircleFill size={16} className="me-2" />
+              <i className="bi bi-exclamation-circle-fill me-2"></i>
               <span>{errors.currentPassword.message}</span>
             </div>
           )}
@@ -142,7 +136,7 @@ export default function PasswordForm() {
             <div>
               {errors.newPassword && (
                 <div className="form-text text-danger mt-1">
-                  <ExclamationCircleFill size={16} className="me-2" />
+                  <i className="bi bi-exclamation-circle-fill me-2"></i>
                   <span>{errors.newPassword.message}</span>
                 </div>
               )}
@@ -154,12 +148,12 @@ export default function PasswordForm() {
               )}
             </div>
             <div className="ms-auto">
-              <InfoCircle
-                size={16}
+              <i
+                className="bi bi-info-circle"
                 data-bs-toggle="popover"
                 data-bs-placement="top"
                 data-bs-content="Include at least one uppercase, one lowercase, one special character, one number and 8 characters long."
-              />
+              ></i>
             </div>
           </div>
         </div>
@@ -175,7 +169,7 @@ export default function PasswordForm() {
           />
           {errors.confirmPassword && (
             <div className="form-text text-danger mt-1">
-              <ExclamationCircleFill size={16} className="me-2" />
+              <i className="bi bi-exclamation-circle-fill me-2"></i>
               <span>{errors.confirmPassword.message}</span>
             </div>
           )}

@@ -2,21 +2,6 @@
 import Avatar from "@/app/components/Avatar";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Bookmark,
-  Briefcase,
-  Calendar2Plus,
-  CameraFill,
-  ChatLeftTextFill,
-  FileEarmarkPdf,
-  Gear,
-  GeoAlt,
-  Lock,
-  PatchCheckFill,
-  PencilFill,
-  PlusLg,
-  ThreeDots,
-} from "react-bootstrap-icons";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friend, FullUser } from "@/app/types/user";
 import { formatDate } from "@/app/utils/dateTime";
@@ -208,7 +193,7 @@ export default function ProfileMainHeader({
             onChange={handleChangeWallpaper}
             hidden
           />
-          <CameraFill size={16} />
+          <i className="bi bi-camera-fill"></i>
           <span>Edit wallpaper</span>
         </label>
       </Fancybox>
@@ -232,7 +217,7 @@ export default function ProfileMainHeader({
                 htmlFor="profilePicture1"
                 className="btn btn-light avatar-camera"
               >
-                <CameraFill size={16} />
+                <i className="bi bi-camera-fill"></i>
                 <input
                   type="file"
                   id="profilePicture1"
@@ -246,7 +231,8 @@ export default function ProfileMainHeader({
 
           <div className="ms-md-4 mt-md-3">
             <h1 className="mb-0 h5">
-              {fullName} <PatchCheckFill className="text-success small" />
+              {fullName}{" "}
+              <i className="bi bi-patch-check-fill text-success small"></i>
             </h1>
             <p>{totalFriends} friends</p>
           </div>
@@ -257,14 +243,14 @@ export default function ProfileMainHeader({
                 type="button"
                 className="btn btn-primary-soft d-flex align-items-center"
               >
-                <PlusLg width={16} height={16} className="me-2" />
+                <i className="bi bi-plus-lg me-2"></i>
                 Add to story
               </button>
               <button
                 type="button"
                 className="btn btn-danger-soft d-flex align-items-center"
               >
-                <PencilFill width={16} height={16} className="me-2" />
+                <i className="bi bi-pencil me-2"></i>
                 Edit profile
               </button>
               <div className="dropdown">
@@ -273,24 +259,24 @@ export default function ProfileMainHeader({
                   className="icon-md btn btn-light p-0"
                   data-bs-toggle="dropdown"
                 >
-                  <ThreeDots />
+                  <i className="bi bi-three-dots"></i>
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Bookmark width={23} height={19} className="pe-2" />
+                      <i className="bi bi-bookmark pe-2"></i>
                       Share profile in a message
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <FileEarmarkPdf width={23} height={19} className="pe-2" />
+                      <i className="bi bi-file-earmark-pdf pe-2"></i>
                       Save your profile to PDF
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Lock width={23} height={19} className="pe-2" />
+                      <i className="bi bi-lock pe-2"></i>
                       Lock profile
                     </Link>
                   </li>
@@ -299,7 +285,7 @@ export default function ProfileMainHeader({
                   </li>
                   <li>
                     <Link className="dropdown-item" href="/settings">
-                      <Gear width={23} height={19} className="pe-2" />
+                      <i className="bi bi-gear pe-2"></i>
                       Profile settings
                     </Link>
                   </li>
@@ -353,7 +339,7 @@ export default function ProfileMainHeader({
                 className="btn btn-light d-flex align-items-center"
                 onClick={() => directMessage(user.id)}
               >
-                <ChatLeftTextFill width={16} height={16} className="me-2" />
+                <i className="bi bi-chat-left-text-fill me-2"></i>
                 <span>Message</span>
               </button>
 
@@ -363,24 +349,24 @@ export default function ProfileMainHeader({
                   className="icon-md btn btn-light p-0"
                   data-bs-toggle="dropdown"
                 >
-                  <ThreeDots />
+                  <i className="bi bi-three-dots"></i>
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Bookmark width={23} height={19} className="pe-2" />
+                      <i className="bi bi-bookmark pe-2"></i>
                       Share profile in a message
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <FileEarmarkPdf width={23} height={19} className="pe-2" />
+                      <i className="bi bi-file-earmark-pdf pe-2"></i>
                       Save your profile to PDF
                     </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Lock width={23} height={19} className="pe-2" />
+                      <i className="bi bi-lock pe-2"></i>
                       Lock profile
                     </Link>
                   </li>
@@ -389,7 +375,7 @@ export default function ProfileMainHeader({
                   </li>
                   <li>
                     <Link className="dropdown-item" href="#">
-                      <Gear width={23} height={19} className="pe-2" />
+                      <i className="bi bi-gear pe-2"></i>
                       Profile settings
                     </Link>
                   </li>
@@ -402,17 +388,19 @@ export default function ProfileMainHeader({
         <ul className="list-inline mb-0 text-center text-md-start mt-3 mt-md-0">
           {user.profile.job && (
             <li className="list-inline-item d-inline-flex align-items-center">
-              <Briefcase className="me-1" /> {user.profile.job}
+              <i className="bi bi-briefcase me-1"></i>
+              {user.profile.job}
             </li>
           )}
           {user.profile.address && (
             <li className="list-inline-item d-inline-flex align-items-center">
-              <GeoAlt className="me-1" /> {user.profile.address}
+              <i className="bi bi-geo-alt me-1"></i>
+              {user.profile.address}
             </li>
           )}
           <li className="list-inline-item d-inline-flex align-items-center">
-            <Calendar2Plus className="me-1" /> Joined on{" "}
-            {formatDate(user.createdAt, { dateStyle: "medium" })}
+            <i className="bi bi-calendar2-plus me-1"></i>
+            Joined on {formatDate(user.createdAt, { dateStyle: "medium" })}
           </li>
         </ul>
       </div>

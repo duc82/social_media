@@ -9,6 +9,7 @@ import postService from "@/app/services/postService";
 import { PostProvider } from "@/app/providers/PostProvider";
 import PostList from "@/app/components/Post/PostList";
 import EditModal from "@/app/components/Post/EditModal";
+import Link from "next/link";
 
 export default async function Home() {
   const { currentUser, token } = await getServerSession();

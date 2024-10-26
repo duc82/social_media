@@ -2,12 +2,6 @@
 
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
-import {
-  BellFill,
-  ChatLeftTextFill,
-  GearFill,
-  LockFill,
-} from "react-bootstrap-icons";
 import NotificationsDropdown from "./NotificationsDropdown";
 import formatName from "@/app/utils/formatName";
 import Avatar from "../Avatar";
@@ -56,7 +50,7 @@ export default function HeaderMenuRight({
           title="Messages"
           className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
         >
-          <ChatLeftTextFill className="fs-6" />
+          <i className="bi bi-chat-left-text-fill fs-6"></i>
           {conversationUnread > 0 && (
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               {conversationUnread > 99 ? "99+" : conversationUnread}
@@ -70,7 +64,7 @@ export default function HeaderMenuRight({
           title="Settings"
           className="nav-link bg-light icon-md btn btn-light p-0"
         >
-          <GearFill className="fs-6" />
+          <i className="bi bi-gear-fill fs-6"></i>
         </Link>
       </li>
       <li className="nav-item ms-2 dropdown">
@@ -81,7 +75,7 @@ export default function HeaderMenuRight({
           data-bs-auto-close="outside"
           className="nav-link bg-light icon-md btn btn-light p-0 position-relative"
         >
-          <BellFill className="fs-6" />
+          <i className="bi bi-bell-fill fs-6"></i>
           <span
             className="position-absolute top-0 p-1 bg-danger rounded-circle"
             style={{ right: "-3px" }}
@@ -133,7 +127,7 @@ export default function HeaderMenuRight({
               title="Settings"
               className="dropdown-item d-flex align-items-center"
             >
-              <GearFill height={19} className="me-2" />
+              <i className="bi bi-gear-fill me-2"></i>
               Settings
             </Link>
           </li>
@@ -143,7 +137,7 @@ export default function HeaderMenuRight({
               title="Privacy & Terms"
               className="dropdown-item d-flex align-items-center"
             >
-              <LockFill height={19} className="me-2" />
+              <i className="bi bi-lock-fill me-2"></i>
               Privacy & Terms
             </Link>
           </li>
