@@ -4,6 +4,7 @@ import "bootstrap-icons/font/bootstrap-icons.min.css";
 import "zuck.js/css";
 import "zuck.js/skins/snapgram";
 import "@/app/assets/scss/globals.scss";
+import "cropperjs/dist/cropper.min.css";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";
 import Toaster from "./libs/Toaster";

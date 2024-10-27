@@ -66,6 +66,9 @@ export class PostsService {
       .leftJoinAndSelect("post.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
       .leftJoinAndSelect("post.files", "files")
+      .loadAllRelationIds({
+        relations: ["likes"],
+      })
       .loadRelationCountAndMap("post.commentCount", "post.comments")
       .where("post.id = :id", { id })
       .getOne();
@@ -138,7 +141,7 @@ export class PostsService {
     return { posts, total, page, limit };
   }
 
-  async getCurrent(currentUserId: string, query: QueryDto) {
+  async getByUserId(userId: string, query: QueryDto) {
     const { page, limit, search } = query;
 
     const skip = (page - 1) * limit;
@@ -179,7 +182,7 @@ export class PostsService {
         "commentCount",
         (qb) => qb.where("commentCount.parentCommentId IS NULL"),
       )
-      .where("post.userId = :userId", { userId: currentUserId })
+      .where("post.userId = :userId", { userId })
       .andWhere("unaccent(post.content) ILIKE unaccent(:search)", {
         search: `%${search}%`,
       })

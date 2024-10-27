@@ -3,7 +3,7 @@
 import { Feeling, PostDto } from "@/app/types/post";
 import { useForm } from "react-hook-form";
 import Avatar from "../Avatar";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import postService from "@/app/services/postService";
 import handlingError from "@/app/utils/error";
@@ -13,7 +13,6 @@ import Dropzone from "./Dropzone";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import { FullUser } from "@/app/types/user";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { POST_ACCESS, postSchema } from "@/app/schemas/post";
 import formatName from "@/app/utils/formatName";
@@ -22,6 +21,7 @@ import TagPeopleModal from "./TagPeopleModal";
 import FeelingActivityModal from "./FeelingActivityModal";
 import usePostContext from "@/app/hooks/usePostContext";
 import VideoPlayer from "@/app/libs/VideoPlayer";
+import EditPhotoModal from "./EditPhotoModal";
 
 export default function CreatePostModal({
   initialActiveDropzone = false,
@@ -31,6 +31,7 @@ export default function CreatePostModal({
   currentUser: FullUser;
 }) {
   const [isActiveDropzone, setActiveDropzone] = useState(false);
+  const [editPhoto, setEditPhoto] = useState<string | null>(null);
   const [files, setFiles] = useState<FilePreview[]>([]);
   const { setPosts } = usePostContext();
   const { data: session } = useSession();
@@ -108,7 +109,7 @@ export default function CreatePostModal({
     setActiveDropzone(initialActiveDropzone);
   }, [initialActiveDropzone]);
 
-  const filePreviews = files.slice(0, 5);
+  const filePreviews = useMemo(() => files.slice(0, 5), [files]);
 
   const fullName = formatName(currentUser.firstName, currentUser.lastName);
 
@@ -123,6 +124,7 @@ export default function CreatePostModal({
         id="createFeelingActivityModal"
         target="#createPostModal"
       />
+      <EditPhotoModal target="#createPostModal" src={editPhoto} />
       <div className="modal fade" id="createPostModal" ref={modalRef}>
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
@@ -208,14 +210,10 @@ export default function CreatePostModal({
                       >
                         <div className="card border-0">
                           {file.type.includes("image") && (
-                            <Image
+                            <img
                               src={file.preview}
                               alt={file.name}
-                              width={0}
-                              height={0}
-                              sizes="100vw"
                               className="card-img object-fit-cover h-auto"
-                              onLoad={() => URL.revokeObjectURL(file.preview)}
                             />
                           )}
 
@@ -236,15 +234,40 @@ export default function CreatePostModal({
                         </div>
                       </div>
                     ))}
-
-                    <button
-                      type="button"
-                      onClick={clearFiles}
-                      className="position-absolute d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm z-index-1"
-                      style={{ height: 30, width: 30, top: 10, right: 12 }}
+                    <div
+                      className="position-absolute d-flex align-items-center justify-content-between z-index-1"
+                      style={{ top: 12, left: 0, padding: "0 12px" }}
                     >
-                      <i className="bi bi-xlg"></i>
-                    </button>
+                      <div>
+                        <button
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editPhotoModal"
+                          onClick={() => setEditPhoto(filePreviews[0].preview)}
+                          className="me-2 px-2 py-1 d-inline-flex aligin-items-center justify-content-center mt-0 rounded-2 bg-white border-0 shadow-sm"
+                        >
+                          <i className="bi bi-pencil-fill me-1"></i>
+                          <span>Edit {files.length > 1 && "All"}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="px-2 py-1 d-inline-flex aligin-items-center justify-content-center mt-0 rounded-2 bg-white border-0 shadow-sm"
+                        >
+                          <i className="bi bi-file-earmark-plus-fill me-1"></i>
+                          <span>Add Photos/Videos</span>
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={clearFiles}
+                        className="d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm"
+                        style={{ height: 30, width: 30 }}
+                      >
+                        <i className="bi bi-x-lg"></i>
+                      </button>
+                    </div>
                   </div>
                 )}
                 <div className="hstack gap-2">

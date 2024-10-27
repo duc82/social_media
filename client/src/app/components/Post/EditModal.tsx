@@ -229,7 +229,7 @@ export default function EditModal() {
                       className="position-absolute d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm z-index-1"
                       style={{ height: 30, width: 30, top: 10, right: 12 }}
                     >
-                      <i className="bi bi-xlg"></i>
+                      <i className="bi bi-x-lg"></i>
                     </button>
                   </div>
                 )}
@@ -274,7 +274,7 @@ export default function EditModal() {
                       className="position-absolute d-flex align-items-center justify-content-center mt-0 rounded-circle bg-white border-0 shadow-sm z-index-1"
                       style={{ height: 30, width: 30, top: 10, right: 12 }}
                     >
-                      <i className="bi bi-xlg"></i>
+                      <i className="bi bi-x-lg"></i>
                     </button>
                   </div>
                 )}

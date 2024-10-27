@@ -12,10 +12,6 @@ export class FilesArrayMimeTypeValidationPipe implements PipeTransform {
       "video/webm",
     ];
 
-    if (!files || !files.length) {
-      throw new BadRequestException("No files uploaded.");
-    }
-
     files.forEach((file) => {
       if (!allowedMimeTypes.includes(file.mimetype)) {
         throw new BadRequestException(

@@ -33,7 +33,6 @@ export class PostsController {
     files: Array<Express.Multer.File>,
     @User("userId") currentUserId: string,
   ) {
-    console.log(files);
     return this.postsService.create(post, files, currentUserId);
   }
 
@@ -42,12 +41,9 @@ export class PostsController {
     return this.postsService.getAll(query);
   }
 
-  @Get("current")
-  async getCurrent(
-    @User("userId") currentUserId: string,
-    @Query() query: QueryDto,
-  ) {
-    return this.postsService.getCurrent(currentUserId, query);
+  @Get(":userId")
+  async getCurrent(@Param("userId") userId: string, @Query() query: QueryDto) {
+    return this.postsService.getByUserId(userId, query);
   }
 
   @Get("comments/:postId")
