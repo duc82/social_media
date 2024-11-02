@@ -111,7 +111,7 @@ export default function SignIn() {
           )}
         </div>
 
-        <div className="mb-3 d-sm-flex justify-content-between">
+        <div className="mb-3 d-flex justify-content-between">
           <FormControl
             {...register("isRemember")}
             type="checkbox"

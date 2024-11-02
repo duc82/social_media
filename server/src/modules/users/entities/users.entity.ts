@@ -22,6 +22,7 @@ import { GroupMember } from "src/modules/groups/entities/group_members.entity";
 import { ConversationMember } from "src/modules/conversations/entities/conversation_members.entity";
 import { UserRole } from "../enums/users.enum";
 import { Blocked } from "./blocked.entity";
+import { Story } from "src/modules/stories/stories.entity";
 
 @Entity({
   name: "users",
@@ -104,6 +105,11 @@ export class User extends BaseEntity {
     cascade: true,
   })
   posts: Post[];
+
+  @OneToMany(() => Story, (story) => story.user, {
+    cascade: true,
+  })
+  stories: Story[];
 
   @Column({
     nullable: true,

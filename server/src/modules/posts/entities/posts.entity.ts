@@ -32,11 +32,6 @@ export class Post extends BaseEntity {
   })
   access: PostAccess;
 
-  @Column({
-    default: false,
-  })
-  isStory: boolean;
-
   @Column("text", { array: true, nullable: true })
   feeling: string[];
 

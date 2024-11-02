@@ -32,6 +32,7 @@ export default function SharePost({ currentUser }: { currentUser: FullUser }) {
               placeholder="Share your thoughts..."
               data-bs-toggle="modal"
               data-bs-target="#createPostModal"
+              readOnly
               onClick={() => setActiveDropzone(false)}
             />
           </form>

@@ -18,7 +18,20 @@ $dropdown-item-padding-x: 1rem;
 
 $font-family-sans-serif: "Inter", sans-serif;
 
+$h1-font-size: 1.4109375rem;
+
+$grid-gutter-width: 3rem;
+
+:root {
+  --bs-heading-color: rgb(30, 32, 34) !important;
+}
+
 @import "bootstrap/scss/bootstrap";
+
+.content {
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+}
 
 .btn-icon {
   position: relative;

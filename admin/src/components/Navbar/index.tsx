@@ -2,16 +2,23 @@ import { Link } from "react-router-dom";
 import "./navbar.scss";
 import logo from "@/assets/logo.svg";
 import { ArrowBarLeft, ArrowBarRight } from "react-bootstrap-icons";
-import { NavbarProps } from "@/types/navbar";
+import { NavbarProps } from "@/types/header";
 import clsx from "clsx";
 import { menus } from "@/data/menus";
 
-export default function Navbar({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
+export default function Navbar({
+  isNavbarOpen,
+  setIsNavbarOpen,
+  isSidebarCollapsed,
+  setIsSidebarCollapsed,
+  isXl,
+}: NavbarProps) {
   return (
     <nav
       className={clsx(
         "navbar navbar-vertical navbar-vertical-fixed navbar-bordered bg-white",
-        isNavbarOpen && "show"
+        isXl && isSidebarCollapsed && "collapsed",
+        !isXl && isNavbarOpen && "show"
       )}
     >
       <div className="navbar-vertical-footer-offset">
@@ -23,12 +30,28 @@ export default function Navbar({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
           type="button"
           className={clsx(
             "navbar-aside-toggler",
-            isNavbarOpen ? "opacity-100" : "opacity-0"
+            !isXl && (isNavbarOpen ? "opacity-100" : "opacity-0")
           )}
-          onClick={() => setIsNavbarOpen((prev) => !prev)}
+          onClick={() =>
+            isXl
+              ? setIsSidebarCollapsed((prev) => !prev)
+              : setIsNavbarOpen((prev) => !prev)
+          }
         >
-          <ArrowBarLeft size={16} className={clsx(!isNavbarOpen && "d-none")} />
-          <ArrowBarRight size={16} className={clsx(isNavbarOpen && "d-none")} />
+          <ArrowBarLeft
+            size={16}
+            className={clsx(
+              isXl && isSidebarCollapsed && "d-none",
+              !isXl && !isNavbarOpen && "d-none"
+            )}
+          />
+          <ArrowBarRight
+            size={16}
+            className={clsx(
+              isXl && !isSidebarCollapsed && "d-none",
+              !isXl && isNavbarOpen && "d-none"
+            )}
+          />
         </button>
         <div className="navbar-vertical-content">
           <ul className="nav nav-pills nav-vertical card-navbar-nav">
@@ -42,10 +65,16 @@ export default function Navbar({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
                       data-bs-target={`#${menu.label}Collapse`}
                       aria-controls={`${menu.label}Collapse`}
                       aria-expanded="false"
-                      className="nav-link dropdown-toggle"
+                      className={clsx(
+                        "nav-link",
+                        isXl && !isSidebarCollapsed && "dropdown-toggle",
+                        !isXl && "dropdown-toggle"
+                      )}
                     >
-                      {menu.icon && <menu.icon className="me-3" />}
-                      <span>{menu.label}</span>
+                      {menu.icon && <menu.icon width={16} height={16} />}
+                      <span className="navbar-link-title ms-3">
+                        {menu.label}
+                      </span>
                     </button>
                     <ul
                       className="nav-collapse collapse"
@@ -64,8 +93,8 @@ export default function Navbar({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
                   </>
                 ) : (
                   <Link to={menu.href || ""} className="nav-link">
-                    {menu.icon && <menu.icon className="me-3" />}
-                    <span>{menu.label}</span>
+                    {menu.icon && <menu.icon width={16} height={16} />}
+                    <span className="navbar-link-title ms-3">{menu.label}</span>
                   </Link>
                 )}
               </li>

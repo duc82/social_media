@@ -3,15 +3,19 @@ import "./header.scss";
 import logo from "@/assets/logo.svg";
 import img6 from "@/assets/img6.jpg";
 import { ArrowBarLeft, ArrowBarRight, Search } from "react-bootstrap-icons";
-import { NavbarProps } from "@/types/navbar";
+import { HeaderProps } from "@/types/header";
 import clsx from "clsx";
 
-export default function Header({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
+export default function Header({
+  isNavbarOpen,
+  setIsNavbarOpen,
+  isSidebarCollapsed,
+}: HeaderProps) {
   return (
     <header
       className={clsx(
         "navbar navbar-expand-lg navbar-fixed navbar-height navbar-container navbar-bordered bg-white",
-        !isNavbarOpen && "navbar-vertical-collapsed"
+        isSidebarCollapsed && "navbar-vertical-collapsed"
       )}
     >
       <div className="navbar-nav-wrap">
@@ -42,11 +46,12 @@ export default function Header({ isNavbarOpen, setIsNavbarOpen }: NavbarProps) {
             </button>
           </div>
         </div>
+
         <div style={{ marginLeft: "auto" }}>
           <ul className="navbar-nav">
-            <li className="nav-item d-none d-sm-inline-block"></li>
-            <li className="nav-item d-none d-sm-inline-block"></li>
-            <li className="nav-item d-none d-sm-inline-block"></li>
+            <li className="nav-item"></li>
+            <li className="nav-item"></li>
+            <li className="nav-item"></li>
             <li className="nav-item">
               <div className="dropdown">
                 <button

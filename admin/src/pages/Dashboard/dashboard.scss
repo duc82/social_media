@@ -4,12 +4,19 @@
 
 .main {
   padding-top: 3.875rem;
+  transition: padding-left 0.2s ease;
 
   @include media-breakpoint-up(xl) {
     padding-left: 16.25rem;
 
     &.navbar-vertical-collapsed {
-      padding-left: 4.25rem;
+      padding-left: 5.75rem;
     }
+  }
+
+  .dashboard-title {
+    padding-bottom: 2rem;
+    margin-bottom: 2.25rem;
+    border-bottom: 0.0625rem solid rgba(231, 234, 243, 0.7);
   }
 }

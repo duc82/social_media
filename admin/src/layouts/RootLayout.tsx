@@ -8,15 +8,25 @@ import { Outlet } from "react-router-dom";
 export default function RootLayout() {
   const width = useResize();
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
-  const [isNavbarMini, setIsNavbarMini] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const isXl = width >= 1200;
 
   return (
     <>
-      <Header isNavbarOpen={isNavbarOpen} setIsNavbarOpen={setIsNavbarOpen} />
+      <Header
+        isNavbarOpen={isNavbarOpen}
+        setIsNavbarOpen={setIsNavbarOpen}
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
 
-      <Navbar isNavbarOpen={isNavbarOpen} setIsNavbarOpen={setIsNavbarOpen} />
+      <Navbar
+        isNavbarOpen={isNavbarOpen}
+        setIsNavbarOpen={setIsNavbarOpen}
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+        isXl={isXl}
+      />
 
       {!isXl && (
         <div
@@ -24,8 +34,12 @@ export default function RootLayout() {
           onClick={() => setIsNavbarOpen((prev) => !prev)}
         ></div>
       )}
+
       <main
-        className={clsx("main", !isNavbarOpen && "navbar-vertical-collapsed")}
+        className={clsx(
+          "main",
+          isSidebarCollapsed && "navbar-vertical-collapsed"
+        )}
       >
         <Outlet />
       </main>

@@ -6,11 +6,19 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 4000,
+    port: 4953,
     open: true,
     host: true,
   },
-
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+        quietDeps: true,
+        silenceDeprecations: ["import"],
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {

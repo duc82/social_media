@@ -9,15 +9,25 @@
   height: 100%;
   z-index: 100;
   width: 16.25rem;
+
   transform: translateX(-16.25rem);
   transition: transform 0.2s ease;
 
   @include media-breakpoint-up(xl) {
+    transition: width 0.2s ease;
     transform: translateX(0);
   }
 
   &.show {
     transform: translateX(0);
+  }
+
+  &.collapsed {
+    width: 5.75rem;
+
+    .navbar-link-title {
+      display: none;
+    }
   }
 }
 
@@ -52,6 +62,15 @@
     position: absolute;
     top: 0.734375rem;
     right: -1.203125rem;
+  }
+
+  .nav-link {
+    margin-bottom: 0.25rem;
+    padding: 0.5rem 0.875rem;
+  }
+
+  &.navbar-bordered {
+    border-width: 0 0.0625rem 0 0;
   }
 }
 
