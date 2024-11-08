@@ -6,13 +6,9 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
-import { FirebaseService } from "./modules/firebase/firebase.service";
-import { cert, ServiceAccount } from "firebase-admin/app";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const firebaseService = app.get(FirebaseService);
 
   const allowedOrigin = [
     process.env.CLIENT_URL,

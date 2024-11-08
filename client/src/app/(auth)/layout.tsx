@@ -10,13 +10,9 @@ import AuthDecoration from "../components/Decoration/AuthDecoration";
 import BackgroundDecoration from "../components/Decoration/BackgroundDecoration";
 import { auth } from "../api/auth/[...nextauth]/auth";
 import { redirect } from "next/navigation";
-import React from "react";
+import { PropsWithChildren } from "react";
 
-export default async function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AuthLayout({ children }: PropsWithChildren) {
   const session = await auth();
 
   if (session) {

@@ -1,0 +1,8 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+@each $key, $value in $theme-colors {
+  .bg-soft-#{$key} {
+    background-color: rgba(var(--bs-#{$key}-rgb), 0.1) !important;
+  }
+}

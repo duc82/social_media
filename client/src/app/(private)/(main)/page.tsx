@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Stories from "@/app/components/Stories";
 import SharePost from "@/app/components/Post/SharePost";
 import RightSidebar from "@/app/components/Home/Sidebar/RightSidebar";
@@ -9,12 +7,17 @@ import postService from "@/app/services/postService";
 import { PostProvider } from "@/app/providers/PostProvider";
 import PostList from "@/app/components/Post/PostList";
 import EditModal from "@/app/components/Post/EditModal";
-import Link from "next/link";
+import CreateStory from "@/app/components/Stories/CreateStory";
+import userService from "@/app/services/userService";
 
 export default async function Home() {
   const { currentUser, token } = await getServerSession();
 
   const { posts, limit, total } = await postService.getAll(token);
+
+  const { users: userStories } = await userService.getStories(token, {
+    tags: ["userStories"],
+  });
 
   return (
     <div className="row g-4">
@@ -23,26 +26,9 @@ export default async function Home() {
       <div className="col-md-8 col-lg-6 vstack gap-4">
         {/* Story */}
         <div className="d-flex gap-2 mb-n3">
-          <div className="position-relative">
-            <div
-              className="card border border-2 border-dashed px-4 px-sm-5 shadow-none d-flex align-items-center justify-content-center text-center"
-              style={{ height: "150px" }}
-            >
-              <div>
-                <button
-                  type="button"
-                  className="stretched-link btn btn-light rounded-circle icon-md"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </button>
-                <h6 className="mt-2 mb-0 small">
-                  Post a<br /> Story
-                </h6>
-              </div>
-            </div>
-          </div>
+          <CreateStory />
 
-          <Stories />
+          <Stories initialUserStories={userStories} />
         </div>
 
         <PostProvider initialPosts={posts}>

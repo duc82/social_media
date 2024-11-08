@@ -1,5 +1,6 @@
 import { Options } from "../types";
 import { ChangePasswordDto } from "../types/auth";
+import { UserStoriesResponse } from "../types/story";
 import type {
   FriendsResponse,
   Friend,
@@ -48,6 +49,21 @@ const userService = {
         Authorization: `Bearer ${token}`,
       },
     });
+  },
+
+  getStories: async (token: string, options?: Options) => {
+    const { limit = 20, page = 1 } = options || {};
+    return apiRequest<UserStoriesResponse>(
+      `/users/stories?limit=${limit}&page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        next: {
+          tags: options?.tags,
+        },
+      }
+    );
   },
 
   getBlocked: async (token: string, options?: Options) => {

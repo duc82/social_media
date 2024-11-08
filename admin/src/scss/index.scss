@@ -16,17 +16,24 @@ $dropdown-link-hover-bg: rgba(189, 197, 209, 0.2);
 $dropdown-item-padding-y: 0.5rem;
 $dropdown-item-padding-x: 1rem;
 
+$card-border-color: rgba(231, 234, 243, 0.7);
+
 $font-family-sans-serif: "Inter", sans-serif;
 
 $h1-font-size: 1.4109375rem;
+$h2-font-size: 1.3125rem;
 
 $grid-gutter-width: 3rem;
+
+@import "bootstrap/scss/bootstrap";
 
 :root {
   --bs-heading-color: rgb(30, 32, 34) !important;
 }
 
-@import "bootstrap/scss/bootstrap";
+a {
+  text-decoration: none !important;
+}
 
 .content {
   padding-top: 1.75rem;

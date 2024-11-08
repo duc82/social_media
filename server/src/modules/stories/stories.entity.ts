@@ -7,8 +7,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { StoryType } from "./stories.enum";
 import { User } from "../users/entities/users.entity";
+import { FileType } from "src/enums/file.enum";
 
 @Entity({
   name: "stories",
@@ -20,8 +20,8 @@ export class Story extends BaseEntity {
   @Column({ nullable: false })
   content: string;
 
-  @Column({ type: "enum", enum: StoryType })
-  type: StoryType;
+  @Column({ type: "enum", enum: FileType })
+  type: FileType;
 
   @ManyToOne(() => User, (user) => user.stories, {
     onDelete: "CASCADE",

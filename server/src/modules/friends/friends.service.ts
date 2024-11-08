@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { QueryDto } from "src/shared/dto/query.dto";
-import { UserService } from "src/modules/users/users.service";
 import { And, DataSource, In, IsNull, Not, Raw } from "typeorm";
 import { Friend } from "./friends.entity";
 import { User } from "src/modules/users/entities/users.entity";
@@ -8,10 +7,7 @@ import { FriendStatus } from "./friends.enum";
 
 @Injectable()
 export class FriendsService {
-  constructor(
-    private dataSource: DataSource,
-    private userService: UserService,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
   async getSuggestedFriends(currentUserId: string, query: QueryDto) {
     const { page, limit, search } = query;

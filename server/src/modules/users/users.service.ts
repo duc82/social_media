@@ -4,16 +4,19 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
-import { DataSource, FindOneOptions, ILike, IsNull, Not } from "typeorm";
+import { DataSource, FindOneOptions, In, IsNull, LessThan, Not } from "typeorm";
 import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
 import { Blocked } from "./entities/blocked.entity";
+import { FriendsService } from "../friends/friends.service";
+import { FriendStatus } from "../friends/friends.enum";
 
 @Injectable()
 export class UserService {
   constructor(
     private dataSource: DataSource,
+    private friendService: FriendsService,
     private firebaseService: FirebaseService,
   ) {}
 
@@ -81,6 +84,43 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async getStories(id: string, query: QueryDto) {
+    const { page, limit } = query;
+
+    const skip = (page - 1) * limit;
+
+    const { friends } = await this.friendService.getFriends(
+      id,
+      FriendStatus.ACCEPTED,
+      query,
+    );
+
+    const friendIds = friends.map((friend) => friend.id);
+    friendIds.push(id);
+
+    const [users, total] = await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder("u")
+      .leftJoinAndSelect("u.profile", "profile")
+      .leftJoinAndSelect("u.stories", "stories")
+      .whereInIds(friendIds)
+      .andWhere("u.createdAt < :time", { time: new Date() })
+      .groupBy("u.id")
+      .addGroupBy("profile.id")
+      .addGroupBy("stories.id")
+      .having("COUNT(stories.id) > 0")
+      .take(limit)
+      .skip(skip)
+      .getManyAndCount();
+
+    return {
+      users,
+      total,
+      limit,
+      skip,
+    };
   }
 
   async block(id: string, blockedId: string) {

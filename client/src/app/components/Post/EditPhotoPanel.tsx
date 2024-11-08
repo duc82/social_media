@@ -42,6 +42,7 @@ export default function EditPhotoPanel({
       movable: false,
       autoCropArea: 1,
     });
+
     setCropper(cropper);
 
     return () => {

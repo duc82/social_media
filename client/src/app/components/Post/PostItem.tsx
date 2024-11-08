@@ -259,8 +259,7 @@ export default function PostItem({
                         width={0}
                         height={0}
                         sizes="100vw"
-                        className="card-img object-fit-cover"
-                        style={{ height: 300 }}
+                        className="card-img object-fit-cover img-fluid"
                       />
                     </Link>
                   )}

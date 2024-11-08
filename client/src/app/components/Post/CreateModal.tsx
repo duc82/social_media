@@ -36,6 +36,7 @@ export default function CreatePostModal({
   const [tab, setTab] = useState<"home" | "photosVideos" | "emoji">("home");
   const [isActiveDropzone, setActiveDropzone] = useState(false);
   const [files, setFiles] = useState<FilePreview[]>([]);
+  const [previewHeight, setPreviewHeight] = useState(0);
   const { setPosts } = usePostContext();
   const { data: session } = useSession();
   const token = session?.token!;
@@ -141,7 +142,7 @@ export default function CreatePostModal({
                 ></button>
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="modal-body" style={{ maxHeight: 300 }}>
+                <div className="modal-body" style={{ maxHeight: 768 }}>
                   <div className="d-flex align-items-center mb-3">
                     <div className="avatar avatar-xs me-2">
                       <Avatar
@@ -193,7 +194,10 @@ export default function CreatePostModal({
                     {...register("content")}
                   ></textarea>
                   {isActiveDropzone && !files.length && (
-                    <Dropzone setFiles={setFiles} />
+                    <Dropzone
+                      setFiles={setFiles}
+                      setPreviewHeight={setPreviewHeight}
+                    />
                   )}
                   {files.length > 0 && (
                     <div className="row g-1 mb-3 position-relative">
@@ -210,12 +214,15 @@ export default function CreatePostModal({
                             files.length >= 5 && (index > 1 ? "col-4" : "col-6")
                           )}
                         >
-                          <div className="card border-0">
+                          <div
+                            className="card border-0"
+                            style={{ height: previewHeight }}
+                          >
                             {file.type.includes("image") && (
                               <img
                                 src={file.preview}
                                 alt={file.name}
-                                className="card-img object-fit-cover h-auto"
+                                className="card-img object-fit-cover h-100"
                               />
                             )}
 

@@ -38,6 +38,11 @@ export class UsersController {
     return this.usersService.getBlocked(userId, query);
   }
 
+  @Get("stories")
+  async getStories(@User("userId") userId: string, @Query() query: QueryDto) {
+    return this.usersService.getStories(userId, query);
+  }
+
   @Get(":id")
   async getById(@Param("id", new ParseUUIDPipe()) id: string) {
     return this.usersService.getById(id);
@@ -49,8 +54,8 @@ export class UsersController {
   }
 
   @Get("current")
-  async getCurrent(@User("userId") currentUserId: string) {
-    return this.usersService.getCurrent(currentUserId);
+  async getCurrent(@User("userId") userId: string) {
+    return this.usersService.getCurrent(userId);
   }
 
   @Post("block")
