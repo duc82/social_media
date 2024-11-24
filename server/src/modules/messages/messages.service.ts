@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, FindManyOptions, FindOneOptions, IsNull } from "typeorm";
+import { DataSource, FindManyOptions, FindOneOptions } from "typeorm";
 import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
 import { UserService } from "src/modules/users/users.service";

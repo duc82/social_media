@@ -1,3 +1,47 @@
+.avatar-uploader {
+  position: relative;
+  .avatar-edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 0;
+      border-radius: 100%;
+      background: #eff2f6;
+      border: 1px solid transparent;
+      box-shadow: 0px 0px 20px rgba(93, 83, 84, 0.15);
+      cursor: pointer;
+      font-weight: normal;
+      transition: all 0.3s ease-in-out;
+
+      svg {
+        transition: all 0.3s ease-in-out;
+      }
+
+      &:hover {
+        background: $primary;
+        border-color: $primary;
+
+        svg {
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+.smaller {
+  font-size: 60%;
+  font-weight: 500;
+}
+
 .icon {
   display: inline-flex;
   align-items: center;

@@ -12,6 +12,7 @@ export interface PaginationLimit {
 export interface Filter {
   search?: string;
   userId?: string;
+  exclude?: string;
 }
 
 export interface Options extends PaginationLimit, Filter {
@@ -19,3 +20,7 @@ export interface Options extends PaginationLimit, Filter {
 }
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+
+export type SearchParams = Promise<{
+  [key: string]: string | string[] | undefined;
+}>;

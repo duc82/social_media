@@ -106,9 +106,9 @@ export default function Header({
 
                   <div className="dropdown-divider"></div>
 
-                  <a className="dropdown-item" href="#">
+                  <Link className="dropdown-item" to="/signout">
                     Sign out
-                  </a>
+                  </Link>
                 </div>
               </div>
             </li>

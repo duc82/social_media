@@ -9,6 +9,7 @@ import useSocketContext from "@/app/hooks/useSocketContext";
 import { ConversationPayload } from "@/app/types/socket";
 import { useParams, useRouter } from "next/navigation";
 import { revalidateTag } from "@/app/actions/indexAction";
+import useBootstrapContext from "@/app/hooks/useBootstrapContext";
 
 interface ChatSidebarProps {
   conversations: Conversation[];
@@ -24,6 +25,7 @@ export default function ChatSidebar({
   const { socket } = useSocketContext();
   const params = useParams();
   const router = useRouter();
+  const bootstrap = useBootstrapContext();
 
   useEffect(() => {
     if (!socket) return;
@@ -71,8 +73,12 @@ export default function ChatSidebar({
               <button
                 type="button"
                 className="icon-md rounded-circle btn btn-sm btn-primary-soft nav-link"
-                data-bs-toggle="modal"
-                data-bs-target="#addChatModal"
+                onClick={() => {
+                  const toastEl = document.getElementById("createChatToast");
+                  if (!toastEl) return;
+                  const toastBs = bootstrap.Toast.getOrCreateInstance(toastEl);
+                  toastBs.show();
+                }}
               >
                 <i className="bi bi-pencil-square"></i>
               </button>

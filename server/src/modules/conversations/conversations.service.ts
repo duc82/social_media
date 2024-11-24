@@ -5,17 +5,26 @@ import {
 } from "@nestjs/common";
 import { DataSource, FindOneOptions, In, IsNull, Not } from "typeorm";
 import { Conversation } from "./entities/conversations.entity";
-import { CreateConversationDto } from "./conversations.dto";
+import {
+  CreateConversationDto,
+  CreateConversationWithMessageDto,
+} from "./conversations.dto";
 import { User } from "src/modules/users/entities/users.entity";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { ConversationMember } from "./entities/conversation_members.entity";
 import { MemberRole } from "src/enums/role.enum";
 import { Message } from "../messages/entities/messages.entity";
 import { MessageFile } from "../messages/entities/message_files.entity";
+import { UserService } from "../users/users.service";
+import { MessagesService } from "../messages/messages.service";
 
 @Injectable()
 export class ConversationsService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly userService: UserService,
+    private readonly messageService: MessagesService,
+  ) {}
 
   async findOne(options?: FindOneOptions<Conversation>) {
     return this.dataSource.getRepository(Conversation).findOne(options);
@@ -142,7 +151,7 @@ export class ConversationsService {
   }
 
   async create(body: CreateConversationDto) {
-    const { members, name, image } = body;
+    const { members, name } = body;
 
     const users = await this.dataSource.getRepository(User).find({
       where: { id: In(members) },
@@ -154,7 +163,6 @@ export class ConversationsService {
 
     const conversation = this.dataSource.getRepository(Conversation).create({
       name,
-      image,
       members: members.map((id, i) => ({
         user: { id },
         role: i === 0 ? MemberRole.ADMIN : MemberRole.MEMBER,
@@ -163,6 +171,26 @@ export class ConversationsService {
     await conversation.save();
 
     return { message: "Conversation created successfully", conversation };
+  }
+
+  async createWithMessage(
+    body: CreateConversationWithMessageDto,
+    userId: string,
+  ) {
+    const userIds = [userId, ...body.members];
+
+    const conversation = await this.getByUsersOrCreate(userIds);
+
+    await this.messageService.create(
+      {
+        content: body.content,
+        files: body.files,
+        conversation: conversation.id,
+      },
+      userId,
+    );
+
+    return conversation;
   }
 
   async countUnread(currentUserId: string) {

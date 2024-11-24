@@ -1,4 +1,4 @@
-import { PersonPlusFill, Search } from "react-bootstrap-icons";
+import { Download, PersonPlusFill, Search } from "react-bootstrap-icons";
 import CountUp from "react-countup";
 import { Link } from "react-router-dom";
 
@@ -167,7 +167,8 @@ export default function UsersOverview() {
               data-bs-toggle="dropdown"
               aria-expanded="true"
             >
-              <i className="bi-download me-2"></i> Export
+              <Download className="me-2" />
+              Export
             </button>
 
             <div
@@ -175,34 +176,7 @@ export default function UsersOverview() {
               aria-labelledby="usersExportDropdown"
               data-popper-placement="top-start"
             >
-              <span className="dropdown-header">Options</span>
-              <a id="export-copy" className="dropdown-item" href="javascript:;">
-                <img
-                  className="avatar avatar-xss avatar-4x3 me-2"
-                  src="./assets/svg/illustrations/copy-icon.svg"
-                  alt="Image Description"
-                />
-                Copy
-              </a>
-              <a
-                id="export-print"
-                className="dropdown-item"
-                href="javascript:;"
-              >
-                <img
-                  className="avatar avatar-xss avatar-4x3 me-2"
-                  src="./assets/svg/illustrations/print-icon.svg"
-                  alt="Image Description"
-                />
-                Print
-              </a>
-              <div className="dropdown-divider"></div>
-              <span className="dropdown-header">Download options</span>
-              <a
-                id="export-excel"
-                className="dropdown-item"
-                href="javascript:;"
-              >
+              <a id="export-excel" className="dropdown-item">
                 <img
                   className="avatar avatar-xss avatar-4x3 me-2"
                   src="./assets/svg/brands/excel-icon.svg"
@@ -210,7 +184,7 @@ export default function UsersOverview() {
                 />
                 Excel
               </a>
-              <a id="export-csv" className="dropdown-item" href="javascript:;">
+              <a id="export-csv" className="dropdown-item">
                 <img
                   className="avatar avatar-xss avatar-4x3 me-2"
                   src="./assets/svg/components/placeholder-csv-format.svg"
@@ -218,7 +192,7 @@ export default function UsersOverview() {
                 />
                 .CSV
               </a>
-              <a id="export-pdf" className="dropdown-item" href="javascript:;">
+              <a id="export-pdf" className="dropdown-item">
                 <img
                   className="avatar avatar-xss avatar-4x3 me-2"
                   src="./assets/svg/brands/pdf-icon.svg"

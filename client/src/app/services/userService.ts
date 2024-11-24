@@ -17,8 +17,8 @@ export interface GetFriendsOptions extends Omit<Options, "userId"> {}
 
 const userService = {
   getAll: async (token: string, options?: Options) => {
-    const { limit = 20, page = 1, search = "" } = options || {};
-    const query = `?limit=${limit}&page=${page}&search=${search}`;
+    const { limit = 20, page = 1, search = "", exclude = "[]" } = options || {};
+    const query = `?limit=${limit}&page=${page}&search=${search}&exclude=${exclude}`;
 
     return apiRequest<UsersReponse>(`/users${query}`, {
       headers: {

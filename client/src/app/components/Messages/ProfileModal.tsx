@@ -3,7 +3,6 @@ import Fancybox from "@/app/libs/FancyBox";
 import { FullUser } from "@/app/types/user";
 import Image from "next/image";
 import Link from "next/link";
-import wallpaper_initial from "@/app/assets/images/wallpaper.jpg";
 import formatName from "@/app/utils/formatName";
 import Avatar from "../Avatar";
 import { directMessage } from "@/app/actions/conversationAction";
@@ -40,24 +39,25 @@ export default function ProfileModal({ user }: ProfileModalProps) {
             ></button>
           </div>
           <div className="modal-body p-0">
-            <Fancybox style={{ height: 170 }}>
-              <Link
-                href={user?.profile.wallpaper || wallpaper_initial.src}
-                data-fancybox
-                data-caption={fullName}
-                className="d-block h-100 position-relative"
-              >
-                <Image
-                  src={user?.profile.wallpaper || wallpaper_initial}
-                  alt="Wallpaper"
-                  className="object-fit-cover"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </Link>
-            </Fancybox>
-
+            {user?.profile.wallpaper && (
+              <Fancybox style={{ height: 170 }}>
+                <Link
+                  href={user?.profile.wallpaper}
+                  data-fancybox
+                  data-caption={fullName}
+                  className="d-block h-100 position-relative"
+                >
+                  <Image
+                    src={user?.profile.wallpaper}
+                    alt="Wallpaper"
+                    className="object-fit-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </Link>
+              </Fancybox>
+            )}
             <div className="px-3">
               <Fancybox className="d-flex align-items-center text-center text-md-start mt-n2 mb-3">
                 <Link

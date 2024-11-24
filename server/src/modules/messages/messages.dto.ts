@@ -11,7 +11,7 @@ import {
 import { Type } from "class-transformer";
 import { FileType } from "src/enums/file.enum";
 
-class MessageFileDto {
+export class MessageFileDto {
   @IsString()
   url: string;
 
@@ -32,7 +32,7 @@ export class CreateMessageDto {
   @Type(() => MessageFileDto)
   files: MessageFileDto[] = [];
 
-  @IsUUID()
   @IsNotEmpty()
+  @IsUUID()
   conversation: string;
 }

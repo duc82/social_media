@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
-import { DataSource, FindOneOptions, In, IsNull, LessThan, Not } from "typeorm";
+import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
 import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
@@ -50,22 +50,27 @@ export class UserService {
     return user;
   }
 
-  async getAll(currentUserId: string, query: QueryDto) {
-    const { search, page, limit } = query;
+  async getAll(userId: string, query: QueryDto) {
+    const { search, page, limit, exclude } = query;
 
     const skip = (page - 1) * limit;
+
+    const excludeIds = JSON.parse(exclude);
 
     const [users, total] = await this.dataSource
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
-      .where(
+      .where("u.id != :userId", { userId })
+      .andWhere(excludeIds.length > 0 && "u.id NOT IN (:...ids)", {
+        ids: excludeIds,
+      })
+      .andWhere(
         'unaccent(u."firstName") ILIKE unaccent(:search) OR unaccent(u."lastName") ILIKE unaccent(:search)',
         {
           search: `%${search}%`,
         },
       )
-
       .skip(skip)
       .take(limit)
       .getManyAndCount();

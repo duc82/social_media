@@ -26,11 +26,8 @@ export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
   @Get()
-  async getAll(
-    @User("userId") currentUserId: string,
-    @Query() query: QueryDto,
-  ) {
-    return this.usersService.getAll(currentUserId, query);
+  async getAll(@User("userId") userId: string, @Query() query: QueryDto) {
+    return this.usersService.getAll(userId, query);
   }
 
   @Get("blocked")

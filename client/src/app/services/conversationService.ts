@@ -26,6 +26,17 @@ const conversationService = {
     });
   },
 
+  create: async (formData: FormData, token: string) => {
+    return apiRequest<Conversation>(`/conversations/create-with-message`, {
+      method: "POST",
+      isFormData: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
   getByUser: async (id: string, token: string) => {
     return apiRequest<Conversation>(`/conversations/by-user/${id}`, {
       headers: {

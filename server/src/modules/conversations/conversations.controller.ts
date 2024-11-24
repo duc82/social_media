@@ -11,7 +11,10 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ConversationsService } from "./conversations.service";
-import { CreateConversationDto } from "./conversations.dto";
+import {
+  CreateConversationDto,
+  CreateConversationWithMessageDto,
+} from "./conversations.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { AuthGuard } from "src/common/guards/auth.guard";
 import { User } from "src/common/decorators/user.decorator";
@@ -50,6 +53,14 @@ export class ConversationsController {
   @Post("create")
   async create(@Body() body: CreateConversationDto) {
     return this.conversationsService.create(body);
+  }
+
+  @Post("create-with-message")
+  async createWithMessage(
+    @Body() body: CreateConversationWithMessageDto,
+    @User("userId") userId: string,
+  ) {
+    return this.conversationsService.createWithMessage(body, userId);
   }
 
   @Put("remove/:id")
