@@ -4,43 +4,65 @@ import Link from "next/link";
 import Avatar from "../Avatar";
 import formatName from "@/app/utils/formatName";
 import { formatDate, formatDateTime } from "@/app/utils/dateTime";
-import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  KeyboardEvent,
+  SetStateAction,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FullUser } from "@/app/types/user";
-import { SendFill } from "react-bootstrap-icons";
 import postService from "@/app/services/postService";
 import { useSession } from "next-auth/react";
 import SpinnerDots from "../SpinnerDots";
+import clsx from "clsx";
 
 export default function PostComment({
   comment,
   currentUser,
   setComments,
+  initialLimit = 3,
   paddingLeft = "0",
 }: {
   comment: Comment;
   currentUser: FullUser;
   setComments: Dispatch<SetStateAction<Comment[]>>;
+  initialLimit?: number;
   paddingLeft?: string;
 }) {
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [isHaveSeenReplies, setIsHaveSeenReplies] = useState<boolean>(false);
-  const replyTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const [replies, setReplies] = useState<Comment[]>([]);
   const [totalReplies, setTotalReplies] = useState<number>(0);
   const [pageReplies, setPageReplies] = useState<number>(0);
+  const [limitReplies, setLimitReplies] = useState<number>(initialLimit);
+  const replyTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const { data } = useSession();
   const token = data?.token;
 
   const handleLikeComment = async () => {
     if (!token) return;
-    const { comment: newComment } = await postService.likeComment(
-      comment.id,
-      token
-    );
+    await postService.likeComment(comment.id, token);
     setComments((prev) => {
-      const index = prev.findIndex((c) => c.id === comment.id);
-      if (index !== -1) {
-        prev[index] = newComment;
+      const idx = prev.findIndex((c) => c.id === comment.id);
+      if (idx !== -1) {
+        prev[idx].likes.push(currentUser);
+      }
+      return [...prev];
+    });
+  };
+
+  const handleUnlikeComment = async () => {
+    if (!token) return;
+    await postService.unlikeComment(comment.id, token);
+    setComments((prev) => {
+      const idx = prev.findIndex((c) => c.id === comment.id);
+      if (idx !== -1) {
+        prev[idx].likes = prev[idx].likes.filter(
+          (user) => user.id !== currentUser.id
+        );
       }
       return [...prev];
     });
@@ -49,27 +71,51 @@ export default function PostComment({
   const handleReplyComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const content = replyTextAreaRef.current?.value;
+    if (!content) return;
+    await replyComment(content);
+  };
 
-    if (!token || !content) return;
+  const replyComment = async (content: string) => {
+    if (!token) return;
+    try {
+      const { comment: newComment } = await postService.replyComment(
+        comment.id,
+        content,
+        token
+      );
+      setReplies((prev) => [newComment, ...prev]);
+      setTotalReplies((prev) => prev + 1);
+      setLimitReplies((prev) => prev + 1);
+      replyTextAreaRef.current!.value = "";
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const { comment: newComment } = await postService.replyComment(
-      comment.id,
-      content,
-      token
-    );
-    setReplies((prev) => [newComment, ...prev]);
-    replyTextAreaRef.current!.value = "";
+  const handleTextareaKeyDown = async (
+    e: KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      const content = e.currentTarget.value;
+      if (content) {
+        await replyComment(content);
+      }
+    }
   };
 
   const getReplies = async () => {
     if (!token) return;
 
-    const page = pageReplies + 1;
+    const newPage = pageReplies + 1;
 
-    const { comments, total } = await postService.getReplies(
+    const { comments, total, page } = await postService.getReplies(
       comment.id,
       token,
-      { page }
+      {
+        page: newPage,
+        limit: limitReplies,
+      }
     );
     setReplies((prev) => [...prev, ...comments]);
     setTotalReplies(total);
@@ -78,6 +124,10 @@ export default function PostComment({
   };
 
   const fullName = formatName(comment.user.firstName, comment.user.lastName);
+  const isLiked = useMemo(
+    () => comment.likes.some((user) => user.id === currentUser.id),
+    [comment, currentUser]
+  );
 
   return (
     <div className="comment-item" key={comment.id} style={{ paddingLeft }}>
@@ -121,10 +171,10 @@ export default function PostComment({
             <li className="nav-item">
               <button
                 type="button"
-                className="nav-link"
-                onClick={handleLikeComment}
+                className={clsx("nav-link", isLiked && "active")}
+                onClick={isLiked ? handleUnlikeComment : handleLikeComment}
               >
-                Like ({comment.likeCount})
+                {isLiked ? "Liked" : "Like"} ({comment.likes.length})
               </button>
             </li>
             <li className="nav-item">
@@ -152,6 +202,7 @@ export default function PostComment({
           comment={reply}
           currentUser={currentUser}
           setComments={setReplies}
+          initialLimit={limitReplies}
           paddingLeft="calc(2.1875rem + .5rem)"
         />
       ))}
@@ -191,6 +242,7 @@ export default function PostComment({
               name="content"
               ref={replyTextAreaRef}
               rows={1}
+              onKeyDown={handleTextareaKeyDown}
               onInput={(e) => {
                 e.currentTarget.style.height = "0px";
                 e.currentTarget.style.height =
@@ -207,7 +259,7 @@ export default function PostComment({
                 type="submit"
                 className="nav-link bg-transparent px-3 border-0"
               >
-                <SendFill />
+                <i className="bi bi-send-fill"></i>
               </button>
             </div>
           </form>

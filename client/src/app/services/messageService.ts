@@ -1,5 +1,5 @@
 import { Options } from "../types";
-import { CreateMessageDto, Message, MessagesResponse } from "../types/message";
+import { Message, MessagesResponse } from "../types/message";
 import apiRequest from "./api";
 
 const messageService = {
@@ -31,13 +31,14 @@ const messageService = {
     );
   },
 
-  async send(body: CreateMessageDto, token: string) {
+  async send(formData: FormData, token: string) {
     return apiRequest<Message>("/messages/create", {
       method: "POST",
-      body: JSON.stringify(body),
+      body: formData,
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      isFormData: true,
     });
   },
 };

@@ -1,19 +1,20 @@
 "use client";
 import { FilePreview } from "@/app/types";
 import React from "react";
-import { Images } from "react-bootstrap-icons";
 import { useDropzone } from "react-dropzone";
 
 interface DropzoneProps {
   setFiles: React.Dispatch<React.SetStateAction<FilePreview[]>>;
   maxFiles?: number;
   maxSize?: number;
+  setPreviewHeight: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function Dropzone({
   setFiles,
   maxFiles,
   maxSize,
+  setPreviewHeight,
 }: DropzoneProps) {
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -22,14 +23,19 @@ export default function Dropzone({
     },
     maxFiles,
     maxSize,
-    onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
+    onDrop: async (acceptedFiles) => {
+      let height = Infinity;
+      acceptedFiles.forEach((file) => {
+        const preview = URL.createObjectURL(file);
+        const image = new Image();
+        image.src = preview;
+        image.onload = () => {
+          height = Math.min(height, image.height);
+          setPreviewHeight(height);
+        };
+
+        setFiles((prev) => [...prev, Object.assign(file, { preview })]);
+      });
     },
   });
 
@@ -41,7 +47,7 @@ export default function Dropzone({
       <div {...getRootProps({ className: "dropzone" })}>
         <input {...getInputProps()} />
         <div className="dz-message">
-          <Images className="display-3" />
+          <i className="bi bi-images display-3"></i>
           <p>Drag here or click to upload photo/video.</p>
         </div>
       </div>

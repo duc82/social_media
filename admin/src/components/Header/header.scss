@@ -5,19 +5,42 @@
 .navbar-nav-wrap {
   display: flex;
   flex-wrap: wrap;
-  flex-basis: 100%;
   align-items: center;
+  width: 100%;
+
+  .navbar-aside-toggler {
+    @include media-breakpoint-up(xl) {
+      display: none;
+    }
+  }
+}
+
+.dropdown-menu {
+  position: absolute !important;
+  box-shadow: 0 0.6125rem 2.5rem 0.6125rem rgba(140, 152, 164, 0.175);
+
+  .dropdown-item {
+    border-radius: 0.3125rem;
+
+    &:not(:last-child) {
+      margin-bottom: 0.25rem;
+    }
+  }
 }
 
 .navbar-fixed {
   position: fixed !important;
   top: 0;
   left: 0;
-  width: 100%;
+  right: 0;
   z-index: 99;
 
-  & ~ .main {
-    padding-top: 3.875rem;
+  @include media-breakpoint-up(xl) {
+    margin-left: 16.25rem;
+
+    &.navbar-vertical-collapsed {
+      margin-left: 5.75rem;
+    }
   }
 }
 
@@ -46,6 +69,10 @@
 .navbar-brand {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+
+  @include media-breakpoint-up(xl) {
+    display: none;
+  }
 }
 
 .navbar-aside-toggler {

@@ -16,7 +16,7 @@ export interface Comment {
   content: string;
   user: FullUser;
   post: Post;
-  likeCount: number;
+  likes: FullUser[];
   replyCount: number;
   createdAt: string;
 }
@@ -26,7 +26,9 @@ export interface Post {
   content?: string;
   files: File[];
   user: FullUser;
-  likeCount: number;
+  likes: string[];
+  comments: Comment[];
+  totalComment: number;
   commentCount: number;
   access: PostAccess;
   feeling: string[] | null;

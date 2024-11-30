@@ -9,7 +9,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { PersonCheckFill, PersonXFill } from "react-bootstrap-icons";
 import toast from "react-hot-toast";
 
 export default function RequestItem(friend: FullUser) {
@@ -85,7 +84,7 @@ export default function RequestItem(friend: FullUser) {
                       <span className="visually-hidden">Loading...</span>
                     </div>
                   ) : (
-                    <PersonCheckFill size={16} />
+                    <i className="bi bi-person-check-fill"></i>
                   )}
 
                   <span className="ms-2">Accept</span>
@@ -104,7 +103,7 @@ export default function RequestItem(friend: FullUser) {
                       <span className="visually-hidden">Loading...</span>
                     </div>
                   ) : (
-                    <PersonXFill size={16} />
+                    <i className="bi bi-person-x-fill"></i>
                   )}
 
                   <span className="ms-2">Decline</span>

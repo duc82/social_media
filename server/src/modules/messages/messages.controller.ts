@@ -6,13 +6,17 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { MessagesService } from "./messages.service";
 import { CreateMessageDto } from "./messages.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { AuthGuard } from "src/common/guards/auth.guard";
 import { User } from "src/common/decorators/user.decorator";
+import { FilesArrayMimeTypeValidationPipe } from "src/common/pipes/file.pipe";
+import { FilesInterceptor } from "@nestjs/platform-express";
 
 @UseGuards(AuthGuard)
 @Controller("api/messages")
@@ -36,10 +40,13 @@ export class MessagesController {
   }
 
   @Post("create")
+  @UseInterceptors(FilesInterceptor("files", undefined))
   async create(
     @Body() body: CreateMessageDto,
-    @User("userId") currentUserId: string,
+    @User("userId") userId: string,
+    @UploadedFiles(FilesArrayMimeTypeValidationPipe)
+    files: Express.Multer.File[],
   ) {
-    return this.messageService.create(body, currentUserId);
+    return this.messageService.create(body, files, userId);
   }
 }

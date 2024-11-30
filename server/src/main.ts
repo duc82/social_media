@@ -6,19 +6,15 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
-import { FirebaseService } from "./modules/firebase/firebase.service";
-import { cert, ServiceAccount } from "firebase-admin/app";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const firebaseService = app.get(FirebaseService);
 
   const allowedOrigin = [
     process.env.CLIENT_URL,
     process.env.ADMIN_URL,
     "http://127.0.0.1:3000",
-    "http://192.168.1.4:3000",
+    "http://192.168.1.10:3000",
   ];
 
   app.enableCors({

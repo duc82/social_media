@@ -14,15 +14,10 @@ import authService from "@/app/services/authService";
 import { SignUpDto } from "@/app/types/auth";
 import { signUpSchema } from "@/app/schemas/auth";
 import clsx from "clsx";
-import { ExclamationCircleFill, InfoCircle } from "react-bootstrap-icons";
 import FormControl from "@/app/components/Form/FormControl";
 import Radio from "@/app/components/Form/Radio";
 import isLeapYear from "@/app/utils/isLeapYear";
 import Spinner from "@/app/components/Spinner";
-
-interface FormValue extends SignUpDto {
-  confirmPassword: string;
-}
 
 const date = new Date();
 
@@ -34,7 +29,7 @@ export default function Signup() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<FormValue>({
+  } = useForm<SignUpDto>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
     defaultValues: {
@@ -50,7 +45,7 @@ export default function Signup() {
     "password"
   );
 
-  const onSubmit = async (data: FormValue) => {
+  const onSubmit = async (data: SignUpDto) => {
     const { confirmPassword: _, ...signUpDto } = data;
 
     try {
@@ -194,7 +189,7 @@ export default function Signup() {
             <div>
               {errors.password && (
                 <div className="form-text text-danger mt-1">
-                  <ExclamationCircleFill size={16} className="me-2" />
+                  <i className="bi bi-exclamation-circle-fill me-2"></i>
                   <span>{errors.password.message}</span>
                 </div>
               )}
@@ -206,21 +201,21 @@ export default function Signup() {
               )}
             </div>
             <div className="ms-auto">
-              <InfoCircle
-                size={16}
+              <i
+                className="bi bi-info-circle"
                 data-bs-toggle="popover"
                 data-bs-placement="top"
                 data-bs-content="Include at least one uppercase, one lowercase, one special character, one number and 8 characters long."
-              />
+              ></i>
             </div>
           </div>
         </div>
 
         <FormControl
-          {...register("confirmPassword")}
           type="password"
           id="confirmPassword"
           placeholder="Confirm Password"
+          {...register("confirmPassword")}
           error={errors.confirmPassword?.message}
         />
 
@@ -283,7 +278,7 @@ export default function Signup() {
 
           {errors.gender && (
             <div className="form-text text-danger mt-1">
-              <ExclamationCircleFill size={16} className="me-2" />
+              <i className="bi bi-exclamation-circle-fill me-2"></i>
               <span>{errors.gender.message}</span>
             </div>
           )}

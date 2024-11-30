@@ -4,13 +4,13 @@ import {
   revalidateTag as revalidateTagCustom,
 } from "next/cache";
 
-export const revalidatePath = (
+export const revalidatePath = async (
   originalPath: string,
   type?: "page" | "layout" | undefined
 ) => {
   revalidatePathCustom(originalPath, type);
 };
 
-export const revalidateTag = (tag: string) => {
+export const revalidateTag = async (tag: string) => {
   revalidateTagCustom(tag);
 };

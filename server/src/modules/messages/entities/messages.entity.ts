@@ -5,7 +5,6 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -13,7 +12,7 @@ import {
 import { MessageFile } from "./message_files.entity";
 import { User } from "src/modules/users/entities/users.entity";
 import { Conversation } from "src/modules/conversations/entities/conversations.entity";
-import { MessageRead } from "./mesage_reads.entity";
+import { MessageRead } from "./message_reads.entity";
 import { CallStatus } from "../enums/messages.enum";
 
 @Entity({

@@ -1,0 +1,35 @@
+:root {
+  --fancybox-zIndex: 1056;
+}
+
+a {
+  transition: all 0.3s ease-in-out;
+}
+
+small,
+.small {
+  font-weight: 400;
+}
+
+ol,
+ul {
+  padding: 0;
+}
+
+main {
+  background-color: $body-bg;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  & > a {
+    color: $headings-color;
+    &:hover {
+      color: $primary;
+    }
+  }
+}

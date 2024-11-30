@@ -3,6 +3,7 @@ type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 /* global RequestInit */
 interface Options extends RequestInit {
   method?: Method;
+  isFormData?: boolean;
 }
 
 const API_URL: string | undefined = process.env.NEXT_PUBLIC_API_URL;
@@ -17,12 +18,18 @@ export default async function apiRequest<T>(
   endpoint: string,
   options?: Options
 ): Promise<T> {
+  let headers = options?.headers || {};
+
+  if (!options?.isFormData) {
+    headers = {
+      ...headers,
+      "Content-Type": "application/json",
+    };
+  }
+
   const res = await fetch(`${API_URL}/api${endpoint}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
+    headers,
   });
 
   const data = await res.json();

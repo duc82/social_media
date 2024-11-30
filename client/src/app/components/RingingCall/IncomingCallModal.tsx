@@ -92,10 +92,9 @@ export default function IncomingCallModal() {
           <div className="modal-body">
             <div className="d-flex justify-content-center align-items-center">
               {user && (
-                <Avatar
-                  src={user.profile.avatar || ""}
-                  alt={user.username || "avatar"}
-                />
+                <div className="avatar">
+                  <Avatar src={user.profile.avatar} alt={user.username} />
+                </div>
               )}
               <div className="ms-3">
                 <h5 className="mb-0">{fullName}</h5>

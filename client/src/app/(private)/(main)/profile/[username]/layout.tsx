@@ -11,15 +11,17 @@ export default async function ProfileLayout({
   params,
 }: {
   children: ReactNode;
-  params: { username?: string };
+  params: Promise<{ username: string }>;
 }) {
   const { currentUser, token } = await getServerSession();
+  let { username } = await params;
 
-  if (!params.username?.includes("%40")) {
+  //  %40 is @
+  if (!username?.includes("%40")) {
     notFound();
   }
 
-  const username = params.username?.replace("%40", ""); // %40 is @
+  username = username.replace("%40", "");
 
   const [user, { total: totalFriends }] = await Promise.all([
     getUserProfile(username, currentUser, token),

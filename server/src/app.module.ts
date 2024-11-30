@@ -19,6 +19,7 @@ import { JwtGlobalModule } from "./modules/jwt/jwt.module";
 import { FilesModule } from "./modules/files/files.module";
 import { FirebaseModule } from "./modules/firebase/firebase.module";
 import { AvatarModule } from "./modules/avatar/avatar.module";
+import { StoriesModule } from "./modules/stories/stories.module";
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { AvatarModule } from "./modules/avatar/avatar.module";
     FirebaseModule,
     FilesModule,
     AvatarModule,
+    StoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

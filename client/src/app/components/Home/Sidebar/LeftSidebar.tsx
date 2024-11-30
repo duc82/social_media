@@ -4,7 +4,6 @@ import Avatar from "../../Avatar";
 import Link from "next/link";
 import Image from "next/image";
 import getServerSession from "@/app/libs/session";
-import calendar_outline_filled from "@/app/assets/images/calendar-outline-filled.svg";
 import chat_outline_filled from "@/app/assets/images/chat-outline-filled.svg";
 import cog_outline_filled from "@/app/assets/images/cog-outline-filled.svg";
 import earth_outline_filled from "@/app/assets/images/earth-outline-filled.svg";
@@ -13,9 +12,17 @@ import notification_outlined_filled from "@/app/assets/images/notification-outli
 import person_outline_filled from "@/app/assets/images/person-outline-filled.svg";
 import formatName from "@/app/utils/formatName";
 import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
+import userService from "@/app/services/userService";
+import formatNumber from "@/app/utils/formatNumber";
 
-export default async function LeftSidebar() {
-  const { currentUser } = await getServerSession();
+export default async function LeftSidebar({
+  totalPost,
+}: {
+  totalPost: number;
+}) {
+  const { currentUser, token } = await getServerSession();
+
+  const friendsCount = await userService.countFriends("accepted", token);
 
   const fullName = formatName(currentUser.firstName, currentUser.lastName);
 
@@ -54,7 +61,6 @@ export default async function LeftSidebar() {
 
             <div className="offcanvas-body d-block px-2 px-lg-0">
               <div className="card overflow-hidden">
-                {/* Cover Image */}
                 <div
                   style={{
                     height: "50px",
@@ -89,13 +95,13 @@ export default async function LeftSidebar() {
                     </p>
                     <div className="hstack gap-2 gap-xl-3 justify-content-center">
                       <div>
-                        <h6 className="mb-0">256</h6>
+                        <h6 className="mb-0">{totalPost}</h6>
                         <small>Post</small>
                       </div>
                       <div className="vr"></div>
                       <div>
-                        <h6 className="mb-0">2.5K</h6>
-                        <small>Followers</small>
+                        <h6 className="mb-0">{formatNumber(friendsCount)}</h6>
+                        <small>Friends</small>
                       </div>
                       <div className="vr"></div>
                       <div>
@@ -153,21 +159,7 @@ export default async function LeftSidebar() {
                         <span>Latest News </span>
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <Link
-                        className="nav-link d-flex align-items-center"
-                        href="/profile/events"
-                      >
-                        <Image
-                          className="me-2"
-                          src={calendar_outline_filled}
-                          alt="Events"
-                          width={20}
-                          height={20}
-                        />
-                        <span>Events </span>
-                      </Link>
-                    </li>
+
                     <li className="nav-item">
                       <Link
                         className="nav-link d-flex align-items-center"
@@ -225,59 +217,6 @@ export default async function LeftSidebar() {
                   </Link>
                 </div>
               </div>
-
-              <ul className="nav small mt-4 justify-content-center lh-1">
-                <li className="nav-item">
-                  <Link className="nav-link" href="my-profile-about.html">
-                    About
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" href="settings.html">
-                    Settings
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link"
-                    target="_blank"
-                    href="https://support.webestica.com/login"
-                  >
-                    Support{" "}
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link"
-                    target="_blank"
-                    href="docs/index.html"
-                  >
-                    Docs{" "}
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" href="help.html">
-                    Help
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" href="privacy-and-terms.html">
-                    Privacy &amp; terms
-                  </Link>
-                </li>
-              </ul>
-
-              <p className="small text-center mt-1">
-                ©{new Date().getFullYear()}{" "}
-                <Link
-                  className="text-reset"
-                  target="_blank"
-                  href="https://www.webestica.com/"
-                >
-                  {" "}
-                  Webestica{" "}
-                </Link>
-              </p>
             </div>
           </div>
         </div>

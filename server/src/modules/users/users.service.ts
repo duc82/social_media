@@ -5,15 +5,18 @@ import {
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
 import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
-import { CreateUserDto, UpdateUserDto } from "./users.dto";
+import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
-import { BlockedUser } from "./entities/blocked_users.entity";
 import { FirebaseService } from "../firebase/firebase.service";
+import { Blocked } from "./entities/blocked.entity";
+import { FriendsService } from "../friends/friends.service";
+import { FriendStatus } from "../friends/friends.enum";
 
 @Injectable()
 export class UserService {
   constructor(
     private dataSource: DataSource,
+    private friendService: FriendsService,
     private firebaseService: FirebaseService,
   ) {}
 
@@ -47,49 +50,27 @@ export class UserService {
     return user;
   }
 
-  async getBlockedUsers(userId: string) {
-    const usersBlockedByCurrentUser = await this.dataSource
-      .getRepository(BlockedUser)
-      .find({
-        where: {
-          blockedUserId: userId,
-        },
-        relations: ["user"],
-      });
-
-    const usersBlockingCurrentUser = await this.dataSource
-      .getRepository(BlockedUser)
-      .find({
-        where: {
-          user: {
-            id: userId,
-          },
-        },
-      });
-
-    return [
-      ...usersBlockedByCurrentUser.map((blockedUser) => blockedUser.user.id),
-      ...usersBlockingCurrentUser.map(
-        (blockedUser) => blockedUser.blockedUserId,
-      ),
-    ];
-  }
-
-  async getAll(query: QueryDto) {
-    const { search, page, limit } = query;
+  async getAll(userId: string, query: QueryDto) {
+    const { search, page, limit, exclude } = query;
 
     const skip = (page - 1) * limit;
+
+    const excludeIds = JSON.parse(exclude);
 
     const [users, total] = await this.dataSource
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
-      .where('unaccent(u."firstName") ILIKE unaccent(:search)', {
-        search: `%${search}%`,
+      .where("u.id != :userId", { userId })
+      .andWhere(excludeIds.length > 0 && "u.id NOT IN (:...ids)", {
+        ids: excludeIds,
       })
-      .andWhere('unaccent(u."lastName") ILIKE unaccent(:search)', {
-        search: `%${search}%`,
-      })
+      .andWhere(
+        'unaccent(u."firstName") ILIKE unaccent(:search) OR unaccent(u."lastName") ILIKE unaccent(:search)',
+        {
+          search: `%${search}%`,
+        },
+      )
       .skip(skip)
       .take(limit)
       .getManyAndCount();
@@ -110,31 +91,122 @@ export class UserService {
     return user;
   }
 
-  async search(currentUserId: string, query: QueryDto) {
-    const { search, page, limit } = query;
+  async getStories(id: string, query: QueryDto) {
+    const { page, limit } = query;
 
     const skip = (page - 1) * limit;
 
-    const blockedUsers = await this.getBlockedUsers(currentUserId);
+    const { friends } = await this.friendService.getFriends(
+      id,
+      FriendStatus.ACCEPTED,
+      query,
+    );
+
+    const friendIds = friends.map((friend) => friend.id);
+    friendIds.push(id);
 
     const [users, total] = await this.dataSource
       .getRepository(User)
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.profile", "profile")
-      .where('unaccent(u."fullName") ILIKE unaccent(:search)', {
-        search: `%${search}%`,
-      })
-      .andWhere("u.emailVerified IS NOT NULL")
-      .andWhere("u.isBan = false")
-      .andWhere(
-        blockedUsers.length > 0 ? "u.id NOT IN (:...blockedUsers)" : "TRUE",
-        { blockedUsers },
-      )
+      .leftJoinAndSelect("u.stories", "stories")
+      .whereInIds(friendIds)
+      .andWhere("u.createdAt < :time", { time: new Date() })
+      .groupBy("u.id")
+      .addGroupBy("profile.id")
+      .addGroupBy("stories.id")
+      .having("COUNT(stories.id) > 0")
+      .take(limit)
       .skip(skip)
-      .limit(limit)
       .getManyAndCount();
 
-    return { users, total, page, limit };
+    return {
+      users,
+      total,
+      limit,
+      skip,
+    };
+  }
+
+  async block(id: string, blockedId: string) {
+    const blockedBy = await this.findOne({
+      where: { id },
+      relations: ["profile"],
+    });
+
+    if (!blockedBy) {
+      throw new NotFoundException("User not found");
+    }
+
+    const blocked = await this.dataSource.getRepository(Blocked).findOne({
+      where: {
+        user: { id: blockedId },
+        blockedBy: { id },
+      },
+    });
+
+    if (blocked) {
+      throw new BadRequestException("User already blocked");
+    }
+
+    const user = await this.findOne({
+      where: { id: blockedId, emailVerified: Not(IsNull()) },
+      relations: ["profile"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const newBlocked = this.dataSource.getRepository(Blocked).create({
+      blockedBy,
+      user,
+    });
+
+    await newBlocked.save();
+
+    return { message: "User blocked successfully", blocked: newBlocked };
+  }
+
+  async unblock(id: string, blockedId: string) {
+    const blocked = await this.dataSource.getRepository(Blocked).findOne({
+      where: {
+        user: { id: blockedId },
+        blockedBy: { id },
+      },
+    });
+
+    if (!blocked) {
+      throw new BadRequestException("User not blocked");
+    }
+
+    await this.dataSource.getRepository(Blocked).remove(blocked);
+
+    return { message: "User unblocked successfully" };
+  }
+
+  async getBlocked(id: string, query: QueryDto) {
+    const { search, page, limit } = query;
+
+    const skip = (page - 1) * limit;
+
+    const [blocked, total] = await this.dataSource
+      .getRepository(Blocked)
+      .createQueryBuilder("blocked")
+      .leftJoinAndSelect("blocked.user", "user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .where("blocked.blockedBy = :id", { id })
+      .andWhere(
+        `unaccent("user"."firstName") ILIKE unaccent(:search) OR unaccent("user"."lastName") ILIKE unaccent(:search)`,
+        {
+          search: `${search}%`,
+        },
+      )
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return { blocked, total, page, limit };
   }
 
   async create(user: CreateUserDto) {
@@ -149,10 +221,10 @@ export class UserService {
     const user = await this.findOne({
       where: {
         id,
-        deletedAt: IsNull(),
         bannedAt: IsNull(),
       },
       relations: ["profile"],
+      withDeleted: true,
     });
 
     if (!user) {
@@ -214,5 +286,27 @@ export class UserService {
     }
 
     return { message: "Deleted user successfully" };
+  }
+
+  async changePassword(id: string, body: ChangePasswordDto) {
+    const user = await this.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const isPasswordMatch = await user.comparePassword(body.currentPassword);
+
+    if (!isPasswordMatch) {
+      throw new BadRequestException("Current password is incorrect");
+    }
+
+    user.password = body.newPassword;
+
+    await this.dataSource.getRepository(User).save(user);
+
+    return { message: "Password updated successfully" };
   }
 }

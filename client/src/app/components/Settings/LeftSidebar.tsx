@@ -1,15 +1,15 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import person_outline_filled from "@/app/assets/images/person-outline-filled.svg";
-import notification_outlined_filled from "@/app/assets/images/notification-outlined-filled.svg";
-import shield_outline_filled from "@/app/assets/images/shield-outline-filled.svg";
-import handshake_outline_filled from "@/app/assets/images/handshake-outline-filled.svg";
-import chat_alt_outline_filled from "@/app/assets/images/chat-alt-outline-filled.svg";
-import trash_var_outline_filled from "@/app/assets/images/trash-var-outline-filled.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSlidersH } from "@fortawesome/free-solid-svg-icons";
+import { usePathname } from "next/navigation";
+import { settings } from "@/app/data/settings";
+import clsx from "clsx";
 
 export default function LeftSidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="col-lg-3">
       <div className="d-flex align-items-center mb-4 d-lg-none">
@@ -46,150 +46,41 @@ export default function LeftSidebar() {
             <div className="card w-100">
               <div className="card-body">
                 <ul className="nav nav-tabs nav-pills nav-pills-soft flex-column fw-bold gap-2 border-0">
-                  <li className="nav-item" data-bs-dismiss="offcanvas">
-                    <Link
-                      className="nav-link d-flex mb-0 active"
-                      href="/settings"
+                  {settings.map((setting, i) => (
+                    <li
+                      className="nav-item"
+                      data-bs-dismiss="offcanvas"
+                      key={i}
                     >
-                      <Image
-                        className="me-2 fa-fw img-fluid"
-                        src={person_outline_filled}
-                        height={20}
-                        alt="Account"
-                      />
-                      <span>Account </span>
-                    </Link>
-                  </li>
-                  <li className="nav-item" data-bs-dismiss="offcanvas">
-                    <Link
-                      className="nav-link d-flex mb-0"
-                      href="/settings/notification"
-                    >
-                      <Image
-                        className="me-2 fa-fw img-fluid"
-                        src={notification_outlined_filled}
-                        height={20}
-                        alt="Notification"
-                      />
-                      <span>Notification </span>
-                    </Link>
-                  </li>
-                  <li className="nav-item" data-bs-dismiss="offcanvas">
-                    <Link
-                      className="nav-link d-flex mb-0"
-                      href="/settings/privacy-safety"
-                    >
-                      {" "}
-                      <Image
-                        className="me-2 fa-fw img-fluid"
-                        src={shield_outline_filled}
-                        height={20}
-                        alt="Privacy and safety"
-                      />
-                      <span>Privacy and safety </span>
-                    </Link>
-                  </li>
-                  <li className="nav-item" data-bs-dismiss="offcanvas">
-                    <Link
-                      className="nav-link d-flex mb-0"
-                      href="/settings/communications"
-                    >
-                      <Image
-                        className="me-2 fa-fw img-fluid"
-                        src={handshake_outline_filled}
-                        height={20}
-                        alt="Communications"
-                      />
-                      <span>Communications </span>
-                    </Link>
-                  </li>
-                  <li className="nav-item" data-bs-dismiss="offcanvas">
-                    <Link
-                      className="nav-link d-flex mb-0"
-                      href="/settings/messaging"
-                    >
-                      {" "}
-                      <Image
-                        className="me-2 fa-fw img-fluid"
-                        src={chat_alt_outline_filled}
-                        height={20}
-                        alt="Messaging"
-                      />
-                      <span>Messaging </span>
-                    </Link>
-                  </li>
-                  <li className="nav-item" data-bs-dismiss="offcanvas">
-                    <Link
-                      className="nav-link d-flex mb-0"
-                      href="/settings/close-account"
-                    >
-                      <Image
-                        className="me-2 fa-fw img-fluid"
-                        src={trash_var_outline_filled}
-                        height={20}
-                        alt="Close account"
-                      />
-                      <span>Close account </span>
-                    </Link>
-                  </li>
+                      <Link
+                        className={clsx(
+                          "nav-link border-0 d-flex mb-0",
+                          setting.href === pathname && "active"
+                        )}
+                        href={setting.href}
+                      >
+                        <Image
+                          className="me-2 fa-fw img-fluid"
+                          src={setting.icon}
+                          height={20}
+                          alt="Account"
+                        />
+                        <span>{setting.title} </span>
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="card-footer text-center py-2">
-                <Link href="/" className="btn btn-link text-secondary btn-sm">
+                <Link
+                  href="/"
+                  className="btn btn-link text-secondary btn-sm p-0"
+                >
                   View Profile{" "}
                 </Link>
               </div>
             </div>
           </div>
-
-          <ul className="nav small mt-4 justify-content-center lh-1">
-            <li className="nav-item">
-              <a className="nav-link" href="my-profile-about.html">
-                About
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="settings.html">
-                Settings
-              </a>
-            </li>
-            <li className="nav-item">
-              <a
-                className="nav-link"
-                target="_blank"
-                href="https://support.webestica.com/login"
-              >
-                Support{" "}
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" target="_blank" href="docs/index.html">
-                Docs{" "}
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="help.html">
-                Help
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="privacy-and-terms.html">
-                Privacy &amp; terms
-              </a>
-            </li>
-          </ul>
-
-          <p className="small text-center mt-1">
-            ©2024{" "}
-            <a
-              className="text-reset"
-              target="_blank"
-              href="https://www.webestica.com/"
-            >
-              {" "}
-              Webestica{" "}
-            </a>
-          </p>
         </div>
       </nav>
     </aside>

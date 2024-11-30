@@ -6,20 +6,6 @@ import handlingError from "@/app/utils/error";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
-import {
-  Briefcase,
-  Calendar2Plus,
-  CalendarDate,
-  Envelope,
-  GenderAmbiguous,
-  GeoAlt,
-  Heart,
-  PencilSquare,
-  PlayCircle,
-  PlusCircleDotted,
-  ThreeDots,
-  Trash,
-} from "react-bootstrap-icons";
 import toast from "react-hot-toast";
 
 export default function ProfileInfo({
@@ -60,6 +46,7 @@ export default function ProfileInfo({
 
     const formData = new FormData();
     formData.append(key, value);
+    formData.append("type", type);
 
     try {
       const { user: newUser } = await userService.update(
@@ -88,7 +75,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <CalendarDate className="me-2" />
+              <i className="bi bi-calendar-date me-2"></i>
               Born:
               <strong>
                 {" "}
@@ -103,7 +90,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -115,7 +102,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("birthday")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -166,7 +153,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <GenderAmbiguous className="me-2" />
+              <i className="bi bi-gender-ambiguous me-2"></i>
               Gender:
               <strong className="text-capitalize"> {values.gender}</strong>
             </p>
@@ -176,7 +163,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
@@ -185,7 +172,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("gender")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -241,7 +228,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <Heart className="me-2" />
+              <i className="bi bi-heart me-2"></i>
               Status:
               <strong className="text-capitalize">
                 {" "}
@@ -254,7 +241,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
@@ -263,7 +250,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("maritalStatus")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -275,7 +262,7 @@ export default function ProfileInfo({
                       handleUpdateProfile("maritalStatus", "delete")
                     }
                   >
-                    <Trash className="pe-2" size={23} />
+                    <i className="bi bi-trash pe-2"></i>
                     Delete
                   </button>
                 </li>
@@ -289,7 +276,7 @@ export default function ProfileInfo({
               className="btn btn-dashed rounded w-100"
               onClick={() => handleToggleEdit("maritalStatus")}
             >
-              <PlusCircleDotted className="me-1" />
+              <i className="bi bi-plus-circle-dotted me-1"></i>
               <span>Add a status</span>
             </button>
           )}
@@ -342,7 +329,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <Briefcase className="me-2" />
+              <i className="bi bi-briefcase me-2"></i>
               Job:
               <strong> {values.job}</strong>
             </p>
@@ -352,7 +339,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -364,7 +351,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("job")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -374,7 +361,7 @@ export default function ProfileInfo({
                     className="dropdown-item"
                     onClick={() => handleUpdateProfile("job", "delete")}
                   >
-                    <Trash className="pe-2" size={23} />
+                    <i className="bi bi-trash pe-2"></i>
                     Delete
                   </button>
                 </li>
@@ -388,7 +375,7 @@ export default function ProfileInfo({
               className="btn btn-dashed rounded w-100"
               onClick={() => handleToggleEdit("job")}
             >
-              <PlusCircleDotted className="me-1" />
+              <i className="bi bi-plus-circle-dotted me-1"></i>
               <span>Add a job</span>
             </button>
           )}
@@ -437,7 +424,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <GeoAlt className="me-2" />
+              <i className="bi bi-geo-alt me-2"></i>
               Address:
               <strong> {values.address}</strong>
             </p>
@@ -447,7 +434,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -459,7 +446,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("address")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -469,7 +456,7 @@ export default function ProfileInfo({
                     className="dropdown-item"
                     onClick={() => handleUpdateProfile("address", "delete")}
                   >
-                    <Trash className="pe-2" size={23} />
+                    <i className="bi bi-trash pe-2"></i>
                     Delete
                   </button>
                 </li>
@@ -483,7 +470,7 @@ export default function ProfileInfo({
               className="btn btn-dashed rounded w-100"
               onClick={() => handleToggleEdit("address")}
             >
-              <PlusCircleDotted className="me-1" />
+              <i className="bi bi-plus-circle-dotted me-1"></i>
               <span>Add a address</span>
             </button>
           )}
@@ -532,7 +519,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <GeoAlt className="me-2" />
+              <i className="bi bi-geo-alt me-2"></i>
               Workplace:
               <strong> {values.workplace}</strong>
             </p>
@@ -542,7 +529,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -554,7 +541,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("workplace")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -564,7 +551,7 @@ export default function ProfileInfo({
                     className="dropdown-item"
                     onClick={() => handleUpdateProfile("address", "delete")}
                   >
-                    <Trash className="pe-2" size={23} />
+                    <i className="bi bi-trash pe-2"></i>
                     Delete
                   </button>
                 </li>
@@ -578,7 +565,7 @@ export default function ProfileInfo({
               className="btn btn-dashed rounded w-100"
               onClick={() => handleToggleEdit("workplace")}
             >
-              <PlusCircleDotted className="me-1" />
+              <i className="bi bi-plus-circle-dotted me-1"></i>
               <span>Add a workplace</span>
             </button>
           )}
@@ -627,7 +614,7 @@ export default function ProfileInfo({
             }}
           >
             <p className="mb-0">
-              <GeoAlt className="me-2" />
+              <i className="bi bi-geo-alt me-2"></i>
               Education:
               <strong> {values.education}</strong>
             </p>
@@ -637,7 +624,7 @@ export default function ProfileInfo({
                 className="nav nav-link text-secondary mb-0 p-0"
                 data-bs-toggle="dropdown"
               >
-                <ThreeDots />
+                <i className="bi bi-three-dots"></i>
               </button>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -649,7 +636,7 @@ export default function ProfileInfo({
                     type="button"
                     onClick={() => handleToggleEdit("education")}
                   >
-                    <PencilSquare className="pe-2" size={23} />
+                    <i className="bi bi-pencil-square pe-2"></i>
                     Edit
                   </button>
                 </li>
@@ -659,7 +646,7 @@ export default function ProfileInfo({
                     className="dropdown-item"
                     onClick={() => handleUpdateProfile("education", "delete")}
                   >
-                    <Trash className="pe-2" size={23} />
+                    <i className="bi bi-trash pe-2"></i>
                     Delete
                   </button>
                 </li>
@@ -673,7 +660,7 @@ export default function ProfileInfo({
               className="btn btn-dashed rounded w-100"
               onClick={() => handleToggleEdit("education")}
             >
-              <PlusCircleDotted className="me-1" />
+              <i className="bi bi-plus-circle-dotted me-1"></i>
               <span>Add a education</span>
             </button>
           )}
@@ -723,7 +710,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <CalendarDate className="me-2" />
+                <i className="bi bi-calendar-date me-2"></i>
                 Born:
                 <strong className="text-capitalize"> {values.job}</strong>
               </p>
@@ -735,7 +722,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <Heart className="me-2" />
+                <i className="bi bi-heart me-2"></i>
                 Status:
                 <strong className="text-capitalize">
                   {" "}
@@ -750,7 +737,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <Briefcase className="me-2" />
+                <i className="bi bi-briefcase me-2"></i>
                 Job:
                 <strong className="text-capitalize"> {values.job}</strong>
               </p>
@@ -762,7 +749,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <GeoAlt className="me-2" />
+                <i className="bi bi-geo-alt me-2"></i>
                 Lives in:
                 <strong className="text-capitalize"> {values.address}</strong>
               </p>
@@ -774,7 +761,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <GenderAmbiguous className="me-2" />
+                <i className="bi bi-gender-ambiguous me-2"></i>
                 Gender:
                 <strong className="text-capitalize"> {values.gender}</strong>
               </p>
@@ -786,7 +773,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <PlayCircle className="me-2" />
+                <i className="bi bi-play-circle me-2"></i>
                 Workplace:
                 <strong className="text-capitalize"> {values.workplace}</strong>
               </p>
@@ -798,7 +785,7 @@ export default function ProfileInfo({
           <div className="col-sm-6">
             <div className="align-items-center rounded border px-3 py-2">
               <p className="mb-0">
-                <PlayCircle className="me-2" />
+                <i className="bi bi-play-circle me-2"> </i>
                 Education:
                 <strong className="text-capitalize"> {values.education}</strong>
               </p>
@@ -823,7 +810,7 @@ export default function ProfileInfo({
                   className="nav nav-link text-secondary mb-0"
                   data-bs-toggle="dropdown"
                 >
-                  <ThreeDots />
+                  <i className="bi bi-three-dots"></i>
                 </button>
                 <ul
                   className="dropdown-menu dropdown-menu-end"
@@ -835,7 +822,7 @@ export default function ProfileInfo({
                       className="dropdown-item"
                       onClick={() => handleToggleEdit("bio")}
                     >
-                      <PencilSquare className="pe-2" size={23} />
+                      <i className="bi bi-pencil-square pe-2"></i>
                       Edit
                     </button>
                   </li>
@@ -845,7 +832,7 @@ export default function ProfileInfo({
                       className="dropdown-item"
                       onClick={() => handleUpdateProfile("bio", "delete")}
                     >
-                      <Trash className="pe-2" size={23} />
+                      <i className="bi bi-trash pe-2"></i>
                       Delete
                     </button>
                   </li>
@@ -864,7 +851,7 @@ export default function ProfileInfo({
         <div className="col-sm-6">
           <div className="d-flex align-items-center rounded border px-3 py-2">
             <p className="mb-0">
-              <Calendar2Plus className="me-2" />
+              <i className="bi bi-calendar2-plus me-2"></i>
               Joined:
               <strong>
                 {" "}
@@ -879,7 +866,7 @@ export default function ProfileInfo({
         <div className="col-sm-6">
           <div className="d-flex align-items-center rounded border px-3 py-2">
             <p className="mb-0">
-              <Envelope className="me-2" />
+              <i className="bi bi-envelope me-2"></i>
               Email:
               <strong> {user.email}</strong>
             </p>

@@ -9,24 +9,38 @@ import apiRequest from "./api";
 
 const postService = {
   create: async (formData: FormData, token: string): Promise<PostResponse> => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/posts/create`,
-      {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(
+        "POST",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts/create`,
+        true
+      );
 
-    const data = await res.json();
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = (event.loaded / event.total) * 100;
+          console.log(percent);
+        }
+      };
 
-    if (!res.ok) {
-      throw new Error(data.message);
-    }
+      xhr.onload = () => {
+        const data = JSON.parse(xhr.responseText);
+        console.log({ status: xhr.status, data });
+        if (xhr.status === 201) {
+          resolve(data);
+        } else {
+          reject(new Error(data.message));
+        }
+      };
 
-    return data;
+      xhr.onerror = () => {
+        reject(new Error("Network error or failed to upload."));
+      };
+
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.send(formData);
+    });
   },
 
   update: async (
@@ -65,22 +79,16 @@ const postService = {
     });
   },
 
-  getCurrent: async (token: string, options?: Options) => {
+  getByUserId: async (userId: string, token: string, options?: Options) => {
     const { page = 1, limit = 20, search = "" } = options || {};
 
     return apiRequest<PostsReponse>(
-      `/posts/current?page=${page}&limit=${limit}&search=${search}`,
+      `/posts/${userId}?page=${page}&limit=${limit}&search=${search}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { tags: options?.tags },
       }
     );
-  },
-
-  hasLiked: async (postId: string, token: string) => {
-    return apiRequest<{ liked: boolean }>(`/posts/likes/liked/${postId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
   },
 
   getComments: async (postId: string, token: string, options?: Options) => {
@@ -112,7 +120,16 @@ const postService = {
   },
 
   like: async (id: string, token: string) => {
-    return apiRequest<PostResponse>(`/posts/like/${id}`, {
+    return apiRequest<{ message: string }>(`/posts/like/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  unlike: async (id: string, token: string) => {
+    return apiRequest<{ message: string }>(`/posts/unlike/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -131,7 +148,16 @@ const postService = {
   },
 
   likeComment: async (id: string, token: string) => {
-    return apiRequest<CommentResponse>(`/posts/comment/like/${id}`, {
+    return apiRequest<{ message: string }>(`/posts/comment/like/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  unlikeComment: async (id: string, token: string) => {
+    return apiRequest<{ message: string }>(`/posts/comment/unlike/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,

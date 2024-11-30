@@ -1,15 +1,13 @@
-"use client";
-
-const debounce = <T extends any[]>(
-  func: (..._args: T) => void,
+function debounce<T extends (..._args: any[]) => void>(
+  func: T,
   wait: number
-) => {
-  /* global NodeJS */
-  let timeout: NodeJS.Timeout;
-  return (...args: T) => {
+): (..._args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return function (...args: Parameters<T>): void {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
   };
-};
+}
 
 export default debounce;

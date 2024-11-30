@@ -1,4 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+$body-color: rgb(103, 119, 136);
+$headings-font-weight: 600;
+$font-size-base: 0.875rem;
+$dropdown-spacer: 0.625rem;
+$dropdown-border-width: 0px;
+$dropdown-border-radius: 0.625rem;
+$h5-font-size: $font-size-base;
+$dropdown-padding-x: 0.5rem;
+$dropdown-divider-bg: rgba(231, 234, 243, 0.7);
+$dropdown-font-size: 0.8125rem;
+$dropdown-link-color: rgb(30 32 34);
+$dropdown-link-hover-color: $dropdown-link-color;
+$dropdown-link-hover-bg: rgba(189, 197, 209, 0.2);
+$dropdown-item-padding-y: 0.5rem;
+$dropdown-item-padding-x: 1rem;
+
+$card-border-color: rgba(231, 234, 243, 0.7);
+
+$font-family-sans-serif: "Inter", sans-serif;
+
+$h1-font-size: 1.4109375rem;
+$h2-font-size: 1.3125rem;
+
+$grid-gutter-width: 3rem;
+
 @import "bootstrap/scss/bootstrap";
+
+:root {
+  --bs-heading-color: rgb(30, 32, 34) !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.content {
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+}
 
 .btn-icon {
   position: relative;

@@ -36,6 +36,14 @@ export default function HeaderMenu() {
           Groups
         </Link>
       </li>
+      <li className="nav-item">
+        <Link
+          href="/blogs"
+          className={clsx("nav-link", pathname === "/blogs" && "active")}
+        >
+          Blogs
+        </Link>
+      </li>
     </ul>
   );
 }

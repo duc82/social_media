@@ -12,11 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  ChatLeftTextFill,
-  PersonPlusFill,
-  PersonXFill,
-} from "react-bootstrap-icons";
 import toast from "react-hot-toast";
 
 export default function SuggesstionItem(friend: FullUser) {
@@ -106,7 +101,7 @@ export default function SuggesstionItem(friend: FullUser) {
                     <span className="visually-hidden">Loading...</span>
                   </div>
                 ) : (
-                  <PersonXFill size={16} />
+                  <i className="bi bi-person-x-fill"></i>
                 )}
 
                 <span className="ms-2">Cancel</span>
@@ -126,7 +121,7 @@ export default function SuggesstionItem(friend: FullUser) {
                     <span className="visually-hidden">Loading...</span>
                   </div>
                 ) : (
-                  <PersonPlusFill size={16} />
+                  <i className="bi bi-person-plus-fill"></i>
                 )}
 
                 <span className="ms-2">Add friend</span>
@@ -137,7 +132,7 @@ export default function SuggesstionItem(friend: FullUser) {
               onClick={handleMessage}
               className="btn btn-secondary-soft d-flex justify-content-center align-items-center"
             >
-              <ChatLeftTextFill size={16} />
+              <i className="bi bi-chat-left-text-fill"></i>
               <span className="ms-2">Message</span>
             </button>
           </div>

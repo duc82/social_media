@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { QueryDto } from "src/shared/dto/query.dto";
-import { UserService } from "src/modules/users/users.service";
 import { And, DataSource, In, IsNull, Not, Raw } from "typeorm";
 import { Friend } from "./friends.entity";
 import { User } from "src/modules/users/entities/users.entity";
@@ -8,17 +7,12 @@ import { FriendStatus } from "./friends.enum";
 
 @Injectable()
 export class FriendsService {
-  constructor(
-    private dataSource: DataSource,
-    private userService: UserService,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
   async getSuggestedFriends(currentUserId: string, query: QueryDto) {
     const { page, limit, search } = query;
 
     const skip = (page - 1) * limit;
-
-    const blockedUsers = await this.userService.getBlockedUsers(currentUserId);
 
     const friends = await this.dataSource.getRepository(Friend).find({
       where: [
@@ -34,6 +28,7 @@ export class FriendsService {
         },
       ],
       relations: ["user", "friend"],
+      select: ["user", "friend"],
     });
 
     const friendIds = friends.map((friend) => {
@@ -49,7 +44,7 @@ export class FriendsService {
       .getRepository(User)
       .findAndCount({
         where: {
-          id: And(Not(In(friendIds)), Not(In(blockedUsers))),
+          id: Not(In(friendIds)),
           emailVerified: Not(IsNull()),
           firstName: Raw(
             (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
@@ -115,6 +110,17 @@ export class FriendsService {
     });
 
     return { friends, total, page, limit };
+  }
+
+  async countFriends(userId: string, status: FriendStatus) {
+    const total = await this.dataSource.getRepository(Friend).count({
+      where: [
+        { user: { id: userId }, status },
+        { friend: { id: userId }, status },
+      ],
+    });
+
+    return total;
   }
 
   async getFriend(userId: string, friendId: string) {

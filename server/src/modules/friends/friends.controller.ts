@@ -45,6 +45,14 @@ export class FriendsController {
     return this.friendService.getFriends(userId, status, query);
   }
 
+  @Get("count/:status")
+  async countFriends(
+    @User("userId") userId: string,
+    @Param("status") status: FriendStatus,
+  ) {
+    return this.friendService.countFriends(userId, status);
+  }
+
   @Get(":id/friend")
   async getFriend(@User("userId") userId: string, @Param("id") id: string) {
     return this.friendService.getFriend(userId, id);

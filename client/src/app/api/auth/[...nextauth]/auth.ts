@@ -91,6 +91,4 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
     newUser: "/",
     verifyRequest: "/verify",
   },
-
-  debug: process.env.NODE_ENV === "development",
 });

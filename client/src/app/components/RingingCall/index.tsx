@@ -10,12 +10,6 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Peer from "peerjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  CameraVideoFill,
-  CameraVideoOffFill,
-  MicFill,
-  MicMuteFill,
-} from "react-bootstrap-icons";
 import RingingCallSpinner from "./RingingCallSpinner";
 
 export default function RingingCall() {
@@ -167,80 +161,84 @@ export default function RingingCall() {
 
   const userFullName = formatName(user?.firstName || "", user?.lastName || "");
 
+  if (isLoading || !user) {
+    return <RingingCallSpinner />;
+  }
+
   return (
-    <>
-      <RingingCallSpinner isLoading={isLoading} />
-      <div
+    <div className="position-relative overflow-hidden vh-100">
+      <video
+        ref={remoteVideoRef}
+        autoPlay
         className={clsx(
-          "position-relative overflow-hidden vh-100",
-          isLoading ? "d-none" : "d-block"
+          "object-fit-cover w-100 h-100",
+          isRemoteCamOn ? "d-block" : "d-none"
         )}
+      />
+      {!isRemoteCamOn && (
+        <div className="d-flex flex-column align-items-center justify-content-center bg-black h-100">
+          <div className="avatar mb-2" style={{ width: 60, height: 60 }}>
+            <Avatar
+              src={user.profile.avatar}
+              alt={user.username}
+              className="rounded-circle"
+            />
+          </div>
+          <h5 className="text-white">{userFullName}</h5>
+        </div>
+      )}
+
+      <div
+        className="position-absolute z-1 d-flex"
+        style={{ bottom: 20, right: 20, width: 350, height: 200 }}
       >
         <video
-          ref={remoteVideoRef}
+          ref={localVideoRef}
           autoPlay
+          muted
           className={clsx(
-            "object-fit-cover w-100 h-100",
-            isRemoteCamOn ? "d-block" : "d-none"
+            "object-fit-cover rounded-3 w-100 h-100",
+            isCamOn ? "d-block" : "d-none"
           )}
+          style={{ transform: "rotateY(180deg)" }}
         />
-        {!isRemoteCamOn && (
-          <div className="d-flex flex-column align-items-center justify-content-center bg-black h-100">
+        {!isCamOn && (
+          <div className="w-100 d-flex flex-column align-items-center justify-content-center bg-black rounded-3">
             <div className="avatar mb-2" style={{ width: 60, height: 60 }}>
               <Avatar
-                src={user?.profile.avatar || ""}
-                alt={user?.username}
+                src={data?.user?.profile.avatar || ""}
+                alt={data?.user?.username}
                 className="rounded-circle"
               />
             </div>
-            <h5 className="text-white">{userFullName}</h5>
+            <h5 className="text-white">{currentUserFullName}</h5>
           </div>
         )}
-
-        <div
-          className="position-absolute z-1 d-flex"
-          style={{ bottom: 20, right: 20, width: 350, height: 200 }}
-        >
-          <video
-            ref={localVideoRef}
-            autoPlay
-            muted
-            className={clsx(
-              "object-fit-cover rounded-3 w-100 h-100",
-              isCamOn ? "d-block" : "d-none"
-            )}
-            style={{ transform: "rotateY(180deg)" }}
-          />
-          {!isCamOn && (
-            <div className="w-100 d-flex flex-column align-items-center justify-content-center bg-black rounded-3">
-              <div className="avatar mb-2" style={{ width: 60, height: 60 }}>
-                <Avatar
-                  src={data?.user?.profile.avatar || ""}
-                  alt={data?.user?.username}
-                  className="rounded-circle"
-                />
-              </div>
-              <h5 className="text-white">{currentUserFullName}</h5>
-            </div>
-          )}
-        </div>
-        <div
-          className="position-absolute translate-middle-x start-50 d-flex align-items-center gap-2"
-          style={{
-            bottom: 20,
-          }}
-        >
-          <button type="button" className="btn btn-dark" onClick={toggleCam}>
-            {isCamOn ? <CameraVideoFill /> : <CameraVideoOffFill />}
-          </button>
-          <button type="button" className="btn btn-dark" onClick={toggleMic}>
-            {isMicMuted ? <MicMuteFill /> : <MicFill />}
-          </button>
-          <button type="button" onClick={handleEnd} className="btn btn-danger">
-            Leave
-          </button>
-        </div>
       </div>
-    </>
+      <div
+        className="position-absolute translate-middle-x start-50 d-flex align-items-center gap-2"
+        style={{
+          bottom: 20,
+        }}
+      >
+        <button type="button" className="btn btn-dark" onClick={toggleCam}>
+          {isCamOn ? (
+            <i className="bi bi-camera-video-fill"></i>
+          ) : (
+            <i className="bi bi-camera-video-off-fill"></i>
+          )}
+        </button>
+        <button type="button" className="btn btn-dark" onClick={toggleMic}>
+          {isMicMuted ? (
+            <i className="bi bi-mic-mute-fill"></i>
+          ) : (
+            <i className="bi bi-mic-fill"></i>
+          )}
+        </button>
+        <button type="button" onClick={handleEnd} className="btn btn-danger">
+          Leave
+        </button>
+      </div>
+    </div>
   );
 }

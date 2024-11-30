@@ -2,7 +2,6 @@
 
 import clsx from "clsx";
 import { useTheme } from "next-themes";
-import { CircleHalf, MoonStars, Sun } from "react-bootstrap-icons";
 
 export default function SwitchTheme() {
   const { theme, setTheme } = useTheme();
@@ -17,7 +16,7 @@ export default function SwitchTheme() {
         data-bs-placement="top"
         data-bs-title="Light"
       >
-        <Sun />
+        <i className="bi bi-sun-fill"></i>
       </button>
       <button
         type="button"
@@ -27,7 +26,7 @@ export default function SwitchTheme() {
         data-bs-placement="top"
         data-bs-title="Dark"
       >
-        <MoonStars />
+        <i className="bi bi-moon-stars-fill"></i>
       </button>
       <button
         type="button"
@@ -37,7 +36,7 @@ export default function SwitchTheme() {
         data-bs-placement="top"
         data-bs-title="System"
       >
-        <CircleHalf />
+        <i className="bi bi-circle-half"></i>
       </button>
     </>
   );

@@ -5,12 +5,6 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import {
-  PeopleFill,
-  PersonFillExclamation,
-  PersonLinesFill,
-  PersonPlusFill,
-} from "react-bootstrap-icons";
 
 interface FriendMenu {
   title: string;
@@ -21,22 +15,22 @@ interface FriendMenu {
 const friendMenus: FriendMenu[] = [
   {
     title: "Home",
-    icon: <PeopleFill width={20} height={20} />,
+    icon: <i className="bi bi-people-fill"></i>,
     link: "/friends",
   },
   {
     title: "Friend Requests",
-    icon: <PersonFillExclamation width={20} height={20} />,
+    icon: <i className="bi bi-person-fill-exclamation"></i>,
     link: "/friends/requests",
   },
   {
     title: "Suggestions",
-    icon: <PersonPlusFill width={20} height={20} />,
+    icon: <i className="bi bi-person-plus-fill"></i>,
     link: "/friends/suggestions",
   },
   {
     title: "All Friends",
-    icon: <PersonLinesFill width={20} height={20} />,
+    icon: <i className="bi bi-person-lines-fill"></i>,
     link: "/friends/list",
   },
 ];

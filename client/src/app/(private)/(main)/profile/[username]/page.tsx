@@ -9,16 +9,15 @@ import postService from "@/app/services/postService";
 export default async function Profile({
   params,
 }: {
-  params: { username?: string };
+  params: Promise<{ username: string }>;
 }) {
   const { currentUser, token } = await getServerSession();
+  let { username } = await params;
 
-  const username = params.username?.replace("%40", "");
+  username = username.replace("%40", "");
 
-  const [user, { posts, limit, total }] = await Promise.all([
-    getUserProfile(username, currentUser, token),
-    postService.getCurrent(token),
-  ]);
+  const user = await getUserProfile(username, currentUser, token);
+  const { posts, limit, total } = await postService.getByUserId(user.id, token);
 
   const isMyProfile = currentUser.id === user.id;
 
@@ -30,6 +29,7 @@ export default async function Profile({
         limit={limit}
         total={total}
         token={token}
+        user={user}
         currentUser={currentUser}
       />
     </PostProvider>

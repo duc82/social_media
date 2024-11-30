@@ -6,11 +6,12 @@ import userService from "@/app/services/userService";
 export default async function Friends({
   params,
 }: {
-  params: { username?: string };
+  params: Promise<{ username: string }>;
 }) {
   const { currentUser, token } = await getServerSession();
+  let { username } = await params;
 
-  const username = params.username?.replace("%40", "");
+  username = username.replace("%40", "");
 
   const user = await getUserProfile(username, currentUser, token);
 

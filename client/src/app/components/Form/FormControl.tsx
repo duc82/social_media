@@ -5,7 +5,6 @@ import {
   Ref,
   forwardRef,
 } from "react";
-import { ExclamationCircleFill } from "react-bootstrap-icons";
 
 interface FormControlProps extends InputHTMLAttributes<HTMLInputElement> {
   text?: ReactNode;
@@ -32,7 +31,7 @@ export default forwardRef(function FormControl(
       <input type="text" className="form-control" {...inputProps} ref={ref} />
       {error ? (
         <div className="form-text text-danger mt-1">
-          <ExclamationCircleFill size={16} className="me-2" />
+          <i className="bi bi-exclamation-circle-fill me-2"></i>
           <span>{error}</span>
         </div>
       ) : (

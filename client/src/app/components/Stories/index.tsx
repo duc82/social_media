@@ -1,9 +1,11 @@
 "use client";
 
 import { Zuck } from "zuck.js";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { UserStory } from "@/app/types/story";
+import formatName from "@/app/utils/formatName";
 
-const timestamp = function () {
+const timestamp = () => {
   let timeIndex = 0;
   const shifts = [
     35,
@@ -12,7 +14,7 @@ const timestamp = function () {
     60 * 60 * 2,
     60 * 60 * 25,
     60 * 60 * 24 * 4,
-    60 * 60 * 24 * 10
+    60 * 60 * 24 * 10,
   ];
 
   const shift = shifts[timeIndex++] || 0;
@@ -21,45 +23,48 @@ const timestamp = function () {
   return date.getTime() / 1000;
 };
 
-export default function Stories() {
+export default function Stories({
+  initialUserStories,
+}: {
+  initialUserStories: UserStory[];
+}) {
+  const [userStories, setUserStories] =
+    useState<UserStory[]>(initialUserStories);
   const storiesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const el = storiesRef.current;
+    if (!el) return;
 
-    if (el) {
-      Zuck(el, {
-        backNative: false, // uses window history to enable back button on browsers/android
-        previousTap: true, // use 1/3 of the screen to navigate to previous item when tap the story
-        skin: "snapgram", // container class
-        autoFullScreen: false, // enables fullscreen on mobile browsers
-        avatars: true, // shows user photo instead of last story item preview
-        list: false, // displays a timeline instead of carousel
-        openEffect: true, // enables effect when opening story
-        cubeEffect: true, // enables the 3d cube effect when sliding story
-        backButton: true, // adds a back button to close the story viewer
-        localStorage: true, // enabled localStorage
-        stories: [
-          {
-            id: "story",
-            photo: "/01.jpg",
-            name: "John Doe",
-            time: timestamp(),
-            items: [
-              {
-                id: "story-1",
-                type: "photo",
-                length: 5,
-                src: "/02.jpg",
-                preview: "/02.jpg",
-                time: timestamp()
-              }
-            ]
-          }
-        ]
-      });
-    }
-  }, []);
+    const stories: StoriesTimeline = userStories.map((user) => ({
+      id: user.id,
+      photo: user.profile.avatar,
+      name: formatName(user.firstName, user.lastName),
+      time: timestamp(),
+      items: user.stories.map((story) => ({
+        id: story.id,
+        type: story.type === "image" ? "photo" : "video",
+        length: 5,
+        src: story.content,
+        preview: story.content,
+        time: timestamp(),
+      })),
+    }));
+
+    Zuck(el, {
+      backNative: false, // uses window history to enable back button on browsers/android
+      previousTap: true, // use 1/3 of the screen to navigate to previous item when tap the story
+      skin: "snapgram", // container class
+      autoFullScreen: true, // enables fullscreen on mobile browsers
+      avatars: false, // shows user photo instead of last story item preview
+      list: false, // displays a timeline instead of carousel
+      openEffect: true, // enables effect when opening story
+      cubeEffect: true, // enables the 3d cube effect when sliding story
+      backButton: true, // adds a back button to close the story viewer
+      localStorage: true, // enabled localStorage
+      stories,
+    });
+  }, [userStories]);
 
   return <div id="stories" ref={storiesRef} className="storiesWrapper"></div>;
 }

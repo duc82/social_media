@@ -3,10 +3,8 @@ import Fancybox from "@/app/libs/FancyBox";
 import { FullUser } from "@/app/types/user";
 import Image from "next/image";
 import Link from "next/link";
-import wallpaper_initial from "@/app/assets/images/wallpaper.jpg";
 import formatName from "@/app/utils/formatName";
 import Avatar from "../Avatar";
-import { PatchCheckFill } from "react-bootstrap-icons";
 import { directMessage } from "@/app/actions/conversationAction";
 import { useRouter } from "next/navigation";
 
@@ -19,8 +17,9 @@ export default function ProfileModal({ user }: ProfileModalProps) {
   const router = useRouter();
 
   const handleMessage = async () => {
+    if (!user) return;
     try {
-      const conversation = await directMessage(user?.id || "");
+      const conversation = await directMessage(user.id);
       router.push(`/messages/${conversation.id}`);
     } catch (error) {
       console.log(error);
@@ -41,31 +40,32 @@ export default function ProfileModal({ user }: ProfileModalProps) {
             ></button>
           </div>
           <div className="modal-body p-0">
-            <Fancybox style={{ height: 170 }}>
-              <Link
-                href={user?.profile.wallpaper || wallpaper_initial.src}
-                data-fancybox
-                data-caption={fullName}
-                className="d-block h-100 position-relative"
-              >
-                <Image
-                  src={user?.profile.wallpaper || wallpaper_initial}
-                  alt="Wallpaper"
-                  className="object-fit-cover"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </Link>
-            </Fancybox>
-
+            {user?.profile.wallpaper && (
+              <Fancybox style={{ height: 170 }}>
+                <Link
+                  href={user?.profile.wallpaper}
+                  data-fancybox
+                  data-caption={fullName}
+                  className="d-block h-100 position-relative"
+                >
+                  <Image
+                    src={user?.profile.wallpaper}
+                    alt="Wallpaper"
+                    className="object-fit-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </Link>
+              </Fancybox>
+            )}
             <div className="px-3">
-              <Fancybox className="d-flex align-items-center text-center text-md-start mt-n2 mb-3">
+              <Fancybox className="d-flex align-items-center text-center text-md-start mt-n3 mb-3">
                 <Link
                   href={user?.profile.avatar || ""}
                   data-fancybox
                   data-caption={fullName}
-                  className="d-flex avatar-xl"
+                  className="d-flex avatar avatar-xl"
                 >
                   <Avatar
                     src={user?.profile.avatar || ""}
@@ -74,7 +74,8 @@ export default function ProfileModal({ user }: ProfileModalProps) {
                 </Link>
                 <div className="ms-2">
                   <h1 className="mb-0 h5">
-                    {fullName} <PatchCheckFill className="text-success small" />
+                    {fullName}{" "}
+                    <i className="bi bi-patch-check-fill text-success small"></i>
                   </h1>
                 </div>
               </Fancybox>

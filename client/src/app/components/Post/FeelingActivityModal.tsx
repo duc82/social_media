@@ -108,7 +108,7 @@ export default function FeelingActivityModal({
                         type="button"
                         onClick={() => handleClickFeeling(feeling)}
                         className={clsx(
-                          "btn w-100 px-0 d-flex align-items-center fw-normal text-black"
+                          "btn w-100 px-0 d-flex align-items-center fw-normal"
                         )}
                       >
                         <div

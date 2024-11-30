@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
+  Post,
   Put,
   Query,
   UploadedFile,
@@ -12,10 +14,9 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { UserService } from "./users.service";
-import { UpdateUserDto } from "./users.dto";
+import { ChangePasswordDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { AuthGuard } from "src/common/guards/auth.guard";
-import { SkipAuth } from "src/common/decorators/auth.decorator";
 import { User } from "src/common/decorators/user.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
 
@@ -24,18 +25,19 @@ import { FileInterceptor } from "@nestjs/platform-express";
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
-  @SkipAuth()
   @Get()
-  async getAll(@Query() query: QueryDto) {
-    return this.usersService.getAll(query);
+  async getAll(@User("userId") userId: string, @Query() query: QueryDto) {
+    return this.usersService.getAll(userId, query);
   }
 
-  @Get("search")
-  async search(
-    @User("userId") currentUserId: string,
-    @Query() query: QueryDto,
-  ) {
-    return this.usersService.search(currentUserId, query);
+  @Get("blocked")
+  async getBlocked(@User("userId") userId: string, @Query() query: QueryDto) {
+    return this.usersService.getBlocked(userId, query);
+  }
+
+  @Get("stories")
+  async getStories(@User("userId") userId: string, @Query() query: QueryDto) {
+    return this.usersService.getStories(userId, query);
   }
 
   @Get(":id")
@@ -49,8 +51,24 @@ export class UsersController {
   }
 
   @Get("current")
-  async getCurrent(@User("userId") currentUserId: string) {
-    return this.usersService.getCurrent(currentUserId);
+  async getCurrent(@User("userId") userId: string) {
+    return this.usersService.getCurrent(userId);
+  }
+
+  @Post("block")
+  async block(
+    @User("userId") blockedById: string,
+    @Body("blockedId") blockedId: string,
+  ) {
+    return this.usersService.block(blockedById, blockedId);
+  }
+
+  @Delete("unblock/:blockedId")
+  async unblock(
+    @User("userId") blockedById: string,
+    @Param("blockedId", new ParseUUIDPipe()) blockedId: string,
+  ) {
+    return this.usersService.unblock(blockedById, blockedId);
   }
 
   @Put("update/:id")
@@ -68,7 +86,7 @@ export class UsersController {
     }),
   )
   async update(
-    @Param("id") id: string,
+    @Param("id", new ParseUUIDPipe()) id: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() user: UpdateUserDto,
   ) {
@@ -78,5 +96,13 @@ export class UsersController {
   @Put("remove/:id")
   async remove(@Param("id", new ParseUUIDPipe()) id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Put("change-password")
+  async changePassword(
+    @User("userId") userId: string,
+    @Body() body: ChangePasswordDto,
+  ) {
+    return this.usersService.changePassword(userId, body);
   }
 }

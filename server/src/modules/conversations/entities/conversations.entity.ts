@@ -24,11 +24,6 @@ export class Conversation extends BaseEntity {
   })
   name: string;
 
-  @Column({
-    nullable: true,
-  })
-  image: string;
-
   @Column()
   isGroup: boolean;
 
