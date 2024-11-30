@@ -33,11 +33,3 @@ export interface MessagesResponse {
   page: number;
   limit: number;
 }
-
-type MessageFileDto = Pick<MessageFile, "url" & "type">;
-
-export interface CreateMessageDto {
-  content?: string;
-  files?: MessageFileDto[];
-  conversation: string;
-}

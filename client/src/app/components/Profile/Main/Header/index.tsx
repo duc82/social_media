@@ -150,6 +150,11 @@ export default function ProfileMainHeader({
     }
   };
 
+  const handleSendMessage = async () => {
+    const conversation = await directMessage(user.id);
+    router.push(`/messages/${conversation.id}`);
+  };
+
   const fullName = formatName(user.firstName, user.lastName);
 
   return (
@@ -337,7 +342,7 @@ export default function ProfileMainHeader({
               <button
                 type="button"
                 className="btn btn-light d-flex align-items-center"
-                onClick={() => directMessage(user.id)}
+                onClick={handleSendMessage}
               >
                 <i className="bi bi-chat-left-text-fill me-2"></i>
                 <span>Message</span>

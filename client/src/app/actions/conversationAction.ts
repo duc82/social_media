@@ -9,9 +9,6 @@ import { Options } from "../types";
 export const directMessage = async (id: string): Promise<Conversation> => {
   const { token } = await getServerSession();
   const conversation = await conversationService.getByUser(id, token);
-
-  console.log(conversation);
-
   return conversation;
 };
 

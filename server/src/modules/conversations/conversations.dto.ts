@@ -14,10 +14,9 @@ export class CreateConversationDto {
   name?: string;
 
   @IsUUID(undefined, { each: true })
-  @ArrayMinSize(1)
   @IsArray()
-  @ArrayMinSize(2, {
-    message: "Members must be at least 2",
+  @ArrayMinSize(1, {
+    message: "Members must be at least 1",
   })
   members: string[];
 }

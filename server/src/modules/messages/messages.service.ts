@@ -3,14 +3,15 @@ import { DataSource, FindManyOptions, FindOneOptions } from "typeorm";
 import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
 import { UserService } from "src/modules/users/users.service";
-import { MessageFile } from "./entities/message_files.entity";
 import { QueryDto } from "src/shared/dto/query.dto";
+import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class MessagesService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly userService: UserService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   async findOne(options?: FindOneOptions<Message>) {
@@ -57,35 +58,37 @@ export class MessagesService {
     return { messages, total, page, limit };
   }
 
-  async markAsRead(conversationId: string, currentUserId: string) {
+  async markAsRead(conversationId: string, userId: string) {
     await this.dataSource.query("SELECT mark_messages_as_read($1, $2)", [
       conversationId,
-      currentUserId,
+      userId,
     ]);
 
     return { message: "Mark as read successfully" };
   }
 
-  async create(body: CreateMessageDto, currentUserId: string) {
+  async create(
+    body: CreateMessageDto,
+    files: Express.Multer.File[],
+    userId: string,
+  ) {
     const user = await this.userService.findOne({
-      where: { id: currentUserId },
+      where: { id: userId },
       relations: ["profile"],
     });
 
-    const files = body.files.map((file) => {
-      return this.dataSource.getRepository(MessageFile).create(file);
-    });
+    const newFiles = await this.firebaseService.uploadFiles(files, "messages");
 
     const message = this.dataSource.getRepository(Message).create({
       content: body.content,
-      files,
+      files: newFiles,
       conversation: {
         id: body.conversation,
       },
       user,
       reads: [
         {
-          user: { id: currentUserId },
+          user: { id: userId },
         },
       ],
     });

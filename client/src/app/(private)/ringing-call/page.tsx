@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 export default function Page() {
   return (
-    <Suspense fallback={<RingingCallSpinner isLoading={true} />}>
+    <Suspense fallback={<RingingCallSpinner />}>
       <RingingCall />
     </Suspense>
   );

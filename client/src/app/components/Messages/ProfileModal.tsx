@@ -17,8 +17,9 @@ export default function ProfileModal({ user }: ProfileModalProps) {
   const router = useRouter();
 
   const handleMessage = async () => {
+    if (!user) return;
     try {
-      const conversation = await directMessage(user?.id || "");
+      const conversation = await directMessage(user.id);
       router.push(`/messages/${conversation.id}`);
     } catch (error) {
       console.log(error);
@@ -59,12 +60,12 @@ export default function ProfileModal({ user }: ProfileModalProps) {
               </Fancybox>
             )}
             <div className="px-3">
-              <Fancybox className="d-flex align-items-center text-center text-md-start mt-n2 mb-3">
+              <Fancybox className="d-flex align-items-center text-center text-md-start mt-n3 mb-3">
                 <Link
                   href={user?.profile.avatar || ""}
                   data-fancybox
                   data-caption={fullName}
-                  className="d-flex avatar-xl"
+                  className="d-flex avatar avatar-xl"
                 >
                   <Avatar
                     src={user?.profile.avatar || ""}

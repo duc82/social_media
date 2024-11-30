@@ -79,11 +79,13 @@ export default function TopAvatarStatus({
           data-bs-target="#profileModal"
           className="btn btn-link p-0 border-0 me-2 d-flex flex-shrink-0"
         >
-          <Avatar
-            className="rounded-circle"
-            src={user?.profile.avatar || ""}
-            alt={fullName}
-          />
+          <div className="avatar">
+            <Avatar
+              className="rounded-circle"
+              src={user?.profile.avatar || ""}
+              alt={fullName}
+            />
+          </div>
         </button>
 
         <div>

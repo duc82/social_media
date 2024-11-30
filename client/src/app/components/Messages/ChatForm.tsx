@@ -1,9 +1,6 @@
 "use client";
 
-import { sendMessage } from "@/app/actions/messageAction";
 import useSocketContext from "@/app/hooks/useSocketContext";
-import { uploadFile } from "@/app/libs/firebase";
-import { CreateMessageDto } from "@/app/types/message";
 import handlingError from "@/app/utils/error";
 import {
   faFaceSmile,
@@ -20,35 +17,33 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import EmojiPicker from "emoji-picker-react";
+import messageService from "@/app/services/messageService";
+import useEmoji from "@/app/hooks/useEmoji";
 
-export default function ChatForm() {
+export default function ChatForm({ token }: { token: string }) {
   const [text, setText] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const { socket } = useSocketContext();
+  const { isOpenEmoji, setOpenEmoji, emojiRef } = useEmoji();
 
   const { id } = useParams<{ id: string }>();
 
-  const handleSendMessage = useCallback(async () => {
+  const sendMessage = useCallback(async () => {
     const content = text.trim();
 
     if (!socket || (files.length === 0 && !content)) return;
 
     try {
-      const data: CreateMessageDto = {
-        content,
-        conversation: id,
-        files: [],
-      };
+      const formData = new FormData();
 
+      formData.append("content", content);
+      formData.append("conversation", id);
       for (const file of files) {
-        const url = await uploadFile(`messages/${file.name}`, file);
-        data.files?.push({
-          url,
-          type: file.type.includes("image") ? "image" : "video",
-        });
+        formData.append("files", file);
       }
 
-      const message = await sendMessage(data);
+      const message = await messageService.send(formData, token);
 
       socket.emit("message", message);
       setText("");
@@ -56,28 +51,28 @@ export default function ChatForm() {
     } catch (error) {
       toast.error(handlingError(error));
     }
-  }, [files, id, socket, text]);
+  }, [files, id, socket, text, token]);
 
-  const handleSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await handleSendMessage();
+    await sendMessage();
   };
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      await handleSendMessage();
+      await sendMessage();
     }
   };
 
   useEffect(() => {
     if (files.length > 0) {
-      handleSendMessage();
+      sendMessage();
     }
-  }, [files, handleSendMessage]);
+  }, [files, sendMessage]);
 
   return (
-    <form onSubmit={handleSubmitForm} className="d-sm-flex align-items-center">
+    <form onSubmit={handleSubmit} className="d-sm-flex align-items-center">
       <textarea
         className="form-control mb-sm-0 mb-3 resize-none"
         placeholder="Type a message"
@@ -87,15 +82,31 @@ export default function ChatForm() {
         onKeyDown={handleKeyDown}
         style={{ height: 41 }}
       ></textarea>
-      <button type="button" className="btn btn-sm btn-danger-soft ms-sm-2">
-        <FontAwesomeIcon className="fs-6" icon={faFaceSmile} />
-      </button>
-      <label htmlFor="file" className="btn btn-sm btn-secondary-soft ms-2">
+
+      <div className="position-relative">
+        <button
+          type="button"
+          className="btn btn-sm btn-danger-soft ms-sm-2 position-relative"
+          onClick={() => setOpenEmoji(!isOpenEmoji)}
+        >
+          <FontAwesomeIcon className="fs-6" icon={faFaceSmile} />
+        </button>
+        <div ref={emojiRef} className="position-absolute bottom-100 end-0">
+          <EmojiPicker
+            open={isOpenEmoji}
+            onEmojiClick={(emojiData) =>
+              setText((prev) => prev + emojiData.emoji)
+            }
+          />
+        </div>
+      </div>
+
+      <label htmlFor="files" className="btn btn-sm btn-secondary-soft ms-2">
         <FontAwesomeIcon className="fs-6" icon={faPaperclip} />
         <input
           type="file"
+          id="files"
           className="d-none"
-          id="file"
           multiple
           accept="image/*, video/*"
           onChange={(e) => {

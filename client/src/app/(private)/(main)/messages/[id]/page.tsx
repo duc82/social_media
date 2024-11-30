@@ -38,7 +38,6 @@ export default async function Messages({
 
       <div className="card card-chat rounded-start-lg-0 border-start-lg-0 h-100">
         <div className="card-body">
-          {/* Top avatar and status */}
           <TopAvatarStatus
             user={user}
             conversation={conversation}
@@ -46,7 +45,6 @@ export default async function Messages({
             currentUser={currentUser}
           />
           <hr />
-          {/* Messages */}
           <MessageList
             initialMessages={messages}
             initialPage={page + 1}
@@ -56,7 +54,7 @@ export default async function Messages({
           />
         </div>
         <div className="card-footer">
-          <ChatForm />
+          <ChatForm token={token} />
         </div>
       </div>
     </div>

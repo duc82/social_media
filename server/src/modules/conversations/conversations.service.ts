@@ -17,6 +17,7 @@ import { Message } from "../messages/entities/messages.entity";
 import { MessageFile } from "../messages/entities/message_files.entity";
 import { UserService } from "../users/users.service";
 import { MessagesService } from "../messages/messages.service";
+import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class ConversationsService {
@@ -24,6 +25,7 @@ export class ConversationsService {
     private readonly dataSource: DataSource,
     private readonly userService: UserService,
     private readonly messageService: MessagesService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   async findOne(options?: FindOneOptions<Conversation>) {
@@ -175,22 +177,23 @@ export class ConversationsService {
 
   async createWithMessage(
     body: CreateConversationWithMessageDto,
+    files: Express.Multer.File[],
     userId: string,
   ) {
     const userIds = [userId, ...body.members];
 
     const conversation = await this.getByUsersOrCreate(userIds);
 
-    await this.messageService.create(
+    const message = await this.messageService.create(
       {
         content: body.content,
-        files: body.files,
         conversation: conversation.id,
       },
+      files,
       userId,
     );
 
-    return conversation;
+    return { conversation, message };
   }
 
   async countUnread(currentUserId: string) {
@@ -221,6 +224,13 @@ export class ConversationsService {
       .createQueryBuilder()
       .softDelete()
       .where("id = :id AND deletedAt IS NULL", { id })
+      .execute();
+
+    await this.dataSource
+      .getRepository(Message)
+      .createQueryBuilder()
+      .softDelete()
+      .where("conversationId = :conversationId", { conversationId: id })
       .execute();
 
     if (result.affected === 0) {

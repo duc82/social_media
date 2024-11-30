@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { userProfileSchema } from "../schemas/user";
+
 export type FriendStatus = "pending" | "accepted" | "declined";
 
 export type Role = "user" | "admin";

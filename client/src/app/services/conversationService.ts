@@ -1,5 +1,6 @@
 import { Options } from "../types";
 import { Conversation, ConversationsReponse } from "../types/conversation";
+import { Message } from "../types/message";
 import apiRequest from "./api";
 
 const conversationService = {
@@ -26,15 +27,18 @@ const conversationService = {
     });
   },
 
-  create: async (formData: FormData, token: string) => {
-    return apiRequest<Conversation>(`/conversations/create-with-message`, {
-      method: "POST",
-      isFormData: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+  createWithMessage: async (formData: FormData, token: string) => {
+    return apiRequest<{ conversation: Conversation; message: Message }>(
+      `/conversations/create-with-message`,
+      {
+        method: "POST",
+        isFormData: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
   },
 
   getByUser: async (id: string, token: string) => {

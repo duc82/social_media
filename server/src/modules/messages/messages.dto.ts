@@ -1,36 +1,9 @@
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateIf,
-  ValidateNested,
-} from "class-validator";
-import { Type } from "class-transformer";
-import { FileType } from "src/enums/file.enum";
-
-export class MessageFileDto {
-  @IsString()
-  url: string;
-
-  @IsEnum(FileType)
-  type: FileType;
-}
+import { IsNotEmpty, IsString, IsUUID, ValidateIf } from "class-validator";
 
 export class CreateMessageDto {
   @ValidateIf((o) => o.content)
   @IsString()
   content: string;
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({
-    each: true,
-  })
-  @Type(() => MessageFileDto)
-  files: MessageFileDto[] = [];
 
   @IsNotEmpty()
   @IsUUID()

@@ -117,4 +117,10 @@
     color: $gray-700-dark;
     border: 1px solid $gray-100-dark;
   }
+
+  .btn-secondary-soft {
+    --bs-secondary-rgb: 197, 198, 204;
+    background-color: rgba(var(--bs-secondary-rgb), 0.1) !important;
+    color: $gray-600-dark !important;
+  }
 }

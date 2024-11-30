@@ -29,9 +29,9 @@ export default function HeaderMenuRight({
   useEffect(() => {
     if (!socket) return;
 
-    const handleConversationUnread = (message: Message) => {
+    const handleConversationUnread = async (message: Message) => {
       if (message.user.id !== currentUser.id) {
-        revalidateTag("headerConversationUnread");
+        await revalidateTag("headerConversationUnread");
       }
     };
 
