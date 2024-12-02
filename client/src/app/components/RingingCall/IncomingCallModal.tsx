@@ -9,7 +9,6 @@ import Avatar from "../Avatar";
 import { CallUser } from "@/app/types/socket";
 import { FullUser } from "@/app/types/user";
 import userService from "@/app/services/userService";
-import ringtone from "@/app/assets/sounds/ringtone.mp3";
 
 export default function IncomingCallModal() {
   const { socket } = useSocketContext();
@@ -20,6 +19,7 @@ export default function IncomingCallModal() {
   const { data } = useSession();
   const token = data?.token;
   const currentUser = data?.user;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleAcceptCall = () => {
     if (!callUser) return;
@@ -35,32 +35,62 @@ export default function IncomingCallModal() {
       "_blank",
       `location=yes,scrollbars=yes,status=yes,width=${width},height=${height},top=${top},left=${left}`
     );
+
+    pauseRingtone();
+  };
+
+  const playRingtone = async () => {
+    const audio = audioRef.current;
+    if (audio) {
+      await audio.play();
+      audio.muted = false;
+    }
+  };
+
+  const pauseRingtone = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.muted = true;
+    }
   };
 
   const handleRejectCall = () => {
-    if (bootstrap && incomingCallModalRef.current) {
-      const modal = new bootstrap.Modal(incomingCallModalRef.current);
+    if (!callUser) return;
+
+    socket?.emit("rejectCall", callUser);
+    if (incomingCallModalRef.current) {
+      const modal = bootstrap.Modal.getOrCreateInstance(
+        incomingCallModalRef.current
+      );
       modal.hide();
     }
+    pauseRingtone();
   };
 
   useEffect(() => {
     if (!socket) return;
 
-    const handleCallUser = (data: CallUser) => {
+    const handleCallUser = async (data: CallUser) => {
       setCallUser(data);
-      if (bootstrap && incomingCallModalRef.current) {
-        const modal = new bootstrap.Modal(incomingCallModalRef.current);
+      if (incomingCallModalRef.current) {
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          incomingCallModalRef.current
+        );
         modal.show();
       }
+
+      await playRingtone();
     };
 
     socket.on("callUser", handleCallUser);
+    socket.on("endCall", handleRejectCall);
 
     return () => {
       socket.off("callUser", handleCallUser);
+      socket.off("endCall", handleRejectCall);
     };
-  }, [socket, bootstrap, currentUser]);
+  }, [socket, bootstrap, currentUser, handleRejectCall, playRingtone]);
 
   useEffect(() => {
     if (!callUser || !token) return;
@@ -77,6 +107,7 @@ export default function IncomingCallModal() {
       id="incomingCallModal"
       ref={incomingCallModalRef}
     >
+      <audio src="/ringtone.mp3" muted ref={audioRef} loop></audio>
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">

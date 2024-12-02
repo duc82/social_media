@@ -62,7 +62,7 @@ export class AuthService {
 
     const buffer = await this.avatarService.generateAvatar(signUpDto.firstName);
 
-    const avatar = await this.firebaseService.uploadFile(
+    const avatar = await this.firebaseService.uploadFileFromBuffer(
       buffer,
       `avatars/${signUpDto.email}`,
     );

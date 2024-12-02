@@ -31,7 +31,10 @@ export class AvatarService {
     return name[0].toUpperCase();
   }
 
-  async generateAvatar(name: string, options?: Partial<AvatarInitialsOptions>) {
+  async generateAvatar(
+    name: string,
+    options?: Partial<AvatarInitialsOptions>,
+  ): Promise<Buffer> {
     const initials = this.getInitials(name);
 
     const canvas = this.createCanvas(

@@ -8,7 +8,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { AuthService } from "src/modules/auth/auth.service";
@@ -163,6 +162,14 @@ export class EventsGateway
   @SubscribeMessage("endCall")
   handleEndCall(@ConnectedSocket() client: Socket) {
     client.broadcast.emit("endCall");
+  }
+
+  @SubscribeMessage("rejectCall")
+  handleRejectCall(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: CallUser,
+  ) {
+    client.broadcast.emit("callRejected", payload);
   }
 
   @SubscribeMessage("remoteCamOn")

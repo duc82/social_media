@@ -5,6 +5,7 @@ import { cert, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import { Auth, getAuth } from "firebase-admin/auth";
 import { FileType } from "src/enums/file.enum";
+import { SaveData } from "@google-cloud/storage/build/cjs/src/file";
 
 @Injectable()
 export class FirebaseService {
@@ -47,22 +48,31 @@ export class FirebaseService {
     this.auth = auth;
   }
 
-  async uploadFile(file: Express.Multer.File | Buffer, path: string) {
-    try {
-      const fileRef = this.bucket.file(path);
+  async uploadFile(file: Express.Multer.File, path: string) {
+    const fileRef = this.bucket.file(path);
 
-      await fileRef.save(file instanceof Buffer ? file : file.buffer, {
-        metadata: {
-          contentType: file instanceof Buffer ? "image/png" : file.mimetype,
-        },
-      });
+    await fileRef.save(file.buffer, {
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
 
-      await fileRef.makePublic();
-      const url = decodeURIComponent(fileRef.publicUrl());
-      return `${url}?time=${Date.now()}`;
-    } catch (error) {
-      throw error;
-    }
+    await fileRef.makePublic();
+    const url = decodeURIComponent(fileRef.publicUrl());
+    return `${url}?time=${Date.now()}`;
+  }
+
+  async uploadFileFromBuffer(buffer: Buffer, path: string) {
+    const fileRef = this.bucket.file(path);
+
+    await fileRef.save(buffer, {
+      metadata: {
+        contentType: "image/png",
+      },
+    });
+
+    await fileRef.makePublic();
+    return fileRef.publicUrl();
   }
 
   async uploadFiles(files: Array<Express.Multer.File>, folder: string) {

@@ -23,6 +23,7 @@ export default function RingingCall() {
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const outGoingRef = useRef<HTMLAudioElement>(null);
 
   const [peer, setPeer] = useState<Peer | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
@@ -38,6 +39,22 @@ export default function RingingCall() {
     window.close();
   }, [socket]);
 
+  const playOutgoing = async () => {
+    const outgoing = outGoingRef.current;
+    if (outgoing) {
+      await outgoing.play();
+      outgoing.muted = false;
+    }
+  };
+
+  const pauseOutgoing = () => {
+    const outgoing = outGoingRef.current;
+    if (outgoing) {
+      outgoing.pause();
+      outgoing.muted = true;
+    }
+  };
+
   useEffect(() => {
     if (!socket || !data || !calleeId) return;
     const currentUser = data.user;
@@ -45,6 +62,7 @@ export default function RingingCall() {
     const peer = new Peer(currentUser.id);
 
     socket.on("endCall", handleEnd);
+    socket.on("callRejected", handleEnd);
 
     const room = `${callerId ? callerId : currentUser.id}-${calleeId}`;
 
@@ -73,6 +91,7 @@ export default function RingingCall() {
 
     peer.on("call", (call) => {
       if (!localStream) return;
+
       call.answer(localStream);
       call.on("stream", (remoteStream) => {
         if (remoteVideoRef.current) {
@@ -86,12 +105,12 @@ export default function RingingCall() {
     return () => {
       peer.disconnect();
       socket.off("endCall", handleEnd);
+      socket.off("callRejected", handleEnd);
     };
   }, [socket, data, calleeId, callerId, hasVideo, localStream, handleEnd]);
 
   useEffect(() => {
     if (!socket || !callerId || !localStream || !peer) return;
-
     socket.on("endCall", handleEnd);
 
     const call = peer.call(callerId, localStream);
@@ -122,36 +141,21 @@ export default function RingingCall() {
   const toggleMic = () => {
     if (!localStream) return;
 
-    setIsMicMuted((prevState) => !prevState);
+    setIsMicMuted((prev) => !prev);
     localStream.getAudioTracks().forEach((track) => {
       track.enabled = !track.enabled;
     });
+    setLocalStream(localStream);
   };
 
   const toggleCam = () => {
     if (!localStream) return;
 
-    navigator.mediaDevices
-      .getUserMedia({ video: !isCamOn, audio: true })
-      .then((stream) => {
-        localStream.getVideoTracks().forEach((track) => {
-          track.stop();
-          localStream.removeTrack(track);
-        });
-
-        stream.getVideoTracks().forEach((track) => {
-          localStream.addTrack(track);
-        });
-
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = localStream;
-        }
-      });
+    setIsCamOn((prev) => !prev);
     localStream.getVideoTracks().forEach((track) => {
       track.enabled = !track.enabled;
     });
     setLocalStream(localStream);
-    setIsCamOn(!isCamOn);
   };
 
   const currentUserFullName = formatName(
@@ -175,6 +179,9 @@ export default function RingingCall() {
           isRemoteCamOn ? "d-block" : "d-none"
         )}
       />
+
+      <audio src="/outgoing.mp3" ref={outGoingRef} muted loop></audio>
+
       {!isRemoteCamOn && (
         <div className="d-flex flex-column align-items-center justify-content-center bg-black h-100">
           <div className="avatar mb-2" style={{ width: 60, height: 60 }}>
@@ -185,6 +192,7 @@ export default function RingingCall() {
             />
           </div>
           <h5 className="text-white">{userFullName}</h5>
+          <p className="text-light">Calling...</p>
         </div>
       )}
 
@@ -216,7 +224,7 @@ export default function RingingCall() {
         )}
       </div>
       <div
-        className="position-absolute translate-middle-x start-50 d-flex align-items-center gap-2"
+        className="position-absolute translate-middle-x start-50 d-flex align-items-center gap-2 z-3"
         style={{
           bottom: 20,
         }}
