@@ -19,7 +19,7 @@ export interface Options extends PaginationLimit, Filter {
   tags?: string[];
 }
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 export type SearchParams = {
   searchParams: Promise<{

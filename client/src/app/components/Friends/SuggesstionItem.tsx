@@ -17,11 +17,12 @@ export default function SuggesstionItem(friend: FullUser) {
   const [status, setStatus] = useState<"" | "send" | "cancel">("");
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useSession();
-  const token = data?.token!;
+  const token = data?.token;
   const { socket } = useSocketContext();
   const router = useRouter();
 
   const handleSendFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading(true);
       await sendFriendRequest(token, friend.id);
@@ -34,6 +35,7 @@ export default function SuggesstionItem(friend: FullUser) {
   };
 
   const handleCancelFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading(true);
       await userService.cancelFriendRequest(token, friend.id);

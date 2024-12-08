@@ -3,7 +3,7 @@
 import useBootstrapContext from "@/app/hooks/useBootstrapContext";
 import useSocketContext from "@/app/hooks/useSocketContext";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Avatar from "../Avatar";
 import { CallUser } from "@/app/types/socket";
 import { FullUser } from "@/app/types/user";
@@ -37,13 +37,13 @@ export default function IncomingCallModal({ token }: { token: string }) {
     pauseRingtone();
   };
 
-  const playRingtone = async () => {
+  const playRingtone = useCallback(async () => {
     const audio = audioRef.current;
     if (audio) {
       await audio.play();
       audio.muted = false;
     }
-  };
+  }, []);
 
   const pauseRingtone = () => {
     const audio = audioRef.current;

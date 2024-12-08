@@ -25,6 +25,7 @@ import EditPhotoModal from "./EditPhotoPanel";
 import EditPhoto from "./EditPhotoPanel";
 import EditPhotoPanel from "./EditPhotoPanel";
 import EditPhotosPanel from "./EditPhotosPanel";
+import Image from "next/image";
 
 export default function CreatePostModal({
   initialActiveDropzone = false,
@@ -39,7 +40,7 @@ export default function CreatePostModal({
   const [previewHeight, setPreviewHeight] = useState(0);
   const { setPosts } = usePostContext();
   const { data: session } = useSession();
-  const token = session?.token!;
+  const token = session?.token;
 
   const modalRef = useRef<HTMLDivElement>(null);
   const bootstrap = useBootstrapContext();
@@ -80,6 +81,8 @@ export default function CreatePostModal({
   };
 
   const onSubmit = async (data: PostDto) => {
+    if (!token) return;
+
     if (!data.content && !files.length) {
       toast.error("Please fill all fields");
       return;
@@ -217,7 +220,7 @@ export default function CreatePostModal({
                             style={{ height: previewHeight }}
                           >
                             {file.type.includes("image") && (
-                              <img
+                              <Image
                                 src={file.preview}
                                 alt={file.name}
                                 className="card-img object-fit-cover h-100"

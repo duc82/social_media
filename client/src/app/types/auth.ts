@@ -25,11 +25,10 @@ export interface SignUpDto extends z.infer<typeof signUpSchema> {
   birthday: string;
 }
 
-export interface SignInDto extends z.infer<typeof signInSchema> {}
+export type SignInDto = z.infer<typeof signInSchema>;
 
-export interface ForgotPasswordDto
-  extends z.infer<typeof forgotPasswordSchema> {}
+export type ForgotPasswordDto = z.infer<typeof forgotPasswordSchema>;
 
-export interface ResetPasswordDto extends z.infer<typeof resetPasswordSchema> {}
+export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;
 
-export interface ChangePasswordDto extends z.infer<typeof changePasswordDto> {}
+export type ChangePasswordDto = z.infer<typeof changePasswordDto>;

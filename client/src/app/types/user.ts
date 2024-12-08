@@ -96,4 +96,4 @@ export interface Friend {
   friend: FullUser;
 }
 
-export interface UpdateUserDto extends z.infer<typeof userProfileSchema> {}
+export type UpdateUserDto = z.infer<typeof userProfileSchema>;

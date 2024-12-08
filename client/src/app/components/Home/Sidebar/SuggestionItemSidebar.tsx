@@ -17,9 +17,10 @@ import {
 export default function SuggestionItemSidebar(friend: FullUser) {
   const [isSendRequest, setIsSendRequest] = useState(false);
   const { data } = useSession();
-  const token = data?.token!;
+  const token = data?.token;
 
   const handleSendFriendRequest = async () => {
+    if (!token) return;
     try {
       await sendFriendRequest(token, friend.id);
       setIsSendRequest(true);
@@ -29,6 +30,7 @@ export default function SuggestionItemSidebar(friend: FullUser) {
   };
 
   const handleCancelFriendRequest = async () => {
+    if (!token) return;
     try {
       await cancelFriendRequest(token, friend.id);
       setIsSendRequest(false);

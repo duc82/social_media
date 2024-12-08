@@ -4,6 +4,7 @@ import storyService from "@/app/services/storyService";
 import { FilePreview } from "@/app/types";
 import Cropper from "cropperjs";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 export default function CreateStoryModal({
@@ -91,7 +92,7 @@ export default function CreateStoryModal({
           <div className="modal-body">
             <div>
               {file && (
-                <img src={file.preview} alt={file.name} ref={imageRef} />
+                <Image src={file.preview} alt={file.name} ref={imageRef} />
               )}
             </div>
           </div>

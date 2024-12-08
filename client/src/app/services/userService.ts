@@ -13,7 +13,7 @@ import type {
 } from "../types/user";
 import apiRequest from "./api";
 
-export interface GetFriendsOptions extends Omit<Options, "userId"> {}
+export type GetFriendsOptions = Omit<Options, "userId">;
 
 const userService = {
   getAll: async (token: string, options?: Options) => {

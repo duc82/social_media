@@ -23,7 +23,7 @@ export const getConversationById = async (id: string) => {
     const { token } = await getServerSession();
     const data = await conversationService.getById(id, token);
     return data;
-  } catch (error) {
+  } catch (_error) {
     notFound();
   }
 };

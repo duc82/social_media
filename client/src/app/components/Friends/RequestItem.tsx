@@ -17,9 +17,10 @@ export default function RequestItem(friend: FullUser) {
     decline: false,
   });
   const { data } = useSession();
-  const token = data?.token!;
+  const token = data?.token;
 
   const handleAcceptFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading((prev) => ({ ...prev, accept: true }));
       await acceptFriendRequest(token, friend.id);
@@ -32,6 +33,7 @@ export default function RequestItem(friend: FullUser) {
   };
 
   const handleDeclineFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading((prev) => ({ ...prev, decline: true }));
       await declineFriendRequest(token, friend.id);

@@ -40,7 +40,7 @@ export default function ProfileMainHeader({
   const [isLoading, setIsLoading] = useState(false);
   const { data: session, update } = useSession();
   const router = useRouter();
-  const token = session?.token!;
+  const token = session?.token;
 
   const isSentFriendRequest = useMemo(
     () =>
@@ -68,7 +68,7 @@ export default function ProfileMainHeader({
   const handleChangeAvatar = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (!file) return;
+    if (!file || !token) return;
 
     const formData = new FormData();
     formData.append("file", file);
@@ -85,7 +85,7 @@ export default function ProfileMainHeader({
 
   const handleChangeWallpaper = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !token) return;
 
     const formData = new FormData();
     formData.append("file", file);
@@ -102,6 +102,7 @@ export default function ProfileMainHeader({
   };
 
   const handleSendFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading(true);
       const friendship = await sendFriendRequest(token, user.id);
@@ -114,6 +115,7 @@ export default function ProfileMainHeader({
   };
 
   const handleCancelFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading(true);
       const friendship = await cancelFriendRequest(token, user.id);
@@ -126,6 +128,7 @@ export default function ProfileMainHeader({
   };
 
   const handleAcceptFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading(true);
       const friendship = await acceptFriendRequest(token, user.id);
@@ -139,6 +142,7 @@ export default function ProfileMainHeader({
   };
 
   const handleDeclineFriendRequest = async () => {
+    if (!token) return;
     try {
       setIsLoading(true);
       const friendship = await declineFriendRequest(token, user.id);
