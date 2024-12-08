@@ -8,13 +8,13 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { AuthService } from "src/modules/auth/auth.service";
 import { UserPayload } from "src/modules/users/interfaces/users.interface";
 import { UserService } from "../users/users.service";
 import "dotenv/config";
+import { MessagesService } from "../messages/messages.service";
 
 interface Message {
   id: string;
@@ -59,11 +59,7 @@ interface CallUser {
 
 @WebSocketGateway({
   cors: {
-    origin: [
-      process.env.CLIENT_URL,
-      process.env.ADMIN_URL,
-      "http://192.168.1.4:3000",
-    ],
+    origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
   },
   transports: ["websocket"],
 })
@@ -77,9 +73,10 @@ export class EventsGateway
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private messageService: MessagesService,
   ) {}
 
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     this.logger.log("Initialized");
   }
 
@@ -149,20 +146,47 @@ export class EventsGateway
     client.join(room);
   }
 
-  @SubscribeMessage("callUser")
-  handleCallUser(@MessageBody() payload: CallUser) {
+  @SubscribeMessage("outgoingCall")
+  handleOutgoingCall(@MessageBody() payload: CallUser) {
     const callee = this.onlines.find(
       (online) => online.userId === payload.calleeId,
     );
 
     if (callee) {
-      this.server.to(callee.socketId).emit("callUser", payload);
+      this.server.to(callee.socketId).emit("incomingCall", payload);
     }
   }
 
   @SubscribeMessage("endCall")
-  handleEndCall(@ConnectedSocket() client: Socket) {
+  async handleEndCall(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: any,
+  ) {
     client.broadcast.emit("endCall");
+
+    if (payload) {
+      const message = await this.messageService.create(
+        {
+          callStatus: payload.callStatus,
+          callType: payload.callType,
+          conversation: payload.conversation,
+          callerId: payload.callerId,
+          calleeId: payload.calleeId,
+        },
+        [],
+        payload.callerId,
+      );
+
+      this.server.emit("message", message);
+    }
+  }
+
+  @SubscribeMessage("rejectCall")
+  handleRejectCall(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: CallUser,
+  ) {
+    client.broadcast.emit("callRejected", payload);
   }
 
   @SubscribeMessage("remoteCamOn")

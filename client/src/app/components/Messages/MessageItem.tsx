@@ -3,7 +3,7 @@ import Avatar from "../Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckDouble } from "@fortawesome/free-solid-svg-icons";
 import { Message } from "@/app/types/message";
-import formatName from "@/app/utils/formatName";
+
 import Image from "next/image";
 import Link from "next/link";
 import Fancybox from "@/app/libs/FancyBox";
@@ -21,8 +21,6 @@ export default function MessageItem({
   isSameDay,
   isShowStatus,
 }: MessageItemProps) {
-  const fullName = formatName(message.user.firstName, message.user.lastName);
-
   return (
     <div id={message.id}>
       {/* Chat time */}
@@ -48,7 +46,7 @@ export default function MessageItem({
               <Avatar
                 className="rounded-circle"
                 src={message.user.profile.avatar}
-                alt={fullName}
+                alt={message.user.fullName}
               />
             </div>
           </button>
@@ -79,6 +77,12 @@ export default function MessageItem({
                       </div>
                     ))}
                   </Fancybox>
+                )}
+
+                {message.call && (
+                  <div className="bg-light text-secondary p-2 px-3 rounded-2">
+                    {message.call.type} call
+                  </div>
                 )}
 
                 {isShowStatus && (
@@ -125,6 +129,12 @@ export default function MessageItem({
                   </Link>
                 ))}
               </Fancybox>
+            )}
+
+            {message.call && (
+              <div className="bg-primary text-white p-2 px-3 rounded-2">
+                {message.call.type} call
+              </div>
             )}
 
             {isShowStatus && (

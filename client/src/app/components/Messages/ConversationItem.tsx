@@ -8,7 +8,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Message } from "@/app/types/message";
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
-import formatName from "@/app/utils/formatName";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -52,8 +51,6 @@ export default function ConversationItem({
     };
   }, [socket]);
 
-  const fullName = formatName(user?.firstName ?? "", user?.lastName ?? "");
-
   return (
     <li className="mb-3">
       <Link
@@ -73,13 +70,13 @@ export default function ConversationItem({
             <Avatar
               className="avatar-img rounded-circle"
               src={user?.profile.avatar || ""}
-              alt={fullName}
+              alt={user?.fullName}
             />
           </div>
 
           <div className="flex-grow-1 d-block">
             <h6 className="mb-0 mt-1">
-              {conversation.isGroup ? conversation.name : fullName}
+              {conversation.isGroup ? conversation.name : user?.fullName}
             </h6>
             <div className="small text-secondary">
               {!lastMessage && "Created a new conversation"}

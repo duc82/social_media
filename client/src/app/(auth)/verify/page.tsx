@@ -1,13 +1,10 @@
 import authService from "@/app/services/authService";
+import { SearchParams } from "@/app/types";
 import clsx from "clsx";
 import Link from "next/link";
 
-interface VerifyProps {
-  searchParams: Record<string, string | undefined>;
-}
-
-export default async function Verify({ searchParams }: VerifyProps) {
-  const token = searchParams.token;
+export default async function Verify({ searchParams }: SearchParams) {
+  const token = (await searchParams).token;
   let message = "";
   let isSuccess = false;
 

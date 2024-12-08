@@ -6,7 +6,6 @@ import useSocketContext from "@/app/hooks/useSocketContext";
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import handlingError from "@/app/utils/error";
-import formatName from "@/app/utils/formatName";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -58,15 +57,13 @@ export default function SuggesstionItem(friend: FullUser) {
     }
   };
 
-  const fullName = formatName(friend.firstName, friend.lastName);
-
   return (
     <div className="col-12 col-md-6 col-lg-4 col-xl-3">
       <div className="card h-100">
         <Link href={`/profile/${friend.username}`} className="d-block">
           <Image
             src={friend.profile.avatar}
-            alt={fullName}
+            alt={friend.fullName}
             width={0}
             height={0}
             sizes="100vw"
@@ -78,7 +75,7 @@ export default function SuggesstionItem(friend: FullUser) {
             href={`/profile/${friend.username}`}
             className="card-title d-block mb-2"
           >
-            <h5 className="mb-0">{fullName}</h5>
+            <h5 className="mb-0">{friend.fullName}</h5>
           </Link>
           <p className="card-text mb-2">
             {status === "send" && "Request sent"}

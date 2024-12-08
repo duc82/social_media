@@ -4,11 +4,10 @@ import apiRequest from "./api";
 
 const messageService = {
   async getByConversation(id: string, token: string, options?: Options) {
-    const query = options
-      ? `?limit=${options.limit}&page=${options.page}&search=${
-          options.search || ""
-        }`
-      : "";
+    const { limit = 20, page = 1, search = "" } = options || {};
+
+    const query = `?limit=${limit}&page=${page}&search=${search}`;
+
     return apiRequest<MessagesResponse>(
       `/messages/by-conversation/${id}${query}`,
       {

@@ -5,7 +5,7 @@ import postService from "@/app/services/postService";
 import { FilePreview } from "@/app/types";
 import { Feeling, PostDto } from "@/app/types/post";
 import handlingError from "@/app/utils/error";
-import formatName from "@/app/utils/formatName";
+
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "../Avatar";
@@ -104,11 +104,6 @@ export default function EditModal() {
 
   const filePreviews = files.slice(0, 5);
 
-  const fullName = formatName(
-    currentUser?.firstName || "",
-    currentUser?.lastName || ""
-  );
-
   useEffect(() => {
     if (post) {
       setValue("content", post.content);
@@ -151,13 +146,13 @@ export default function EditModal() {
                       <Avatar
                         className="avatar-img rounded-circle"
                         src={currentUser.profile.avatar}
-                        alt={fullName}
+                        alt={currentUser.fullName}
                       />
                     </div>
                   )}
 
                   <span className="fw-semibold text-700">
-                    {fullName}
+                    {currentUser?.fullName}
                     {feeling && feeling.length > 0 && (
                       <span>
                         is {feeling[0]} feeling

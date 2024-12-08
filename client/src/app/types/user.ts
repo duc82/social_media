@@ -36,6 +36,7 @@ export interface User {
   username: string;
   lastName: string;
   firstName: string;
+  fullName: string;
   email: string;
   password: string;
   role: Role;

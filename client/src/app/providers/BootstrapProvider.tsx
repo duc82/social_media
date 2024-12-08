@@ -1,15 +1,23 @@
 "use client";
-import { createContext, PropsWithChildren, useLayoutEffect } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { usePathname } from "next/navigation";
 import { Tooltip, Popover } from "bootstrap";
-import * as bootstrap from "bootstrap";
 
-export const BootstrapContext = createContext<typeof bootstrap>(bootstrap);
+export const BootstrapContext = createContext<any>({});
 
 export function BootstrapProvider({ children }: PropsWithChildren) {
   const pathname = usePathname();
+  const [bootstrap, setBootstrap] = useState<any>();
 
   useLayoutEffect(() => {
+    const bootstrap = require("bootstrap/dist/js/bootstrap.bundle");
+    setBootstrap(bootstrap);
+
     const tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"], [data-bs-tooltip="true"]'
     );

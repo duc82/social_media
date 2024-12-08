@@ -1,5 +1,5 @@
 "use client";
-import formatName from "@/app/utils/formatName";
+
 import Link from "next/link";
 import React, { useState } from "react";
 import Avatar from "../../Avatar";
@@ -37,7 +37,6 @@ export default function FriendList({
       {friends.length > 0 ? (
         <>
           {friends.map((friend) => {
-            const fullName = formatName(friend.firstName, friend.lastName);
             return (
               <div
                 key={friend.id}
@@ -50,7 +49,7 @@ export default function FriendList({
                   <Avatar
                     className="avatar-img rounded-circle"
                     src={friend.profile.avatar}
-                    alt={fullName}
+                    alt={friend.fullName}
                   />
                 </Link>
 
@@ -60,7 +59,7 @@ export default function FriendList({
                       href={`/profile/${friend.username}`}
                       className="h6 mb-0"
                     >
-                      {fullName}
+                      {friend.fullName}
                     </Link>
 
                     {friend.profile.job && (

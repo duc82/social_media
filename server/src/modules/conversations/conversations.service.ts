@@ -82,7 +82,6 @@ export class ConversationsService {
       .andWhere(search ? "c.name ILIKE :search" : "TRUE", {
         search: `%${search}%`,
       })
-      .andWhere("c.deletedAt IS NULL")
       .orderBy("m.createdAt", "DESC", "NULLS LAST")
       .take(limit)
       .skip(skip)

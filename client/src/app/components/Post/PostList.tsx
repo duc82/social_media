@@ -29,7 +29,7 @@ export default function PostList({
     try {
       const newPage = page + 1;
       const data = await postService.getByUserId(
-        user?.id ?? currentUser.id,
+        user?.id || currentUser.id,
         token,
         {
           page: newPage,

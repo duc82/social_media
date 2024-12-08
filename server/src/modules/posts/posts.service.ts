@@ -51,7 +51,7 @@ export class PostsService {
 
     return {
       message: "Post created successfully",
-      post: { ...post, commentCount: 0 },
+      post: { ...post, commentCount: 0, totalComment: 0 },
     };
   }
 

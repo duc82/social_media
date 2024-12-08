@@ -5,15 +5,17 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { MessageFile } from "./message_files.entity";
 import { User } from "src/modules/users/entities/users.entity";
 import { Conversation } from "src/modules/conversations/entities/conversations.entity";
 import { MessageRead } from "./message_reads.entity";
-import { CallStatus } from "../enums/messages.enum";
+import { Call } from "./calls.entity";
 
 @Entity({
   name: "messages",
@@ -27,21 +29,12 @@ export class Message extends BaseEntity {
   })
   content?: string;
 
-  @Column({ nullable: true })
-  isVideoCall: boolean;
-
-  @Column({ nullable: true })
-  isAudioCall: boolean;
-
-  @Column({ nullable: true })
-  callDuration: number;
-
-  @Column({
-    nullable: true,
-    type: "enum",
-    enum: CallStatus,
+  @OneToOne(() => Call, {
+    cascade: true,
+    onDelete: "CASCADE",
   })
-  callStatus: CallStatus;
+  @JoinColumn()
+  call: Call;
 
   @Index("idx_messages_conversation_id")
   @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
@@ -54,7 +47,9 @@ export class Message extends BaseEntity {
   })
   files: MessageFile[];
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {
+    onDelete: "CASCADE",
+  })
   user: User;
 
   @OneToMany(() => MessageRead, (view) => view.message, {

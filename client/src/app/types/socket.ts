@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 import { Friend } from "./user";
-import { Message } from "./message";
+import { Call, Message } from "./message";
 
 interface FriendRequest {
   userId: string;
@@ -30,7 +30,7 @@ interface ServerToClientEvents {
   friendRequest: (_data: FriendRequest) => void;
   onlines: (_data: Online[]) => void;
   conversationUnread: (_data: string) => void;
-  callUser: (_data: CallUser) => void;
+  incomingCall: (_data: CallUser) => void;
   endCall: () => void;
   callRejected: (_data: CallUser) => void;
   remoteCamOn: (_isOn: boolean) => void;
@@ -42,8 +42,8 @@ interface ClientToServerEvents {
   friendRequest: (_data: FriendRequest) => void;
   conversationUnread: () => void;
   joinCall: (_room: string) => void;
-  callUser: (_data: CallUser) => void;
-  endCall: () => void;
+  outgoingCall: (_data: CallUser) => void;
+  endCall: (_data: any) => void;
   rejectCall: (_data: CallUser) => void;
   remoteCamOn: (_isOn: boolean) => void;
 }

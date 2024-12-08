@@ -10,7 +10,7 @@ import earth_outline_filled from "@/app/assets/images/earth-outline-filled.svg";
 import home_outline_filled from "@/app/assets/images/home-outline-filled.svg";
 import notification_outlined_filled from "@/app/assets/images/notification-outlined-filled.svg";
 import person_outline_filled from "@/app/assets/images/person-outline-filled.svg";
-import formatName from "@/app/utils/formatName";
+
 import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
 import userService from "@/app/services/userService";
 import formatNumber from "@/app/utils/formatNumber";
@@ -23,8 +23,6 @@ export default async function LeftSidebar({
   const { currentUser, token } = await getServerSession();
 
   const friendsCount = await userService.countFriends("accepted", token);
-
-  const fullName = formatName(currentUser.firstName, currentUser.lastName);
 
   const wallpaper = currentUser.profile.wallpaper || wallpaper_initial.src;
 
@@ -79,12 +77,12 @@ export default async function LeftSidebar({
                     >
                       <Avatar
                         src={currentUser.profile.avatar ?? "/01.jpg"}
-                        alt={fullName}
+                        alt={currentUser.fullName}
                         className="border border-3 border-white"
                       />
                     </div>
 
-                    <h5 className="mb-0">{fullName}</h5>
+                    <h5 className="mb-0">{currentUser.fullName}</h5>
                     {currentUser?.profile.job && (
                       <small>{currentUser.profile.job}</small>
                     )}
