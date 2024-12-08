@@ -22,6 +22,7 @@ import usePostContext from "@/app/hooks/usePostContext";
 export default function EditModal() {
   const { post, setPosts } = usePostContext();
   const [isActiveDropzone, setActiveDropzone] = useState(false);
+  const [previewHeight, setPreviewHeight] = useState(0);
   const [files, setFiles] = useState<FilePreview[]>([]);
   const { data: session } = useSession();
   const token = session?.token;
@@ -181,7 +182,10 @@ export default function EditModal() {
                   {...register("content")}
                 ></textarea>
                 {isActiveDropzone && !files.length && (
-                  <Dropzone setFiles={setFiles} />
+                  <Dropzone
+                    setFiles={setFiles}
+                    setPreviewHeight={setPreviewHeight}
+                  />
                 )}
                 {files.length > 0 && (
                   <div className="row g-1 mb-3 position-relative">
@@ -196,14 +200,14 @@ export default function EditModal() {
                           files.length >= 5 && (index > 1 ? "col-4" : "col-6")
                         )}
                       >
-                        <div className="card border-0">
+                        <div
+                          className="card border-0"
+                          style={{ height: previewHeight }}
+                        >
                           <Image
                             src={file.preview}
                             alt={file.name}
-                            width={0}
-                            height={0}
-                            sizes="100vw"
-                            className="card-img object-fit-cover h-auto"
+                            className="card-img object-fit-cover h-100"
                             onLoad={() => URL.revokeObjectURL(file.preview)}
                           />
                           {index === filePreviews.length - 1 &&

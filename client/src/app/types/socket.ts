@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 import { Friend } from "./user";
-import { Call, Message } from "./message";
+import { Message } from "./message";
 
 interface FriendRequest {
   userId: string;
@@ -48,5 +48,4 @@ interface ClientToServerEvents {
   remoteCamOn: (_isOn: boolean) => void;
 }
 
-export interface ISocket
-  extends Socket<ServerToClientEvents, ClientToServerEvents> {}
+export type ISocket = Socket<ServerToClientEvents, ClientToServerEvents>;

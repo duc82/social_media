@@ -7,7 +7,7 @@ import useSocketContext from "@/app/hooks/useSocketContext";
 import { FullUser } from "@/app/types/user";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import messageService from "@/app/services/messageService";
 
 export default function RingingCall({
@@ -52,7 +52,7 @@ export default function RingingCall({
     return body;
   };
 
-  const handleEnd = async () => {
+  const handleEnd = useCallback(async () => {
     if (!socket) return;
 
     const data = newCall();
@@ -60,7 +60,7 @@ export default function RingingCall({
     socket.emit("endCall", data);
 
     window.close();
-  };
+  }, [socket, newCall]);
 
   const playOutgoing = async () => {
     const outgoing = outGoingRef.current;

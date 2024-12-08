@@ -56,9 +56,9 @@ export interface CommentResponse {
   comment: Comment;
 }
 
-export interface FileUpload extends Pick<File, "url" | "type"> {}
+export type FileUpload = Pick<File, "url" | "type">;
 
-export interface PostDto extends z.infer<typeof postSchema> {}
+export type PostDto = z.infer<typeof postSchema>;
 
 export interface PostsReponse {
   posts: Post[];

@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import ButtonBack from "../Button/ButtonBack";
 import VideoPlayer from "@/app/libs/VideoPlayer";
 import EditPhotoPanel from "./EditPhotoPanel";
+import Image from "next/image";
 
 interface EditPhotosPanelProps {
   active: boolean;
@@ -73,7 +74,7 @@ export default function EditPhotosPanel({
             <div key={idx} className="col-12">
               <div className="card border-0">
                 {file.type.includes("image") && (
-                  <img
+                  <Image
                     src={file.preview}
                     alt={file.name}
                     className="card-img object-fit-cover h-auto"

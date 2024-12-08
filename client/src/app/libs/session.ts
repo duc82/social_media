@@ -8,7 +8,7 @@ const getServerSession = async () => {
     redirect("/signin");
   }
 
-  const token = session?.token!;
+  const token = session.token;
 
   const currentUser = session.user;
 

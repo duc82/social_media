@@ -3,6 +3,7 @@ import ButtonBack from "../Button/ButtonBack";
 import { useEffect, useRef, useState } from "react";
 import Cropper from "cropperjs";
 import clsx from "clsx";
+import Image from "next/image";
 
 export default function EditPhotoPanel({
   src,
@@ -59,7 +60,7 @@ export default function EditPhotoPanel({
       </div>
       <div className="modal-body">
         <div>
-          <img src={src} alt="crop" className="img-fluid" ref={imageRef} />
+          <Image src={src} alt="crop" className="img-fluid" ref={imageRef} />
         </div>
       </div>
       <div className="modal-footer">

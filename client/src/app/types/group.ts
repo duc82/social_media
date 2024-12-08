@@ -19,7 +19,7 @@ export interface Group {
   createdAt: string;
 }
 
-export interface CreateGroupDto extends z.infer<typeof createGroupSchema> {}
+export type CreateGroupDto = z.infer<typeof createGroupSchema>;
 
 export interface GroupResponse {
   group: Group;

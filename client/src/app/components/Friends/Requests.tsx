@@ -3,7 +3,7 @@
 import { FullUser } from "@/app/types/user";
 import { useSession } from "next-auth/react";
 import InfiniteScroll from "observer-infinite-scroll";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import RequestItem from "./RequestItem";
 import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
@@ -21,7 +21,7 @@ export default function FriendRequests({
   limit,
 }: RequestsProps) {
   const { data } = useSession();
-  const token = data?.token!;
+  const token = data?.token;
 
   const [friends, setFriends] = useState<FullUser[]>(initialFriends);
   const [hasMore, setHasMore] = useState(
@@ -30,6 +30,7 @@ export default function FriendRequests({
   const [page, setPage] = useState(initialPage + 1);
 
   const fetchMoreRequest = async () => {
+    if (!token) return;
     try {
       const { friends } = await getFriendRequests(token, {
         page,
