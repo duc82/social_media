@@ -13,7 +13,6 @@ import {
   cancelFriendRequest,
   sendFriendRequest,
 } from "@/app/actions/userAction";
-import formatName from "@/app/utils/formatName";
 
 export default function SuggestionItemSidebar(friend: FullUser) {
   const [isSendRequest, setIsSendRequest] = useState(false);
@@ -38,8 +37,6 @@ export default function SuggestionItemSidebar(friend: FullUser) {
     }
   };
 
-  const fullName = formatName(friend.firstName, friend.lastName);
-
   return (
     <div className="hstack gap-2 mb-3">
       <div className="avatar">
@@ -47,13 +44,16 @@ export default function SuggestionItemSidebar(friend: FullUser) {
           <Avatar
             className="avatar-img rounded-circle"
             src={friend.profile.avatar}
-            alt={fullName}
+            alt={friend.fullName}
           />
         </Link>
       </div>
       <div className="overflow-hidden">
-        <Link className="h6 mb-0 text-truncate" href={`/profile/${friend.id}`}>
-          {fullName}
+        <Link
+          className="h6 mb-0 text-truncate"
+          href={`/profile/@${friend.username}`}
+        >
+          {friend.fullName}
         </Link>
         <p className="mb-0 small text-truncate">{friend.profile.bio}</p>
       </div>

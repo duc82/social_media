@@ -8,11 +8,12 @@ import { FullUser } from "@/app/types/user";
 import clsx from "clsx";
 import useSocketToken from "@/app/hooks/useSocketContext";
 import { formatDateTime } from "@/app/utils/dateTime";
-import formatName from "@/app/utils/formatName";
+
 import { markMessagesAsRead } from "@/app/actions/messageAction";
 import { Conversation } from "@/app/types/conversation";
 import conversationService from "@/app/services/conversationService";
 import useSocketContext from "@/app/hooks/useSocketContext";
+import { useParams } from "next/navigation";
 
 interface TopAvatarStatusProps {
   user?: FullUser;
@@ -29,6 +30,7 @@ export default function TopAvatarStatus({
 }: TopAvatarStatusProps) {
   const { onlines } = useSocketToken();
   const { socket } = useSocketContext();
+  const { id: conversationId } = useParams();
 
   const isOnline = onlines.some((online) => online.userId === user?.id);
 
@@ -37,7 +39,7 @@ export default function TopAvatarStatus({
 
     const room = `${currentUser.id}-${user.id}`;
 
-    socket.emit("callUser", {
+    socket.emit("outgoingCall", {
       callerId: currentUser.id,
       calleeId: user.id,
       hasVideo,
@@ -51,7 +53,7 @@ export default function TopAvatarStatus({
     const top = screen.height / 2 - height / 2;
 
     window.open(
-      `/ringing-call?hasVideo=${hasVideo}&calleeId=${user.id}`,
+      `/ringing-call?hasVideo=${hasVideo}&calleeId=${user.id}&conversationId=${conversationId}`,
       "_blank",
       `location=yes,scrollbars=yes,status=yes,width=${width},height=${height},top=${top},left=${left}`
     );
@@ -68,8 +70,6 @@ export default function TopAvatarStatus({
     }
   };
 
-  const fullName = formatName(user?.firstName || "", user?.lastName || "");
-
   return (
     <div className="d-sm-flex justify-content-between align-items-center">
       <div className="d-flex align-items-center mb-2 mb-sm-0">
@@ -83,13 +83,13 @@ export default function TopAvatarStatus({
             <Avatar
               className="rounded-circle"
               src={user?.profile.avatar || ""}
-              alt={fullName}
+              alt={user?.fullName}
             />
           </div>
         </button>
 
         <div>
-          <h6 className="mb-0 mt-1">{fullName}</h6>
+          <h6 className="mb-0 mt-1">{user?.fullName}</h6>
 
           <div className="small">
             <FontAwesomeIcon

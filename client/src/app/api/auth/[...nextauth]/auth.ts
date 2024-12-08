@@ -41,6 +41,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
 
           return { ...result, ...result.user };
         } catch (error) {
+          console.log(error);
           if (error instanceof Error) {
             throw new SignInError(error.message);
           }
@@ -71,6 +72,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
         email: token.email!,
         lastName: token.lastName,
         firstName: token.firstName,
+        fullName: token.fullName,
         username: token.username,
         role: token.role,
         profile: token.profile,

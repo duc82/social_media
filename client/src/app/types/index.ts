@@ -21,6 +21,8 @@ export interface Options extends PaginationLimit, Filter {
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export type SearchParams = Promise<{
-  [key: string]: string | string[] | undefined;
-}>;
+export type SearchParams = {
+  searchParams: Promise<{
+    [key: string]: string | undefined;
+  }>;
+};

@@ -3,7 +3,7 @@
 import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import debounce from "@/app/utils/debounce";
-import formatName from "@/app/utils/formatName";
+
 import {
   faFaceSmile,
   faPaperclip,
@@ -161,7 +161,7 @@ export default function CreateChatToast({ token }: { token: string }) {
                         />
                       </div>
                       <div className="ms-2">
-                        {formatName(user.firstName, user.lastName)}
+                        {(user.firstName, user.lastName)}
                       </div>
                     </div>
                   ))}
@@ -174,7 +174,7 @@ export default function CreateChatToast({ token }: { token: string }) {
                       key={user.id}
                       className="badge text-bg-light fw-normal mr-1"
                     >
-                      {formatName(user.firstName, user.lastName)}
+                      {(user.firstName, user.lastName)}
                       <button
                         type="button"
                         className="btn p-0 ms-1"

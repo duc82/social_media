@@ -3,7 +3,7 @@
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
 import NotificationsDropdown from "./NotificationsDropdown";
-import formatName from "@/app/utils/formatName";
+
 import Avatar from "../Avatar";
 import ButtonSignOut from "./ButtonSignOut";
 import { useEffect } from "react";
@@ -23,7 +23,6 @@ export default function HeaderMenuRight({
   currentUser: FullUser;
   conversationUnread: number;
 }) {
-  const fullName = formatName(currentUser.firstName, currentUser.lastName);
   const { socket } = useSocketContext();
 
   useEffect(() => {
@@ -91,7 +90,10 @@ export default function HeaderMenuRight({
           data-bs-toggle="dropdown"
         >
           <div className="avatar" style={{ width: "2.5rem", height: "2.5rem" }}>
-            <Avatar src={currentUser.profile.avatar} alt={fullName} />
+            <Avatar
+              src={currentUser.profile.avatar}
+              alt={currentUser.fullName}
+            />
           </div>
         </button>
 
@@ -101,13 +103,13 @@ export default function HeaderMenuRight({
               <div className="avatar me-3" style={{ width: 48, height: 48 }}>
                 <Avatar
                   src={currentUser.profile.avatar}
-                  alt={fullName}
+                  alt={currentUser.fullName}
                   className="rounded-circle"
                 />
               </div>
 
               <div>
-                <h6 className="mb-1">{fullName}</h6>
+                <h6 className="mb-1">{currentUser.fullName}</h6>
                 {currentUser.profile.job && (
                   <p className="small m-0">{currentUser.profile.job}</p>
                 )}

@@ -82,7 +82,7 @@ export default function MessagesLoading() {
           </div>
         </div>
         <div className="card-footer">
-          <ChatForm />
+          <ChatForm token="" />
         </div>
       </div>
     </div>

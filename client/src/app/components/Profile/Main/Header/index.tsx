@@ -18,7 +18,7 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
 import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
-import formatName from "@/app/utils/formatName";
+
 import { directMessage } from "@/app/actions/conversationAction";
 import userService from "@/app/services/userService";
 import { useRouter } from "next/navigation";
@@ -155,8 +155,6 @@ export default function ProfileMainHeader({
     router.push(`/messages/${conversation.id}`);
   };
 
-  const fullName = formatName(user.firstName, user.lastName);
-
   return (
     <div className="card">
       <Fancybox
@@ -236,7 +234,7 @@ export default function ProfileMainHeader({
 
           <div className="ms-md-4 mt-md-3">
             <h1 className="mb-0 h5">
-              {fullName}{" "}
+              {user.fullName}{" "}
               <i className="bi bi-patch-check-fill text-success small"></i>
             </h1>
             <p>{totalFriends} friends</p>

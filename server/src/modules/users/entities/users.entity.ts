@@ -23,6 +23,8 @@ import { ConversationMember } from "src/modules/conversations/entities/conversat
 import { UserRole } from "../enums/users.enum";
 import { Blocked } from "./blocked.entity";
 import { Story } from "src/modules/stories/stories.entity";
+import { Call } from "src/modules/messages/entities/calls.entity";
+import { Message } from "src/modules/messages/entities/messages.entity";
 
 @Entity({
   name: "users",
@@ -41,6 +43,9 @@ export class User extends BaseEntity {
 
   @Column()
   lastName: string;
+
+  @Column()
+  fullName: string;
 
   @Index("idx_users_username", { unique: true })
   @Column()
@@ -111,6 +116,17 @@ export class User extends BaseEntity {
   })
   stories: Story[];
 
+  @OneToMany(() => Message, (message) => message.user, {
+    cascade: true,
+  })
+  messages: Message[];
+
+  @OneToMany(() => Call, (call) => call.caller, { cascade: true })
+  callers: Call[];
+
+  @OneToMany(() => Call, (call) => call.callee, { cascade: true })
+  callees: Call[];
+
   @Column({
     nullable: true,
     type: "timestamptz",
@@ -145,8 +161,9 @@ export class User extends BaseEntity {
   }
 
   @BeforeInsert()
-  async generateUsername(): Promise<void> {
+  async generateUsernameAndFullname(): Promise<void> {
     this.username = this.email.split("@")[0];
+    this.fullName = this.firstName + " " + this.lastName;
   }
 
   async comparePassword(attempt: string): Promise<boolean> {

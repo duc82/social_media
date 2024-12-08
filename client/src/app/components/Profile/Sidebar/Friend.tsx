@@ -2,13 +2,12 @@
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
 import Avatar from "../../Avatar";
-import formatName from "@/app/utils/formatName";
+
 import { useSession } from "next-auth/react";
 import userService from "@/app/services/userService";
 import { useRouter } from "next/navigation";
 
 export default function Friend({ friend }: { friend: FullUser }) {
-  const fullName = formatName(friend.firstName, friend.lastName);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -30,11 +29,11 @@ export default function Friend({ friend }: { friend: FullUser }) {
             <Avatar
               className="avatar-img rounded-circle"
               src={friend.profile.avatar}
-              alt={fullName}
+              alt={friend.fullName}
             />
           </Link>
           <h6 className="card-title mb-1 mt-3">
-            <Link href={`/profile/${friend.id}`}>{fullName}</Link>
+            <Link href={`/profile/${friend.id}`}>{friend.fullName}</Link>
           </h6>
           <p className="mb-0 small lh-sm">16 mutual connections</p>
         </div>

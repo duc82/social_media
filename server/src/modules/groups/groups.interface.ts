@@ -1,4 +1,4 @@
 export enum GroupAccess {
-  PUBLIC = "PUBLIC",
-  PRIVATE = "PRIVATE",
+  PUBLIC = "public",
+  PRIVATE = "private",
 }

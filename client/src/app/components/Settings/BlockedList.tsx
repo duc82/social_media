@@ -2,7 +2,7 @@
 import { Blocked } from "@/app/types/user";
 import { ChangeEvent, Fragment, useCallback, useState } from "react";
 import Avatar from "../Avatar";
-import formatName from "@/app/utils/formatName";
+
 import userService from "@/app/services/userService";
 import debounce from "@/app/utils/debounce";
 import Link from "next/link";
@@ -112,7 +112,7 @@ export default function BlockedList({
                 </div>
 
                 <span className="text-dark m-0 fw-medium">
-                  {formatName(item.user.firstName, item.user.lastName)}
+                  {(item.user.firstName, item.user.lastName)}
                 </span>
               </Link>
               <button

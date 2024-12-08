@@ -5,10 +5,9 @@ import debounce from "@/app/utils/debounce";
 import { ChangeEvent, KeyboardEvent, useCallback, useState } from "react";
 import Link from "next/link";
 import Avatar from "../Avatar";
-import formatName from "@/app/utils/formatName";
+
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import clsx from "clsx";
 
 export default function HeaderSearch() {
   const [search, setSearch] = useState("");
@@ -67,7 +66,6 @@ export default function HeaderSearch() {
 
       <ul className="dropdown-menu w-100">
         {users.map((user) => {
-          const fullName = formatName(user.firstName, user.lastName);
           return (
             <li key={user.id} className="dropdown-item">
               <Link
@@ -75,10 +73,10 @@ export default function HeaderSearch() {
                 className="d-flex align-items-center"
               >
                 <div className="avatar">
-                  <Avatar src={user.profile.avatar} alt={fullName} />
+                  <Avatar src={user.profile.avatar} alt={user.fullName} />
                 </div>
                 <div className="ms-2">
-                  <p className="mb-0">{fullName}</p>
+                  <p className="mb-0">{user.fullName}</p>
                   {/* <small className="text-muted">{user.email}</small> */}
                 </div>
               </Link>

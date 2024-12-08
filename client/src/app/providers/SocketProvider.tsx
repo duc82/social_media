@@ -2,7 +2,6 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { ISocket, Online } from "../types/socket";
 import { io } from "socket.io-client";
-import { useSession } from "next-auth/react";
 
 interface SocketContextState {
   socket: ISocket | null;
@@ -14,15 +13,17 @@ export const SocketContext = createContext<SocketContextState>({
   onlines: [],
 });
 
-export function SocketProvider({ children }: { children: ReactNode }) {
+export function SocketProvider({
+  children,
+  token,
+}: {
+  children: ReactNode;
+  token: string;
+}) {
   const [socket, setSocket] = useState<ISocket | null>(null);
   const [onlines, setOnlines] = useState<Online[]>([]);
-  const { data } = useSession();
-  const token = data?.token;
 
   useEffect(() => {
-    if (!token) return;
-
     const newSocket: ISocket = io(process.env.NEXT_PUBLIC_API_URL as string, {
       auth: {
         token,

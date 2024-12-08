@@ -1,6 +1,6 @@
 "use client";
 import Avatar from "@/app/components/Avatar";
-import formatName from "@/app/utils/formatName";
+
 import Link from "next/link";
 import CreatePostModal from "./CreateModal";
 import { FullUser } from "@/app/types/user";
@@ -8,8 +8,6 @@ import { useState } from "react";
 
 export default function SharePost({ currentUser }: { currentUser: FullUser }) {
   const [isActiveDropzone, setActiveDropzone] = useState(false);
-
-  const fullName = formatName(currentUser.firstName, currentUser.lastName);
 
   return (
     <>
@@ -23,7 +21,7 @@ export default function SharePost({ currentUser }: { currentUser: FullUser }) {
             <Avatar
               className="avatar-img rounded-circle"
               src={currentUser.profile.avatar || ""}
-              alt={fullName}
+              alt={currentUser.fullName}
             />
           </div>
           <form className="w-100">

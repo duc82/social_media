@@ -5,7 +5,7 @@ import Link from "next/link";
 import Avatar from "../Avatar";
 import { formatDate, formatDateTime } from "@/app/utils/dateTime";
 import { Comment, Post } from "@/app/types/post";
-import formatName from "@/app/utils/formatName";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEarthAmerica,
@@ -40,6 +40,7 @@ export default function PostItem({
   const handleLike = async () => {
     if (!token) return;
     await postService.like(post.id, token);
+
     setPosts((prev) => {
       const idx = prev.findIndex((p) => p.id === post.id);
       if (idx !== -1) {
@@ -104,12 +105,7 @@ export default function PostItem({
     setPosts((prev) => prev.filter((post) => post.id !== id));
   };
 
-  const fullName = formatName(post.user.firstName, post.user.lastName);
-
-  const isLiked = useMemo(
-    () => post.likes.includes(currentUser.id),
-    [post, currentUser]
-  );
+  const isLiked = post.likes.includes(currentUser.id);
 
   const postFiles = useMemo(() => post.files.slice(0, 5), [post]);
 
@@ -133,7 +129,7 @@ export default function PostItem({
                 fill={false}
                 width={0}
                 height={0}
-                alt={fullName}
+                alt={currentUser.fullName}
                 className="rounded-circle"
               />
             </Link>
@@ -144,7 +140,7 @@ export default function PostItem({
                   href={`/profile/@${post.user.username}`}
                   className="mb-0 h6"
                 >
-                  {fullName}
+                  {currentUser.fullName}
                 </Link>
 
                 {post.feeling && post.feeling.length > 0 && (
@@ -362,7 +358,7 @@ export default function PostItem({
             <Avatar
               className="rounded-circle"
               src={currentUser.profile.avatar}
-              alt={fullName}
+              alt={currentUser.fullName}
             />
           </Link>
           <form

@@ -3,7 +3,7 @@ import Fancybox from "@/app/libs/FancyBox";
 import { FullUser } from "@/app/types/user";
 import Image from "next/image";
 import Link from "next/link";
-import formatName from "@/app/utils/formatName";
+
 import Avatar from "../Avatar";
 import { directMessage } from "@/app/actions/conversationAction";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,6 @@ interface ProfileModalProps {
 }
 
 export default function ProfileModal({ user }: ProfileModalProps) {
-  const fullName = formatName(user?.firstName || "", user?.lastName || "");
   const router = useRouter();
 
   const handleMessage = async () => {
@@ -45,7 +44,7 @@ export default function ProfileModal({ user }: ProfileModalProps) {
                 <Link
                   href={user?.profile.wallpaper}
                   data-fancybox
-                  data-caption={fullName}
+                  data-caption={user.fullName}
                   className="d-block h-100 position-relative"
                 >
                   <Image
@@ -64,7 +63,7 @@ export default function ProfileModal({ user }: ProfileModalProps) {
                 <Link
                   href={user?.profile.avatar || ""}
                   data-fancybox
-                  data-caption={fullName}
+                  data-caption={user?.fullName}
                   className="d-flex avatar avatar-xl"
                 >
                   <Avatar
@@ -74,7 +73,7 @@ export default function ProfileModal({ user }: ProfileModalProps) {
                 </Link>
                 <div className="ms-2">
                   <h1 className="mb-0 h5">
-                    {fullName}{" "}
+                    {user?.fullName}{" "}
                     <i className="bi bi-patch-check-fill text-success small"></i>
                   </h1>
                 </div>

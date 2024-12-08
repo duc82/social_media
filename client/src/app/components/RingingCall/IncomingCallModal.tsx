@@ -2,24 +2,22 @@
 
 import useBootstrapContext from "@/app/hooks/useBootstrapContext";
 import useSocketContext from "@/app/hooks/useSocketContext";
-import formatName from "@/app/utils/formatName";
-import { useSession } from "next-auth/react";
+
 import { useEffect, useRef, useState } from "react";
 import Avatar from "../Avatar";
 import { CallUser } from "@/app/types/socket";
 import { FullUser } from "@/app/types/user";
 import userService from "@/app/services/userService";
+import { useParams } from "next/navigation";
 
-export default function IncomingCallModal() {
+export default function IncomingCallModal({ token }: { token: string }) {
   const { socket } = useSocketContext();
   const incomingCallModalRef = useRef<HTMLDivElement>(null);
   const [callUser, setCallUser] = useState<CallUser | null>(null);
   const [user, setUser] = useState<FullUser | null>(null);
   const bootstrap = useBootstrapContext();
-  const { data } = useSession();
-  const token = data?.token;
-  const currentUser = data?.user;
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { id: conversationId } = useParams();
 
   const handleAcceptCall = () => {
     if (!callUser) return;
@@ -31,7 +29,7 @@ export default function IncomingCallModal() {
     const top = screen.height / 2 - height / 2;
 
     window.open(
-      `/ringing-call?hasVideo=${callUser.hasVideo}&calleeId=${callUser.calleeId}&callerId=${callUser.callerId}`,
+      `/ringing-call?hasVideo=${callUser.hasVideo}&callerId=${callUser.callerId}&conversationId=${conversationId}`,
       "_blank",
       `location=yes,scrollbars=yes,status=yes,width=${width},height=${height},top=${top},left=${left}`
     );
@@ -71,7 +69,7 @@ export default function IncomingCallModal() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleCallUser = async (data: CallUser) => {
+    const handleIncomingCall = async (data: CallUser) => {
       setCallUser(data);
       if (incomingCallModalRef.current) {
         const modal = bootstrap.Modal.getOrCreateInstance(
@@ -83,23 +81,21 @@ export default function IncomingCallModal() {
       await playRingtone();
     };
 
-    socket.on("callUser", handleCallUser);
+    socket.on("incomingCall", handleIncomingCall);
     socket.on("endCall", handleRejectCall);
 
     return () => {
-      socket.off("callUser", handleCallUser);
+      socket.off("incomingCall", handleIncomingCall);
       socket.off("endCall", handleRejectCall);
     };
-  }, [socket, bootstrap, currentUser, handleRejectCall, playRingtone]);
+  }, [socket, bootstrap, handleRejectCall, playRingtone]);
 
   useEffect(() => {
-    if (!callUser || !token) return;
+    if (!callUser) return;
     userService.getById(callUser.callerId, token).then((data) => {
       setUser(data);
     });
   }, [callUser, token]);
-
-  const fullName = formatName(user?.firstName || "", user?.lastName || "");
 
   return (
     <div
@@ -128,7 +124,7 @@ export default function IncomingCallModal() {
                 </div>
               )}
               <div className="ms-3">
-                <h5 className="mb-0">{fullName}</h5>
+                <h5 className="mb-0">{user?.fullName}</h5>
                 <p className="mb-0">Incoming call...</p>
               </div>
             </div>

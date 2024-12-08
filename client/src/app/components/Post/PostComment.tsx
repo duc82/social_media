@@ -2,7 +2,7 @@
 import { Comment } from "@/app/types/post";
 import Link from "next/link";
 import Avatar from "../Avatar";
-import formatName from "@/app/utils/formatName";
+
 import { formatDate, formatDateTime } from "@/app/utils/dateTime";
 import {
   Dispatch,
@@ -123,7 +123,6 @@ export default function PostComment({
     setIsHaveSeenReplies(true);
   };
 
-  const fullName = formatName(comment.user.firstName, comment.user.lastName);
   const isLiked = useMemo(
     () => comment.likes.some((user) => user.id === currentUser.id),
     [comment, currentUser]
@@ -151,7 +150,7 @@ export default function PostComment({
             <div className="d-flex justify-content-between">
               <h6 className="mb-1">
                 <Link href={`/profile/@${comment.user.username}`}>
-                  {fullName}
+                  {currentUser.fullName}
                 </Link>
               </h6>
               <small
@@ -181,7 +180,7 @@ export default function PostComment({
               <button
                 type="button"
                 className="nav-link"
-                onClick={() => setIsReplying(true)}
+                onClick={() => setIsReplying((prev) => !prev)}
               >
                 Reply
               </button>
@@ -231,7 +230,7 @@ export default function PostComment({
             <Avatar
               className="rounded-circle"
               src={currentUser.profile.avatar}
-              alt={fullName}
+              alt={currentUser.fullName}
             />
           </Link>
           <form className="w-100" onSubmit={handleReplyComment}>

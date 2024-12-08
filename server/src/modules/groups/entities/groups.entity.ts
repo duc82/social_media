@@ -23,7 +23,10 @@ export class Group extends BaseEntity {
   @Column({
     nullable: true,
   })
-  about: string;
+  description: string;
+
+  @Column()
+  picture: string;
 
   @Column({
     type: "enum",

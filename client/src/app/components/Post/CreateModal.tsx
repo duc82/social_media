@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 import { FullUser } from "@/app/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { POST_ACCESS, postSchema } from "@/app/schemas/post";
-import formatName from "@/app/utils/formatName";
+
 import Spinner from "../Spinner";
 import TagPeopleModal from "./TagPeopleModal";
 import FeelingActivityModal from "./FeelingActivityModal";
@@ -115,8 +115,6 @@ export default function CreatePostModal({
 
   const filePreviews = useMemo(() => files.slice(0, 5), [files]);
 
-  const fullName = formatName(currentUser.firstName, currentUser.lastName);
-
   return (
     <>
       {/* <TagPeopleModal />
@@ -148,12 +146,12 @@ export default function CreatePostModal({
                       <Avatar
                         className="avatar-img rounded-circle"
                         src={currentUser.profile.avatar}
-                        alt={fullName}
+                        alt={currentUser.fullName}
                       />
                     </div>
 
                     <span className="fw-semibold">
-                      {fullName}{" "}
+                      {currentUser.fullName}{" "}
                       {feeling && (
                         <span>
                           is {feeling[0]} feeling

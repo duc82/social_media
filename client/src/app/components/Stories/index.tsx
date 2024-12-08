@@ -3,7 +3,6 @@
 import { Zuck } from "zuck.js";
 import { useEffect, useRef, useState } from "react";
 import { UserStory } from "@/app/types/story";
-import formatName from "@/app/utils/formatName";
 
 const timestamp = () => {
   let timeIndex = 0;
@@ -39,7 +38,7 @@ export default function Stories({
     const stories: StoriesTimeline = userStories.map((user) => ({
       id: user.id,
       photo: user.profile.avatar,
-      name: formatName(user.firstName, user.lastName),
+      name: (user.firstName, user.lastName),
       time: timestamp(),
       items: user.stories.map((story) => ({
         id: story.id,

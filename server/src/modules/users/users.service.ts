@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
-import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
+import { Brackets, DataSource, FindOneOptions, IsNull, Not } from "typeorm";
 import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
@@ -65,12 +65,9 @@ export class UserService {
       .andWhere(excludeIds.length > 0 && "u.id NOT IN (:...ids)", {
         ids: excludeIds,
       })
-      .andWhere(
-        'unaccent(u."firstName") ILIKE unaccent(:search) OR unaccent(u."lastName") ILIKE unaccent(:search)',
-        {
-          search: `%${search}%`,
-        },
-      )
+      .andWhere('unaccent(u."fullName") ILIKE unaccent(:search)', {
+        search: `%${search}%`,
+      })
       .skip(skip)
       .take(limit)
       .getManyAndCount();

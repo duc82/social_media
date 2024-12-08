@@ -1,6 +1,5 @@
 import getServerSession from "@/app/libs/session";
 import userService from "@/app/services/userService";
-import formatName from "@/app/utils/formatName";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,14 +10,13 @@ const ListFriends = async () => {
   return (
     <div className="row">
       {friends.map((friend) => {
-        const fullName = formatName(friend.firstName, friend.lastName);
         return (
           <div key={friend.id} className="col-12 col-md-6 col-lg-4 col-xl-3">
             <div className="card">
               <Link href={`/profile/${friend.id}`} className="d-block">
                 <Image
                   src={friend.profile.avatar}
-                  alt={fullName}
+                  alt={friend.fullName}
                   width={0}
                   height={0}
                   sizes="100vw"
@@ -30,7 +28,7 @@ const ListFriends = async () => {
                   href={`/profile/${friend.id}`}
                   className="card-title d-block mb-3"
                 >
-                  <h5 className="mb-0">{fullName}</h5>
+                  <h5 className="mb-0">{friend.fullName}</h5>
                 </Link>
                 <p className="card-text">{friend.profile.bio}</p>
                 <div className="d-flex flex-column justify-content-center">
