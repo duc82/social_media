@@ -120,7 +120,7 @@ export default function CreatePostModal({
 
   return (
     <>
-      {/* <TagPeopleModal />
+      <TagPeopleModal />
       <FeelingActivityModal
         currentFeeling={
           feeling ? { emoji: feeling[0], name: feeling[1] } : null
@@ -128,7 +128,7 @@ export default function CreatePostModal({
         setFeeling={setFeeling}
         id="createFeelingActivityModal"
         target="#createPostModal"
-      /> */}
+      />
       <div className="modal fade" id="createPostModal" ref={modalRef}>
         <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered">
           <div className="modal-content tab-content">

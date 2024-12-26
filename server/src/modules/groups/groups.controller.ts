@@ -2,9 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
@@ -13,8 +14,8 @@ import { AuthGuard } from "src/common/guards/auth.guard";
 import { CreateGroupDto } from "./groups.dto";
 import { User } from "src/common/decorators/user.decorator";
 import { QueryDto } from "src/shared/dto/query.dto";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { FileMimeTypeValidationPipe } from "src/common/pipes/file.pipe";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import { FilesArrayMimeTypeValidationPipe } from "src/common/pipes/file.pipe";
 
 @UseGuards(AuthGuard)
 @Controller("api/groups")
@@ -26,13 +27,19 @@ export class GroupsController {
     return this.groupService.getAll(userId, query);
   }
 
+  @Get("/:id")
+  async getById(@User("userId") userId: string, @Param("id") id: string) {
+    return this.groupService.getById(id, userId);
+  }
+
   @Post("create")
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(FilesInterceptor("files", 2))
   async create(
     @Body() body: CreateGroupDto,
     @User("userId") userId: string,
-    @UploadedFile(FileMimeTypeValidationPipe) file: Express.Multer.File,
+    @UploadedFiles(FilesArrayMimeTypeValidationPipe)
+    files: Express.Multer.File[],
   ) {
-    return this.groupService.create(body, userId, file);
+    return this.groupService.create(body, userId, files[0], files[1]);
   }
 }

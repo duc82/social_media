@@ -5,7 +5,6 @@ import { cert, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import { Auth, getAuth } from "firebase-admin/auth";
 import { FileType } from "src/enums/file.enum";
-import { SaveData } from "@google-cloud/storage/build/cjs/src/file";
 
 @Injectable()
 export class FirebaseService {

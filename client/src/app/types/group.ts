@@ -13,8 +13,10 @@ export interface Group {
   name: string;
   description?: string;
   picture: string;
+  wallpaper: string;
   access: "public" | "private";
   members: GroupMember[];
+  totalMembers: number;
   deletedAt: string;
   createdAt: string;
 }
@@ -27,7 +29,7 @@ export interface GroupResponse {
 }
 
 export interface GroupsResponse {
-  groups: Group;
+  groups: Group[];
   page: number;
   limit: number;
   total: number;

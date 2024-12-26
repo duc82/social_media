@@ -1,6 +1,15 @@
-import { Download, PersonPlusFill, Search } from "react-bootstrap-icons";
+import {
+  Download,
+  Filter,
+  PersonPlusFill,
+  Search,
+} from "react-bootstrap-icons";
 import CountUp from "react-countup";
 import { Link } from "react-router-dom";
+import excel from "@/assets/excel-icon.svg";
+import pdf from "@/assets/pdf-icon.svg";
+import csv from "@/assets/placeholder-csv-format.svg";
+import { useState } from "react";
 
 export default function UsersOverview() {
   return (
@@ -156,52 +165,78 @@ export default function UsersOverview() {
               </div>
             </form>
           </div>
-        </div>
+          <div className="d-sm-flex justify-content-md-end align-items-sm-center gap-2">
+            <div className="dropdown">
+              <button
+                type="button"
+                className="btn btn-white btn-sm dropdown-toggle w-100 show"
+                id="usersExportDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="true"
+              >
+                <Download className="me-2" />
+                Export
+              </button>
 
-        <div className="d-sm-flex justify-content-md-end align-items-sm-center gap-2">
-          <div className="dropdown">
-            <button
-              type="button"
-              className="btn btn-white btn-sm dropdown-toggle w-100 show"
-              id="usersExportDropdown"
-              data-bs-toggle="dropdown"
-              aria-expanded="true"
-            >
-              <Download className="me-2" />
-              Export
-            </button>
+              <div
+                className="dropdown-menu dropdown-menu-sm-end show"
+                aria-labelledby="usersExportDropdown"
+                data-popper-placement="top-start"
+              >
+                <button
+                  type="button"
+                  id="export-excel"
+                  className="dropdown-item"
+                >
+                  <img
+                    className="avatar avatar-xss avatar-4x3 me-2"
+                    src={excel}
+                    alt="Image Description"
+                  />
+                  Excel
+                </button>
+                <button type="button" id="export-csv" className="dropdown-item">
+                  <img
+                    className="avatar avatar-xss avatar-4x3 me-2"
+                    src={csv}
+                    alt="Image Description"
+                  />
+                  .CSV
+                </button>
+                <button type="button" id="export-pdf" className="dropdown-item">
+                  <img
+                    className="avatar avatar-xss avatar-4x3 me-2"
+                    src={pdf}
+                    alt="Image Description"
+                  />
+                  PDF
+                </button>
+              </div>
+            </div>
 
-            <div
-              className="dropdown-menu dropdown-menu-sm-end show"
-              aria-labelledby="usersExportDropdown"
-              data-popper-placement="top-start"
-            >
-              <a id="export-excel" className="dropdown-item">
-                <img
-                  className="avatar avatar-xss avatar-4x3 me-2"
-                  src="./assets/svg/brands/excel-icon.svg"
-                  alt="Image Description"
-                />
-                Excel
-              </a>
-              <a id="export-csv" className="dropdown-item">
-                <img
-                  className="avatar avatar-xss avatar-4x3 me-2"
-                  src="./assets/svg/components/placeholder-csv-format.svg"
-                  alt="Image Description"
-                />
-                .CSV
-              </a>
-              <a id="export-pdf" className="dropdown-item">
-                <img
-                  className="avatar avatar-xss avatar-4x3 me-2"
-                  src="./assets/svg/brands/pdf-icon.svg"
-                  alt="Image Description"
-                />
-                PDF
-              </a>
+            <div className="dropdown">
+              <button
+                type="button"
+                className="btn btn-white btn-sm w-100"
+                id="usersFilterDropdown"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                aria-expanded="false"
+              >
+                <Filter className="me-1" />
+                Filter{" "}
+                <span className="badge bg-soft-dark text-dark rounded-circle ms-1">
+                  2
+                </span>
+              </button>
             </div>
           </div>
+        </div>
+
+        <div className="card-body">
+          <table>
+            <thead></thead>
+          </table>
         </div>
       </div>
     </div>

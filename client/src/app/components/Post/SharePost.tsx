@@ -1,6 +1,5 @@
 "use client";
 import Avatar from "@/app/components/Avatar";
-
 import Link from "next/link";
 import CreatePostModal from "./CreateModal";
 import { FullUser } from "@/app/types/user";
@@ -20,7 +19,7 @@ export default function SharePost({ currentUser }: { currentUser: FullUser }) {
           <div className="avatar avatar-xs me-2">
             <Avatar
               className="avatar-img rounded-circle"
-              src={currentUser.profile.avatar || ""}
+              src={currentUser.profile.avatar}
               alt={currentUser.fullName}
             />
           </div>

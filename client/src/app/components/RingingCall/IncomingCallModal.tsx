@@ -53,7 +53,7 @@ export default function IncomingCallModal({ token }: { token: string }) {
     }
   };
 
-  const handleRejectCall = () => {
+  const handleRejectCall = useCallback(() => {
     if (!callUser) return;
 
     socket?.emit("rejectCall", callUser);
@@ -64,7 +64,7 @@ export default function IncomingCallModal({ token }: { token: string }) {
       modal.hide();
     }
     pauseRingtone();
-  };
+  }, [socket, callUser, bootstrap, pauseRingtone]);
 
   useEffect(() => {
     if (!socket) return;

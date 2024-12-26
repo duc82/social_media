@@ -13,3 +13,13 @@
     font-size: 0.7109375rem;
   }
 }
+
+.card-header-content-md-between {
+  @include media-breakpoint-up(md) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+  }
+}

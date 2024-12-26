@@ -7,5 +7,6 @@ import { FirebaseModule } from "../firebase/firebase.module";
   imports: [FirebaseModule],
   controllers: [FilesController],
   providers: [FilesService],
+  exports: [FilesService],
 })
 export class FilesModule {}

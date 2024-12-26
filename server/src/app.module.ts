@@ -23,6 +23,7 @@ import { StoriesModule } from "./modules/stories/stories.module";
 
 @Module({
   imports: [
+    // Config module
     ConfigModule.forRoot({ isGlobal: true }),
 
     // TypeORM configuration

@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.dummyjson.com",
-      },
-      {
-        protocol: "https",
         hostname: "firebasestorage.googleapis.com",
       },
       {
@@ -18,7 +14,19 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  reactStrictMode: false,
+  reactStrictMode: true,
+  sassOptions: {
+    api: "modern-compiler",
+    quietDeps: true,
+    // Silence deprecation warnings for sass imports
+    silenceDeprecations: [
+      "import",
+      "global-builtin",
+      "legacy-js-api",
+      "mixed-decls",
+      "color-functions",
+    ],
+  },
 };
 
 export default nextConfig;
