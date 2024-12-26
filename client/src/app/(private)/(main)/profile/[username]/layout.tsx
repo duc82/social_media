@@ -21,7 +21,7 @@ export default async function ProfileLayout({
     notFound();
   }
 
-  username = username.replace("%40", "");
+  username = username.replace(/%40/g, "");
 
   const [user, { total: totalFriends }] = await Promise.all([
     getUserProfile(username, currentUser, token),
