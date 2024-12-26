@@ -14,7 +14,7 @@ export default async function Profile({
   const { currentUser, token } = await getServerSession();
   let { username } = await params;
 
-  username = username.replace("%40", "");
+  username = username.replace(/%40/g, "");
 
   const user = await getUserProfile(username, currentUser, token);
   const { posts, limit, total } = await postService.getByUserId(user.id, token);

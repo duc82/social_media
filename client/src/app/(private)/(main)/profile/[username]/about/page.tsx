@@ -10,7 +10,7 @@ export default async function About({
   const { currentUser, token } = await getServerSession();
   let { username } = await params;
 
-  username = username.replace("%40", "");
+  username = username.replace(/%40/g, "");
 
   const user = await getUserProfile(username, currentUser, token);
 
