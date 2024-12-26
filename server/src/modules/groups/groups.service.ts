@@ -9,9 +9,13 @@ import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class GroupsService {
+  private readonly groupRepository = this.dataSource.getRepository(Group);
+  private readonly groupMemberRepository =
+    this.dataSource.getRepository(GroupMember);
+
   constructor(
+    private readonly dataSource: DataSource,
     private readonly firebaseService: FirebaseService,
-    private dataSource: DataSource,
   ) {}
 
   async getAll(userId: string, query: QueryDto) {
@@ -19,12 +23,12 @@ export class GroupsService {
 
     const skip = (page - 1) * limit;
 
-    const [groups, total] = await this.dataSource
-      .getRepository(Group)
+    const [groups, total] = await this.groupRepository
       .createQueryBuilder("g")
       .leftJoinAndSelect("g.members", "gm")
       .leftJoinAndSelect("gm.user", "user")
       .leftJoinAndSelect("user.profile", "profile")
+      .loadRelationCountAndMap("g.totalMembers", "g.members")
       .where((qb) => {
         const subQuery = qb
           .subQuery()
@@ -44,18 +48,35 @@ export class GroupsService {
     return { groups, total, page, limit };
   }
 
+  async getById(id: string, userId: string) {
+    const group = await this.groupRepository
+      .createQueryBuilder("g")
+      .leftJoinAndSelect("g.members", "gm")
+      .leftJoinAndSelect("gm.user", "user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .loadRelationCountAndMap("g.totalMembers", "g.members")
+      .where("g.id = :id", { id })
+      .andWhere("gm.userId = :userId", { userId })
+      .getOne();
+
+    if (!group) {
+      throw new BadRequestException("Group not found");
+    }
+
+    return group;
+  }
+
   async create(
     body: CreateGroupDto,
     userId: string,
-    file: Express.Multer.File,
+    pictureFile: Express.Multer.File,
+    wallpaperFile: Express.Multer.File,
   ) {
-    const group = await this.dataSource.getRepository(Group).findOne({
-      where: {
-        name: body.name,
-      },
+    const isExists = await this.groupRepository.existsBy({
+      name: body.name,
     });
 
-    if (group) {
+    if (isExists) {
       throw new BadRequestException("Group already exists");
     }
 
@@ -67,13 +88,19 @@ export class GroupsService {
     members.unshift({ user: { id: userId }, role: MemberRole.ADMIN });
 
     const picture = await this.firebaseService.uploadFile(
-      file,
-      `groups/${file.originalname}`,
+      pictureFile,
+      `groups/${pictureFile.originalname}`,
     );
 
-    const newGroup = this.dataSource.getRepository(Group).create({
+    const wallpaper = await this.firebaseService.uploadFile(
+      wallpaperFile,
+      `groups/${wallpaperFile.originalname}`,
+    );
+
+    const newGroup = this.groupRepository.create({
       ...body,
       picture,
+      wallpaper,
       members,
     });
 

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UserService } from "../users/users.service";
-import { DataSource, LessThan, MoreThan } from "typeorm";
+import { DataSource, LessThan } from "typeorm";
 import { Story } from "./stories.entity";
 import { FirebaseService } from "../firebase/firebase.service";
 import { FileType } from "src/enums/file.enum";

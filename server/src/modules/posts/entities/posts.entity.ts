@@ -14,6 +14,7 @@ import {
 import { Comment } from "./comments.entity";
 import { PostFile } from "./post_files.entity";
 import { PostAccess } from "../enums/posts.enum";
+import { Group } from "src/modules/groups/entities/groups.entity";
 
 @Entity({
   name: "posts",
@@ -47,6 +48,11 @@ export class Post extends BaseEntity {
     cascade: true,
   })
   comments: Comment[];
+
+  @ManyToOne(() => Group, (group) => group.posts, {
+    onDelete: "CASCADE",
+  })
+  group: Group;
 
   @ManyToOne(() => User, (user) => user.posts, {
     onDelete: "CASCADE",

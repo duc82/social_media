@@ -1,8 +1,8 @@
 import Image from "next/image";
 import clsx from "clsx";
-import { CSSProperties } from "react";
+import { CSSProperties, HTMLProps } from "react";
 
-interface AvatarProps {
+interface AvatarProps extends HTMLProps<HTMLImageElement> {
   src: string;
   alt?: string;
   className?: string;
@@ -22,6 +22,7 @@ export default function Avatar({
   height,
   style,
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  ...props
 }: AvatarProps) {
   return (
     <Image

@@ -1,5 +1,5 @@
 import { Options } from "../types";
-import { GroupResponse, GroupsResponse } from "../types/group";
+import { Group, GroupResponse, GroupsResponse } from "../types/group";
 import apiRequest from "./api";
 
 const groupService = {
@@ -23,6 +23,14 @@ const groupService = {
       },
       isFormData: true,
       body: formData,
+    });
+  },
+
+  getById: async (id: string, token: string) => {
+    return apiRequest<Group>(`/groups/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
 };
