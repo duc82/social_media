@@ -1,0 +1,82 @@
+$box-shadow-menu: 0px 20px 30px rgba(83, 88, 93, 0.1),
+  0px 0px 30px rgba(83, 88, 93, 0.2);
+
+$all-colors: map-merge-multiple(
+  $blues,
+  $indigos,
+  $purples,
+  $pinks,
+  $reds,
+  $oranges,
+  $yellows,
+  $greens,
+  $teals,
+  $cyans,
+  $grays
+);
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "opacity": (
+      property: opacity,
+      values: (
+        0: 0,
+        10: 0.1,
+        25: 0.25,
+        50: 0.5,
+        75: 0.75,
+        100: 1,
+      ),
+    ),
+
+    "width":
+      map-merge(
+        map-get($utilities, "width"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "width"), "values"),
+              (
+                "40px": 40px,
+              )
+            ),
+        )
+      ),
+    "height":
+      map-merge(
+        map-get($utilities, "height"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "height"), "values"),
+              (
+                "40px": 40px,
+              )
+            ),
+        )
+      ),
+    "shadow": (
+      property: box-shadow,
+      class: shadow,
+      values: (
+        null: var(--#{$prefix}box-shadow),
+        sm: var(--#{$prefix}box-shadow-sm),
+        lg: var(--#{$prefix}box-shadow-lg),
+        menu: $box-shadow-menu,
+        none: none,
+      ),
+    ),
+    "color":
+      map-merge(
+        map-get($utilities, "color"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "color"), "values"),
+              ($all-colors)
+            ),
+        )
+      ),
+  )
+);

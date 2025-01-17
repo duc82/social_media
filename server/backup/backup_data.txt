@@ -1,0 +1,1 @@
+pg_dump -U postgres -d social_media --data-only --column-inserts --schema public -T public.migrations -f social_media_data.sql

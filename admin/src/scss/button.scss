@@ -1,0 +1,9 @@
+.btn {
+  &.dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  --bs-btn-padding-y: 0.5rem !important;
+  --bs-btn-padding-x: 1rem !important;
+}

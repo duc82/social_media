@@ -1,0 +1,42 @@
+[
+  {
+    "emoji": "😊",
+    "name": "happy"
+  },
+  {
+    "emoji": "😢",
+    "name": "sad"
+  },
+  {
+    "emoji": "😡",
+    "name": "angry"
+  },
+  {
+    "emoji": "😨",
+    "name": "scared"
+  },
+  {
+    "emoji": "😴",
+    "name": "tired"
+  },
+  {
+    "emoji": "😷",
+    "name": "sick"
+  },
+  {
+    "emoji": "😇",
+    "name": "blessed"
+  },
+  {
+    "emoji": "😎",
+    "name": "cool"
+  },
+  {
+    "emoji": "😜",
+    "name": "silly"
+  },
+  {
+    "emoji": "😳",
+    "name": "embarrassed"
+  }
+]

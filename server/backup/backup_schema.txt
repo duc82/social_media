@@ -1,0 +1,1 @@
+pg_dump -U postgres -d social_media --schema-only -f social_media_schema.sql

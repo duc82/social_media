@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+$body-color: rgb(103, 119, 136);
+$headings-font-weight: 600;
+$font-size-base: 0.875rem;
+$dropdown-spacer: 0.625rem;
+$dropdown-border-width: 0px;
+$dropdown-border-radius: 0.625rem;
+$dropdown-padding-x: 0.5rem;
+$dropdown-divider-bg: rgba(231, 234, 243, 0.7);
+$dropdown-font-size: 0.8125rem;
+$dropdown-link-color: rgb(30 32 34);
+$dropdown-link-hover-color: $dropdown-link-color;
+$dropdown-link-hover-bg: rgba(189, 197, 209, 0.2);
+$dropdown-item-padding-y: 0.5rem;
+$dropdown-item-padding-x: 1rem;
+
+$card-border-color: rgba(231, 234, 243, 0.7);
+$card-spacer-y: 1.3125rem;
+$card-spacer-x: 1.3125rem;
+
+$font-family-sans-serif: "Inter", sans-serif;
+
+$h1-font-size: 1.4109375rem;
+$h2-font-size: 1.3125rem;
+$h5-font-size: $font-size-base;
+
+$display-font-sizes: (
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: calc(1.325rem + 0.9vw),
+  5: 3rem,
+  6: 2.5rem,
+);
+$display-font-weight: 600;
+
+$card-subtitle-color: rgb(140, 152, 164);
+$card-cap-bg: transparent;
+$input-padding-y: 0.6125rem;
+
+@import "bootstrap/scss/bootstrap";
+@import "./card.scss";
+@import "./button.scss";
+@import "./container.scss";
+@import "./form.scss";
+@import "./background.scss";
+@import "./table.scss";
+
+:root {
+  --bs-heading-color: rgb(30, 32, 34) !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.content {
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+}
+
+.btn-icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: 2.625rem;
+  height: 2.625rem;
+  padding: 0;
+}
+
+.btn-white {
+  border: 0.0625rem solid rgba(231, 234, 243, 0.7);
+}
+
+.btn-ghost-secondary {
+  color: #71869d;
+  background-color: transparent;
+}

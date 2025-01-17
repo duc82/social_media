@@ -1,0 +1,385 @@
+.video-container {
+  @extend .ratio, .ratio-4x3;
+}
+
+.avatar-uploader {
+  position: relative;
+  .avatar-edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 0;
+      border-radius: 100%;
+      background: #eff2f6;
+      border: 1px solid transparent;
+      box-shadow: 0px 0px 20px rgba(93, 83, 84, 0.15);
+      cursor: pointer;
+      font-weight: normal;
+      transition: all 0.3s ease-in-out;
+
+      svg {
+        transition: all 0.3s ease-in-out;
+      }
+
+      &:hover {
+        background: $primary;
+        border-color: $primary;
+
+        svg {
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+.smaller {
+  font-size: 60%;
+  font-weight: 500;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.icon-xs {
+  height: 1.5rem;
+  width: 1.5rem;
+  font-size: 0.6em;
+  @extend .icon;
+}
+.icon-sm {
+  height: 2rem;
+  width: 2rem;
+  font-size: 0.7em;
+  @extend .icon;
+}
+.icon-md {
+  height: 2.5rem;
+  width: 2.5rem;
+  font-size: 0.9em;
+  @extend .icon;
+}
+.icon-lg {
+  height: 3rem;
+  width: 3rem;
+  font-size: 1em;
+  @extend .icon;
+}
+.icon-xl {
+  height: 4rem;
+  width: 4rem;
+  font-size: 1.6em;
+  @extend .icon;
+}
+.icon-xxl {
+  height: 5.125rem;
+  width: 5.125rem;
+  font-size: 2em;
+  @extend .icon;
+}
+
+.flip-horizontal {
+  transform: scaleX(-1);
+  display: inline-block;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.hstack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.vstack {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+// Avatar
+$avatar-size-base: 3rem;
+$avatar-size-xxs: 1.5rem;
+$avatar-size-xs: 2.1875rem;
+$avatar-size-sm: 2.5rem;
+$avatar-size-lg: 4rem;
+$avatar-size-xl: 5.125rem;
+$avatar-size-xxl: 8rem;
+$avatar-size-xxxl: 11rem;
+
+// Avatar status
+[class*="status-"]:before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  border-radius: 100%;
+  border: 2px solid $white;
+  height: 12px;
+  width: 12px;
+  right: -2px;
+  top: -2px;
+}
+.status-online:before {
+  background-color: $success;
+}
+.status-away:before {
+  background-color: $warning;
+}
+.status-offline:before {
+  background-color: $danger;
+}
+.avatar.avatar-lg[class*="status-"]:before {
+  right: 2px;
+  top: 2px;
+}
+.avatar.avatar-xl[class*="status-"]:before {
+  right: 4px;
+  top: 4px;
+}
+.avatar.avatar-xxl[class*="status-"]:before {
+  right: 12px;
+  top: 12px;
+}
+.avatar.avatar-xxxl[class*="status-"]:before {
+  right: 18px;
+  top: 18px;
+}
+
+// Avatar
+.avatar {
+  height: $avatar-size-base;
+  width: $avatar-size-base;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0 !important;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-camera {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 25px;
+  right: 0px;
+  border-radius: 50%;
+  padding: 0;
+
+  @include media-breakpoint-up(md) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+// Avatar group
+.avatar-group {
+  padding: 0;
+  display: flex;
+  > li {
+    position: relative;
+    &:not(:last-child) {
+      margin-right: -0.8rem;
+    }
+  }
+  .avatar-img {
+    border: 2px solid $white;
+  }
+}
+
+// Avatar 2 person
+.avatar-group-two {
+  display: inline-flex;
+  padding: 0;
+  > li {
+    margin-top: 0.8rem;
+    position: relative;
+    &:not(:last-child) {
+      margin-right: -1.2rem;
+      margin-top: 0;
+    }
+  }
+}
+
+// Avatar 3 person
+.avatar-group-three {
+  display: inline-flex;
+  padding: 0;
+  padding-right: 1.2rem;
+  position: relative;
+  > li {
+    position: relative;
+    &:not(:last-child) {
+      margin-right: -1.2rem;
+    }
+
+    &:last-child {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, 50%);
+    }
+  }
+}
+
+// Avatar 4 person
+.avatar-group-four {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: auto auto;
+  gap: 0px 0px;
+  li {
+    margin: 0;
+    &:not(:last-child) {
+      margin: 0;
+    }
+  }
+}
+
+// avatar Sizing
+.avatar-xxs {
+  height: $avatar-size-xxs;
+  width: $avatar-size-xxs;
+}
+.avatar-xs {
+  height: $avatar-size-xs;
+  width: $avatar-size-xs;
+}
+.avatar-sm {
+  height: $avatar-size-sm;
+  width: $avatar-size-sm;
+}
+.avatar-lg {
+  height: $avatar-size-lg;
+  width: $avatar-size-lg;
+}
+.avatar-xl {
+  height: $avatar-size-xl;
+  width: $avatar-size-xl;
+}
+.avatar-xxl {
+  height: $avatar-size-xl;
+  width: $avatar-size-xl;
+  @include media-breakpoint-up(md) {
+    width: $avatar-size-xxl;
+    height: $avatar-size-xxl;
+  }
+}
+.avatar-xxxl {
+  height: $avatar-size-xxl;
+  width: $avatar-size-xxl;
+  @include media-breakpoint-up(md) {
+    width: $avatar-size-xxxl;
+    height: $avatar-size-xxxl;
+  }
+}
+
+// avatar story
+.avatar-story {
+  position: relative;
+  padding: 4px;
+  z-index: 1;
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    border: 2px solid $primary;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.resize-none {
+  resize: none;
+}
+
+@include media-breakpoint-up(lg) {
+  .rounded-start-lg-0 {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .border-end-lg-0 {
+    border-right: 0;
+  }
+}
+
+#illustration {
+  .st0 {
+    opacity: 0.2;
+    fill: #0b2252;
+  }
+  .st1 {
+    fill: #daeeff;
+  }
+  .st2 {
+    fill: #6ac1ff;
+  }
+  .st3 {
+    fill: #3fb790;
+  }
+  .st4 {
+    fill: #34916f;
+  }
+  .st5 {
+    fill: #90dad8;
+  }
+  .st6 {
+    fill: #ffffff;
+  }
+  .st7 {
+    fill: url(#SVGID_1_);
+  }
+  .st8 {
+    fill: #14336d;
+  }
+  .st9 {
+    fill: #ffaa9d;
+  }
+  .st10 {
+    fill: url(#SVGID_00000017490826837838658910000002142626527740690084_);
+  }
+  .st11 {
+    fill: url(#SVGID_00000034068006629406653660000012692420182534256547_);
+  }
+  .st12 {
+    fill: url(#SVGID_00000101803975007610050020000011470946412395280313_);
+  }
+  .st13 {
+    fill: url(#SVGID_00000030466211624571626890000017464207134027537062_);
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .sticky {
+    position: sticky;
+  }
+}

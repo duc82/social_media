@@ -1,0 +1,27 @@
+$light: rgb(238, 240, 242);
+$secondary: rgb(20, 25, 30);
+$gray-100: rgb(247, 248, 249);
+$gray-200: rgb(239, 242, 246);
+$gray-300: rgb(238, 240, 242);
+$gray-400: rgb(225, 228, 230);
+$gray-500: rgb(161, 161, 168);
+$gray-600: rgb(103, 106, 121);
+$gray-700: rgb(41, 41, 46);
+$gray-800: rgb(20, 25, 30);
+$gray-900: rgb(15, 15, 16);
+
+$border-color: rgba(0, 0, 0, 0.1);
+$list-group-bg: transparent;
+$list-group-hover-bg: $light;
+
+$kbd-padding-y: 0.1rem;
+$enable-negative-margins: true;
+$enable-cssgrid: true;
+
+$body-color: $gray-700;
+$body-bg: $gray-200;
+
+// Dropdown
+$dropdown-min-width: 15rem;
+$dropdown-item-padding-y: 0.4rem;
+$dropdown-border-color: rgba(255, 255, 255, 0.07);
