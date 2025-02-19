@@ -182,10 +182,7 @@ export default function EditModal() {
                   {...register("content")}
                 ></textarea>
                 {isActiveDropzone && !files.length && (
-                  <Dropzone
-                    setFiles={setFiles}
-                    setPreviewHeight={setPreviewHeight}
-                  />
+                  <Dropzone setFiles={setFiles} />
                 )}
                 {files.length > 0 && (
                   <div className="row g-1 mb-3 position-relative">

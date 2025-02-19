@@ -1,6 +1,7 @@
 import { Socket } from "socket.io-client";
 import { Friend } from "./user";
 import { Message } from "./message";
+import { Notification } from "./notification";
 
 interface FriendRequest {
   userId: string;
@@ -44,6 +45,7 @@ interface ServerToClientEvents {
   incomingCall: (_data: CallUser) => void;
   endCall: () => void;
   callRejected: (_data: CallUser) => void;
+  notification: (_data: Notification) => void;
 }
 
 interface ClientToServerEvents {

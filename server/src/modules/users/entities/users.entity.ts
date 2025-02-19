@@ -9,6 +9,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -25,6 +27,7 @@ import { Story } from "src/modules/stories/stories.entity";
 import { Call } from "src/modules/messages/entities/calls.entity";
 import { Message } from "src/modules/messages/entities/messages.entity";
 import { NotificationSettings } from "src/modules/notifications/entities/notification_settings.entity";
+import { Notification } from "src/modules/notifications/entities/notifications.entity";
 
 @Entity({
   name: "users",
@@ -105,6 +108,11 @@ export class User extends BaseEntity {
   @JoinColumn()
   token: Token;
 
+  @OneToMany(() => Notification, (notification) => notification.user, {
+    cascade: true,
+  })
+  notifications: Notification[];
+
   @OneToMany(() => GroupMember, (member) => member.user, {
     cascade: true,
   })
@@ -136,6 +144,17 @@ export class User extends BaseEntity {
   @OneToMany(() => Call, (call) => call.callee, { cascade: true })
   callees: Call[];
 
+  @ManyToMany(() => User, (user) => user.followers)
+  @JoinTable({
+    name: "followers",
+    joinColumn: { name: "followerId", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "followingId", referencedColumnName: "id" },
+  })
+  following: User[];
+
+  @ManyToMany(() => User, (user) => user.following)
+  followers: User[];
+
   @Column({
     nullable: true,
     type: "timestamptz",
@@ -162,6 +181,7 @@ export class User extends BaseEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
+    console.log(this);
     if (!this.password) {
       return;
     }
@@ -172,6 +192,11 @@ export class User extends BaseEntity {
   @BeforeInsert()
   async generateUsernameAndFullname(): Promise<void> {
     this.username = this.email.split("@")[0];
+    this.fullName = this.firstName + " " + this.lastName;
+  }
+
+  @BeforeUpdate()
+  async generateFullname(): Promise<void> {
     this.fullName = this.firstName + " " + this.lastName;
   }
 

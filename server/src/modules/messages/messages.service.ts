@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, FindManyOptions, FindOneOptions } from "typeorm";
 import { Message } from "./entities/messages.entity";
 import { CreateMessageDto } from "./messages.dto";
-import { UserService } from "src/modules/users/users.service";
+import { UsersService } from "src/modules/users/users.service";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
 import { Call } from "./entities/calls.entity";
@@ -11,7 +11,7 @@ import { Call } from "./entities/calls.entity";
 export class MessagesService {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly firebaseService: FirebaseService,
   ) {}
 
@@ -74,7 +74,7 @@ export class MessagesService {
     files: Express.Multer.File[],
     userId: string,
   ) {
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: userId },
     });
 

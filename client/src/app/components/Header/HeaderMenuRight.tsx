@@ -6,11 +6,11 @@ import NotificationsDropdown from "./NotificationsDropdown";
 import Avatar from "../Avatar";
 import ButtonSignOut from "./ButtonSignOut";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSocketContext from "@/app/hooks/useSocketContext";
 import { Message } from "@/app/types/message";
-import { usePathname } from "next/navigation";
 import { revalidateTag } from "@/app/actions/indexAction";
+import { Notification } from "@/app/types/notification";
 
 const SwitchThemeNoSSR = dynamic(() => import("./SwitchTheme"), { ssr: false });
 
@@ -22,6 +22,7 @@ export default function HeaderMenuRight({
   conversationUnread: number;
 }) {
   const { socket } = useSocketContext();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     if (!socket) return;
@@ -35,10 +36,18 @@ export default function HeaderMenuRight({
       }
     };
 
+    const handleNotificaton = async (notification: Notification) => {
+      if (notification.user.id === currentUser.id) {
+        setNotifications((prev) => [notification, ...prev]);
+      }
+    };
+
     socket.on("message", handleNewMessage);
+    socket.on("notification", handleNotificaton);
 
     return () => {
       socket.off("message", handleNewMessage);
+      socket.off("notification", handleNotificaton);
     };
   }, [socket, currentUser]);
 
@@ -81,7 +90,7 @@ export default function HeaderMenuRight({
             style={{ right: "-3px" }}
           ></span>
         </button>
-        <NotificationsDropdown />
+        <NotificationsDropdown notifications={notifications} />
       </li>
 
       <li className="nav-item ms-2 dropdown">

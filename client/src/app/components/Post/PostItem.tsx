@@ -5,7 +5,6 @@ import Link from "next/link";
 import Avatar from "../Avatar";
 import { formatDate, formatDateTime } from "@/app/utils/dateTime";
 import { Comment, Post } from "@/app/types/post";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEarthAmerica,
@@ -40,14 +39,17 @@ export default function PostItem({
   const handleLike = async () => {
     if (!token) return;
     await postService.like(post.id, token);
-
-    setPosts((prev) => {
-      const idx = prev.findIndex((p) => p.id === post.id);
-      if (idx !== -1) {
-        prev[idx].likes.push(currentUser.id);
-      }
-      return [...prev];
-    });
+    setPosts((prev) =>
+      prev.map((p) => {
+        if (p.id === post.id) {
+          return {
+            ...p,
+            likes: [...p.likes, currentUser.id],
+          };
+        }
+        return p;
+      })
+    );
   };
 
   const handleUnlike = async () => {
@@ -66,6 +68,17 @@ export default function PostItem({
     if (!token) return;
     const { comment } = await postService.comment(post.id, content, token);
     setComments((prev) => [comment, ...prev]);
+    setPosts((prev) =>
+      prev.map((p) => {
+        if (p.id === post.id) {
+          return {
+            ...p,
+            totalComment: p.totalComment + 1,
+          };
+        }
+        return p;
+      })
+    );
     setLimitComments((prev) => prev + 1);
     textareaRef.current!.value = "";
   };
@@ -105,11 +118,16 @@ export default function PostItem({
     setPosts((prev) => prev.filter((post) => post.id !== id));
   };
 
+  const handleCopyLink = () => {
+    const url = `${window.location.protocol}//${window.location.host}/posts/${post.id}`;
+    navigator.clipboard.writeText(url);
+  };
+
   const isLiked = post.likes.includes(currentUser.id);
 
   const postFiles = useMemo(() => post.files.slice(0, 5), [post]);
 
-  const total = post.commentCount;
+  const total = post.totalComment;
 
   return (
     <div className="card">
@@ -121,15 +139,11 @@ export default function PostItem({
               className="avatar avatar-story me-2"
             >
               <Avatar
-                src={
-                  post.user.id === currentUser.id
-                    ? currentUser.profile.avatar
-                    : post.user.profile.avatar
-                }
+                src={post.user.profile.avatar}
                 fill={false}
                 width={0}
                 height={0}
-                alt={currentUser.fullName}
+                alt={post.user.fullName}
                 className="rounded-circle"
               />
             </Link>
@@ -140,7 +154,7 @@ export default function PostItem({
                   href={`/profile/@${post.user.username}`}
                   className="mb-0 h6"
                 >
-                  {currentUser.fullName}
+                  {post.user.fullName}
                 </Link>
 
                 {post.feeling && post.feeling.length > 0 && (
@@ -233,7 +247,7 @@ export default function PostItem({
           </p>
         )}
         {post.files.length > 0 && (
-          <Fancybox className="row g-3">
+          <Fancybox className="row g-1">
             {postFiles.map((file, index) => (
               <div
                 className={clsx(
@@ -246,9 +260,13 @@ export default function PostItem({
                 )}
                 key={file.id}
               >
-                <div className="position-relative">
+                <div className="card border-0">
                   {file.type === "image" && (
-                    <Link href={file.url} data-fancybox>
+                    <Link
+                      href={file.url}
+                      data-fancybox
+                      data-disable-nprogress={true}
+                    >
                       <Image
                         src={file.url}
                         alt={post.id}
@@ -302,7 +320,7 @@ export default function PostItem({
             <button
               type="button"
               className="nav-link mb-0 fw-normal d-flex align-items-start"
-              id="cardShareAction8"
+              id="cardShareAction"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
@@ -311,29 +329,33 @@ export default function PostItem({
             </button>
             <ul
               className="dropdown-menu dropdown-menu-end"
-              aria-labelledby="cardShareAction8"
+              aria-labelledby="cardShareAction"
             >
               <li>
                 <Link href="#" className="dropdown-item">
-                  <i className="bi bi-envelope pe-2 fs-4"></i>
+                  <i className="bi bi-envelope pe-2 fa-fw"></i>
                   Send via Direct Message
                 </Link>
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <i className="bi bi-bookmark fs-4 pe-2"></i>
+                  <i className="bi bi-bookmark fa-fw pe-2"></i>
                   Bookmark{" "}
                 </Link>
               </li>
               <li>
-                <Link href="#" className="dropdown-item">
-                  <i className="bi bi-link-icon fs-4 pe-2"></i>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="dropdown-item"
+                >
+                  <i className="bi bi-link fa-fw pe-2"></i>
                   Copy link href post
-                </Link>
+                </button>
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <i className="bi bi-share fs-4 pe-2"></i>
+                  <i className="bi bi-share fa-fw pe-2"></i>
                   Share post via …
                 </Link>
               </li>
@@ -342,7 +364,7 @@ export default function PostItem({
               </li>
               <li>
                 <Link href="#" className="dropdown-item">
-                  <i className="bi bi-pencil-square fs-4 pe-2"></i>
+                  <i className="bi bi-pencil-square fa-fw pe-2"></i>
                   Share href News Feed
                 </Link>
               </li>

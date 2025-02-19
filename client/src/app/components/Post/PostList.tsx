@@ -1,7 +1,7 @@
 "use client";
 import postService from "@/app/services/postService";
 import InfiniteScroll from "observer-infinite-scroll";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FullUser } from "@/app/types/user";
 import PostItem from "./PostItem";
 import usePostContext from "@/app/hooks/usePostContext";
@@ -25,7 +25,7 @@ export default function PostList({
   const [hasMore, setHasMore] = useState<boolean>(total > limit);
   const [page, setPage] = useState<number>(1);
 
-  const fetchMorePosts = async (): Promise<void> => {
+  const fetchMorePosts = async () => {
     try {
       const newPage = page + 1;
       const data = await postService.getByUserId(

@@ -4,46 +4,31 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
-import { DataSource, FindOneOptions, IsNull, Not } from "typeorm";
+import { DataSource, IsNull, Not } from "typeorm";
 import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
 import { Blocked } from "./entities/blocked.entity";
 import { FriendsService } from "../friends/friends.service";
 import { NotificationSettings } from "../notifications/entities/notification_settings.entity";
+import { instanceToPlain } from "class-transformer";
 
 @Injectable()
-export class UserService {
+export class UsersService {
+  public readonly userRepository = this.dataSource.getRepository(User);
+
   constructor(
     private dataSource: DataSource,
     private friendService: FriendsService,
     private firebaseService: FirebaseService,
   ) {}
 
-  async findOne(options?: FindOneOptions<User>) {
-    return this.dataSource.getRepository(User).findOne(options);
-  }
-
   async getProfile(username: string) {
-    const user = await this.findOne({
-      where: { username },
-    });
-
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-
-    return user;
-  }
-
-  async getCurrent(id: string) {
-    const user = await this.findOne({
-      where: { id },
-    });
-
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const user = await this.userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .where("user.username = :username", { username })
+      .getOne();
 
     return user;
   }
@@ -94,8 +79,8 @@ export class UserService {
   }
 
   async getById(id: string) {
-    const user = await this.findOne({
-      where: { id, bannedAt: IsNull() },
+    const user = await this.userRepository.findOne({
+      where: { id },
     });
 
     if (!user) {
@@ -103,6 +88,39 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async follow(id: string, followId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ["following"],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const follow = await this.userRepository.findOne({
+      where: { id: followId },
+    });
+
+    if (!follow) {
+      throw new NotFoundException("Follow user not found");
+    }
+
+    const isFollowing = user.following.some(
+      (following) => following.id === followId,
+    );
+
+    if (isFollowing) {
+      throw new BadRequestException("User already following");
+    }
+
+    user.following.push(follow);
+
+    await this.dataSource.getRepository(User).save(user);
+
+    return { message: "User followed successfully" };
   }
 
   async getStories(id: string, query: QueryDto) {
@@ -133,7 +151,7 @@ export class UserService {
   }
 
   async block(id: string, blockedId: string) {
-    const blockedBy = await this.findOne({
+    const blockedBy = await this.userRepository.findOne({
       where: { id },
     });
 
@@ -152,7 +170,7 @@ export class UserService {
       throw new BadRequestException("User already blocked");
     }
 
-    const user = await this.findOne({
+    const user = await this.userRepository.findOne({
       where: { id: blockedId, emailVerified: Not(IsNull()) },
     });
 
@@ -225,7 +243,7 @@ export class UserService {
   async update(id: string, body: UpdateUserDto, file?: Express.Multer.File) {
     const { firstName, lastName, username, isAvatar, ...profile } = body;
 
-    const user = await this.findOne({
+    const user = await this.userRepository.findOne({
       where: {
         id,
         bannedAt: IsNull(),
@@ -239,11 +257,11 @@ export class UserService {
 
     if (file) {
       if (isAvatar) {
-        const path = `avatars/${user.email}`;
+        const path = `avatars/${user.email}-${Date.now()}`;
         const newAvatar = await this.firebaseService.uploadFile(file, path);
         user.profile.avatar = newAvatar;
       } else {
-        const path = `wallpapers/${user.email}`;
+        const path = `wallpapers/${user.email}-${Date.now()}`;
         const newWallpaper = await this.firebaseService.uploadFile(file, path);
         user.profile.wallpaper = newWallpaper;
       }
@@ -274,7 +292,7 @@ export class UserService {
       }
     }
 
-    await this.dataSource.getRepository(User).save(user);
+    await this.dataSource.getRepository(User).save(instanceToPlain(user));
 
     return { user, message: "Profile updated successfully" };
   }
@@ -295,7 +313,7 @@ export class UserService {
   }
 
   async changePassword(id: string, body: ChangePasswordDto) {
-    const user = await this.findOne({
+    const user = await this.userRepository.findOne({
       where: { id },
     });
 

@@ -9,6 +9,7 @@ import "./scss/pages.scss";
 import "./scss/background.scss";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import UsersOverview from "./pages/Users/Overview";
+import Login from "./pages/Login";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 

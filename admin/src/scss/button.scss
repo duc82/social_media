@@ -7,3 +7,27 @@
   --bs-btn-padding-y: 0.5rem !important;
   --bs-btn-padding-x: 1rem !important;
 }
+
+.btn-icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: 2.625rem;
+  height: 2.625rem;
+  padding: 0;
+}
+
+.btn-ghost-secondary {
+  color: #71869d;
+  background-color: transparent;
+
+  &:hover {
+    color: $primary;
+    border-color: transparent;
+    background-color: rgba(55, 125, 255, 0.1);
+  }
+}

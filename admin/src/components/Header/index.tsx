@@ -2,7 +2,14 @@ import { Link } from "react-router-dom";
 import "./header.scss";
 import logo from "@/assets/logo.svg";
 import img6 from "@/assets/img6.jpg";
-import { ArrowBarLeft, ArrowBarRight, Search } from "react-bootstrap-icons";
+
+import {
+  ArrowBarLeft,
+  ArrowBarRight,
+  BrightnessHigh,
+  CircleHalf,
+  Moon,
+} from "react-bootstrap-icons";
 import { HeaderProps } from "@/types/header";
 import clsx from "clsx";
 
@@ -37,21 +44,89 @@ export default function Header({
               className={clsx(!isNavbarOpen && "d-none")}
             />
           </button>
-          <div className="dropdown ms-2">
-            <button
-              type="button"
-              className="btn btn-icon btn-ghost-secondary rounded-circle d-lg-none"
-            >
-              <Search size={14} />
-            </button>
-          </div>
         </div>
 
-        <div style={{ marginLeft: "auto" }}>
+        <div className="ms-auto">
           <ul className="navbar-nav">
-            <li className="nav-item"></li>
-            <li className="nav-item"></li>
-            <li className="nav-item"></li>
+            <li className="nav-item d-none d-sm-block"></li>
+            <li className="nav-item dropdown d-none d-sm-block">
+              <button
+                type="button"
+                className="btn btn-ghost-secondary btn-icon rounded-circle"
+                id="selectThemeDropdown"
+                data-bs-toggle="dropdown"
+                data-bs-dropdown-animation
+              >
+                <BrightnessHigh />
+              </button>
+              <div
+                className="dropdown-menu dropdown-menu-end navbar-dropdown-menu-borderless"
+                aria-labelledby="selectThemeDropdown"
+              >
+                <button type="button" className="dropdown-item active">
+                  <CircleHalf className="me-2" />
+                  <span className="text-truncate" title="Auto">
+                    Auto
+                  </span>
+                </button>
+                <button type="button" className="dropdown-item">
+                  <BrightnessHigh className="me-2" />
+                  <span className="text-truncate" title="Light">
+                    Light
+                  </span>
+                </button>
+                <button type="button" className="dropdown-item">
+                  <Moon className="me-2" />
+                  <span className="text-truncate" title="Dark">
+                    Dark
+                  </span>
+                </button>
+              </div>
+            </li>
+            <li className="nav-item dropdown d-none d-sm-block">
+              <button
+                type="button"
+                className="btn btn-ghost-secondary btn-icon rounded-circle"
+                id="selectLanguageDropdown"
+                data-bs-toggle="dropdown"
+                data-bs-dropdown-animation
+              >
+                <img src="https://flagcdn.com/16x12/us.webp" alt="Flag" />
+              </button>
+              <div className="dropdown-menu navbar-dropdown-menu-borderless dropdown-menu-end">
+                <span className="dropdown-header">Select language</span>
+                <button className="dropdown-item">
+                  <img
+                    src={"https://flagcdn.com/16x12/us.webp"}
+                    alt="Flag"
+                    className="me-2"
+                  />
+                  <span className="text-truncate" title="English">
+                    English
+                  </span>
+                </button>
+                <button className="dropdown-item">
+                  <img
+                    src={"https://flagcdn.com/16x12/vn.webp"}
+                    alt="Flag"
+                    className="me-2"
+                  />
+                  <span className="text-truncate" title="Vietnamese">
+                    Vietnamese
+                  </span>
+                </button>
+                <button className="dropdown-item">
+                  <img
+                    src={"https://flagcdn.com/16x12/cn.webp"}
+                    alt="Flag"
+                    className="me-2"
+                  />
+                  <span className="text-truncate" title="Chinese">
+                    Chinese
+                  </span>
+                </button>
+              </div>
+            </li>
             <li className="nav-item">
               <div className="dropdown">
                 <button

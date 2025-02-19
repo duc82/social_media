@@ -1,7 +1,7 @@
 "use client";
 
 import { Zuck } from "zuck.js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserStory } from "@/app/types/story";
 
 const timestamp = () => {
@@ -63,7 +63,7 @@ export default function Stories({
       })),
     });
     zuckObjectRef.current = zuckObject;
-  }, [userStories]);
+  }, []);
 
   return <div id="stories" ref={storiesRef} className="storiesWrapper"></div>;
 }

@@ -6,13 +6,10 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Post } from "../../posts/entities/posts.entity";
-import { NotificationSettings } from "./notification_settings.entity";
 import { NotificationType } from "../enums/notifications.enum";
 
 @Entity({
@@ -36,7 +33,7 @@ export class Notification extends BaseEntity {
   @ManyToOne(() => Post, { nullable: true })
   post: Post;
 
-  @ManyToOne(() => Comment)
+  @ManyToOne(() => Comment, { nullable: true })
   comment: Comment;
 
   @Column({
@@ -50,13 +47,6 @@ export class Notification extends BaseEntity {
     type: "timestamptz",
   })
   readAt: Date;
-
-  @OneToOne(() => NotificationSettings, {
-    cascade: true,
-    onDelete: "CASCADE",
-  })
-  @JoinColumn()
-  settings: NotificationSettings;
 
   @DeleteDateColumn({
     type: "timestamptz",

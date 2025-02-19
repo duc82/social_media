@@ -25,7 +25,6 @@ import EditPhotoModal from "./EditPhotoPanel";
 import EditPhoto from "./EditPhotoPanel";
 import EditPhotoPanel from "./EditPhotoPanel";
 import EditPhotosPanel from "./EditPhotosPanel";
-import Image from "next/image";
 
 export default function CreatePostModal({
   initialActiveDropzone = false,
@@ -37,7 +36,6 @@ export default function CreatePostModal({
   const [tab, setTab] = useState<"home" | "photosVideos" | "emoji">("home");
   const [isActiveDropzone, setActiveDropzone] = useState(false);
   const [files, setFiles] = useState<FilePreview[]>([]);
-  const [previewHeight, setPreviewHeight] = useState(0);
   const { setPosts } = usePostContext();
   const { data: session } = useSession();
   const token = session?.token;
@@ -69,6 +67,9 @@ export default function CreatePostModal({
   const clearFiles = () => {
     setFiles([]);
     setActiveDropzone(false);
+    for (const file of files) {
+      URL.revokeObjectURL(file.preview);
+    }
   };
 
   const closeModal = () => {
@@ -195,10 +196,7 @@ export default function CreatePostModal({
                     {...register("content")}
                   ></textarea>
                   {isActiveDropzone && !files.length && (
-                    <Dropzone
-                      setFiles={setFiles}
-                      setPreviewHeight={setPreviewHeight}
-                    />
+                    <Dropzone setFiles={setFiles} />
                   )}
                   {files.length > 0 && (
                     <div className="row g-1 mb-3 position-relative">
@@ -215,23 +213,18 @@ export default function CreatePostModal({
                             files.length >= 5 && (index > 1 ? "col-4" : "col-6")
                           )}
                         >
-                          <div
-                            className="card border-0"
-                            style={{ height: previewHeight }}
-                          >
+                          <div className="card border-0">
                             {file.type.includes("image") && (
-                              <Image
+                              <img
                                 src={file.preview}
                                 alt={file.name}
                                 className="card-img object-fit-cover h-100"
+                                onLoad={() => URL.revokeObjectURL(file.preview)}
                               />
                             )}
 
                             {file.type.includes("video") && (
-                              <VideoPlayer
-                                src={file.preview}
-                                onLoad={() => URL.revokeObjectURL(file.preview)}
-                              />
+                              <VideoPlayer src={file.preview} />
                             )}
                             {index === filePreviews.length - 1 &&
                               files.length > 5 && (

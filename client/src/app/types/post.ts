@@ -29,7 +29,6 @@ export interface Post {
   likes: string[];
   comments: Comment[];
   totalComment: number;
-  commentCount: number;
   access: PostAccess;
   feeling: string[] | null;
   activity: string[] | null;

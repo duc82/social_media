@@ -58,7 +58,7 @@ export class FirebaseService {
 
     await fileRef.makePublic();
     const url = decodeURIComponent(fileRef.publicUrl());
-    return `${url}?time=${Date.now()}`;
+    return url;
   }
 
   async uploadFileFromBuffer(buffer: Buffer, path: string) {

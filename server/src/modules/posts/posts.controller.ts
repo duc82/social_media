@@ -41,9 +41,14 @@ export class PostsController {
     return this.postsService.getAll(query);
   }
 
-  @Get(":userId")
+  @Get("users/:userId")
   async getCurrent(@Param("userId") userId: string, @Query() query: QueryDto) {
     return this.postsService.getByUserId(userId, query);
+  }
+
+  @Get(":id")
+  async getById(@Param("id") id: string) {
+    return this.postsService.getById(id);
   }
 
   @Get("comments/:postId")

@@ -13,6 +13,7 @@ export default function NotificationForm({
 }) {
   const [values, setValues] = useState({
     likes: settings.likes,
+    followers: settings.followers,
     comments: settings.comments,
     friendRequests: settings.friendRequests,
     birthdays: settings.birthdays,
@@ -48,6 +49,26 @@ export default function NotificationForm({
                 name="likes"
                 id="likesSwitchCheckChecked"
                 checked={values.likes}
+                onChange={handleChange}
+              />
+            </div>
+          </li>
+
+          <li className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+            <div className="me-2">
+              <h6 className="mb-0">Followers</h6>
+              <p className="small mb-0">
+                These are notifications for new followers
+              </p>
+            </div>
+            <div className="form-check form-switch">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                name="likes"
+                id="followersSwitchCheckChecked"
+                checked={values.followers}
                 onChange={handleChange}
               />
             </div>

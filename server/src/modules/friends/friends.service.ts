@@ -145,8 +145,16 @@ export class FriendsService {
   async getFriend(userId: string, friendId: string) {
     const friend = await this.dataSource.getRepository(Friend).findOne({
       where: [
-        { user: { id: userId }, friend: { id: friendId } },
-        { user: { id: friendId }, friend: { id: userId } },
+        {
+          user: { id: userId },
+          friend: { id: friendId },
+          status: FriendStatus.ACCEPTED,
+        },
+        {
+          user: { id: friendId },
+          friend: { id: userId },
+          status: FriendStatus.ACCEPTED,
+        },
       ],
       relations: ["user", "friend"],
     });
@@ -156,6 +164,25 @@ export class FriendsService {
     }
 
     return friend;
+  }
+
+  async isFriend(userId: string, friendId: string) {
+    const friend = await this.dataSource.getRepository(Friend).findOne({
+      where: [
+        {
+          user: { id: userId },
+          friend: { id: friendId },
+          status: FriendStatus.ACCEPTED,
+        },
+        {
+          user: { id: friendId },
+          friend: { id: userId },
+          status: FriendStatus.ACCEPTED,
+        },
+      ],
+    });
+
+    return !!friend;
   }
 
   async sendFriendRequest(userId: string, friendId: string) {

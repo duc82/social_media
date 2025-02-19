@@ -1,7 +1,13 @@
 import Link from "next/link";
 import Avatar from "../Avatar";
+import { Notification } from "@/app/types/notification";
+import { formatDateTime } from "@/app/utils/dateTime";
 
-export default function NotificationsDropdown() {
+export default function NotificationsDropdown({
+  notifications,
+}: {
+  notifications: Notification[];
+}) {
   return (
     <div
       className="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0"
@@ -21,7 +27,31 @@ export default function NotificationsDropdown() {
         </div>
         <div className="card-body p-0">
           <ul className="list-group list-group-flush p-2">
-            {/* Unread notification */}
+            {notifications.map((notification) => (
+              <li key={notification.id}>
+                <div className="list-group-item list-group-item-action rounded badge-unread d-flex border-0 mb-1 p-3">
+                  <div className="avatar text-center d-none d-sm-inline-block">
+                    <Avatar
+                      className="rounded-circle"
+                      src={notification.actor.profile.avatar}
+                      alt="Avatar"
+                    />
+                  </div>
+                  <div className="ms-sm-3">
+                    <div className=" d-flex">
+                      <p className="small mb-2">
+                        <b>{notification.actor.fullName}</b>{" "}
+                        {notification.content}.
+                      </p>
+                      <p className="small ms-3 text-nowrap">
+                        {formatDateTime(notification.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+
             <li>
               <div className="list-group-item list-group-item-action rounded badge-unread d-flex border-0 mb-1 p-3">
                 <div className="avatar text-center d-none d-sm-inline-block">
@@ -54,30 +84,6 @@ export default function NotificationsDropdown() {
                   </div>
                 </div>
               </div>
-            </li>
-
-            {/* Read notification */}
-            <li>
-              <a
-                role="button"
-                className="list-group-item list-group-item-action rounded d-flex border-0 mb-1 p-3"
-              >
-                <div className="avatar text-center d-none d-sm-inline-block">
-                  <div className="avatar-img rounded-circle bg-success">
-                    <span className="text-white position-absolute top-50 start-50 translate-middle fw-bold">
-                      WB
-                    </span>
-                  </div>
-                </div>
-                <div className="ms-sm-3">
-                  <div className="d-flex">
-                    <p className="small mb-2">
-                      Webestica has 15 like and 1 new activity
-                    </p>
-                    <p className="small ms-3">1hr</p>
-                  </div>
-                </div>
-              </a>
             </li>
           </ul>
         </div>

@@ -60,7 +60,15 @@ export default function EditPhotoPanel({
       </div>
       <div className="modal-body">
         <div>
-          <Image src={src} alt="crop" className="img-fluid" ref={imageRef} />
+          <Image
+            src={src}
+            alt="crop"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="img-fluid w-100"
+            ref={imageRef}
+          />
         </div>
       </div>
       <div className="modal-footer">

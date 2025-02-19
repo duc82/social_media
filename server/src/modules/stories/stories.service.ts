@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { UserService } from "../users/users.service";
+import { UsersService } from "../users/users.service";
 import { DataSource, LessThan } from "typeorm";
 import { Story } from "./stories.entity";
 import { FirebaseService } from "../firebase/firebase.service";
@@ -9,12 +9,12 @@ import { FileType } from "src/enums/file.enum";
 export class StoriesService {
   constructor(
     private dataSource: DataSource,
-    private userService: UserService,
+    private usersService: UsersService,
     private firebaseService: FirebaseService,
   ) {}
 
   async create(file: Express.Multer.File, userId: string) {
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: userId },
     });
 

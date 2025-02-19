@@ -15,27 +15,29 @@ export default async function RightSidebar() {
     <div className="col-lg-3">
       <div className="sticky" style={{ top: "calc(56px + 1.5rem)" }}>
         <div className="row flex-nowrap flex-column justify-content-start">
-          <div className="col-sm-6 col-lg-12 flex-fill mb-4">
-            <div className="card">
-              <div className="card-header pb-0 border-0">
-                <h5 className="card-title mb-0">Who to follow</h5>
-              </div>
-              <div className="card-body">
-                {friends.map((friend) => (
-                  <SuggestionItemSidebar key={friend.id} {...friend} />
-                ))}
+          {friends.length > 0 && (
+            <div className="col-sm-6 col-lg-12 flex-fill mb-4">
+              <div className="card">
+                <div className="card-header pb-0 border-0">
+                  <h5 className="card-title mb-0">Who to follow</h5>
+                </div>
+                <div className="card-body">
+                  {friends.map((friend) => (
+                    <SuggestionItemSidebar key={friend.id} {...friend} />
+                  ))}
 
-                <div className="d-grid mt-3">
-                  <Link
-                    className="btn btn-sm btn-primary-soft"
-                    href="/friends/suggestion"
-                  >
-                    View more
-                  </Link>
+                  <div className="d-grid mt-3">
+                    <Link
+                      className="btn btn-sm btn-primary-soft"
+                      href="/friends/suggestion"
+                    >
+                      View more
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="col-sm-6 col-lg-12 flex-fill">
             <div className="card h-100 overflow-y-auto">

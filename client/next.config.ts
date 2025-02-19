@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   },
   output: "standalone",
 
-  reactStrictMode: true,
+  // reactStrictMode: true,
   sassOptions: {
     api: "modern-compiler",
     quietDeps: true,

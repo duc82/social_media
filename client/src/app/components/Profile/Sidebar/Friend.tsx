@@ -46,7 +46,7 @@ export default function Friend({ friend }: { friend: FullUser }) {
             aria-label="Send message"
             data-bs-original-title="Send message"
           >
-            <i className="bi bi-chat-text-left"></i>
+            <i className="bi bi-chat-left-text"></i>
           </button>
           <button
             type="button"

@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
-import { UserService } from "src/modules/users/users.service";
+import { UsersService } from "src/modules/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
 import { Profile } from "src/modules/users/entities/profiles.entity";
 import { MailerService } from "@nestjs-modules/mailer";
@@ -30,7 +30,7 @@ export class AuthService {
     this.configService.getOrThrow<string>("CLIENT_URL");
 
   constructor(
-    private usersService: UserService,
+    private usersService: UsersService,
     private avatarService: AvatarService,
     private firebaseService: FirebaseService,
     private jwtService: JwtService,
@@ -52,7 +52,7 @@ export class AuthService {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const userExists = await this.usersService.findOne({
+    const userExists = await this.usersService.userRepository.findOne({
       where: { email: signUpDto.email },
     });
 
@@ -110,7 +110,7 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: {
         email: signInDto.email,
       },
@@ -179,7 +179,7 @@ export class AuthService {
   async verifyEmail(token: string) {
     try {
       const payload = await this.verifyToken<UserPayload>(token);
-      const user = await this.usersService.findOne({
+      const user = await this.usersService.userRepository.findOne({
         where: {
           id: payload.userId,
         },
@@ -203,7 +203,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    const user = await this.usersService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { email },
       relations: ["token"],
       select: ["id", "username"],
@@ -258,7 +258,7 @@ export class AuthService {
   async resetPassword(token: string, password: string) {
     try {
       const payload = await this.verifyToken<UserPayload>(token);
-      const user = await this.usersService.findOne({
+      const user = await this.usersService.userRepository.findOne({
         where: { id: payload.userId },
         relations: ["token"],
       });

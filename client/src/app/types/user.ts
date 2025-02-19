@@ -39,7 +39,6 @@ export interface User {
   firstName: string;
   fullName: string;
   email: string;
-  password: string;
   role: Role;
   profile: Profile;
   notificationSettings: NotificationSettings;

@@ -77,6 +77,9 @@ export default function EditPhotosPanel({
                   <Image
                     src={file.preview}
                     alt={file.name}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
                     className="card-img object-fit-cover h-auto"
                   />
                 )}

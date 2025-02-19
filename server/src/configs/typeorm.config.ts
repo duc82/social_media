@@ -9,13 +9,13 @@ const migrationsFolder = process.cwd() + "/migrations";
 
 const files = fs.readdirSync(migrationsFolder);
 
-const lastMigration = files[files.length - 1];
+const migrations = files.map((file) => `./migrations/${file}`);
 
 const dataSource = new DataSource({
   type: "postgres",
   url: configService.getOrThrow<string>("DATABASE_URL"),
   entities: ["src/**/*.entity{.ts,.js}"],
-  migrations: [`./migrations/${lastMigration}`], // Path to the migration files
+  migrations, // Path to the migration files
   logging: true,
 });
 

@@ -13,7 +13,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { UserService } from "./users.service";
+import { UsersService } from "./users.service";
 import { ChangePasswordDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { AuthGuard } from "src/common/guards/auth.guard";
@@ -23,7 +23,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 @UseGuards(AuthGuard)
 @Controller("api/users")
 export class UsersController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   async getAll(@User("userId") userId: string, @Query() query: QueryDto) {
@@ -52,7 +52,7 @@ export class UsersController {
 
   @Get("current")
   async getCurrent(@User("userId") userId: string) {
-    return this.usersService.getCurrent(userId);
+    return this.usersService.getById(userId);
   }
 
   @Post("block")
@@ -69,6 +69,11 @@ export class UsersController {
     @Param("blockedId", new ParseUUIDPipe()) blockedId: string,
   ) {
     return this.usersService.unblock(blockedById, blockedId);
+  }
+
+  @Put("follow/:id")
+  async follow(@User("userId") userId: string, @Param("id") id: string) {
+    return this.usersService.follow(userId, id);
   }
 
   @Put("update/:id")

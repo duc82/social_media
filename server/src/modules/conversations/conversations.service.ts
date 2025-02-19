@@ -15,7 +15,7 @@ import { ConversationMember } from "./entities/conversation_members.entity";
 import { MemberRole } from "src/enums/role.enum";
 import { Message } from "../messages/entities/messages.entity";
 import { MessageFile } from "../messages/entities/message_files.entity";
-import { UserService } from "../users/users.service";
+import { UsersService } from "../users/users.service";
 import { MessagesService } from "../messages/messages.service";
 import { FirebaseService } from "../firebase/firebase.service";
 
@@ -23,7 +23,7 @@ import { FirebaseService } from "../firebase/firebase.service";
 export class ConversationsService {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly messageService: MessagesService,
     private readonly firebaseService: FirebaseService,
   ) {}

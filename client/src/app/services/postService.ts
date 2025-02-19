@@ -79,11 +79,18 @@ const postService = {
     });
   },
 
+  getById: async (id: string, token: string, options?: Options) => {
+    return apiRequest<PostResponse>(`/posts/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      next: { tags: options?.tags },
+    });
+  },
+
   getByUserId: async (userId: string, token: string, options?: Options) => {
     const { page = 1, limit = 20, search = "" } = options || {};
 
     return apiRequest<PostsReponse>(
-      `/posts/${userId}?page=${page}&limit=${limit}&search=${search}`,
+      `/posts/users/${userId}?page=${page}&limit=${limit}&search=${search}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { tags: options?.tags },

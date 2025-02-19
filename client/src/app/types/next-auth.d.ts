@@ -9,7 +9,6 @@ declare module "next-auth" {
    */
   interface User extends FullUser {
     token: string;
-    tokenExpiration: number;
   }
 
   interface Session extends DefaultSession {
@@ -20,10 +19,8 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT {
+  interface JWT extends FullUser {
     token: string;
-    /** Token expired (miliseconds) */
-    tokenExpiration: number;
     user: FullUser;
   }
 }

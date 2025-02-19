@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import {
   ConnectedSocket,
   MessageBody,
@@ -12,7 +12,7 @@ import {
 import { Socket, Server } from "socket.io";
 import { AuthService } from "src/modules/auth/auth.service";
 import { UserPayload } from "src/modules/users/interfaces/users.interface";
-import { UserService } from "../users/users.service";
+import { UsersService } from "../users/users.service";
 import "dotenv/config";
 import { MessagesService } from "../messages/messages.service";
 import { CallStatus, CallType } from "../messages/enums/calls.enum";
@@ -69,6 +69,19 @@ interface EndCall {
   room: string;
 }
 
+@Injectable()
+export class WebSocketService {
+  private server: Server;
+
+  setServer(server: Server) {
+    this.server = server;
+  }
+
+  getServer(): Server {
+    return this.server;
+  }
+}
+
 @WebSocketGateway({
   cors: {
     origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
@@ -84,12 +97,14 @@ export class EventsGateway
 
   constructor(
     private authService: AuthService,
-    private userService: UserService,
+    private usersService: UsersService,
     private messageService: MessagesService,
+    private webSocketService: WebSocketService,
   ) {}
 
-  afterInit(_server: Server) {
+  afterInit(server: Server) {
     this.logger.log("Initialized");
+    this.webSocketService.setServer(server);
   }
 
   addOnline(socketId: string, userId: string) {
@@ -112,7 +127,7 @@ export class EventsGateway
 
     if (onlineIndex !== -1) {
       const userId = this.onlines[onlineIndex].userId;
-      await this.userService.update(userId, {
+      await this.usersService.update(userId, {
         offlineAt: new Date(),
       });
       this.onlines.splice(onlineIndex, 1);

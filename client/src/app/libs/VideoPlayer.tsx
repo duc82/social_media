@@ -28,9 +28,7 @@ export default function VideoPlayer({ src, ...props }: VideoPlayerProps) {
     () => ({
       controls: [
         "play-large",
-        "rewind",
         "play",
-        "fast-forward",
         "progress",
         "current-time",
         "duration",

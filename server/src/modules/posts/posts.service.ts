@@ -5,30 +5,33 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { CreatePostDto, UpdatePostDto } from "./posts.dto";
-import { DataSource, FindOneOptions, SelectQueryBuilder } from "typeorm";
-import { UserService } from "../users/users.service";
+import { DataSource, FindOneOptions } from "typeorm";
+import { UsersService } from "../users/users.service";
 import { Comment } from "./entities/comments.entity";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
+import { NotificationsService } from "../notifications/notifications.service";
+import { NotificationType } from "../notifications/enums/notifications.enum";
+import { WebSocketService } from "../events/events.gateway";
 
 @Injectable()
 export class PostsService {
+  public readonly postRepository = this.dataSource.getRepository(Post);
+
   constructor(
     private dataSource: DataSource,
-    private userService: UserService,
+    private usersService: UsersService,
+    private notificationsService: NotificationsService,
     private firebaseService: FirebaseService,
+    private webSocketService: WebSocketService,
   ) {}
-
-  async findOne(options?: FindOneOptions<Post>) {
-    return this.dataSource.getRepository(Post).findOne(options);
-  }
 
   async create(
     body: CreatePostDto,
     files: Array<Express.Multer.File>,
     currentUserId: string,
   ) {
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: currentUserId },
       relations: ["profile"],
     });
@@ -58,7 +61,7 @@ export class PostsService {
   async update(
     id: string,
     body: UpdatePostDto,
-    files: Array<Express.Multer.File>,
+    _files: Array<Express.Multer.File>,
   ) {
     const post = await this.dataSource
       .getRepository(Post)
@@ -123,12 +126,11 @@ export class PostsService {
         relations: ["likes"],
       })
       .loadRelationCountAndMap("comments.replyCount", "comments.childComments")
-      .loadRelationCountAndMap("post.totalComment", "post.comments")
       .loadRelationCountAndMap(
-        "post.commentCount",
+        "post.totalComment",
         "post.comments",
-        "commentCount",
-        (qb) => qb.where("commentCount.parentCommentId IS NULL"),
+        "totalComment",
+        (qb) => qb.where("totalComment.parentCommentId IS NULL"),
       )
       .where("unaccent(post.content) ILIKE unaccent(:search)", {
         search: `%${search}%`,
@@ -194,6 +196,25 @@ export class PostsService {
     return { posts, total, page, limit };
   }
 
+  async getById(userId: string) {
+    const post = await this.dataSource.getRepository(Post).findOne({
+      where: { id: userId },
+      relations: ["user", "user.profile", "files", "likes", "comments"],
+      loadRelationIds: {
+        relations: ["likes"],
+      },
+    });
+
+    if (!post) {
+      throw new NotFoundException("Post not found");
+    }
+
+    return {
+      post,
+      message: "Post retrieved successfully",
+    };
+  }
+
   async getComments(postId: string, query: QueryDto) {
     const { page = 1, limit = 3 } = query;
 
@@ -246,20 +267,20 @@ export class PostsService {
   }
 
   async like(id: string, userId: string) {
-    const post = await this.findOne({
+    const post = await this.postRepository.findOne({
       where: { id },
-      relations: ["likes"],
-      select: ["likes"],
+      relations: ["likes", "user"],
+      select: {
+        id: true,
+        user: { id: true },
+      },
     });
 
     if (!post) {
       throw new NotFoundException("Post not found");
     }
 
-    const user = await this.userService.findOne({
-      where: { id: userId },
-      select: ["id"],
-    });
+    const user = await this.usersService.getById(userId);
 
     if (!user) {
       throw new NotFoundException("User not found");
@@ -275,13 +296,32 @@ export class PostsService {
 
     await this.dataSource.getRepository(Post).save(post);
 
+    const isNotificationExists =
+      await this.notificationsService.notificationRepository.existsBy({
+        post: { id: post.id },
+        actor: { id: userId },
+        user: { id: post.user.id },
+      });
+
+    if (post.user.notificationSettings.likes && !isNotificationExists) {
+      const notification = await this.notificationsService.create({
+        userId: post.user.id,
+        actor: user,
+        content: "liked your post",
+        type: NotificationType.LIKE,
+        postId: post.id,
+      });
+      const server = this.webSocketService.getServer();
+      server.emit("notification", notification);
+    }
+
     return {
       message: "Post liked successfully",
     };
   }
 
   async unlike(id: string, userId: string) {
-    const post = await this.findOne({
+    const post = await this.postRepository.findOne({
       where: { id },
       relations: ["likes"],
       select: ["likes"],
@@ -291,7 +331,7 @@ export class PostsService {
       throw new NotFoundException("Post not found");
     }
 
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: userId },
       select: ["id"],
     });
@@ -316,7 +356,7 @@ export class PostsService {
   }
 
   async comment(id: string, userId: string, content: string) {
-    const post = await this.findOne({
+    const post = await this.postRepository.findOne({
       where: { id },
     });
 
@@ -324,7 +364,7 @@ export class PostsService {
       throw new NotFoundException("Post not found");
     }
 
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: userId },
       relations: ["profile"],
     });
@@ -359,7 +399,7 @@ export class PostsService {
       throw new NotFoundException("Comment not found");
     }
 
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: userId },
       select: ["id"],
     });
@@ -394,7 +434,7 @@ export class PostsService {
       throw new NotFoundException("Comment not found");
     }
 
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: userId },
       select: ["id"],
     });
@@ -428,7 +468,7 @@ export class PostsService {
       throw new NotFoundException("Comment not found");
     }
 
-    const user = await this.userService.findOne({
+    const user = await this.usersService.userRepository.findOne({
       where: { id: currentUserId },
       relations: ["profile"],
     });

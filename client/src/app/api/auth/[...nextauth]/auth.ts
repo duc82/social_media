@@ -1,5 +1,6 @@
 import authService from "@/app/services/authService";
 import { SignInDto } from "@/app/types/auth";
+import { FullUser } from "@/app/types/user";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -39,7 +40,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
 
           const result = await authService.signIn(data);
 
-          return { ...result, ...result.user };
+          return { ...result.user, token: result.token };
         } catch (error) {
           if (error instanceof Error) {
             throw new SignInError(error.message);
@@ -63,11 +64,16 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
 
       return token;
     },
+
+    // Don't touch this
     session({ session, token }) {
       session.token = token.token;
+
       session.user = {
-        ...session.user,
-        ...token.user,
+        ...token,
+        name: token.fullName,
+        image: token.profile.avatar,
+        email: token.email as string,
       };
       return session;
     },

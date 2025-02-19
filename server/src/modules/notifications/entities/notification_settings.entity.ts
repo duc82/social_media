@@ -15,6 +15,11 @@ export class NotificationSettings extends BaseEntity {
   @Column({
     default: true,
   })
+  followers: boolean;
+
+  @Column({
+    default: true,
+  })
   comments: boolean;
 
   @Column({

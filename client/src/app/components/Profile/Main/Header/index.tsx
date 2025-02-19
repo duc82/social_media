@@ -5,7 +5,7 @@ import Link from "next/link";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friend, FullUser } from "@/app/types/user";
 import { formatDate } from "@/app/utils/dateTime";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
 import {
@@ -175,6 +175,7 @@ export default function ProfileMainHeader({
             href={user.profile.wallpaper || wallpaper_initial.src}
             className="d-block h-100 position-relative"
             data-fancybox
+            data-disable-nprogress
           >
             <Image
               src={user.profile.wallpaper || wallpaper_initial}
@@ -217,6 +218,7 @@ export default function ProfileMainHeader({
               href={user.profile.avatar}
               className="avatar avatar-xxl mt-n5 mb-3"
               data-fancybox
+              data-disable-nprogress
             >
               <Avatar
                 src={user.profile.avatar}

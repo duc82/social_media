@@ -39,6 +39,8 @@ $card-subtitle-color: rgb(140, 152, 164);
 $card-cap-bg: transparent;
 $input-padding-y: 0.6125rem;
 
+$nav-link-color: rgb(19, 33, 68);
+
 @import "bootstrap/scss/bootstrap";
 @import "./card.scss";
 @import "./button.scss";
@@ -49,6 +51,11 @@ $input-padding-y: 0.6125rem;
 
 :root {
   --bs-heading-color: rgb(30, 32, 34) !important;
+}
+
+::selection {
+  color: $primary;
+  background-color: rgba(55, 125, 255, 0.1);
 }
 
 a {

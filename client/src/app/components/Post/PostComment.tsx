@@ -9,7 +9,6 @@ import {
   FormEvent,
   KeyboardEvent,
   SetStateAction,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -45,13 +44,17 @@ export default function PostComment({
   const handleLikeComment = async () => {
     if (!token) return;
     await postService.likeComment(comment.id, token);
-    setComments((prev) => {
-      const idx = prev.findIndex((c) => c.id === comment.id);
-      if (idx !== -1) {
-        prev[idx].likes.push(currentUser);
-      }
-      return [...prev];
-    });
+    setComments((prev) =>
+      prev.map((c) => {
+        if (c.id === comment.id) {
+          return {
+            ...c,
+            likes: [...c.likes, currentUser],
+          };
+        }
+        return c;
+      })
+    );
   };
 
   const handleUnlikeComment = async () => {
@@ -123,10 +126,7 @@ export default function PostComment({
     setIsHaveSeenReplies(true);
   };
 
-  const isLiked = useMemo(
-    () => comment.likes.some((user) => user.id === currentUser.id),
-    [comment, currentUser]
-  );
+  const isLiked = comment.likes.some((user) => user.id === currentUser.id);
 
   return (
     <div className="comment-item" key={comment.id} style={{ paddingLeft }}>

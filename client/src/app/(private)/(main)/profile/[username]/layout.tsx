@@ -17,7 +17,7 @@ export default async function ProfileLayout({
   let { username } = await params;
 
   //  %40 is @
-  if (!username?.includes("%40")) {
+  if (!username.includes("%40")) {
     notFound();
   }
 

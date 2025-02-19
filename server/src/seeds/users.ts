@@ -1,4 +1,4 @@
-import { UserService } from "src/modules/users/users.service";
+import { UsersService } from "src/modules/users/users.service";
 import { INestApplicationContext } from "@nestjs/common";
 import { Gender } from "src/modules/users/enums/profiles.enum";
 
@@ -17,7 +17,7 @@ function generateRandomNumber(min: number, max: number) {
 }
 
 async function seedUsers(application: INestApplicationContext) {
-  const userService = application.get(UserService);
+  const usersService = application.get(UsersService);
   const genders = ["MALE", "FEMALE", "OTHER"];
 
   for (let i = 0; i < 5; i++) {
@@ -31,7 +31,7 @@ async function seedUsers(application: INestApplicationContext) {
       ];
     const email = `${firstName.toLowerCase()}@gmail.com`;
 
-    await userService.create({
+    await usersService.create({
       email,
       firstName,
       lastName,
