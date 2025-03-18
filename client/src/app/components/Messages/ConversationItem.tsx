@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Message } from "@/app/types/message";
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
+import { Typing } from "@/app/types/socket";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -20,6 +21,11 @@ export default function ConversationItem({
 }: ConversationItemProps) {
   const pathname = usePathname();
   const { onlines, socket } = useSocketContext();
+  const [typing, setTyping] = useState<Typing>({
+    conversationId: "",
+    fullName: "",
+    isTyping: false,
+  });
 
   const [lastMessage, setLastMessage] = useState<Message | null>(
     conversation.messages.length > 0 ? conversation.messages[0] : null
@@ -46,12 +52,20 @@ export default function ConversationItem({
       setLastMessage(message);
     };
 
+    const handleTyping = (typing: Typing) => {
+      if (typing.conversationId !== conversation.id) return;
+      setTyping(typing);
+    };
+
     socket.on("message", handleLastMessage);
+
+    socket.on("typing", handleTyping);
 
     return () => {
       socket.off("message", handleLastMessage);
+      socket.off("typing", handleTyping);
     };
-  }, [socket]);
+  }, [socket, conversation.id]);
 
   return (
     <li className="mb-3">
@@ -86,9 +100,14 @@ export default function ConversationItem({
             {conversation.isGroup ? conversation.name : user?.fullName}
           </h6>
           <div className="small text-secondary text-truncate">
-            {!lastMessage && "Created a new conversation"}
-            {lastMessage && !lastMessageFile && lastMessage.content}
-            {lastMessage &&
+            {typing.isTyping && `${typing.fullName} is typing ...`}
+            {!typing.isTyping && !lastMessage && "Created a new conversation"}
+            {!typing.isTyping &&
+              lastMessage &&
+              !lastMessageFile &&
+              lastMessage.content}
+            {!typing.isTyping &&
+              lastMessage &&
               lastMessageFile &&
               (lastMessageFile.type === "image" ? "Image" : "Video")}
           </div>

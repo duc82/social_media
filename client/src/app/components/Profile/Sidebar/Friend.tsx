@@ -5,7 +5,7 @@ import Avatar from "../../Avatar";
 
 import { useSession } from "next-auth/react";
 import userService from "@/app/services/userService";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 export default function Friend({ friend }: { friend: FullUser }) {
   const { data: session } = useSession();

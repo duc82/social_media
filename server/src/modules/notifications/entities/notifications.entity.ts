@@ -23,17 +23,17 @@ export class Notification extends BaseEntity {
   content: string;
 
   // who gets the notification
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, onDelete: "CASCADE" })
   user: User;
 
   // who made the action
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, onDelete: "CASCADE" })
   actor: User;
 
-  @ManyToOne(() => Post, { nullable: true })
+  @ManyToOne(() => Post, { nullable: true, onDelete: "CASCADE" })
   post: Post;
 
-  @ManyToOne(() => Comment, { nullable: true })
+  @ManyToOne(() => Comment, { nullable: true, onDelete: "CASCADE" })
   comment: Comment;
 
   @Column({

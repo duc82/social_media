@@ -1,8 +1,10 @@
 import NotificationForm from "@/app/components/Settings/NotificationForm";
 import getServerSession from "@/app/libs/session";
+import notificationService from "@/app/services/notificationService";
 
 export default async function Notification() {
-  const { currentUser } = await getServerSession();
+  const { currentUser, token } = await getServerSession();
+  const settings = await notificationService.getSettings(token);
 
   return (
     <div className="card">
@@ -14,7 +16,8 @@ export default async function Notification() {
       </div>
       <NotificationForm
         currentUser={currentUser}
-        settings={currentUser.notificationSettings}
+        settings={settings}
+        token={token}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import { FullUser, GENDER, MARIAL_STATUS, Profile } from "@/app/types/user";
 import { formatDate } from "@/app/utils/dateTime";
 import handlingError from "@/app/utils/error";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 

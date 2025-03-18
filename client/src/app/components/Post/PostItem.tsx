@@ -55,13 +55,12 @@ export default function PostItem({
   const handleUnlike = async () => {
     if (!token) return;
     await postService.unlike(post.id, token);
-    setPosts((prev) => {
-      const idx = prev.findIndex((p) => p.id === post.id);
-      if (idx !== -1) {
-        prev[idx].likes = prev[idx].likes.filter((id) => id !== currentUser.id);
-      }
-      return [...prev];
-    });
+    setPosts((prev) =>
+      prev.map((p) => ({
+        ...p,
+        likes: p.likes.filter((id) => id !== currentUser.id),
+      }))
+    );
   };
 
   const sendComment = async (content: string) => {

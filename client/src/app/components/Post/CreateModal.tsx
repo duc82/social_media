@@ -21,9 +21,6 @@ import TagPeopleModal from "./TagPeopleModal";
 import FeelingActivityModal from "./FeelingActivityModal";
 import usePostContext from "@/app/hooks/usePostContext";
 import VideoPlayer from "@/app/libs/VideoPlayer";
-import EditPhotoModal from "./EditPhotoPanel";
-import EditPhoto from "./EditPhotoPanel";
-import EditPhotoPanel from "./EditPhotoPanel";
 import EditPhotosPanel from "./EditPhotosPanel";
 
 export default function CreatePostModal({
@@ -34,11 +31,11 @@ export default function CreatePostModal({
   currentUser: FullUser;
 }) {
   const [tab, setTab] = useState<"home" | "photosVideos" | "emoji">("home");
-  const [isActiveDropzone, setActiveDropzone] = useState(false);
+  const [isActiveDropzone, setActiveDropzone] = useState(initialActiveDropzone);
   const [files, setFiles] = useState<FilePreview[]>([]);
-  const { setPosts } = usePostContext();
   const { data: session } = useSession();
   const token = session?.token;
+  const { setPosts } = usePostContext();
 
   const modalRef = useRef<HTMLDivElement>(null);
   const bootstrap = useBootstrapContext();
@@ -106,7 +103,7 @@ export default function CreatePostModal({
       }
 
       const { post } = await postService.create(formData, token);
-      setPosts((prev) => [post, ...prev]);
+      setPosts((posts) => [post, ...posts]);
       closeModal();
     } catch (error) {
       toast.error(handlingError(error));
@@ -219,7 +216,6 @@ export default function CreatePostModal({
                                 src={file.preview}
                                 alt={file.name}
                                 className="card-img object-fit-cover h-100"
-                                onLoad={() => URL.revokeObjectURL(file.preview)}
                               />
                             )}
 
@@ -241,26 +237,16 @@ export default function CreatePostModal({
                         className="position-absolute d-flex align-items-center justify-content-between z-index-1"
                         style={{ top: 12, left: 0, padding: "0 12px" }}
                       >
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setTab("photosVideos");
-                            }}
-                            className="me-2 px-2 py-1 d-inline-flex aligin-items-center justify-content-center mt-0 rounded-2 bg-white border-0 shadow-sm"
-                          >
-                            <i className="bi bi-pencil-fill me-1"></i>
-                            <span>Edit {files.length > 1 && "All"}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            className="px-2 py-1 d-inline-flex aligin-items-center justify-content-center mt-0 rounded-2 bg-white border-0 shadow-sm"
-                          >
-                            <i className="bi bi-file-earmark-plus-fill me-1"></i>
-                            <span>Add Photos/Videos</span>
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTab("photosVideos");
+                          }}
+                          className="me-2 px-2 py-1 d-inline-flex aligin-items-center justify-content-center mt-0 rounded-2 bg-white border-0 shadow-sm"
+                        >
+                          <i className="bi bi-pencil-fill me-1"></i>
+                          <span>Edit {files.length > 1 && "All"}</span>
+                        </button>
 
                         <button
                           type="button"

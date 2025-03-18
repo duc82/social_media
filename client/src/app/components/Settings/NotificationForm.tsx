@@ -1,16 +1,21 @@
 "use client";
+import notificationService from "@/app/services/notificationService";
 import { NotificationSettings } from "@/app/types/notification";
 import { FullUser } from "@/app/types/user";
 import Link from "next/link";
 import React, { useState } from "react";
+import Spinner from "../Spinner";
 
 export default function NotificationForm({
   currentUser,
   settings,
+  token,
 }: {
   currentUser: FullUser;
   settings: NotificationSettings;
+  token: string;
 }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [values, setValues] = useState({
     likes: settings.likes,
     followers: settings.followers,
@@ -25,9 +30,16 @@ export default function NotificationForm({
     setValues({ ...values, [e.target.name]: e.target.checked });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(values);
+    try {
+      setIsSubmitting(true);
+      await notificationService.updateSettings(token, values);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +78,7 @@ export default function NotificationForm({
                 className="form-check-input"
                 type="checkbox"
                 role="switch"
-                name="likes"
+                name="followers"
                 id="followersSwitchCheckChecked"
                 checked={values.followers}
                 onChange={handleChange}
@@ -207,7 +219,7 @@ export default function NotificationForm({
                   data-bs-parent="#emailNotifications"
                 >
                   <div className="accordion-body p-0 pt-3">
-                    <div className="text-dark">
+                    <div>
                       <p className="mb-0 fw-bold">{currentUser.email}</p>
                       <p className="mb-0">Primary email address</p>
                     </div>
@@ -281,8 +293,12 @@ export default function NotificationForm({
       </div>
 
       <div className="card-footer pt-0 text-end border-0">
-        <button type="submit" className="btn btn-sm btn-primary mb-0">
-          Save changes
+        <button
+          type="submit"
+          className="btn btn-sm btn-primary mb-0"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <Spinner /> : "Save changes"}
         </button>
       </div>
     </form>

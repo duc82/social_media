@@ -9,6 +9,16 @@ const notificationService = {
       },
     });
   },
+
+  async updateSettings(token: string, data: Partial<NotificationSettings>) {
+    return apiRequest<NotificationSettings>("/notifications/update/settings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+  },
 };
 
 export default notificationService;

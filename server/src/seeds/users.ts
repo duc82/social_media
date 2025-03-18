@@ -1,5 +1,5 @@
 import { UsersService } from "src/modules/users/users.service";
-import { INestApplicationContext } from "@nestjs/common";
+import { INestApplicationContext, Logger } from "@nestjs/common";
 import { Gender } from "src/modules/users/enums/profiles.enum";
 
 function generateRandomText(length: number) {
@@ -16,32 +16,27 @@ function generateRandomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function seedUsers(application: INestApplicationContext) {
+async function seedUsers(application: INestApplicationContext, row: number) {
   const usersService = application.get(UsersService);
-  const genders = ["MALE", "FEMALE", "OTHER"];
+  const genders = ["MALE", "FEMALE", "OTHER"] as const;
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < row; i++) {
     const firstName = generateRandomText(5);
-    const lastName = generateRandomText(5);
-    const gender =
-      Gender[
-        genders[
-          generateRandomNumber(0, genders.length - 1)
-        ] as keyof typeof Gender
-      ];
+    const lastName = generateRandomText(4);
+    const gender = Gender[genders[generateRandomNumber(0, genders.length - 1)]];
     const email = `${firstName.toLowerCase()}@gmail.com`;
 
-    await usersService.create({
+    const user = await usersService.create({
       email,
       firstName,
       lastName,
-      password: "Liutiudiu@0802",
+      password: "Socialmedia@123",
       emailVerified: new Date(),
-      profile: {
-        birthday: new Date().toISOString(),
-        gender,
-      },
+      birthday: new Date().toISOString(),
+      gender,
     });
+
+    Logger.log(`User ${user.fullName} created`);
   }
 }
 

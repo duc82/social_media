@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageItem from "./MessageItem";
 import { Message } from "@/app/types/message";
 import { useParams } from "next/navigation";
@@ -30,7 +30,6 @@ export default function MessageList({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [hasMore, setHasMore] = useState(total > limit);
   const [page, setPage] = useState(initialPage);
-  const [isScrollBottom, setIsScrollBottom] = useState(false);
   const params = useParams<{ id: string }>();
   const id = params.id;
   const { socket } = useSocketContext();
@@ -73,10 +72,6 @@ export default function MessageList({
       if (message.conversation.id !== id) return;
 
       setMessages((prev) => [...prev, message]);
-      if (message.user.id === currentUser.id) {
-        setIsScrollBottom(true);
-      }
-
       if (message.user.id !== currentUser.id) {
         await Promise.all([
           markMessagesAsRead(id),
@@ -92,16 +87,15 @@ export default function MessageList({
     };
   }, [socket, currentUser, id]);
 
-  useLayoutEffect(() => {
-    if (isScrollBottom && ref.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
-      setIsScrollBottom(false);
-    }
-  }, [isScrollBottom]);
-
   useEffect(() => {
     revalidateTag("headerConversationUnread");
   }, []);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <>

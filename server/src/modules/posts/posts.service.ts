@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { CreatePostDto, UpdatePostDto } from "./posts.dto";
-import { DataSource, FindOneOptions } from "typeorm";
+import { DataSource } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { Comment } from "./entities/comments.entity";
 import { QueryDto } from "src/shared/dto/query.dto";
@@ -143,6 +143,10 @@ export class PostsService {
     return { posts, total, page, limit };
   }
 
+  async count() {
+    return this.dataSource.getRepository(Post).count();
+  }
+
   async getByUserId(userId: string, query: QueryDto) {
     const { page, limit, search } = query;
 
@@ -197,22 +201,49 @@ export class PostsService {
   }
 
   async getById(userId: string) {
-    const post = await this.dataSource.getRepository(Post).findOne({
-      where: { id: userId },
-      relations: ["user", "user.profile", "files", "likes", "comments"],
-      loadRelationIds: {
+    const commentQuery = this.dataSource
+      .createQueryBuilder()
+      .subQuery()
+      .select("comment.id")
+      .from(Comment, "comment")
+      .where("comment.postId = post.id")
+      .andWhere("comment.parentCommentId IS NULL")
+      .orderBy("comment.createdAt", "DESC")
+      .limit(3)
+      .getQuery();
+
+    const post = await this.dataSource
+      .getRepository(Post)
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.user", "user")
+      .leftJoinAndSelect("user.profile", "profile")
+      .leftJoinAndSelect("post.files", "files")
+      .leftJoinAndSelect(
+        "post.comments",
+        "comments",
+        `comments.id IN ${commentQuery}`,
+      )
+      .leftJoinAndSelect("comments.user", "commentUser")
+      .leftJoinAndSelect("commentUser.profile", "commentProfile")
+      .leftJoinAndSelect("comments.likes", "commentLikes")
+      .loadAllRelationIds({
         relations: ["likes"],
-      },
-    });
+      })
+      .loadRelationCountAndMap("comments.replyCount", "comments.childComments")
+      .loadRelationCountAndMap(
+        "post.totalComment",
+        "post.comments",
+        "totalComment",
+        (qb) => qb.where("totalComment.parentCommentId IS NULL"),
+      )
+      .where("post.id = :id", { id: userId })
+      .getOne();
 
     if (!post) {
       throw new NotFoundException("Post not found");
     }
 
-    return {
-      post,
-      message: "Post retrieved successfully",
-    };
+    return post;
   }
 
   async getComments(postId: string, query: QueryDto) {
@@ -296,14 +327,16 @@ export class PostsService {
 
     await this.dataSource.getRepository(Post).save(post);
 
-    const isNotificationExists =
-      await this.notificationsService.notificationRepository.existsBy({
+    const [notificationSettings, isNotificationExists] = await Promise.all([
+      this.notificationsService.getOrCreateSettings(post.user.id),
+      this.notificationsService.notificationRepository.existsBy({
         post: { id: post.id },
         actor: { id: userId },
         user: { id: post.user.id },
-      });
+      }),
+    ]);
 
-    if (post.user.notificationSettings.likes && !isNotificationExists) {
+    if (notificationSettings.likes && !isNotificationExists) {
       const notification = await this.notificationsService.create({
         userId: post.user.id,
         actor: user,

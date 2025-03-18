@@ -13,11 +13,10 @@ import userService from "@/app/services/userService";
 export default async function Home() {
   const { currentUser, token } = await getServerSession();
 
-  const { posts, limit, total } = await postService.getAll(token);
-
-  const { users: userStories } = await userService.getStories(token, {
-    tags: ["userStories"],
-  });
+  const [{ posts, limit, total }, { users: userStories }] = await Promise.all([
+    postService.getAll(token),
+    userService.getStories(token, { tags: ["userStories"] }),
+  ]);
 
   return (
     <div className="row g-4">

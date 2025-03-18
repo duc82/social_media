@@ -38,8 +38,8 @@ export class AvatarService {
     const initials = this.getInitials(name);
 
     const canvas = this.createCanvas(
-      options?.width ?? 100,
-      options?.height ?? 100,
+      options?.width ?? 256,
+      options?.height ?? 256,
     );
     const ctx = canvas.getContext("2d");
 

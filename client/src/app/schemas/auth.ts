@@ -25,6 +25,7 @@ export const signUpSchema = z
     email,
     password,
     confirmPassword: z.string(),
+    birthday: z.string(),
     dateOfBirth: z.object({
       day: z.number(),
       month: z.number(),

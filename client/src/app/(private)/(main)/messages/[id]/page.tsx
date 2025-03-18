@@ -36,7 +36,7 @@ export default async function Messages({
     <div className="col-lg-8 col-xxl-9">
       <ProfileModal user={user} />
 
-      <div className="card card-chat rounded-start-lg-0 border-start-lg-0 h-100">
+      <div className="card card-chat rounded-top-0 h-100">
         <div className="card-body position-relative">
           <TopAvatarStatus
             user={user}
@@ -54,7 +54,7 @@ export default async function Messages({
             token={token}
           />
         </div>
-        <div className="card-footer">
+        <div className="card-footer position-relative">
           <ChatForm token={token} />
         </div>
       </div>

@@ -6,7 +6,6 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { FullUser } from "@/app/types/user";
 import clsx from "clsx";
-import useSocketToken from "@/app/hooks/useSocketContext";
 import { formatDateTime } from "@/app/utils/dateTime";
 
 import { markMessagesAsRead } from "@/app/actions/messageAction";
@@ -28,13 +27,12 @@ export default function TopAvatarStatus({
   token,
   currentUser,
 }: TopAvatarStatusProps) {
-  const { onlines } = useSocketToken();
-  const { socket } = useSocketContext();
+  const { socket, onlines } = useSocketContext();
   const { id: conversationId } = useParams();
 
   const isOnline = onlines.some((online) => online.userId === user?.id);
 
-  const openRingingCall = (hasVideo: boolean) => {
+  const openRingingCall = async (hasVideo: boolean) => {
     if (!user || !socket) return;
 
     const room = `${currentUser.id}-${user.id}`;

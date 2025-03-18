@@ -7,9 +7,10 @@ import { FullUser } from "@/app/types/user";
 import ConversationItem from "./ConversationItem";
 import useSocketContext from "@/app/hooks/useSocketContext";
 import { ConversationPayload } from "@/app/types/socket";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { revalidateTag } from "@/app/actions/indexAction";
 import useBootstrapContext from "@/app/hooks/useBootstrapContext";
+import { useRouter } from "next-nprogress-bar";
 
 interface ChatSidebarProps {
   conversations: Conversation[];
@@ -60,7 +61,7 @@ export default function ChatSidebar({
         </button>
       </div>
 
-      <div className="card card-body border-end-0 border-bottom-0 rounded-bottom-0 rounded-end-0">
+      <div className="card card-body border-bottom-0 rounded-bottom-0 border-end-0 rounded-end-0">
         <div className=" d-flex justify-content-between align-items-center">
           <h1 className="h5 mb-0">
             Active chats{" "}

@@ -22,9 +22,9 @@ import {
 import Avatar from "../Avatar";
 import useSocketContext from "@/app/hooks/useSocketContext";
 import conversationService from "@/app/services/conversationService";
-import { useRouter } from "next/navigation";
 import EmojiPicker from "emoji-picker-react";
 import useEmoji from "@/app/hooks/useEmoji";
+import { useRouter } from "next-nprogress-bar";
 
 export default function CreateChatToast({ token }: { token: string }) {
   const [search, setSerach] = useState("");

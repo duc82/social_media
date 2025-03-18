@@ -13,7 +13,7 @@ const ListFriends = async () => {
         return (
           <div key={friend.id} className="col-12 col-md-6 col-lg-4 col-xl-3">
             <div className="card">
-              <Link href={`/profile/${friend.id}`} className="d-block">
+              <Link href={`/profile/@${friend.username}`} className="d-block">
                 <Image
                   src={friend.profile.avatar}
                   alt={friend.fullName}
@@ -25,7 +25,7 @@ const ListFriends = async () => {
               </Link>
               <div className="p-3">
                 <Link
-                  href={`/profile/${friend.id}`}
+                  href={`/profile/@${friend.username}`}
                   className="card-title d-block mb-3"
                 >
                   <h5 className="mb-0">{friend.fullName}</h5>

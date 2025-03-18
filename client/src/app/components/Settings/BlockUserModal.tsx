@@ -98,9 +98,7 @@ export default function BlockUserModal({
                       />
                     </div>
 
-                    <span className="text-dark m-0 fw-medium">
-                      {user.fullName}
-                    </span>
+                    <span className="m-0 fw-medium">{user.fullName}</span>
                   </div>
                   <button
                     type="button"

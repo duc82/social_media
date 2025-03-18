@@ -18,13 +18,15 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import usePostContext from "@/app/hooks/usePostContext";
+import { useRouter } from "next-nprogress-bar";
 
 export default function EditModal() {
-  const { post, setPosts } = usePostContext();
+  const { post } = usePostContext();
   const [isActiveDropzone, setActiveDropzone] = useState(false);
   const [previewHeight, setPreviewHeight] = useState(0);
   const [files, setFiles] = useState<FilePreview[]>([]);
   const { data: session } = useSession();
+  const router = useRouter();
   const token = session?.token;
   const currentUser = session?.user;
   const modalRef = useRef<HTMLDivElement>(null);
@@ -85,18 +87,8 @@ export default function EditModal() {
         formData.append("files[]", file);
       });
 
-      const { post: newPost } = await postService.update(
-        post.id,
-        formData,
-        token
-      );
-      setPosts((prev) => {
-        const index = prev.findIndex((p) => p.id === post.id);
-        if (index !== -1) {
-          prev[index] = newPost;
-        }
-        return [...prev];
-      });
+      await postService.update(post.id, formData, token);
+      router.refresh();
       closeModal();
     } catch (error) {
       toast.error(handlingError(error));

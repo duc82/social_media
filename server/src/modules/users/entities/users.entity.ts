@@ -93,14 +93,6 @@ export class User extends BaseEntity {
   @JoinColumn()
   profile: Profile;
 
-  @OneToOne(() => NotificationSettings, {
-    eager: true,
-    cascade: true,
-    onDelete: "CASCADE",
-  })
-  @JoinColumn()
-  notificationSettings: NotificationSettings;
-
   @OneToOne(() => Token, {
     cascade: true,
     onDelete: "CASCADE",
@@ -181,7 +173,6 @@ export class User extends BaseEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    console.log(this);
     if (!this.password) {
       return;
     }
@@ -197,7 +188,9 @@ export class User extends BaseEntity {
 
   @BeforeUpdate()
   async generateFullname(): Promise<void> {
-    this.fullName = this.firstName + " " + this.lastName;
+    if (this.firstName || this.lastName) {
+      this.fullName = this.firstName + " " + this.lastName;
+    }
   }
 
   async comparePassword(attempt: string): Promise<boolean> {

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import Avatar from "../Avatar";
 import { directMessage } from "@/app/actions/conversationAction";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 interface ProfileModalProps {
   user?: FullUser;

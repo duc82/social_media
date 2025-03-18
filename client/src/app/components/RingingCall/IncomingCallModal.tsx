@@ -3,19 +3,20 @@
 import useBootstrapContext from "@/app/hooks/useBootstrapContext";
 import useSocketContext from "@/app/hooks/useSocketContext";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Avatar from "../Avatar";
 import { CallUser } from "@/app/types/socket";
 import { FullUser } from "@/app/types/user";
 import userService from "@/app/services/userService";
 import { useParams } from "next/navigation";
+import isMobile from "@/app/utils/isMobile";
 
 export default function IncomingCallModal({ token }: { token: string }) {
   const { socket } = useSocketContext();
   const incomingCallModalRef = useRef<HTMLDivElement>(null);
   const [callUser, setCallUser] = useState<CallUser | null>(null);
   const [user, setUser] = useState<FullUser | null>(null);
-  const bootstrap = useBootstrapContext();
+  const { Modal } = useBootstrapContext();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { id } = useParams();
 
@@ -39,13 +40,13 @@ export default function IncomingCallModal({ token }: { token: string }) {
     pauseRingtone();
   };
 
-  const playRingtone = useCallback(async () => {
+  const playRingtone = async () => {
     const audio = audioRef.current;
     if (audio) {
       await audio.play();
       audio.muted = false;
     }
-  }, []);
+  };
 
   const pauseRingtone = () => {
     const audio = audioRef.current;
@@ -55,18 +56,16 @@ export default function IncomingCallModal({ token }: { token: string }) {
     }
   };
 
-  const handleRejectCall = useCallback(() => {
-    if (!callUser) return;
+  const handleRejectCall = () => {
+    if (!callUser || !socket) return;
 
-    socket?.emit("rejectCall", callUser);
+    socket.emit("rejectCall", callUser);
     if (incomingCallModalRef.current) {
-      const modal = bootstrap.Modal.getOrCreateInstance(
-        incomingCallModalRef.current
-      );
+      const modal = Modal.getOrCreateInstance(incomingCallModalRef.current);
       modal.hide();
     }
     pauseRingtone();
-  }, [socket, callUser, bootstrap, pauseRingtone]);
+  };
 
   useEffect(() => {
     if (!socket) return;
@@ -74,13 +73,13 @@ export default function IncomingCallModal({ token }: { token: string }) {
     const handleIncomingCall = async (data: CallUser) => {
       setCallUser(data);
       if (incomingCallModalRef.current) {
-        const modal = bootstrap.Modal.getOrCreateInstance(
-          incomingCallModalRef.current
-        );
+        const modal = Modal.getOrCreateInstance(incomingCallModalRef.current);
         modal.show();
       }
 
-      await playRingtone();
+      if (!isMobile()) {
+        await playRingtone();
+      }
     };
 
     socket.on("incomingCall", handleIncomingCall);
@@ -90,7 +89,7 @@ export default function IncomingCallModal({ token }: { token: string }) {
       socket.off("incomingCall", handleIncomingCall);
       socket.off("endCall", handleRejectCall);
     };
-  }, [socket, bootstrap, handleRejectCall, playRingtone]);
+  }, [socket, Modal, handleRejectCall, playRingtone]);
 
   useEffect(() => {
     if (!callUser) return;

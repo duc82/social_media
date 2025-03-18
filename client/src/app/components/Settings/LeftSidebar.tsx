@@ -71,14 +71,6 @@ export default function LeftSidebar() {
                   ))}
                 </ul>
               </div>
-              <div className="card-footer text-center py-2">
-                <Link
-                  href="/"
-                  className="btn btn-link text-secondary btn-sm p-0"
-                >
-                  View Profile{" "}
-                </Link>
-              </div>
             </div>
           </div>
         </div>

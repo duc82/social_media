@@ -2,6 +2,7 @@
 import ButtonBack from "../Button/ButtonBack";
 import { useEffect, useRef, useState } from "react";
 import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.min.css";
 import clsx from "clsx";
 import Image from "next/image";
 
@@ -24,6 +25,8 @@ export default function EditPhotoPanel({
 
     const canvas = cropper.getCroppedCanvas();
 
+    if (!canvas) return;
+
     canvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
@@ -43,7 +46,6 @@ export default function EditPhotoPanel({
       movable: false,
       autoCropArea: 1,
     });
-
     setCropper(cropper);
 
     return () => {
@@ -65,7 +67,7 @@ export default function EditPhotoPanel({
             alt="crop"
             width={0}
             height={0}
-            sizes="100vw"
+            sizes="(min-width: 1080px) 20vw, (min-width: 768px) 25vw, 50vw"
             className="img-fluid w-100"
             ref={imageRef}
           />

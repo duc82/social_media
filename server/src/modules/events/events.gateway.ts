@@ -16,6 +16,7 @@ import { UsersService } from "../users/users.service";
 import "dotenv/config";
 import { MessagesService } from "../messages/messages.service";
 import { CallStatus, CallType } from "../messages/enums/calls.enum";
+import { User } from "../users/entities/users.entity";
 
 interface Message {
   id: string;
@@ -28,8 +29,9 @@ interface Message {
 }
 
 interface Typing {
-  typing: boolean;
-  username: string;
+  isTyping: boolean;
+  user: User;
+  conversationId: string;
 }
 
 interface Online {
@@ -104,7 +106,7 @@ export class EventsGateway
 
   afterInit(server: Server) {
     this.logger.log("Initialized");
-    this.webSocketService.setServer(server);
+    // this.webSocketService.setServer(server);
   }
 
   addOnline(socketId: string, userId: string) {
@@ -179,9 +181,11 @@ export class EventsGateway
       (online) => online.userId === payload.calleeId,
     );
 
-    if (callee) {
-      this.server.to(callee.socketId).emit("incomingCall", payload);
-    }
+    if (!callee) return;
+
+    console.log(callee);
+
+    this.server.to(callee.socketId).emit("incomingCall", payload);
   }
 
   @SubscribeMessage("endCall")

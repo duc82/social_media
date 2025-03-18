@@ -29,9 +29,9 @@ export default function VideoPlayer({ src, ...props }: VideoPlayerProps) {
       controls: [
         "play-large",
         "play",
-        "progress",
         "current-time",
         "duration",
+        "progress",
         "mute",
         "volume",
         "captions",

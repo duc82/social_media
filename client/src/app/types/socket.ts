@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { Friend } from "./user";
+import { Friend, FullUser } from "./user";
 import { Message } from "./message";
 import { Notification } from "./notification";
 
@@ -19,6 +19,12 @@ export interface CallUser {
   hasVideo: boolean;
   room: string;
   conversationId: string;
+}
+
+export interface Typing {
+  isTyping: boolean;
+  conversationId: string;
+  fullName: string;
 }
 
 export interface ConversationPayload {
@@ -46,6 +52,7 @@ interface ServerToClientEvents {
   endCall: () => void;
   callRejected: (_data: CallUser) => void;
   notification: (_data: Notification) => void;
+  typing: (_data: Typing) => void;
 }
 
 interface ClientToServerEvents {
@@ -57,6 +64,7 @@ interface ClientToServerEvents {
   outgoingCall: (_data: CallUser) => void;
   endCall: (_data: EndCall) => void;
   rejectCall: (_data: CallUser) => void;
+  typing: (_data: Typing) => void;
 }
 
 export type ISocket = Socket<ServerToClientEvents, ClientToServerEvents>;

@@ -1,6 +1,5 @@
 "use client";
 import Avatar from "@/app/components/Avatar";
-import Link from "next/link";
 import CreatePostModal from "./CreateModal";
 import { FullUser } from "@/app/types/user";
 import { useState } from "react";
@@ -71,43 +70,6 @@ export default function SharePost({ currentUser }: { currentUser: FullUser }) {
               <i className="bi bi-emoji-smile-fill text-warning pe-2"></i>
               Feeling / Activity
             </button>
-          </li>
-          <li className="nav-item dropdown ms-sm-auto">
-            <button
-              type="button"
-              className="nav-link bg-light py-1 px-2 mb-0 rounded-2"
-              id="feedActionShare"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i className="bi bi-three-dots"></i>
-            </button>
-            <ul
-              className="dropdown-menu dropdown-menu-end"
-              aria-labelledby="feedActionShare"
-            >
-              <li>
-                <Link className="dropdown-item" href="#">
-                  <i className="bi bi-envelope pe-2"></i>
-                  Create a poll
-                </Link>
-              </li>
-              <li>
-                <Link className="dropdown-item" href="#">
-                  <i className="bi bi-bookmark-check pe-2"></i>
-                  Ask a question
-                </Link>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-              <li>
-                <Link className="dropdown-item" href="#">
-                  <i className="bi bi-pencil-square pe-2"></i>
-                  Help
-                </Link>
-              </li>
-            </ul>
           </li>
         </ul>
       </div>

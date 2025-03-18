@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/modules/users/entities/users.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity({
   name: "notification_settings",
@@ -46,4 +54,10 @@ export class NotificationSettings extends BaseEntity {
     default: true,
   })
   messages: boolean;
+
+  @OneToOne(() => User, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
+  user: User;
 }

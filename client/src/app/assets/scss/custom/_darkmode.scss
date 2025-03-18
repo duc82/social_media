@@ -14,10 +14,10 @@
 
     .card-header {
       background-color: $card-dark;
+    }
 
-      .card-title {
-        color: $white;
-      }
+    .card-title {
+      color: $white;
     }
 
     .card-footer {
@@ -70,6 +70,13 @@
       .nav-link {
         color: $gray-800-dark;
       }
+    }
+  }
+
+  .nav-pills-soft {
+    .svg-circle {
+      background-color: $gray-100-dark;
+      color: $gray-700-dark;
     }
   }
 
@@ -126,5 +133,15 @@
     --bs-secondary-rgb: 197, 198, 204;
     background-color: rgba(var(--bs-secondary-rgb), 0.1) !important;
     color: $gray-600-dark !important;
+  }
+
+  .stories {
+    &::-webkit-scrollbar-thumb {
+      background-color: $gray-400-dark;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: $gray-200-dark;
+    }
   }
 }

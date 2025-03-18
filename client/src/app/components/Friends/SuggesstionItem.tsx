@@ -7,9 +7,9 @@ import userService from "@/app/services/userService";
 import { FullUser } from "@/app/types/user";
 import handlingError from "@/app/utils/error";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 

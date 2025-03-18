@@ -54,6 +54,7 @@ export default function Suggestions({
           </div>
         </div>
       }
+      endMessage={<></>}
       className="row gy-4 overflow-hidden"
     >
       {friends.map((friend) => (

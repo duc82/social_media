@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { userProfileSchema } from "../schemas/user";
-import { NotificationSettings } from "./notification";
 
 export type FriendStatus = "pending" | "accepted" | "declined";
 
@@ -41,7 +40,6 @@ export interface User {
   email: string;
   role: Role;
   profile: Profile;
-  notificationSettings: NotificationSettings;
   emailVerified: Date | null;
   offlineAt: string | null;
 }

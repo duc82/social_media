@@ -150,7 +150,7 @@ export default function PostComment({
             <div className="d-flex justify-content-between">
               <h6 className="mb-1">
                 <Link href={`/profile/@${comment.user.username}`}>
-                  {currentUser.fullName}
+                  {comment.user.fullName}
                 </Link>
               </h6>
               <small

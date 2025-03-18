@@ -6,7 +6,7 @@ import Avatar from "../../Avatar";
 import { FullUser } from "@/app/types/user";
 import userService from "@/app/services/userService";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 export default function FriendList({
   initialFriends,

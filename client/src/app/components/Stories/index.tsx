@@ -1,69 +1,73 @@
 "use client";
 
-import { Zuck } from "zuck.js";
-import { useEffect, useRef, useState } from "react";
 import { UserStory } from "@/app/types/story";
-
-const timestamp = () => {
-  let timeIndex = 0;
-  const shifts = [
-    35,
-    60,
-    60 * 3,
-    60 * 60 * 2,
-    60 * 60 * 25,
-    60 * 60 * 24 * 4,
-    60 * 60 * 24 * 10,
-  ];
-
-  const shift = shifts[timeIndex++] || 0;
-  const date = new Date(Date.now() - shift * 1000);
-
-  return date.getTime() / 1000;
-};
+import Image from "next/image";
+import { useState } from "react";
+import StoryModal from "./StoryModal";
+import { formatDateTime } from "@/app/utils/dateTime";
 
 export default function Stories({
   initialUserStories,
 }: {
   initialUserStories: UserStory[];
 }) {
-  const [userStories, setUserStories] =
-    useState<UserStory[]>(initialUserStories);
-  const storiesRef = useRef<HTMLDivElement | null>(null);
-  const zuckObjectRef = useRef<ZuckObject | null>(null);
+  const [userStories, setUserStories] = useState(initialUserStories);
+  const [currentStory, setCurrentStory] = useState<UserStory | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const el = storiesRef.current;
-    if (!el) return;
+  const onOpen = (userStory: UserStory) => {
+    setCurrentStory(userStory);
+    setIsOpen(true);
+    document.body.style.overflow = "hidden";
+  };
 
-    const zuckObject = Zuck(el, {
-      backNative: true, // uses window history to enable back button on browsers/android
-      previousTap: true, // use 1/3 of the screen to navigate to previous item when tap the story
-      skin: "snapgram", // container class
-      autoFullScreen: true, // enables fullscreen on mobile browsers
-      avatars: false, // shows user photo instead of last story item preview
-      list: false, // displays a timeline instead of carousel
-      openEffect: true, // enables effect when opening story
-      cubeEffect: true, // enables the 3d cube effect when sliding story
-      backButton: true, // adds a back button to close the story viewer
-      localStorage: true, // enabled localStorage
-      stories: userStories.map((user) => ({
-        id: user.id,
-        photo: user.profile.avatar,
-        name: user.fullName,
-        time: timestamp(),
-        items: user.stories.map((story) => ({
-          id: story.id,
-          type: story.type === "image" ? "photo" : "video",
-          length: 5,
-          src: story.content,
-          preview: story.content,
-          time: timestamp(),
-        })),
-      })),
-    });
-    zuckObjectRef.current = zuckObject;
-  }, []);
+  const onClose = () => {
+    setIsOpen(false);
+    document.body.style.overflow = "auto";
+  };
 
-  return <div id="stories" ref={storiesRef} className="storiesWrapper"></div>;
+  return (
+    <>
+      <StoryModal
+        isOpen={isOpen}
+        onClose={onClose}
+        stories={currentStory?.stories.map((story) => ({
+          url: story.content,
+          type: story.type,
+          header: {
+            heading: currentStory?.fullName,
+            subheading: formatDateTime(story.createdAt),
+            profileImage: currentStory?.profile.avatar,
+          },
+          duration: 5000,
+        }))}
+      />
+      <div className="stories" id="stories">
+        {userStories.map((userStory) => (
+          <div className="story" id={userStory.id} key={userStory.id}>
+            <button
+              type="button"
+              className="item"
+              onClick={() => onOpen(userStory)}
+            >
+              <Image
+                src={
+                  userStory.stories[0].type === "video"
+                    ? userStory.profile.avatar
+                    : userStory.stories[0].content
+                }
+                alt={userStory.fullName}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
+              />
+              <span className="info">
+                <strong className="name">{userStory.fullName}</strong>
+              </span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }

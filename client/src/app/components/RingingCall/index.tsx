@@ -53,8 +53,6 @@ export default function RingingCall({
       room,
     };
 
-    console.log(data);
-
     socket?.emit("endCall", data);
   }, [callerId, calleeId, currentUser, socket, conversationId, hasVideo]);
 

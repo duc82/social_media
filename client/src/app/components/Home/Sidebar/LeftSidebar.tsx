@@ -76,7 +76,7 @@ export default async function LeftSidebar({
                       style={{ width: "4rem", height: "4rem" }}
                     >
                       <Avatar
-                        src={currentUser.profile.avatar ?? "/01.jpg"}
+                        src={currentUser.profile.avatar}
                         alt={currentUser.fullName}
                         className="border border-3 border-white"
                       />
@@ -114,7 +114,7 @@ export default async function LeftSidebar({
                   <ul className="nav nav-link-secondary flex-column fw-bold gap-2">
                     <li className="nav-item">
                       <Link
-                        href={`/profile/${currentUser?.id}`}
+                        href={`/profile/@${currentUser.username}`}
                         className="nav-link d-flex align-items-center"
                       >
                         <Image
@@ -124,7 +124,7 @@ export default async function LeftSidebar({
                           width={20}
                           height={20}
                         />
-                        <span>Feed </span>
+                        <span>Feed</span>
                       </Link>
                     </li>
                     <li className="nav-item">
@@ -139,13 +139,13 @@ export default async function LeftSidebar({
                           width={20}
                           height={20}
                         />
-                        <span>Friends </span>
+                        <span>Friends</span>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link
                         className="nav-link d-flex align-items-center"
-                        href="/blog"
+                        href="/blogs"
                       >
                         <Image
                           className="me-2"
@@ -154,7 +154,7 @@ export default async function LeftSidebar({
                           width={20}
                           height={20}
                         />
-                        <span>Latest News </span>
+                        <span>Latest News</span>
                       </Link>
                     </li>
 
@@ -208,7 +208,7 @@ export default async function LeftSidebar({
 
                 <div className="card-footer text-center py-2">
                   <Link
-                    href={`/profile/${currentUser?.id}`}
+                    href={`/profile/@${currentUser.username}`}
                     className="btn btn-link btn-sm p-0"
                   >
                     View Profile

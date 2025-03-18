@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import handlingError from "@/app/utils/error";
 import authService from "@/app/services/authService";
 import { SignUpDto } from "@/app/types/auth";
@@ -18,6 +17,7 @@ import FormControl from "@/app/components/Form/FormControl";
 import Radio from "@/app/components/Form/Radio";
 import isLeapYear from "@/app/utils/isLeapYear";
 import Spinner from "@/app/components/Spinner";
+import { useRouter } from "next-nprogress-bar";
 
 const date = new Date();
 

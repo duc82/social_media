@@ -73,8 +73,6 @@ export class CreateUserDto {
 
   @IsOptional()
   emailVerified?: Date;
-
-  profile: ProfileDto;
 }
 
 export class UpdateUserDto extends OmitType(ProfileDto, [

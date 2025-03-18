@@ -103,6 +103,9 @@ export default function BlockedList({
               <Link
                 href={`/profile/@${item.user.username}`}
                 className="d-flex align-items-center"
+                style={{
+                  color: "inherit",
+                }}
               >
                 <div className="avatar avatar-sm me-2">
                   <Avatar
@@ -111,9 +114,7 @@ export default function BlockedList({
                   />
                 </div>
 
-                <span className="text-dark m-0 fw-medium">
-                  {item.user.fullName}
-                </span>
+                <span className="m-0 fw-medium">{item.user.fullName}</span>
               </Link>
               <button
                 type="button"

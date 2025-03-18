@@ -1,4 +1,0 @@
-2023-12-20 14:13:31.691 +07 [10055] FATAL:  database files are incompatible with server
-2023-12-20 14:13:31.691 +07 [10055] DETAIL:  The data directory was initialized by PostgreSQL version 15, which is not compatible with this version 16.1.
-2023-12-20 14:15:30.202 +07 [10594] FATAL:  database files are incompatible with server
-2023-12-20 14:15:30.202 +07 [10594] DETAIL:  The data directory was initialized by PostgreSQL version 15, which is not compatible with this version 16.1.

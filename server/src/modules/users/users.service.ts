@@ -5,13 +5,16 @@ import {
 } from "@nestjs/common";
 import { User } from "./entities/users.entity";
 import { DataSource, IsNull, Not } from "typeorm";
-import { ChangePasswordDto, CreateUserDto, UpdateUserDto } from "./users.dto";
+import { ChangePasswordDto, UpdateUserDto } from "./users.dto";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
 import { Blocked } from "./entities/blocked.entity";
 import { FriendsService } from "../friends/friends.service";
-import { NotificationSettings } from "../notifications/entities/notification_settings.entity";
 import { instanceToPlain } from "class-transformer";
+import { NotificationsService } from "../notifications/notifications.service";
+import { AvatarService } from "../avatar/avatar.service";
+import { Profile } from "./entities/profiles.entity";
+import { SignUpDto } from "../auth/auth.dto";
 
 @Injectable()
 export class UsersService {
@@ -20,7 +23,9 @@ export class UsersService {
   constructor(
     private dataSource: DataSource,
     private friendService: FriendsService,
+    private notificationsService: NotificationsService,
     private firebaseService: FirebaseService,
+    private avatarService: AvatarService,
   ) {}
 
   async getProfile(username: string) {
@@ -134,6 +139,7 @@ export class UsersService {
       .leftJoinAndSelect("u.stories", "stories")
       .leftJoinAndSelect("u.profile", "profile")
       .where("u.createdAt < :time", { time: new Date() })
+      .orderBy("stories.createdAt", "DESC")
       .groupBy("u.id")
       .addGroupBy("profile.id")
       .addGroupBy("stories.id")
@@ -229,14 +235,27 @@ export class UsersService {
     return { blocked, total, page, limit };
   }
 
-  async create(user: CreateUserDto) {
-    const notificationSettings = this.dataSource
-      .getRepository(NotificationSettings)
-      .create();
-    const newUser = this.dataSource
-      .getRepository(User)
-      .create({ ...user, notificationSettings });
-    await newUser.save();
+  async create(user: SignUpDto) {
+    const { birthday, gender, ...userData } = user;
+    const buffer = await this.avatarService.generateAvatar(userData.firstName);
+
+    const avatar = await this.firebaseService.uploadFileFromBuffer(
+      buffer,
+      `avatars/${userData.email}`,
+    );
+
+    const profile = this.dataSource.getRepository(Profile).create({
+      avatar,
+      birthday,
+      gender,
+    });
+
+    const newUser = this.userRepository.create({
+      ...userData,
+      profile,
+    });
+    await this.userRepository.save(newUser);
+    await this.notificationsService.createSettings(newUser.id);
     return newUser;
   }
 
@@ -292,7 +311,7 @@ export class UsersService {
       }
     }
 
-    await this.dataSource.getRepository(User).save(instanceToPlain(user));
+    await this.userRepository.save(instanceToPlain(user));
 
     return { user, message: "Profile updated successfully" };
   }

@@ -7,6 +7,8 @@ import { FileType } from "src/enums/file.enum";
 
 @Injectable()
 export class StoriesService {
+  public readonly storyRepository = this.dataSource.getRepository(Story);
+
   constructor(
     private dataSource: DataSource,
     private usersService: UsersService,
@@ -30,13 +32,13 @@ export class StoriesService {
       ? FileType.IMAGE
       : FileType.VIDEO;
 
-    const story = this.dataSource.getRepository(Story).create({
+    const story = this.storyRepository.create({
       user,
       content: url,
       type,
     });
 
-    await this.dataSource.getRepository(Story).save(story);
+    await this.storyRepository.save(story);
 
     return {
       message: "Story created successfully",
@@ -45,9 +47,12 @@ export class StoriesService {
   }
 
   async getAll(userId: string) {
-    return this.dataSource.getRepository(Story).find({
+    return this.storyRepository.find({
       where: { user: { id: userId }, expiresAt: LessThan(new Date()) },
       relations: ["user"],
+      order: {
+        createdAt: "ASC",
+      },
     });
   }
 }

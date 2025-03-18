@@ -5,7 +5,7 @@ import Link from "next/link";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friend, FullUser } from "@/app/types/user";
 import { formatDate } from "@/app/utils/dateTime";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
 import {
@@ -21,8 +21,8 @@ import wallpaper_initial from "@/app/assets/images/wallpaper.webp";
 
 import { directMessage } from "@/app/actions/conversationAction";
 import userService from "@/app/services/userService";
-import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import { useRouter } from "next-nprogress-bar";
 
 export default function ProfileMainHeader({
   user,

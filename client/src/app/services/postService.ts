@@ -2,6 +2,7 @@ import { Options } from "../types";
 import {
   CommentResponse,
   CommentsResponse,
+  Post,
   PostResponse,
   PostsReponse,
 } from "../types/post";
@@ -80,7 +81,7 @@ const postService = {
   },
 
   getById: async (id: string, token: string, options?: Options) => {
-    return apiRequest<PostResponse>(`/posts/${id}`, {
+    return apiRequest<Post>(`/posts/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
       next: { tags: options?.tags },
     });
@@ -120,6 +121,12 @@ const postService = {
         next: { tags: options?.tags },
       }
     );
+  },
+
+  count: async (token: string) => {
+    return apiRequest<number>("/posts/count", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   },
 
   countComments: async (postId: string) => {

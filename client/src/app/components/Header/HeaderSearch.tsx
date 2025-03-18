@@ -12,8 +12,8 @@ import {
 } from "react";
 import Link from "next/link";
 import Avatar from "../Avatar";
-import { useRouter } from "next/navigation";
 import useBootstrapContext from "@/app/hooks/useBootstrapContext";
+import { useRouter } from "next-nprogress-bar";
 
 export default function HeaderSearch({ token }: { token: string }) {
   const [search, setSearch] = useState("");

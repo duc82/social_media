@@ -13,7 +13,7 @@ const bootstrap = async () => {
 
   switch (seedName) {
     case "users":
-      await seedUsers(application);
+      await seedUsers(application, 50);
       break;
     default:
       throw new Error("Invalid seed name, please try again!");

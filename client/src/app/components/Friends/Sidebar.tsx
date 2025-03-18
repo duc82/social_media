@@ -46,7 +46,7 @@ const FriendSidebar = () => {
       >
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">Friends</h4>
+            <h4 className="card-title px-2">Friends</h4>
             <ul className="nav nav-pills-soft flex-coloumn fw-bold gap-2">
               {friendMenus.map((menu) => (
                 <li className="nav-item w-100" key={menu.title}>

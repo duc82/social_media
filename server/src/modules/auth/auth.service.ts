@@ -6,7 +6,6 @@ import {
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { UsersService } from "src/modules/users/users.service";
 import { SignInDto, SignUpDto } from "./auth.dto";
-import { Profile } from "src/modules/users/entities/profiles.entity";
 import { MailerService } from "@nestjs-modules/mailer";
 import { UserPayload } from "src/modules/users/interfaces/users.interface";
 import { Token } from "src/modules/users/entities/tokens.entity";
@@ -60,26 +59,7 @@ export class AuthService {
       throw new BadRequestException("User already exists");
     }
 
-    const buffer = await this.avatarService.generateAvatar(signUpDto.firstName);
-
-    const avatar = await this.firebaseService.uploadFileFromBuffer(
-      buffer,
-      `avatars/${signUpDto.email}`,
-    );
-
-    const profile = this.dataSource.getRepository(Profile).create({
-      avatar,
-      birthday: signUpDto.birthday,
-      gender: signUpDto.gender,
-    });
-
-    const user = await this.usersService.create({
-      email: signUpDto.email,
-      firstName: signUpDto.firstName,
-      lastName: signUpDto.lastName,
-      password: signUpDto.password,
-      profile,
-    });
+    const user = await this.usersService.create(signUpDto);
 
     // send verify email
     const payload: UserPayload = {
@@ -196,8 +176,7 @@ export class AuthService {
       return {
         message: "Account verified successfully",
       };
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       throw new BadRequestException("Invalid token or token expired");
     }
   }
