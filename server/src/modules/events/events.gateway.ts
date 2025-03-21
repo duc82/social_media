@@ -106,7 +106,7 @@ export class EventsGateway
 
   afterInit(server: Server) {
     this.logger.log("Initialized");
-    // this.webSocketService.setServer(server);
+    this.webSocketService.setServer(server);
   }
 
   addOnline(socketId: string, userId: string) {
