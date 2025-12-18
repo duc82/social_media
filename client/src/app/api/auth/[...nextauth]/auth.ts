@@ -1,6 +1,5 @@
 import authService from "@/app/services/authService";
 import { SignInDto } from "@/app/types/auth";
-import { FullUser } from "@/app/types/user";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -65,7 +64,6 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
       return token;
     },
 
-    // Don't touch this
     session({ session, token }) {
       session.token = token.token;
 

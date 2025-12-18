@@ -25,10 +25,6 @@ const menus = [
     route: "videos",
   },
   {
-    title: "Events",
-    route: "events",
-  },
-  {
     title: "Activity",
     route: "activity",
   },

@@ -32,6 +32,7 @@ export class UsersService {
     const user = await this.userRepository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.profile", "profile")
+      .leftJoinAndSelect("user.stories", "stories")
       .where("user.username = :username", { username })
       .getOne();
 
@@ -86,6 +87,7 @@ export class UsersService {
   async getById(id: string) {
     const user = await this.userRepository.findOne({
       where: { id },
+      relations: ["profile", "stories"],
     });
 
     if (!user) {
@@ -254,6 +256,7 @@ export class UsersService {
       ...userData,
       profile,
     });
+
     await this.userRepository.save(newUser);
     await this.notificationsService.createSettings(newUser.id);
     return newUser;

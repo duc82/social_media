@@ -13,18 +13,6 @@ export interface Message {
   user: FullUser;
   conversation: { id: string };
   reads: MessageRead[];
-  call?: Call;
-  deletedAt: string | null;
-  createdAt: string;
-}
-
-export interface Call {
-  id: string;
-  type: "video" | "audio";
-  status: "success" | "failed";
-  duration: number;
-  caller: FullUser;
-  callee: FullUser;
   deletedAt: string | null;
   createdAt: string;
 }

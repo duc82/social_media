@@ -3,6 +3,21 @@
 @include color-mode(dark) {
   --bs-secondary-rgb: 197, 198, 204 !important;
 
+  @mixin button-soft-variant-hover(
+    $color,
+    $soft-background: rgba($color, 0.1)
+  ) {
+    &:hover {
+      color: $color !important;
+      background-color: $soft-background;
+    }
+  }
+  @each $color, $value in $theme-colors {
+    .btn-#{$color}-soft-hover:hover {
+      @include button-soft-variant-hover($value);
+    }
+  }
+
   // Main
   main {
     background-color: $body-bg-dark;

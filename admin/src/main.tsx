@@ -1,15 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
+import { StyledEngineProvider } from "@mui/material/styles";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import RootLayout from "./layouts/RootLayout";
-import "./scss/index.scss";
-import "./scss/avatar.scss";
-import "./scss/pages.scss";
-import "./scss/background.scss";
-import "bootstrap/dist/js/bootstrap.bundle.min";
-import UsersOverview from "./pages/Users/Overview";
-import Login from "./pages/Login";
+import SignIn from "./pages/SignIn";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -20,26 +15,20 @@ const router = createBrowserRouter([
         index: true,
         element: <Dashboard />,
       },
-      {
-        path: "users",
-        element: <UsersOverview />,
-        children: [
-          {
-            path: "add",
-            element: <div>Add User</div>,
-          },
-        ],
-      },
     ],
   },
   {
-    path: "/login",
-    element: <Login />,
+    path: "/signin",
+    element: <SignIn />,
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root");
+
+createRoot(root!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <StyledEngineProvider injectFirst>
+      <RouterProvider router={router} />
+    </StyledEngineProvider>
   </StrictMode>
 );

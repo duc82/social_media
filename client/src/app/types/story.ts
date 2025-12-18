@@ -10,7 +10,7 @@ export interface Story {
 }
 
 export interface UserStory extends FullUser {
-  stories: Omit<Story, "user">[];
+  stories: Story[];
 }
 
 export interface UserStoriesResponse {
@@ -21,6 +21,6 @@ export interface UserStoriesResponse {
 }
 
 export interface StoryResponse {
-  stories: Story[];
+  story: Story;
   message: string;
 }

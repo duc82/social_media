@@ -61,30 +61,6 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 
 --
--- Name: calls_status_enum; Type: TYPE; Schema: public; Owner: postgres
---
-
-CREATE TYPE public.calls_status_enum AS ENUM (
-    'success',
-    'failed'
-);
-
-
-ALTER TYPE public.calls_status_enum OWNER TO postgres;
-
---
--- Name: calls_type_enum; Type: TYPE; Schema: public; Owner: postgres
---
-
-CREATE TYPE public.calls_type_enum AS ENUM (
-    'video',
-    'audio'
-);
-
-
-ALTER TYPE public.calls_type_enum OWNER TO postgres;
-
---
 -- Name: conversation_members_role_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -148,6 +124,22 @@ CREATE TYPE public.message_files_type_enum AS ENUM (
 ALTER TYPE public.message_files_type_enum OWNER TO postgres;
 
 --
+-- Name: notifications_type_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.notifications_type_enum AS ENUM (
+    'like',
+    'comment',
+    'friend_request',
+    'accepted_friend_request',
+    'birthday',
+    'group'
+);
+
+
+ALTER TYPE public.notifications_type_enum OWNER TO postgres;
+
+--
 -- Name: post_files_type_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -164,9 +156,9 @@ ALTER TYPE public.post_files_type_enum OWNER TO postgres;
 --
 
 CREATE TYPE public.posts_access_enum AS ENUM (
-    'Public',
-    'Friends',
-    'Only me'
+    'public',
+    'friends',
+    'only me'
 );
 
 
@@ -222,30 +214,6 @@ CREATE TYPE public.users_role_enum AS ENUM (
 
 
 ALTER TYPE public.users_role_enum OWNER TO postgres;
-
---
--- Name: mark_messages_as_read(uuid, uuid); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE OR REPLACE FUNCTION public.mark_messages_as_read(conversation_id uuid, user_id uuid) RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-BEGIN 
-	INSERT INTO message_reads ("userId", "messageId")
-	SELECT user_id, id
-	FROM messages
-	WHERE "conversationId" = conversation_id
-    AND NOT EXISTS (
-        SELECT 1
-        FROM message_reads
-        WHERE "userId" = user_id
-        AND "messageId" = messages.id
-    );
-END;
-$$;
-
-
-ALTER FUNCTION public.mark_messages_as_read(conversation_id uuid, user_id uuid) OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -309,24 +277,6 @@ CREATE TABLE public.blogs (
 ALTER TABLE public.blogs OWNER TO postgres;
 
 --
--- Name: calls; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.calls (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    type public.calls_type_enum NOT NULL,
-    duration integer,
-    status public.calls_status_enum NOT NULL,
-    "deletedAt" timestamp with time zone,
-    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "callerId" uuid,
-    "calleeId" uuid
-);
-
-
-ALTER TABLE public.calls OWNER TO postgres;
-
---
 -- Name: comments; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -387,6 +337,18 @@ CREATE TABLE public.conversations (
 ALTER TABLE public.conversations OWNER TO postgres;
 
 --
+-- Name: followers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.followers (
+    "followerId" uuid NOT NULL,
+    "followingId" uuid NOT NULL
+);
+
+
+ALTER TABLE public.followers OWNER TO postgres;
+
+--
 -- Name: friends; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -425,6 +387,7 @@ CREATE TABLE public.groups (
     name character varying NOT NULL,
     description character varying,
     picture character varying NOT NULL,
+    wallpaper character varying NOT NULL,
     access public.groups_access_enum NOT NULL,
     "deletedAt" timestamp with time zone,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL
@@ -471,7 +434,6 @@ CREATE TABLE public.messages (
     content character varying,
     "deletedAt" timestamp with time zone,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "callId" uuid,
     "conversationId" uuid,
     "userId" uuid
 );
@@ -521,6 +483,7 @@ ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 CREATE TABLE public.notification_settings (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     likes boolean DEFAULT true NOT NULL,
+    followers boolean DEFAULT true NOT NULL,
     comments boolean DEFAULT true NOT NULL,
     "friendRequests" boolean DEFAULT true NOT NULL,
     birthdays boolean DEFAULT true NOT NULL,
@@ -540,14 +503,13 @@ ALTER TABLE public.notification_settings OWNER TO postgres;
 CREATE TABLE public.notifications (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     content character varying NOT NULL,
-    type character varying NOT NULL,
+    type public.notifications_type_enum NOT NULL,
     "readAt" timestamp with time zone,
     "deletedAt" timestamp with time zone,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "actorId" uuid,
     "userId" uuid,
+    "actorId" uuid,
     "postId" uuid,
-    "friendId" uuid,
     "commentId" uuid
 );
 
@@ -577,11 +539,12 @@ ALTER TABLE public.post_files OWNER TO postgres;
 CREATE TABLE public.posts (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     content character varying,
-    access public.posts_access_enum DEFAULT 'Public'::public.posts_access_enum NOT NULL,
+    access public.posts_access_enum DEFAULT 'public'::public.posts_access_enum NOT NULL,
     feeling text[],
     activity text[],
     "deletedAt" timestamp with time zone,
     "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "groupId" uuid,
     "userId" uuid
 );
 
@@ -690,6 +653,14 @@ ALTER TABLE ONLY public.migrations ALTER COLUMN id SET DEFAULT nextval('public.m
 
 ALTER TABLE ONLY public.message_files
     ADD CONSTRAINT "PK_0c383dd49eca61f122709fb16d0" PRIMARY KEY (id);
+
+
+--
+-- Name: followers PK_1485f24f1f66ac91ea2c5517ebd; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.followers
+    ADD CONSTRAINT "PK_1485f24f1f66ac91ea2c5517ebd" PRIMARY KEY ("followerId", "followingId");
 
 
 --
@@ -861,14 +832,6 @@ ALTER TABLE ONLY public.notification_settings
 
 
 --
--- Name: calls PK_d9171d91f8dd1a649659f1b6a20; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.calls
-    ADD CONSTRAINT "PK_d9171d91f8dd1a649659f1b6a20" PRIMARY KEY (id);
-
-
---
 -- Name: blogs PK_e113335f11c926da929a625f118; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -893,14 +856,6 @@ ALTER TABLE ONLY public.notification_settings
 
 
 --
--- Name: messages REL_950aecd82e8ca8a4d8349a39a6; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT "REL_950aecd82e8ca8a4d8349a39a6" UNIQUE ("callId");
-
-
---
 -- Name: users REL_b1bda35cdb9a2c1b777f5541d8; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -921,6 +876,20 @@ ALTER TABLE ONLY public.users
 --
 
 CREATE INDEX "IDX_0518ca06cb04edf6b840e11f5b" ON public.comments_likes_users USING btree ("commentsId");
+
+
+--
+-- Name: IDX_451bb9eb792c3023a164cf14e0; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_451bb9eb792c3023a164cf14e0" ON public.followers USING btree ("followerId");
+
+
+--
+-- Name: IDX_5e34418be6d904b779ca96cf93; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_5e34418be6d904b779ca96cf93" ON public.followers USING btree ("followingId");
 
 
 --
@@ -1012,14 +981,6 @@ ALTER TABLE ONLY public.group_members
 
 
 --
--- Name: notifications FK_2d69981b419fe03231a32f60956; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.notifications
-    ADD CONSTRAINT "FK_2d69981b419fe03231a32f60956" FOREIGN KEY ("friendId") REFERENCES public.friends(id);
-
-
---
 -- Name: blocked FK_340622b9f43a602c8f568381310; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1040,7 +1001,15 @@ ALTER TABLE ONLY public.blocked
 --
 
 ALTER TABLE ONLY public.notifications
-    ADD CONSTRAINT "FK_44412a2d6f162ff4dc1697d0db7" FOREIGN KEY ("actorId") REFERENCES public.users(id);
+    ADD CONSTRAINT "FK_44412a2d6f162ff4dc1697d0db7" FOREIGN KEY ("actorId") REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: followers FK_451bb9eb792c3023a164cf14e0a; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.followers
+    ADD CONSTRAINT "FK_451bb9eb792c3023a164cf14e0a" FOREIGN KEY ("followerId") REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1072,7 +1041,15 @@ ALTER TABLE ONLY public.message_reads
 --
 
 ALTER TABLE ONLY public.notification_settings
-    ADD CONSTRAINT "FK_5a8ffc3b89343043c9440d631e2" FOREIGN KEY ("userId") REFERENCES public.users(id);
+    ADD CONSTRAINT "FK_5a8ffc3b89343043c9440d631e2" FOREIGN KEY ("userId") REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: followers FK_5e34418be6d904b779ca96cf932; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.followers
+    ADD CONSTRAINT "FK_5e34418be6d904b779ca96cf932" FOREIGN KEY ("followingId") REFERENCES public.users(id);
 
 
 --
@@ -1088,7 +1065,7 @@ ALTER TABLE ONLY public.stories
 --
 
 ALTER TABLE ONLY public.notifications
-    ADD CONSTRAINT "FK_692a909ee0fa9383e7859f9b406" FOREIGN KEY ("userId") REFERENCES public.users(id);
+    ADD CONSTRAINT "FK_692a909ee0fa9383e7859f9b406" FOREIGN KEY ("userId") REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -1112,15 +1089,7 @@ ALTER TABLE ONLY public.friends
 --
 
 ALTER TABLE ONLY public.notifications
-    ADD CONSTRAINT "FK_93c464aaf70fb0720dc500e93c8" FOREIGN KEY ("postId") REFERENCES public.posts(id);
-
-
---
--- Name: messages FK_950aecd82e8ca8a4d8349a39a66; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT "FK_950aecd82e8ca8a4d8349a39a66" FOREIGN KEY ("callId") REFERENCES public.calls(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_93c464aaf70fb0720dc500e93c8" FOREIGN KEY ("postId") REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
@@ -1136,15 +1105,7 @@ ALTER TABLE ONLY public.conversation_members
 --
 
 ALTER TABLE ONLY public.notifications
-    ADD CONSTRAINT "FK_9faba56a12931cf4e38f9dddb49" FOREIGN KEY ("commentId") REFERENCES public.comments(id);
-
-
---
--- Name: calls FK_a0781de29eae6a119141edd4031; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.calls
-    ADD CONSTRAINT "FK_a0781de29eae6a119141edd4031" FOREIGN KEY ("callerId") REFERENCES public.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_9faba56a12931cf4e38f9dddb49" FOREIGN KEY ("commentId") REFERENCES public.comments(id) ON DELETE CASCADE;
 
 
 --
@@ -1196,11 +1157,11 @@ ALTER TABLE ONLY public.message_files
 
 
 --
--- Name: calls FK_d0f2e470b45482680fc5f2cf408; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: posts FK_d10acbe503da4c56853181efc98; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.calls
-    ADD CONSTRAINT "FK_d0f2e470b45482680fc5f2cf408" FOREIGN KEY ("calleeId") REFERENCES public.users(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT "FK_d10acbe503da4c56853181efc98" FOREIGN KEY ("groupId") REFERENCES public.groups(id) ON DELETE CASCADE;
 
 
 --

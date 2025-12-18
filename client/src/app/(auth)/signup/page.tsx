@@ -1,11 +1,10 @@
 "use client";
-
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import usePasswordScore from "@/app/hooks/usePasswordScore";
 import toast from "react-hot-toast";
 import handlingError from "@/app/utils/error";
@@ -46,6 +45,7 @@ export default function Signup() {
   );
 
   const onSubmit = async (data: SignUpDto) => {
+    console.log("Sign up");
     const { confirmPassword: _, ...signUpDto } = data;
 
     try {
@@ -118,6 +118,10 @@ export default function Signup() {
 
     return years;
   };
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">

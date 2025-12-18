@@ -1,4 +1,4 @@
-import { formatDate, formatDateTime } from "@/app/utils/dateTime";
+import { formatDate } from "@/app/utils/dateTime";
 import Avatar from "../Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckDouble } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +7,6 @@ import { Message } from "@/app/types/message";
 import Image from "next/image";
 import Link from "next/link";
 import Fancybox from "@/app/libs/FancyBox";
-import clsx from "clsx";
 
 interface MessageItemProps {
   message: Message;
@@ -80,33 +79,6 @@ export default function MessageItem({
                   </Fancybox>
                 )}
 
-                {message.call && (
-                  <div className="bg-light d-flex align-items-center cursor-pointer text-secondary p-2 px-3 rounded-2">
-                    {message.call.status === "success" && ""}
-                    {message.call.status === "failed" && (
-                      <div
-                        className="bg-danger d-inline-flex align-items-center justify-content-center rounded-circle text-white"
-                        style={{
-                          width: 36,
-                          height: 36,
-                        }}
-                      >
-                        <i
-                          className={clsx(
-                            "bi",
-                            message.call.type === "video"
-                              ? "bi-camera-video-off-fill"
-                              : "bi-telephone-x-fill"
-                          )}
-                        ></i>
-                      </div>
-                    )}
-                    <span className="ms-2 fw-semibold">
-                      Missed {message.call.type} <br /> call
-                    </span>
-                  </div>
-                )}
-
                 {isShowStatus && (
                   <span
                     className="small my-2"
@@ -160,27 +132,6 @@ export default function MessageItem({
                     </Link>
                   ))}
                 </Fancybox>
-              )}
-
-              {message.call && (
-                <div className="bg-light text-secondary cursor-pointer p-2 px-3 rounded-2 d-flex align-items-center">
-                  {message.call.status === "success" && ""}
-                  {message.call.status === "failed" && (
-                    <i
-                      className={clsx(
-                        "bi",
-                        message.call.type === "video"
-                          ? "bi-camera-video-off-fill"
-                          : "bi-telephone-x-fill"
-                      )}
-                    ></i>
-                  )}
-                  <span className="ms-2 fw-semibold">
-                    {message.call.type[0].toUpperCase() +
-                      message.call.type.slice(1)}{" "}
-                    call
-                  </span>
-                </div>
               )}
             </div>
 

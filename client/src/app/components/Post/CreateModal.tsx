@@ -17,11 +17,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { POST_ACCESS, postSchema } from "@/app/schemas/post";
 
 import Spinner from "../Spinner";
-import TagPeopleModal from "./TagPeopleModal";
 import FeelingActivityModal from "./FeelingActivityModal";
 import usePostContext from "@/app/hooks/usePostContext";
 import VideoPlayer from "@/app/libs/VideoPlayer";
 import EditPhotosPanel from "./EditPhotosPanel";
+import TagPeopleModal from "./TagPeopleModal";
 
 export default function CreatePostModal({
   initialActiveDropzone = false,
@@ -286,18 +286,6 @@ export default function CreatePostModal({
                       data-bs-target="#createFeelingActivityModal"
                     >
                       <i className="bi bi-emoji-smile-fill"></i>
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-md bg-light text-secondary rounded-circle border-0"
-                      data-bs-tooltip="true"
-                      data-bs-placement="top"
-                      data-bs-trigger="hover"
-                      data-bs-title="Check in"
-                      data-bs-toggle="modal"
-                      data-bs-target="#checkInModal"
-                    >
-                      <i className="bi bi-geo-alt-fill"></i>
                     </button>
                     <button
                       type="button"

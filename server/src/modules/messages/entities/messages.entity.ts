@@ -5,17 +5,14 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { MessageFile } from "./message_files.entity";
 import { User } from "src/modules/users/entities/users.entity";
 import { Conversation } from "src/modules/conversations/entities/conversations.entity";
 import { MessageRead } from "./message_reads.entity";
-import { Call } from "./calls.entity";
 
 @Entity({
   name: "messages",
@@ -28,13 +25,6 @@ export class Message extends BaseEntity {
     nullable: true,
   })
   content?: string;
-
-  @OneToOne(() => Call, {
-    cascade: true,
-    onDelete: "CASCADE",
-  })
-  @JoinColumn()
-  call: Call;
 
   @Index("idx_messages_conversation_id")
   @ManyToOne(() => Conversation, (conversation) => conversation.messages, {

@@ -14,8 +14,6 @@ import { AuthService } from "src/modules/auth/auth.service";
 import { UserPayload } from "src/modules/users/interfaces/users.interface";
 import { UsersService } from "../users/users.service";
 import "dotenv/config";
-import { MessagesService } from "../messages/messages.service";
-import { CallStatus, CallType } from "../messages/enums/calls.enum";
 import { User } from "../users/entities/users.entity";
 
 interface Message {
@@ -53,24 +51,6 @@ interface ConversationPayload {
   type: "add" | "remove";
 }
 
-interface CallUser {
-  callerId: string;
-  calleeId: string;
-  hasVideo: boolean;
-  room: string;
-  conversationId: string;
-}
-
-interface EndCall {
-  callStatus: CallStatus;
-  callType: CallType;
-  conversation: string;
-  callerId: string;
-  calleeId: string;
-  isCallee: boolean;
-  room: string;
-}
-
 @Injectable()
 export class WebSocketService {
   private server: Server;
@@ -100,7 +80,6 @@ export class EventsGateway
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
-    private messageService: MessagesService,
     private webSocketService: WebSocketService,
   ) {}
 
@@ -165,61 +144,6 @@ export class EventsGateway
   @SubscribeMessage("conversation")
   handleConversation(@MessageBody() payload: ConversationPayload) {
     this.server.emit("conversation", payload);
-  }
-
-  @SubscribeMessage("joinCall")
-  handleJoinCall(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() room: string,
-  ) {
-    client.join(room);
-  }
-
-  @SubscribeMessage("outgoingCall")
-  handleOutgoingCall(@MessageBody() payload: CallUser) {
-    const callee = this.onlines.find(
-      (online) => online.userId === payload.calleeId,
-    );
-
-    if (!callee) return;
-
-    console.log(callee);
-
-    this.server.to(callee.socketId).emit("incomingCall", payload);
-  }
-
-  @SubscribeMessage("endCall")
-  async handleEndCall(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: EndCall,
-  ) {
-    client.broadcast.to(payload.room).emit("endCall");
-
-    client.leave(payload.room);
-
-    if (payload.isCallee) return;
-
-    const message = await this.messageService.create(
-      {
-        callStatus: payload.callStatus,
-        callType: payload.callType,
-        conversation: payload.conversation,
-        callerId: payload.callerId,
-        calleeId: payload.calleeId,
-      },
-      [],
-      payload.callerId,
-    );
-
-    this.server.emit("message", message);
-  }
-
-  @SubscribeMessage("rejectCall")
-  handleRejectCall(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: CallUser,
-  ) {
-    client.broadcast.to(payload.room).emit("callRejected", payload);
   }
 
   @SubscribeMessage("typing")

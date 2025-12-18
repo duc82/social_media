@@ -200,33 +200,31 @@ export default function PostItem({
             </button>
             <ul className="dropdown-menu dropdown-menu-end">
               {post.user.id === currentUser.id && (
-                <li>
-                  <button
-                    type="button"
-                    className="dropdown-item"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editPostModal"
-                    onClick={() => updatePost(post)}
-                  >
-                    <i className="bi bi-pencil pe-2"></i>
-                    Edit post
-                  </button>
-                </li>
+                <>
+                  <li>
+                    <button
+                      type="button"
+                      className="dropdown-item"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editPostModal"
+                      onClick={() => updatePost(post)}
+                    >
+                      <i className="bi bi-pencil pe-2"></i>
+                      Edit post
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleRemove(post.id)}
+                    >
+                      <i className="bi bi-x-circle pe-2"></i>
+                      Remove post
+                    </button>
+                  </li>
+                </>
               )}
-              {post.user.id === currentUser.id && (
-                <li>
-                  <button
-                    className="dropdown-item"
-                    onClick={() => handleRemove(post.id)}
-                  >
-                    <i className="bi bi-x-circle pe-2"></i>
-                    Remove post
-                  </button>
-                </li>
-              )}
-              {/* <li>
-                <hr className="dropdown-divider" />
-              </li> */}
+
               {post.user.id !== currentUser.id && (
                 <li>
                   <button type="button" className="dropdown-item">

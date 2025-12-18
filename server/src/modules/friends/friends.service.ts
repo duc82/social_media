@@ -67,14 +67,12 @@ export class FriendsService {
           emailVerified: Not(IsNull()),
           firstName: Raw(
             (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
-            { search },
           ),
           lastName: Raw(
             (alias) => `unaccent(${alias}) ILIKE unaccent('%${search}%')`,
-            { search },
           ),
         },
-        relations: ["profile"],
+        relations: ["profile", "stories"],
         skip,
         take: limit,
       });

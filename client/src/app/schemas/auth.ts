@@ -3,7 +3,7 @@ import { z } from "zod";
 // regex one uppercase, one lowercase, one number, one special character, 8 characters minimum
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
 
-const email = z.string().email("Invalid email address");
+const email = z.email("Invalid email address");
 
 const password = z
   .string()
@@ -16,16 +16,16 @@ export const signUpSchema = z
   .object({
     firstName: z
       .string({
-        required_error: "First name is required",
+        error: "First name is required",
       })
       .min(2, "First name must be at least 2 characters long"),
     lastName: z
-      .string({ required_error: "Last name is required" })
+      .string({ error: "Last name is required" })
       .min(2, "Last name must be at least 2 characters long"),
     email,
     password,
     confirmPassword: z.string(),
-    birthday: z.string(),
+    birthday: z.any(),
     dateOfBirth: z.object({
       day: z.number(),
       month: z.number(),

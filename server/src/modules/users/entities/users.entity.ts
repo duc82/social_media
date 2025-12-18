@@ -24,7 +24,6 @@ import { ConversationMember } from "src/modules/conversations/entities/conversat
 import { UserRole } from "../enums/users.enum";
 import { Blocked } from "./blocked.entity";
 import { Story } from "src/modules/stories/stories.entity";
-import { Call } from "src/modules/messages/entities/calls.entity";
 import { Message } from "src/modules/messages/entities/messages.entity";
 import { NotificationSettings } from "src/modules/notifications/entities/notification_settings.entity";
 import { Notification } from "src/modules/notifications/entities/notifications.entity";
@@ -129,12 +128,6 @@ export class User extends BaseEntity {
     cascade: true,
   })
   messages: Message[];
-
-  @OneToMany(() => Call, (call) => call.caller, { cascade: true })
-  callers: Call[];
-
-  @OneToMany(() => Call, (call) => call.callee, { cascade: true })
-  callees: Call[];
 
   @ManyToMany(() => User, (user) => user.followers)
   @JoinTable({

@@ -49,7 +49,7 @@ export class AvatarService {
 
     // Draw text
     ctx.fillStyle = options?.fontColor ?? "white";
-    ctx.font = options?.font ?? "bold 50px Arial";
+    ctx.font = options?.font ?? "bold 80px Arial";
 
     const textWidth = ctx.measureText(initials).width;
     const textHeight = ctx.measureText(initials).actualBoundingBoxAscent;

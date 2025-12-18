@@ -2,7 +2,6 @@
 import FormControl from "@/app/components/Form/FormControl";
 import Spinner from "@/app/components/Spinner";
 import { signInSchema } from "@/app/schemas/auth";
-import apiRequest from "@/app/services/api";
 import { SignInDto } from "@/app/types/auth";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -42,22 +41,11 @@ export default function SignIn() {
 
   const onSubmit = async (data: SignInDto) => {
     await signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
       ...data,
+      redirect: true,
+      redirectTo: "/",
     });
   };
-
-  useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_API_URL + "/")
-      .then((res) => res.text())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   return (
     <div className="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">

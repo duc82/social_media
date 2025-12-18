@@ -94,6 +94,7 @@ export class AuthService {
       where: {
         email: signInDto.email,
       },
+      relations: ["stories"],
     });
 
     if (!user) {

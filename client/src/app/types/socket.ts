@@ -13,14 +13,6 @@ export interface Online {
   userId: string;
 }
 
-export interface CallUser {
-  callerId: string;
-  calleeId: string;
-  hasVideo: boolean;
-  room: string;
-  conversationId: string;
-}
-
 export interface Typing {
   isTyping: boolean;
   conversationId: string;
@@ -32,25 +24,12 @@ export interface ConversationPayload {
   type: "add" | "remove";
 }
 
-export interface EndCall {
-  conversation: string;
-  callType: "video" | "audio";
-  callStatus: "failed" | "success";
-  callerId: string;
-  calleeId: string;
-  isCallee: boolean;
-  room: string;
-}
-
 interface ServerToClientEvents {
   message: (_data: Message) => void;
   conversation: (_data: ConversationPayload) => void;
   friendRequest: (_data: FriendRequest) => void;
   onlines: (_data: Online[]) => void;
   conversationUnread: (_data: string) => void;
-  incomingCall: (_data: CallUser) => void;
-  endCall: () => void;
-  callRejected: (_data: CallUser) => void;
   notification: (_data: Notification) => void;
   typing: (_data: Typing) => void;
 }
@@ -60,10 +39,6 @@ interface ClientToServerEvents {
   conversation: (_data: ConversationPayload) => void;
   friendRequest: (_data: FriendRequest) => void;
   conversationUnread: () => void;
-  joinCall: (_room: string) => void;
-  outgoingCall: (_data: CallUser) => void;
-  endCall: (_data: EndCall) => void;
-  rejectCall: (_data: CallUser) => void;
   typing: (_data: Typing) => void;
 }
 
