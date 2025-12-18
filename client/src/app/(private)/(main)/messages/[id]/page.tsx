@@ -42,7 +42,6 @@ export default async function Messages({
             user={user}
             conversation={conversation}
             token={token}
-            currentUser={currentUser}
           />
           <hr />
           <MessageList

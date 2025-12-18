@@ -28,8 +28,8 @@ export default function CreateStory() {
     <>
       <div className="position-relative">
         <div
-          className="card border border-2 border-dashed px-4 px-sm-5 shadow-none d-flex align-items-center justify-content-center text-center"
-          style={{ height: "150px" }}
+          className="card border border-2 border-dashed px-4 shadow-none d-flex align-items-center justify-content-center text-center"
+          style={{ width: 136, height: 150 }}
         >
           <label
             htmlFor="storyFile"
@@ -46,7 +46,8 @@ export default function CreateStory() {
             />
           </label>
           <h6 className="mt-2 mb-0 small">
-            Post a<br /> Story
+            Post a<br />
+            Story
           </h6>
         </div>
       </div>

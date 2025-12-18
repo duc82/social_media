@@ -10,38 +10,24 @@ import apiRequest from "./api";
 
 const postService = {
   create: async (formData: FormData, token: string): Promise<PostResponse> => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open(
-        "POST",
-        `${process.env.NEXT_PUBLIC_API_URL}/api/posts/create`,
-        true
-      );
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/posts/create`,
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = (event.loaded / event.total) * 100;
-          console.log(percent);
-        }
-      };
+    const data = await res.json();
 
-      xhr.onload = () => {
-        const data = JSON.parse(xhr.responseText);
-        console.log({ status: xhr.status, data });
-        if (xhr.status === 201) {
-          resolve(data);
-        } else {
-          reject(new Error(data.message));
-        }
-      };
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
 
-      xhr.onerror = () => {
-        reject(new Error("Network error or failed to upload."));
-      };
-
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-      xhr.send(formData);
-    });
+    return data;
   },
 
   update: async (

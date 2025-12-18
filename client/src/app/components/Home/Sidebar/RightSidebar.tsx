@@ -29,7 +29,7 @@ export default async function RightSidebar() {
                   <div className="d-grid mt-3">
                     <Link
                       className="btn btn-sm btn-primary-soft"
-                      href="/friends/suggestion"
+                      href="/friends/suggestions"
                     >
                       View more
                     </Link>

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ProfileMainHeaderMenu from "./Menu";
 import { Friend, FullUser } from "@/app/types/user";
-import { formatDate } from "@/app/utils/dateTime";
+import { formatDate, formatDateTime } from "@/app/utils/dateTime";
 import { ChangeEvent, useMemo, useState } from "react";
 import FriendButton from "./FriendButton";
 import Fancybox from "@/app/libs/FancyBox";
@@ -23,6 +23,10 @@ import { directMessage } from "@/app/actions/conversationAction";
 import userService from "@/app/services/userService";
 import clsx from "clsx";
 import { useRouter } from "next-nprogress-bar";
+import StoryModal from "@/app/components/Stories/StoryModal";
+import CreateStoryModal from "@/app/components/Stories/CreateModal";
+import { FilePreview } from "@/app/types";
+import { Story } from "@/app/types/story";
 
 export default function ProfileMainHeader({
   user,
@@ -38,6 +42,9 @@ export default function ProfileMainHeader({
   const [friendship, setFriendship] = useState(initialFriend);
   const [totalFriends, setTotalFriends] = useState(initialTotalFriends);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenStory, setIsOpenStory] = useState(false);
+  const [fileStory, setFileStory] = useState<FilePreview | null>(null);
+
   const { data: session, update } = useSession();
   const router = useRouter();
   const token = session?.token;
@@ -159,8 +166,38 @@ export default function ProfileMainHeader({
     router.push(`/messages/${conversation.id}`);
   };
 
+  const handleChangeFileStory = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0] as FilePreview;
+
+    const preview = URL.createObjectURL(file);
+    file.preview = preview;
+    setFileStory(file);
+  };
+
+  const resetFileStory = () => {
+    setFileStory(null);
+  };
+
   return (
     <div className="card">
+      <StoryModal
+        isOpen={isOpenStory}
+        onClose={() => setIsOpenStory(false)}
+        stories={user.stories.map((story) => ({
+          url: story.content,
+          type: story.type,
+          header: {
+            heading: user.fullName,
+            subheading: formatDateTime(story.createdAt),
+            profileImage: user.profile.avatar,
+          },
+          duration: 5000,
+        }))}
+      />
+
       <Fancybox
         style={{
           height: "200px",
@@ -203,6 +240,7 @@ export default function ProfileMainHeader({
                 id="wallpaperPicture"
                 onChange={handleChangeWallpaper}
                 hidden
+                accept="image/*"
               />
               <i className="bi bi-camera-fill"></i>
               <span>Edit wallpaper</span>
@@ -214,22 +252,64 @@ export default function ProfileMainHeader({
       <div className="card-body py-0">
         <div className="d-md-flex align-items-start text-center text-md-start">
           <Fancybox className="d-inline-block position-relative">
-            <Link
-              href={user.profile.avatar}
-              className="avatar avatar-xxl mt-n5 mb-3"
-              data-fancybox
-              data-disable-nprogress
-            >
-              <Avatar
-                src={user.profile.avatar}
-                className="rounded-circle border border-3 border-white"
-              />
-            </Link>
+            {user.stories.length > 0 ? (
+              <div className="dropdown">
+                <button
+                  type="button"
+                  className="avatar avatar-xxl avatar-story mt-n5 mb-3 border-0 bg-transparent"
+                  data-bs-toggle="dropdown"
+                >
+                  <Avatar
+                    src={user.profile.avatar}
+                    className="rounded-circle border border-3 border-white"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    fill={false}
+                  />
+                </button>
+                <ul className="dropdown-menu mt-2">
+                  <li>
+                    <button
+                      type="button"
+                      className="dropdown-item"
+                      onClick={() => setIsOpenStory(true)}
+                    >
+                      <i className="bi bi-book me-2"></i>
+                      View story
+                    </button>
+                  </li>
+                  <li>
+                    <Link
+                      href={user.profile.avatar}
+                      className="dropdown-item"
+                      data-fancybox
+                      data-disable-nprogress
+                    >
+                      <i className="bi bi-person-square me-2"></i>
+                      See profile picture
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <Link
+                href={user.profile.avatar}
+                className="avatar avatar-xxl mt-n5 mb-3"
+                data-fancybox
+                data-disable-nprogress
+              >
+                <Avatar
+                  src={user.profile.avatar}
+                  className="rounded-circle border border-3 border-white"
+                />
+              </Link>
+            )}
 
             {isMyProfile && (
               <label
                 htmlFor="profilePicture1"
-                className="btn btn-light avatar-camera"
+                className="btn btn-light avatar-camera z-1"
               >
                 <i className="bi bi-camera-fill"></i>
                 <input
@@ -253,13 +333,23 @@ export default function ProfileMainHeader({
 
           {isMyProfile && (
             <div className="d-flex flex-wrap justify-content-center gap-2 mt-3 ms-md-auto">
-              <button
-                type="button"
+              <CreateStoryModal file={fileStory} resetFile={resetFileStory} />
+              <label
+                htmlFor="storyFile"
+                data-bs-toggle="modal"
+                data-bs-target="#createStoryModal"
                 className="btn btn-primary-soft d-flex align-items-center"
               >
+                <input
+                  type={fileStory ? "hidden" : "file"}
+                  id="storyFile"
+                  onChange={handleChangeFileStory}
+                  accept="image/*,video/*"
+                  hidden
+                />
                 <i className="bi bi-plus-lg me-2"></i>
                 Add to story
-              </button>
+              </label>
               <button
                 type="button"
                 className="btn btn-danger-soft d-flex align-items-center"

@@ -16,7 +16,6 @@ import {
   FormEvent,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import Avatar from "../Avatar";
@@ -37,8 +36,8 @@ export default function CreateChatToast({ token }: { token: string }) {
 
   const router = useRouter();
 
-  const debounceSearch = debounce(
-    async (value: string, exclude: string, token: string) => {
+  const getSearchResults = useCallback(
+    debounce(async (value: string, exclude: string, token: string) => {
       if (!value) return setUsers([]);
 
       try {
@@ -52,11 +51,9 @@ export default function CreateChatToast({ token }: { token: string }) {
       } catch (error) {
         console.error(error);
       }
-    },
-    500
+    }, 500),
+    []
   );
-
-  const getSearchResults = useCallback(debounceSearch, []);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

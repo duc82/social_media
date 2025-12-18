@@ -15,7 +15,7 @@ export default async function Home() {
 
   const [{ posts, limit, total }, { users: userStories }] = await Promise.all([
     postService.getAll(token),
-    userService.getStories(token, { tags: ["userStories"] }),
+    userService.getStories(token),
   ]);
 
   return (

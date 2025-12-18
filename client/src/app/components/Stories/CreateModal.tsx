@@ -1,22 +1,29 @@
 "use client";
-import { revalidateTag } from "@/app/actions/indexAction";
 import storyService from "@/app/services/storyService";
 import { FilePreview } from "@/app/types";
 import Cropper from "cropperjs";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import Spinner from "../Spinner";
+import VideoPlayer from "@/app/libs/VideoPlayer";
+import { Story } from "@/app/types/story";
 
 export default function CreateStoryModal({
   file,
   resetFile,
+  handleAddStory,
 }: {
   file: FilePreview | null;
   resetFile: () => void;
+  handleAddStory?: (story: Story) => void;
 }) {
   const [cropper, setCropper] = useState<Cropper | null>(null);
-  const { data: session } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session, update } = useSession();
   const token = session?.token;
+  const user = session?.user;
+
   const imageRef = useRef<HTMLImageElement>(null);
   const btnCloseRef = useRef<HTMLButtonElement>(null);
 
@@ -38,18 +45,29 @@ export default function CreateStoryModal({
 
   const handleShareStory = async () => {
     if (!file || !token) return;
-    const newFile = await onCrop(file.name, file.type);
+
+    const newFile = file.type.includes("image/")
+      ? await onCrop(file.name, file.type)
+      : file;
 
     try {
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("file", newFile);
 
-      await storyService.create(formData, token);
-      await revalidateTag("userStories");
+      const { story } = await storyService.create(formData, token);
+      if (user?.id === story.user.id) {
+        user.stories.unshift(story);
+        await update({
+          stories: user.stories,
+        });
+      }
       resetFile();
       btnCloseRef.current?.click();
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,7 +105,7 @@ export default function CreateStoryModal({
           </div>
           <div className="modal-body">
             <div>
-              {file && (
+              {file && file.type.includes("image/") && (
                 <Image
                   src={file.preview}
                   alt={file.name}
@@ -96,6 +114,10 @@ export default function CreateStoryModal({
                   className="img-fluid w-100"
                   ref={imageRef}
                 />
+              )}
+
+              {file && file.type.includes("video/") && (
+                <VideoPlayer src={file.preview} />
               )}
 
               {!file && <div style={{ height: 200 }}></div>}
@@ -114,8 +136,9 @@ export default function CreateStoryModal({
               type="button"
               className="btn btn-primary"
               onClick={handleShareStory}
+              disabled={isLoading}
             >
-              Share to Story
+              {isLoading ? <Spinner /> : "Share to Story"}
             </button>
           </div>
         </div>

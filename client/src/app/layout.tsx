@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import "@/app/assets/scss/globals.scss";
 import NextAuthProvider from "./providers/NextAuthProvider";
 import NextThemeProvider from "./providers/NextThemeProvider";

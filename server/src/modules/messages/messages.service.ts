@@ -5,7 +5,6 @@ import { CreateMessageDto } from "./messages.dto";
 import { UsersService } from "src/modules/users/users.service";
 import { QueryDto } from "src/shared/dto/query.dto";
 import { FirebaseService } from "../firebase/firebase.service";
-import { Call } from "./entities/calls.entity";
 
 @Injectable()
 export class MessagesService {
@@ -43,7 +42,6 @@ export class MessagesService {
           "reads",
           "reads.user",
           "conversation",
-          "call",
         ],
         take: limit,
         skip,
@@ -80,23 +78,12 @@ export class MessagesService {
 
     const newFiles = await this.firebaseService.uploadFiles(files, "messages");
 
-    const call =
-      body.callType &&
-      this.dataSource.getRepository(Call).create({
-        type: body.callType,
-        status: body.callStatus,
-        caller: { id: body.callerId },
-        callee: { id: body.calleeId },
-        duration: body.callDuration,
-      });
-
     const message = this.dataSource.getRepository(Message).create({
       content: body.content,
       files: newFiles,
       conversation: {
         id: body.conversation,
       },
-      call,
       user,
       reads: [
         {

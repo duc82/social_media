@@ -296,11 +296,9 @@ $avatar-size-xxxl: 11rem;
   }
 }
 
-// avatar story
 .avatar-story {
   position: relative;
   padding: 4px;
-  z-index: 1;
   &:after {
     content: "";
     position: absolute;

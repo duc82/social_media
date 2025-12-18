@@ -12,51 +12,21 @@ import { markMessagesAsRead } from "@/app/actions/messageAction";
 import { Conversation } from "@/app/types/conversation";
 import conversationService from "@/app/services/conversationService";
 import useSocketContext from "@/app/hooks/useSocketContext";
-import { useParams } from "next/navigation";
 
 interface TopAvatarStatusProps {
   user?: FullUser;
   conversation: Conversation;
   token: string;
-  currentUser: FullUser;
 }
 
 export default function TopAvatarStatus({
   user,
   conversation,
   token,
-  currentUser,
 }: TopAvatarStatusProps) {
   const { socket, onlines } = useSocketContext();
-  const { id: conversationId } = useParams();
 
   const isOnline = onlines.some((online) => online.userId === user?.id);
-
-  const openRingingCall = async (hasVideo: boolean) => {
-    if (!user || !socket) return;
-
-    const room = `${currentUser.id}-${user.id}`;
-
-    socket.emit("outgoingCall", {
-      callerId: currentUser.id,
-      calleeId: user.id,
-      hasVideo,
-      room,
-      conversationId: conversation.id,
-    });
-
-    const width = 1280;
-    const height = 720;
-
-    const left = screen.width / 2 - width / 2;
-    const top = screen.height / 2 - height / 2;
-
-    window.open(
-      `/ringing-call?hasVideo=${hasVideo}&calleeId=${user.id}&conversationId=${conversationId}`,
-      "_blank",
-      `location=yes,scrollbars=yes,status=yes,width=${width},height=${height},top=${top},left=${left}`
-    );
-  };
 
   const handleMarkAsRead = async () => {
     await markMessagesAsRead(conversation.id);
@@ -107,26 +77,6 @@ export default function TopAvatarStatus({
         </div>
       </div>
       <div className="d-flex align-items-center">
-        <button
-          type="button"
-          onClick={() => openRingingCall(false)}
-          className="icon-md rounded-circle btn btn-primary-soft me-2 px-2"
-          data-bs-toggle="tooltip"
-          data-bs-placement="top"
-          data-bs-title="Audio call"
-        >
-          <i className="bi bi-telephone-fill"></i>
-        </button>
-        <button
-          type="button"
-          className="icon-md rounded-circle btn btn-primary-soft me-2 px-2"
-          data-bs-toggle="tooltip"
-          data-bs-placement="top"
-          data-bs-title="Video call"
-          onClick={() => openRingingCall(true)}
-        >
-          <i className="bi bi-camera-video-fill"></i>
-        </button>
         <div className="dropdown">
           <button
             type="button"

@@ -12,14 +12,6 @@ const storyService = {
       isFormData: true,
     });
   },
-
-  getStories: async (token: string) => {
-    return apiRequest<StoryResponse>("/stories", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
 };
 
 export default storyService;

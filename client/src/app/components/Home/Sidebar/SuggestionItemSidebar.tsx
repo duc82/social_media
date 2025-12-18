@@ -41,15 +41,19 @@ export default function SuggestionItemSidebar(friend: FullUser) {
 
   return (
     <div className="hstack gap-2 mb-3">
-      <div className="avatar">
-        <Link href={`/profile/@${friend.username}`}>
-          <Avatar
-            className="avatar-img rounded-circle"
-            src={friend.profile.avatar}
-            alt={friend.fullName}
-          />
-        </Link>
-      </div>
+      <Link
+        href={`/profile/@${friend.username}`}
+        className={clsx("avatar", friend.stories.length > 0 && "avatar-story")}
+      >
+        <Avatar
+          className="avatar-img rounded-circle"
+          src={friend.profile.avatar}
+          alt={friend.fullName}
+          fill={false}
+          width={0}
+          height={0}
+        />
+      </Link>
       <div className="overflow-hidden">
         <Link
           className="h6 mb-0 text-truncate"
